@@ -22,29 +22,33 @@
     var CONFIG = {"hostname":"afogsheep.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="We losers do nothing so winners keeping winning   仍在施工中">
-<meta property="og:type" content="website">
+  <meta name="description" content="C++学习 一个半循环 思考以下的循环方式和 while(! input.fail()) 的区别： 1234567891011int rowNumber &#x3D; 0;        while(true) &#123;            int intValue;            double doubleValue;            input &gt;&gt; intValue &amp;">
+<meta property="og:type" content="article">
 <meta property="og:title" content="杜鹃声">
-<meta property="og:url" content="https://afogsheep.github.io/index.html">
+<meta property="og:url" content="https://afogsheep.github.io/2024/03/30/cpp-learn%20(2)/index.html">
 <meta property="og:site_name" content="杜鹃声">
-<meta property="og:description" content="We losers do nothing so winners keeping winning   仍在施工中">
+<meta property="og:description" content="C++学习 一个半循环 思考以下的循环方式和 while(! input.fail()) 的区别： 1234567891011int rowNumber &#x3D; 0;        while(true) &#123;            int intValue;            double doubleValue;            input &gt;&gt; intValue &amp;">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:\Users\24208\AppData\Roaming\Typora\typora-user-images\image-20240320165928508.png">
+<meta property="article:published_time" content="2024-03-30T11:34:55.897Z">
+<meta property="article:modified_time" content="2024-03-30T11:34:38.357Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:\Users\24208\AppData\Roaming\Typora\typora-user-images\image-20240320165928508.png">
 
-<link rel="canonical" href="https://afogsheep.github.io/">
+<link rel="canonical" href="https://afogsheep.github.io/2024/03/30/cpp-learn%20(2)/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>杜鹃声</title>
+  <title> | 杜鹃声</title>
   
 
 
@@ -153,9 +157,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -171,10 +176,9 @@
       <meta itemprop="name" content="杜鹃声">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
+        <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2024/03/30/cpp-learn%20(2)/" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -198,7 +202,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="C-学习"><a href="#C-学习" class="headerlink" title="C++学习"></a>C++学习</h1><h2 id="一个半循环"><a href="#一个半循环" class="headerlink" title=" 一个半循环 "></a><span style="font-size:1.2em;"> <strong>一个半循环</strong> </span></h2><p>思考以下的循环方式和 <strong>while(! input.fail())</strong> 的区别：</p>
+        <h1 id="C-学习"><a href="#C-学习" class="headerlink" title="C++学习"></a>C++学习</h1><h2 id="一个半循环"><a href="#一个半循环" class="headerlink" title=" 一个半循环 "></a><span style="font-size:1.2em;"> <strong>一个半循环</strong> </span></h2><p>思考以下的循环方式和 <strong>while(! input.fail())</strong> 的区别：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> rowNumber = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="type">int</span> intValue;</span><br><span class="line">            <span class="type">double</span> doubleValue;</span><br><span class="line">            input &gt;&gt; intValue &gt;&gt; doubleValue;</span><br><span class="line">            <span class="keyword">if</span>(input.<span class="built_in">fail</span>()) <span class="keyword">break</span>;</span><br><span class="line">            cout &lt;&lt; <span class="built_in">setw</span>(COLUMN_WIDTH) &lt;&lt; (rowNumber + <span class="number">1</span>) &lt;&lt; <span class="string">&quot; | &quot;</span>;</span><br><span class="line">            cout &lt;&lt; <span class="built_in">setw</span>(COLUMN_WIDTH) &lt;&lt; intValue &lt;&lt; <span class="string">&quot; | &quot;</span>;</span><br><span class="line">            cout &lt;&lt; <span class="built_in">setw</span>(COLUMN_WIDTH) &lt;&lt; doubleValue &lt;&lt; endl;</span><br><span class="line"> rowNumber++;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
 
 <p>这种循环优点在于错误发生时能及时停止循环，若是后者，则总是会多执行一次循环。使用一个半循环而不是简单的 while 循环是有益的。</p>
@@ -316,280 +320,30 @@
 <p>优点：(1) 随机访问方便，即支持 [ ] 操作符和 vector.at()<br>      (2) 在内部方便的进行插入和删除操作<br>      (3) 可在两端进行 push、pop</p>
 <p>缺点：占用内存多</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://afogsheep.github.io/2024/03/28/cpp-learn/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="">
-      <meta itemprop="description" content="We losers do nothing so winners keeping winning <br> </br> 仍在施工中">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="杜鹃声">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/03/28/cpp-learn/" class="post-title-link" itemprop="url">C++学习</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2024-03-28 21:04:45 / 修改时间：21:34:59" itemprop="dateCreated datePublished" datetime="2024-03-28T21:04:45+08:00">2024-03-28</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="C-学习"><a href="#C-学习" class="headerlink" title="C++学习"></a>C++学习</h1><p><span style="font-size:1.2em;"><strong>一个半循环</strong></span></p>
-<p>思考以下的循环方式和 **while(!input.fail())**的区别：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> rowNumber = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="type">int</span> intValue;</span><br><span class="line">            <span class="type">double</span> doubleValue;</span><br><span class="line">            input &gt;&gt; intValue &gt;&gt; doubleValue;</span><br><span class="line">            <span class="keyword">if</span>(input.<span class="built_in">fail</span>()) <span class="keyword">break</span>;</span><br><span class="line">            cout &lt;&lt; <span class="built_in">setw</span>(COLUMN_WIDTH) &lt;&lt; (rowNumber + <span class="number">1</span>) &lt;&lt; <span class="string">&quot; | &quot;</span>;</span><br><span class="line">            cout &lt;&lt; <span class="built_in">setw</span>(COLUMN_WIDTH) &lt;&lt; intValue &lt;&lt; <span class="string">&quot; | &quot;</span>;</span><br><span class="line">            cout &lt;&lt; <span class="built_in">setw</span>(COLUMN_WIDTH) &lt;&lt; doubleValue &lt;&lt; endl;</span><br><span class="line"> rowNumber++;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
-
-<p>这种循环优点在于错误发生时能及时停止循环，若是后者，则总是会多执行一次循环。使用一个半循环而不是简单的while循环是有益的。</p>
-<p>事实上，以上的代码可以简化成这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int intValue;</span><br><span class="line">   double doubleValue;</span><br><span class="line">   while(input &gt;&gt; intValue &gt;&gt; doubleValue) &#123;</span><br><span class="line">       /* ... process values here ... */</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-<p>直接将操作符运算放进while循环的判定条件中，能有效的减少代码的冗余。</p>
-<p><span style="font-size:1.2em;"><strong>c++程序是如何运行的？</strong></span></p>
-<p>c++程序的运行分为三个部分：</p>
-<p>​	<span style="font-size:1.1em;">预处理（preprocessing）  编译(compile)  连接(link)</span></p>
-<ul>
-<li>预处理：在预处理步骤中，称为预处理器的特殊程序会扫描 C++ 源代码并对其应用各种转换。例如，解析 #include 指令以使各种库可用，特殊标记（如 __FILE__和 __LINE__将替换为源文件中的文件和行号，#define-d 常量和宏替换为其适当的值</li>
-<li>编译：在编译步骤中，编译器将C++源文件读入、优化并转换为目标文件。这些目标文件是特定于机器的，但通常包含执行 C++ 文件中指定的指令的机器代码，以及一些额外的信息。在这个阶段，编译器将报告犯的任何语法错误，例如省略分号、引用未定义的变量或将错误类型的参数传递到函数中</li>
-<li>连接：最后，在链接阶段，一个名为链接器的程序将构建最终可执行文件所需的所有目标文件收集在一起，将它们与特定于操作系统的信息捆绑在一起，最后生成一个多文件程序、抽象和可以运行和分发的预处理器可执行文件。在此阶段，链接器可能会报告一些最终错误，这些错误会阻止它生成有效的 C++ 程序。</li>
-</ul>
-<p><strong><span style="font-size:1.2em;">包含保护（include guard）</span></strong></p>
-<p>运用以下代码来防止头文件被重复利用：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#ifndef file_Included</span><br><span class="line">#define file_Included</span><br><span class="line"></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
-
-<p>头文件的后缀是**.h**</p>
-<p><strong><span style="font-size:1.2em;">#define是什么？</span></strong></p>
-<p>运用以下格式，在整个代码中完成替换</p>
-<p> <span style="font-style:italic;">#define phrase replacement</span></p>
-<p>注意，被替换的判断是从第一个空格开始，#define 指令的替换部分由换行符前面的短语后的所有文本组成。同时默认替换后的文本将会是字符串。这个过程是在编译过程中进行的。如果全局定义了一个函数，那么在调用时会将其先转化成c++代码。</p>
-<p><span style="font-size:1.2em;"><strong>inline,内联函数</strong></span></p>
-<p>在计算机科学术语中，宏是内联的，因为编译器将“函数”的内容放在调用站点，而不是插入到函数代码的间接跳转。内联函数可能比非内联函数效率高得多.对一个函数使用inline关键字会建议编译器自动内联该函数，提高运行效率。inline 关键字只是对编译器的建议，如果编译器认为内联函数太难或成本太高，则可以忽略该关键字。但是，在编写短函数时，有时有助于将函数标记为内联以提高性能。</p>
-<p>如以下代码</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="type">int</span> <span class="title">Max</span><span class="params">(<span class="type">int</span> one, <span class="type">int</span> two)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> one &gt; two ? one : two;</span><br><span class="line">   &#125; </span><br></pre></td></tr></table></figure>
+        
 
 
-
-<p><span style="font-size:1.2em;"><strong>向量小结</strong></span></p>
-<p>向量，作为一个允许我们使用单个变量存储元素序列的多功能工具，有着难以取代的非凡地位。向量可以储存所有类型的数据(不可以混储)，没有元素数量限制，增减元素都十分方便。仅仅需要在头文件中引入<span style="color:#0000FF;">include&lt;vector&gt;</span>。比如完成一个简单的从大到小排序的程序：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">GetInteger</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> myInt;</span><br><span class="line">    cin &gt;&gt; myInt;</span><br><span class="line">    <span class="keyword">return</span> myInt;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">size_t</span> <span class="title">GetSmallestIndex</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v,<span class="type">size_t</span> startIndex)</span></span>&#123;</span><br><span class="line">    <span class="type">size_t</span> bestIndex = startIndex; <span class="comment">//size_t类型表示C中任何对象所能达到的最大长度，它是无符号整数。这里使用是因为index肯定是大于零的数</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = startIndex; i &lt; v.<span class="built_in">size</span>(); ++i)&#123;</span><br><span class="line">        <span class="keyword">if</span> (v[i] &lt; v[bestIndex])</span><br><span class="line">            bestIndex = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> bestIndex;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">SelectionSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp; v)</span></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; v.<span class="built_in">size</span>(); ++i) &#123;  </span><br><span class="line">        <span class="type">size_t</span> smallestIndex = <span class="built_in">GetSmallestIndex</span>(v, i); </span><br><span class="line">        <span class="built_in">swap</span> (v[i], v[smallestIndex]);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; values; <span class="comment">//创建一个空向量</span></span><br><span class="line">    <span class="type">int</span> kNumValues = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span> ;i &lt; kNumValues; ++i)&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;enter another value &quot;</span> &lt;&lt; endl;</span><br><span class="line">        <span class="type">int</span> val =<span class="built_in">GetInteger</span>();</span><br><span class="line">        values.<span class="built_in">push_back</span>(val);  <span class="comment">//给向量赋值</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">SelectionSort</span>(values);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">size_t</span> i = <span class="number">0</span>; i&lt;values.<span class="built_in">size</span>(); ++i)&#123;</span><br><span class="line">        cout &lt;&lt; values[i]&lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>也能通过以下格式初始化向量</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="type">double</span>&gt; <span class="title">myReals</span><span class="params">(<span class="number">20</span>, <span class="number">137.0</span>)</span></span>;</span><br><span class="line"><span class="function">vector&lt;string&gt; <span class="title">myStrings</span><span class="params">(<span class="number">5</span>, <span class="string">&quot;(none)&quot;</span>)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>规定向量的元素上限以及填充内容。之后如果要改变向量元素上限可以使用&#96;.resize() 以下是示例</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="type">int</span>&gt; myVector;			<span class="comment">// Defaults to empty vector</span></span><br><span class="line"><span class="built_in">PrintVector</span>(myVector);			<span class="comment">// Output: [nothing]</span></span><br><span class="line"></span><br><span class="line">myVector.<span class="built_in">resize</span>(<span class="number">10</span>);			<span class="comment">// Grow the vector, setting new elements to 0</span></span><br><span class="line"><span class="built_in">PrintVector</span>(myVector);			<span class="comment">// Output: 0 0 0 0 0 0 0 0 0 0</span></span><br><span class="line"></span><br><span class="line">myVector.<span class="built_in">resize</span>(<span class="number">5</span>);				<span class="comment">// Shrink the vector</span></span><br><span class="line"><span class="built_in">PrintVector</span>(myVector);			<span class="comment">// Output: 0 0 0 0 0</span></span><br><span class="line"></span><br><span class="line">myVector.<span class="built_in">resize</span>(<span class="number">7</span>, <span class="number">1</span>);			<span class="comment">// Grow the vector, setting new elements to 1</span></span><br><span class="line"><span class="built_in">PrintVector</span>(myVector);			<span class="comment">// Output: 0 0 0 0 0 1 1</span></span><br><span class="line"></span><br><span class="line">myVector.<span class="built_in">resize</span>(<span class="number">1</span>, <span class="number">7</span>);			<span class="comment">// The second parameter is effectively ignored.</span></span><br><span class="line"><span class="built_in">PrintVector</span>(myVector);			<span class="comment">// Output: 0</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><span style="font-size:1.2em;"><strong>部分常见的向量操作</strong></span></p>
-<table>
-<thead>
-<tr>
-<th>Constructor: vector ()</th>
-<th>vector myVector; Constructs an empty vector</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Constructor: vector (size_type size)</td>
-<td>vector myVector(10);                            Constructs a vector of the specified size where all elements  use their default values (for integral types, this is zero).</td>
-</tr>
-<tr>
-<td>Constructor: vector (size_type size,                       const T&amp; default)</td>
-<td>vector myVector(5, “blank”);                   Constructs a vector of the specified size where each  element is equal to the specified default value.</td>
-</tr>
-<tr>
-<td>size_type size() const;</td>
-<td>for(int i &#x3D; 0; i &lt; myVector.size(); ++i) { … } Returns the number of elements in the vector</td>
-</tr>
-<tr>
-<td>bool empty() const;</td>
-<td>while(!myVector.empty()) { … } Returns whether the vector is empty.</td>
-</tr>
-<tr>
-<td>void clear();</td>
-<td>myVector.clear(); <br />Erases all the elements in the vector and sets the size to  zero.</td>
-</tr>
-<tr>
-<td>T&amp; operator [] (size_type position); <br />const T&amp; operator [] (size_type position) const;    <br />T&amp; at(size_type position); const T&amp; at(size_type position) const;</td>
-<td>myVector[0] &#x3D; 100; int x &#x3D; myVector[0]; myVector.at(0) &#x3D; 100; int x &#x3D; myVector.at(0); Returns a reference to the element at the specified position.  The bracket notation [] does not do any bounds checking  and has undefined behavior past the end of the data.  The at  member function will throw an exception if you try to  access data beyond the end.  We will cover exception  handling in a later chapter</td>
-</tr>
-<tr>
-<td>void resize(size_type newSize); void resize(size_type newSize, T fill);</td>
-<td>myVector.resize(10); myVector.resize(10, “default”); Resizes the vector so that it’s guaranteed to be the specified  size.  In the second version, the vector elements are  initialized to the value specified by the second parameter.  Elements are added to and removed from the end of the  vector, so you can’t use resize to add elements to or remove  elements from the start of the vector</td>
-</tr>
-<tr>
-<td>void push_back();</td>
-<td>myVector.push_back(100); Appends an element to the vector</td>
-</tr>
-<tr>
-<td>T&amp; back(); const T&amp; back() const;</td>
-<td>myVector.back() &#x3D; 5; int lastElem &#x3D; myVector.back(); Returns a reference to the last element in the vector.</td>
-</tr>
-</tbody></table>
-<p>续表：</p>
-<table>
-<thead>
-<tr>
-<th>T&amp; front(); const T&amp; front() const;</th>
-<th>myVector.front() &#x3D; 0; int firstElem &#x3D; myVector.front(); Returns a reference to the first element in the vector.</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>void pop_back();</td>
-<td>myVector.pop_back(); <br />Removes the last element from the vector.</td>
-</tr>
-<tr>
-<td>iterator begin(); const_iterator begin() const;</td>
-<td>vector::iterator itr &#x3D; myVector.begin(); <br />Returns an iterator that points to the first element in the  vector</td>
-</tr>
-<tr>
-<td>iterator end(); const_iterator end() const;</td>
-<td>while(itr !&#x3D; myVector.end()); <br />Returns an iterator to the element after the last.  The  iterator returned by end does not point to an element in the  vector.</td>
-</tr>
-<tr>
-<td>iterator insert(iterator position,                 const T&amp; value); void insert(iterator start,             size_type numCopies,             const T&amp; value);</td>
-<td>myVector.insert(myVector.begin() + 4, “Hello”); myVector.insert(myVector.begin(), 2, “Yo!”); <br />The first version inserts the specified value into the vector,  and the second inserts numCopies copies of the value into  the vector.  Both calls invalidate all outstanding iterators for  the vector.</td>
-</tr>
-<tr>
-<td>iterator erase(iterator position); iterator erase(iterator start,               iterator end);</td>
-<td>myVector.erase(myVector.begin()); <br />myVector.erase(startItr, endItr);<br />The first version erases the element at the position pointed  to by position.  The second version erases all elements in the  range [startItr, endItr).  Note that this does not erase  the element pointed to by endItr.  All iterators after the  remove point are invalidated.  If using this member  function on a deque (see below), all iterators are  invalidated.</td>
-</tr>
-</tbody></table>
-<p><span style="font-size:1.2em;"><strong>Deque</strong></span></p>
-<p>称作double_end_queue。和vector相较有许多类似的操作，比如resize，push.back等。但是与vector最大的不同是，在STL实现的储存空间是不连续的大片“page”，而vector的是连续的空间.</p>
-<p><img src="C:\Users\24208\AppData\Roaming\Typora\typora-user-images\image-20240320165928508.png" alt="image-20240320165928508"></p>
-<p>优点：(1) 随机访问方便，即支持[ ]操作符和vector.at()<br>      (2) 在内部方便的进行插入和删除操作<br>      (3) 可在两端进行push、pop</p>
-<p>缺点：占用内存多</p>
-
-      
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/03/28/cpp-learn/" rel="prev" title="C++学习">
+      <i class="fa fa-chevron-left"></i> C++学习
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://afogsheep.github.io/2024/03/04/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="">
-      <meta itemprop="description" content="We losers do nothing so winners keeping winning <br> </br> 仍在施工中">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="杜鹃声">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/03/04/hello-world/" class="post-title-link" itemprop="url">Hello_My_Blog</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-03-04 20:30:15" itemprop="dateCreated datePublished" datetime="2024-03-04T20:30:15+08:00">2024-03-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-28 21:34:19" itemprop="dateModified" datetime="2024-03-28T21:34:19+08:00">2024-03-28</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.😊</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
   
 
 
@@ -642,6 +396,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.</span> <span class="nav-text">C++学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%8D%8A%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.1.</span> <span class="nav-text"> 一个半循环 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#c-%E7%A8%8B%E5%BA%8F%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text"> c++程序是如何运行的？ </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%85%E5%90%AB%E4%BF%9D%E6%8A%A4%EF%BC%88include-guard%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text"> 包含保护（include guard）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#define-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">#define 是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inline-%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text"> inline, 内联函数 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%91%E9%87%8F%E5%B0%8F%E7%BB%93"><span class="nav-number">1.6.</span> <span class="nav-text"> 向量小结 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deque"><span class="nav-number">1.7.</span> <span class="nav-text"> Deque </span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
