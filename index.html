@@ -177,10 +177,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2024-04-10 21:20:12 / 修改时间：20:22:50" itemprop="dateCreated datePublished" datetime="2024-04-10T21:20:12+08:00">2024-04-10</time>
+              <time title="创建时间：2024-04-10 21:20:12" itemprop="dateCreated datePublished" datetime="2024-04-10T21:20:12+08:00">2024-04-10</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-17 17:47:00" itemprop="dateModified" datetime="2024-04-17T17:47:00+08:00">2024-04-17</time>
+              </span>
 
           
 
@@ -193,7 +199,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="旅途的开始"><a href="#旅途的开始" class="headerlink" title="旅途的开始"></a>旅途的开始</h1><h2 id="一个半循环"><a href="#一个半循环" class="headerlink" title=" 一个半循环 "></a><span style="font-size:1.2em;"> <strong>一个半循环</strong> </span></h2><p>思考以下的循环方式和 <strong>while(! input.fail())</strong> 的区别：</p>
+          <h1 id="C-预备"><a href="#C-预备" class="headerlink" title="C++预备"></a>C++预备</h1><h2 id="一个半循环"><a href="#一个半循环" class="headerlink" title=" 一个半循环 "></a><span style="font-size:1.2em;"> <strong>一个半循环</strong> </span></h2><p>思考以下的循环方式和 <strong>while(! input.fail())</strong> 的区别：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> rowNumber = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="type">int</span> intValue;</span><br><span class="line">            <span class="type">double</span> doubleValue;</span><br><span class="line">            input &gt;&gt; intValue &gt;&gt; doubleValue;</span><br><span class="line">            <span class="keyword">if</span>(input.<span class="built_in">fail</span>()) <span class="keyword">break</span>;</span><br><span class="line">            cout &lt;&lt; <span class="built_in">setw</span>(COLUMN_WIDTH) &lt;&lt; (rowNumber + <span class="number">1</span>) &lt;&lt; <span class="string">&quot; | &quot;</span>;</span><br><span class="line">            cout &lt;&lt; <span class="built_in">setw</span>(COLUMN_WIDTH) &lt;&lt; intValue &lt;&lt; <span class="string">&quot; | &quot;</span>;</span><br><span class="line">            cout &lt;&lt; <span class="built_in">setw</span>(COLUMN_WIDTH) &lt;&lt; doubleValue &lt;&lt; endl;</span><br><span class="line"> rowNumber++;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
 
 <p>这种循环优点在于错误发生时能及时停止循环，若是后者，则总是会多执行一次循环。使用一个半循环而不是简单的 while 循环是有益的。</p>
@@ -201,7 +207,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int intValue;</span><br><span class="line">   double doubleValue;</span><br><span class="line">   while(input &gt;&gt; intValue &gt;&gt; doubleValue) &#123;</span><br><span class="line">       /* ... process values here ... */</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 
 <p>直接将操作符运算放进 while 循环的判定条件中，能有效的减少代码的冗余。</p>
-<h2 id="c-程序是如何运行的？"><a href="#c-程序是如何运行的？" class="headerlink" title=" c++程序是如何运行的？ "></a><span style="font-size:1.2em;"> <strong>c++程序是如何运行的？</strong> </span></h2><p>c++程序的运行分为三个部分：</p>
+<h2 id="C-程序是如何运行的？"><a href="#C-程序是如何运行的？" class="headerlink" title=" C++程序是如何运行的？ "></a><span style="font-size:1.2em;"> <strong>C++程序是如何运行的？</strong> </span></h2><p>c++程序的运行分为三个部分：</p>
 <p>​	<span style="font-size:1.1em;"> 预处理（preprocessing）  编译(compile)  连接(link)</span></p>
 <ul>
 <li>预处理：在预处理步骤中，称为预处理器的特殊程序会扫描 C++ 源代码并对其应用各种转换。例如，解析 #include 指令以使各种库可用，特殊标记（如 __FILE_ _和 _ _LINE__将替换为源文件中的文件和行号，#define-d 常量和宏替换为其适当的值</li>
@@ -307,18 +313,18 @@
 </tr>
 </tbody></table>
 <h2 id="Deque"><a href="#Deque" class="headerlink" title=" Deque "></a><span style="font-size:1.2em;"> <strong>Deque</strong> </span></h2><p>称作 double_end_queue。也就是双端队列和 vector 相较有许多类似的操作，比如 resize，push.back 等。但是与 vector 最大的不同是，在 STL 实现的储存空间是不连续的大片“page”，而 vector 的是连续的空间.</p>
-<p><img src="C:\Users\24208\AppData\Roaming\Typora\typora-user-images\image-20240320165928508.png" alt="image-20240320165928508"></p>
+<p><img src="E:\Blog\source_posts\assets\image-20240320165928508.png" alt="image-20240320165928508"></p>
 <p>优点：(1) 随机访问方便，即支持 [ ] 操作符和 vector.at()<br>      (2) 在内部方便的进行插入和删除操作<br>      (3) 可在两端进行 push、pop</p>
 <p>缺点：占用内存多</p>
 <h1 id="四个新的容器类"><a href="#四个新的容器类" class="headerlink" title="四个新的容器类"></a>四个新的容器类</h1><h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>设想一个程序，它能计算出连续扔骰子，直到扔出的点数与第一次相同时所需的次数，以下是采用向量的实现方式：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;random&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;ctime&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="comment">//摇骰子</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">DieRoll</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="built_in">rand</span>() %<span class="number">6</span>) +<span class="number">1</span>; <span class="comment">//确保返回是一到六的整数</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">RunProcess</span><span class="params">()</span></span>&#123;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; generate;  <span class="comment">//储存重复前摇出的数</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="type">int</span> NextVaule = <span class="built_in">DieRoll</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">size_t</span> k =<span class="number">0</span> ; k &lt; generate.<span class="built_in">size</span>(); ++k)&#123;</span><br><span class="line">            <span class="keyword">if</span> (generate[k] == NextVaule)&#123; <span class="comment">//满足说明已经重复了</span></span><br><span class="line">                <span class="keyword">return</span> generate.<span class="built_in">size</span>() + <span class="number">1</span>; <span class="comment">//加一是为了返还摇动的总次数</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    generate.<span class="built_in">push_back</span>(NextVaule);    <span class="comment">//不是就把数字保存进去</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">size_t</span> kNumIterations = <span class="number">10000</span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">srand</span>(<span class="built_in">static_cast</span>&lt;<span class="type">unsigned</span>&gt;(<span class="built_in">time</span>(<span class="literal">NULL</span>)));</span><br><span class="line">    <span class="type">float</span> total2 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">size_t</span> i = <span class="number">0</span> ; i&lt; kNumIterations ; ++i)&#123;</span><br><span class="line">        <span class="type">size_t</span> total = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">size_t</span> k = <span class="number">0</span>; k&lt; kNumIterations ;++k)&#123;</span><br><span class="line">            total += <span class="built_in">RunProcess</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    total2 += <span class="built_in">float</span>(total) / kNumIterations;</span><br><span class="line">    </span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;ultimate unswer is &quot;</span> &lt;&lt; total2 / kNumIterations &lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>当我们扔常见的六面骰子时，结果似乎很合理：</p>
-<p><img src="E:\Blog\source_posts\assets\image-20240408110931050.png" alt="image-20240408110931050"></p>
+<p><img src="E:\Blog\source_posts\assets\image-20240408110931050-1713347209397-1.png" alt="image-20240408110931050"></p>
 <p>当重复次数增加这个数字的精度也会变大。但是如果我们扔的是个八面骰子呢？</p>
-<p><img src="E:\Blog\source_posts\assets\image-20240408111044967.png" alt="image-20240408111044967"></p>
+<p><img src="E:\Blog\source_posts\assets\image-20240408111044967-1713347209397-2.png" alt="image-20240408111044967"></p>
 <p>到重复时所需要的数字并没增大许多。那要是我们正在玩博德之门3，需要连续过两个高难检定呢？</p>
-<p><img src="E:\Blog\source_posts\assets\image-20240408111222882.png" alt="image-20240408111222882"></p>
+<p><img src="E:\Blog\source_posts\assets\image-20240408111222882-1713347209397-3.png" alt="image-20240408111222882"></p>
 <p>仅仅需要大概6次就可以重复？？虽然这是个概率论问题，但我们可以注意到我们所使用的容器——向量。答案在于 RunProcess 函数的实现。此函数的核心是一个 for 循环，用于检查向量中是否包含特定值。直观地说，向量保持元素的有序序列。对向量的主要操作通过在该序列中添加和删除元素、查找该序列中特定位置的元素等来维护该序列。对于此应用程序，我们希望存储一个无序的数字集合。我们不关心元素何时被添加到向量中或它们占据什么位置。相反，我们感兴趣的是向量中有哪些元素，特别是给定的元素是否在向量中。</p>
 <h2 id="set"><a href="#set" class="headerlink" title="set"></a>set</h2><p>当元素集合的内容比元素所在的容器内的实际序列更重要时，便可以采用set容器。跟向量相比，set提供了一个任意的，无序的特殊容器，并且对以下的操作有很好的支持：</p>
 <ul>
@@ -358,8 +364,8 @@
 <p>为了解决此问题，所有 STL 迭代器都支持并调用了箭头运算符，该运算符允许您在当前正在迭代的元素上调用成员函数。例如，要打印出集合中所有字符串的长度<string>，正确的语法是：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (set&lt;string&gt;::iterator itr = mySet.<span class="built_in">begin</span>(); itr != mySet.<span class="built_in">end</span>(); ++itr)</span><br><span class="line">       cout &lt;&lt; itr-&gt;<span class="built_in">length</span>() &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
 
-<h3 id="迭代的范围定义"><a href="#迭代的范围定义" class="headerlink" title="迭代的范围定义"></a>迭代的范围定义</h3><p>容易注意到我们之前的循环控制是靠 <code>mySet.begin()</code>与 <code>mySet.end()</code>。前者指定迭代范围开始的第一俄国元素，后者定义迭代范围末尾的元素。单个迭代器指向容器类中的单个位置，并表示间接读取或写入该值的方法。一对迭代器定义两个位置，从而定义一系列元素。具体而言，给定两个迭代器 start 和 stop，这些迭代器定义从 start 开始到停止前一个位置结束的元素范围。使用数学符号，由开始和停止跨度定义的元素范围 [start， stop)。</p>
-<p>由于集合本身把元素按顺序排列的性质，我们可以如下尝试一下：</p>
+<h3 id="迭代的范围定义"><a href="#迭代的范围定义" class="headerlink" title="迭代的范围定义"></a>迭代的范围定义</h3><p>容易注意到我们之前的循环控制是靠 <code>mySet.begin()</code>与 <code>mySet.end()</code>。前者指定迭代范围开始的第一个元素，后者定义迭代范围末尾的元素。单个迭代器指向容器类中的单个位置，并表示间接读取或写入该值的方法。一对迭代器定义两个位置，从而定义一系列元素。具体而言，给定两个迭代器 start 和 stop，这些迭代器定义从 start 开始到停止前一个位置结束的元素范围。使用数学符号，由开始和停止跨度定义的元素范围 [start， stop)。</p>
+<p>由于集合本身把元素按顺序排列的性质，我们可以尝试：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set&lt;<span class="type">int</span>&gt;::iterator stop = mySet.<span class="built_in">upper_bound</span>(<span class="number">100</span>);</span><br><span class="line">   <span class="keyword">for</span>(set&lt;<span class="type">int</span>&gt;::iterator itr = mySet.<span class="built_in">lower_bound</span>(<span class="number">10</span>); itr != stop; ++itr)</span><br><span class="line">       cout &lt;&lt; *itr &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
 
 <p><strong>upper_bound</strong> 和 <strong>lower_bound</strong> 的美妙之处在于，指定为函数参数的元素是否实际存在于集合中并不重要(假如要求的元素不存在就会直接返还到开头或者末尾)。例如，假设我们在包含 3 到 137 之间的所有奇数的集合上运行上述 for 循环。在本例中，集合中既不包含 10 也不包含 100。但是，代码仍将正常工作。lower_bound 函数向第一个元素返回一个迭代器，其大小至少与其参数一样大，并且在奇数集中将向元素 11 返回一个迭代器。类似地，upper_bound 向第一个元素返回一个迭代器，严格大于其参数，因此将向元素 101 返回一个迭代器。</p>
@@ -425,6 +431,116 @@
 <tr>
 <td>iterator upper_bound(const T&amp; value)</td>
 <td>返回指向第一个大于指定值的元素的迭代器。因为这个元素必须严格大于指定值，你可以迭代一个范围，直到迭代器等于upper_bound，以获得所有小于或等于参数的元素。</td>
+</tr>
+</tbody></table>
+<h2 id="容器-Map"><a href="#容器-Map" class="headerlink" title="容器:Map"></a>容器:Map</h2><h3 id="pair"><a href="#pair" class="headerlink" title="pair"></a>pair</h3><p>pair 是一个参数化类，它只保存两个任意类型的值。其中定义的 <code>pair &lt;utility&gt;</code>接受两个模板参数。定义的声明是：  <code>pair&lt;TypeOne, TypeTwo&gt;</code>。如下示范：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//基本操作</span><br><span class="line">pair&lt;int, string&gt; myPair;</span><br><span class="line">	myPair.first  =  137;</span><br><span class="line">   myPair.second = &quot;C++ is awesome!&quot;;</span><br><span class="line">   //动态设置</span><br><span class="line">    pair&lt;int, string&gt; myPair = make_pair(137, &quot;string!&quot;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Map的基本操作"><a href="#Map的基本操作" class="headerlink" title="Map的基本操作"></a>Map的基本操作</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;map&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    map&lt;<span class="type">int</span>,string&gt; mymap;</span><br><span class="line">    mymap[<span class="number">0</span>] = <span class="string">&quot;zero&quot;</span>;</span><br><span class="line">    mymap[<span class="number">1</span>] = <span class="string">&quot;one&quot;</span>;</span><br><span class="line">    mymap[<span class="number">2</span>] = <span class="string">&quot;two&quot;</span>;</span><br><span class="line">    mymap[<span class="number">3</span>] = <span class="string">&quot;three&quot;</span>;</span><br><span class="line">    cout &lt;&lt; mymap[<span class="number">1</span>] &lt;&lt; endl;</span><br><span class="line">    cout &lt;&lt; mymap[<span class="number">99</span>] &lt;&lt; endl;<span class="comment">//假如调用一个没有的键值对，那么map会自动创建对应的键，并把其对应的值初始化int类型的是0,string是&quot;&quot;</span></span><br><span class="line">    <span class="comment">//对MAP使用迭代器</span></span><br><span class="line">    map&lt;<span class="type">int</span>,string&gt;::iterator itr = mymap.<span class="built_in">find</span>(<span class="number">13</span>); <span class="comment">//find()可以寻找map类型里的键</span></span><br><span class="line">    <span class="keyword">if</span>(itr == mymap.<span class="built_in">end</span>())&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;未找到对应键&quot;</span> &lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;存在key是&quot;</span> &lt;&lt; itr-&gt;first &lt;&lt; <span class="string">&quot;，值是&quot;</span> &lt;&lt; itr-&gt;second &lt;&lt; <span class="string">&quot;的数据&quot;</span> &lt;&lt; endl; <span class="comment">//迭代器访问地图的方式</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//迭代map</span></span><br><span class="line">    <span class="keyword">for</span>(map&lt;<span class="type">int</span>,string&gt;::iterator itr = mymap.<span class="built_in">begin</span>();itr != mymap.<span class="built_in">end</span>() ; itr++)&#123;</span><br><span class="line">        cout &lt;&lt; itr-&gt;first &lt;&lt; <span class="string">&quot;:&quot;</span> &lt;&lt; itr-&gt;second &lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    mymap.<span class="built_in">erase</span>(<span class="number">99</span>);<span class="comment">//键不能更改但是可以删除</span></span><br><span class="line">    <span class="comment">//mymap.clear();//删除所有键值对</span></span><br><span class="line">    <span class="comment">//mymap.size(); //获取键值对数目</span></span><br><span class="line"></span><br><span class="line">    mymap.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(<span class="number">4</span>,<span class="string">&quot;four&quot;</span>));<span class="comment">//利用insert函数进行插入</span></span><br><span class="line">    mymap.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(<span class="number">5</span>,<span class="string">&quot;five&quot;</span>));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，map的底层逻辑和set一样是平衡二叉树实现的，所以用迭代器输出时是按从小到大的排列顺序。即使是string类的输出也会按照字母表的顺序。</p>
+<h3 id="在Map中使用-insert-需要注意"><a href="#在Map中使用-insert-需要注意" class="headerlink" title="在Map中使用 insert()需要注意"></a>在Map中使用 <code>insert()</code>需要注意</h3><p>如上所示，map的<code>insert()</code> 与集合的插入函数一样，只需要指定要插入的内容使用即可，因为映射与集合一样，不会按特定顺序存储值。但是，由于映射将元素存储为键&#x2F;值对，因此插入函数的参数应为包含键和值的对对象。</p>
+<p>下面请考虑以下两个向map中添加键值对的方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Populate a map using [ ] */</span></span><br><span class="line">    map&lt;string, string&gt; one;</span><br><span class="line">    one[<span class="string">&quot;C++&quot;</span>] = <span class="string">&quot;sad&quot;</span>;</span><br><span class="line">    one[<span class="string">&quot;C++&quot;</span>] = <span class="string">&quot;happy&quot;</span>;</span><br><span class="line"><span class="comment">/* Populate a map using insert */</span></span><br><span class="line">    map&lt;string, string&gt; two;</span><br><span class="line">    two.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(<span class="string">&quot;C++&quot;</span>, <span class="string">&quot;sad&quot;</span>));</span><br><span class="line">    two.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(<span class="string">&quot;C++&quot;</span>, <span class="string">&quot;happy&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>运行后结果：</p>
+<p><img src="E:\Blog\source_posts\assets\image-20240417164442494.png" alt="image-20240417164442494"></p>
+<p>为什么会出现这种情况呢？原因是：map和set相似，key一旦被创建就不能再进行修改，而使用方括号对map进行的更新都是永久性的。当检测到后续增加的key与已有的重复时，会对原有的值进行覆盖。但是insert函数就没有这种权限，遇见已有的键时不能进行修改。也不会更新与现有键关联的值。为了缓解这种情况，我们可以</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Try to insert normally. */</span></span><br><span class="line">pair&lt;map&lt;string, <span class="type">int</span>&gt;::iterator, <span class="type">bool</span>&gt; result = </span><br><span class="line">       myMap.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(<span class="string">&quot;STL&quot;</span>, <span class="number">137</span>));</span><br><span class="line"><span class="comment">/* If insertion failed, manually set the value. */</span></span><br><span class="line"><span class="keyword">if</span>(!result.second)</span><br><span class="line">       result.first-&gt;second = <span class="number">137</span>;</span><br></pre></td></tr></table></figure>
+
+<p>解释一下上面的代码，在 C++ 中，<code>std::map::insert</code> 方法在插入元素时返回一个 <code>pair</code> 对象，这个 <code>pair</code> 对象包含两个部分：</p>
+<ol>
+<li><strong>第一个部分</strong>：一个迭代器，指向插入的元素或者已经存在于 <code>std::map</code> 中具有相同键的元素。如果插入成功，则这个迭代器指向新插入的元素；如果插入失败（因为键已存在），则这个迭代器指向已经存在的元素。</li>
+<li><strong>第二个部分</strong>：一个布尔值，表示插入操作的结果。如果插入成功，则为 <code>true</code>；如果插入失败（因为键已存在），则为 <code>false</code>。</li>
+</ol>
+<p>这样的设计允许开发者在执行插入操作后，通过一个函数调用同时获得插入位置的迭代器和插入操作的结果。这在处理插入可能失败的情况时非常方便，因为我们可以根据插入的结果来决定下一步的操作，而不需要额外的查找操作。如果插入失败，即键已存在，通过 <code>result.first</code> 可以获取到已存在的元素的迭代器，然后可以在其上进行操作，如更新其值。</p>
+<h3 id="Map的常用函数"><a href="#Map的常用函数" class="headerlink" title="Map的常用函数"></a>Map的常用函数</h3><table>
+<thead>
+<tr>
+<th>函数&#x2F;方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>map&lt;K, V&gt;()</code></td>
+<td>构造一个空的 map。</td>
+</tr>
+<tr>
+<td><code>map&lt;K, V&gt;(const map&lt;K, V&gt;&amp; other)</code></td>
+<td>构造一个其他 map 的副本。</td>
+</tr>
+<tr>
+<td><code>map&lt;K, V&gt;(InputIterator start, InputIterator stop)</code></td>
+<td>构造一个包含指定范围元素副本的 map，任何重复的元素都会被丢弃，并且元素会被排序。注意，此函数接受来自任何来源的迭代器，但它们必须是对键值对的迭代器。</td>
+</tr>
+<tr>
+<td><code>size_type size() const</code></td>
+<td>返回 map 中包含的元素数量。</td>
+</tr>
+<tr>
+<td><code>bool empty() const</code></td>
+<td>返回 map 是否为空。</td>
+</tr>
+<tr>
+<td><code>void clear()</code></td>
+<td>从 map 中移除所有元素。</td>
+</tr>
+<tr>
+<td><code>iterator begin()</code></td>
+<td><code>const_iterator begin() const</code> 返回指向 map 开始的迭代器。</td>
+</tr>
+<tr>
+<td><code>iterator end()</code></td>
+<td><code>const_iterator end() const</code> 返回指向 map 结束后一个元素的迭代器。</td>
+</tr>
+<tr>
+<td><code>pair&lt;iterator, bool&gt; insert(const pair&lt;const K, V&gt;&amp; value)</code></td>
+<td>插入指定的键值对到 map 中。返回一个 pair，包含一个指向元素的迭代器和一个表示插入是否成功的布尔值。</td>
+</tr>
+<tr>
+<td><code>void insert(InputIterator begin, InputIterator end)</code></td>
+<td>插入指定范围的元素到 map 中，忽略重复元素。</td>
+</tr>
+<tr>
+<td><code>V&amp; operator[] (const K&amp; key)</code></td>
+<td>返回与指定键关联的值，如果键不存在，则创建一个新的键值对，并将值初始化为零（如果它是原始类型）或默认值（对于非原始类型）。</td>
+</tr>
+</tbody></table>
+<p>续表：</p>
+<table>
+<thead>
+<tr>
+<th>函数&#x2F;方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>iterator find(const K&amp; element)</code></td>
+<td><code>const_iterator find(const K&amp; element) const</code> 如果存在指定键的键值对，则返回指向其的迭代器，否则返回 <code>end</code> 迭代器。</td>
+</tr>
+<tr>
+<td><code>size_type count(const K&amp; item)</code></td>
+<td>返回在 map 中具有指定键的键值对的数量。如果存在，返回 1，否则返回 0。</td>
+</tr>
+<tr>
+<td><code>size_type erase(const K&amp; element)</code></td>
+<td>移除具有指定键的键值对。第一版本中，如果找到具有指定键的键值对，则将其移除，并返回 1；否则返回 0。</td>
+</tr>
+<tr>
+<td><code>void erase(iterator itr)</code></td>
+<td>移除由迭代器 <code>itr</code> 指向的键值对。</td>
+</tr>
+<tr>
+<td><code>void erase(iterator start, iterator stop)</code></td>
+<td>移除指定范围内的键值对，范围为 <code>[start, stop)</code>。</td>
+</tr>
+<tr>
+<td><code>iterator lower_bound(const K&amp; value)</code></td>
+<td>返回一个指向第一个键值对的迭代器，其键大于或等于指定值。此函数可用于获取一系列元素的迭代器，特别是与 <code>upper_bound</code> 结合使用。</td>
+</tr>
+<tr>
+<td><code>iterator upper_bound(const K&amp; value)</code></td>
+<td>返回一个指向第一个键值对的迭代器，其键严格大于指定值。因为这个元素必须严格大于指定值，所以可以在迭代器等于 <code>upper_bound</code> 之前迭代一个范围，以获取所有小于或等于参数的元素。</td>
 </tr>
 </tbody></table>
 
