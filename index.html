@@ -290,7 +290,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-18 22:41:10" itemprop="dateModified" datetime="2024-04-18T22:41:10+08:00">2024-04-18</time>
+                <time title="修改时间：2024-04-18 23:05:29" itemprop="dateModified" datetime="2024-04-18T23:05:29+08:00">2024-04-18</time>
               </span>
 
           
@@ -418,20 +418,20 @@
 </tr>
 </tbody></table>
 <h2 id="Deque"><a href="#Deque" class="headerlink" title=" Deque "></a><span style="font-size:1.2em;"> <strong>Deque</strong> </span></h2><p>称作 double_end_queue。也就是双端队列和 vector 相较有许多类似的操作，比如 resize，push.back 等。但是与 vector 最大的不同是，在 STL 实现的储存空间是不连续的大片“page”，而 vector 的是连续的空间.</p>
-<p><img src="E:\Blog\source_posts\assets\image-20240320165928508-1713451253312-1.png" alt="image-20240320165928508"></p>
+<p><img src="E:\Blog\source_posts\assets\image-20240320165928508-1713452721015-1.png" alt="image-20240320165928508"></p>
 <p>优点：(1) 随机访问方便，即支持 [ ] 操作符和 vector.at()<br>      (2) 在内部方便的进行插入和删除操作<br>      (3) 可在两端进行 push、pop</p>
 <p>缺点：占用内存多</p>
 <h1 id="四个新的容器类"><a href="#四个新的容器类" class="headerlink" title="四个新的容器类"></a>四个新的容器类</h1><h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>设想一个程序，它能计算出连续扔骰子，直到扔出的点数与第一次相同时所需的次数，以下是采用向量的实现方式：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;random&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;ctime&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="comment">//摇骰子</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">DieRoll</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="built_in">rand</span>() %<span class="number">6</span>) +<span class="number">1</span>; <span class="comment">//确保返回是一到六的整数</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">RunProcess</span><span class="params">()</span></span>&#123;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; generate;  <span class="comment">//储存重复前摇出的数</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="type">int</span> NextVaule = <span class="built_in">DieRoll</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">size_t</span> k =<span class="number">0</span> ; k &lt; generate.<span class="built_in">size</span>(); ++k)&#123;</span><br><span class="line">            <span class="keyword">if</span> (generate[k] == NextVaule)&#123; <span class="comment">//满足说明已经重复了</span></span><br><span class="line">                <span class="keyword">return</span> generate.<span class="built_in">size</span>() + <span class="number">1</span>; <span class="comment">//加一是为了返还摇动的总次数</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    generate.<span class="built_in">push_back</span>(NextVaule);    <span class="comment">//不是就把数字保存进去</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">size_t</span> kNumIterations = <span class="number">10000</span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">srand</span>(<span class="built_in">static_cast</span>&lt;<span class="type">unsigned</span>&gt;(<span class="built_in">time</span>(<span class="literal">NULL</span>)));</span><br><span class="line">    <span class="type">float</span> total2 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">size_t</span> i = <span class="number">0</span> ; i&lt; kNumIterations ; ++i)&#123;</span><br><span class="line">        <span class="type">size_t</span> total = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">size_t</span> k = <span class="number">0</span>; k&lt; kNumIterations ;++k)&#123;</span><br><span class="line">            total += <span class="built_in">RunProcess</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    total2 += <span class="built_in">float</span>(total) / kNumIterations;</span><br><span class="line">    </span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;ultimate unswer is &quot;</span> &lt;&lt; total2 / kNumIterations &lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>当我们扔常见的六面骰子时，结果似乎很合理：</p>
-<p><img src="E:\Blog\source_posts\assets\image-20240408110931050-1713451253312-2.png" alt="image-20240408110931050"></p>
+<p><img src="E:\Blog\source_posts\assets\image-20240408110931050-1713452721015-2.png" alt="image-20240408110931050"></p>
 <p>当重复次数增加这个数字的精度也会变大。但是如果我们扔的是个八面骰子呢？</p>
-<p><img src="E:\Blog\source_posts\assets\image-20240408111044967-1713451253312-3.png" alt="image-20240408111044967"></p>
+<p><img src="E:\Blog\source_posts\assets\image-20240408111044967-1713452721015-4.png" alt="image-20240408111044967"></p>
 <p>到重复时所需要的数字并没增大许多。那要是我们正在玩博德之门3，需要连续过两个高难检定呢？</p>
-<p><img src="E:\Blog\source_posts\assets\image-20240408111222882-1713451253312-4.png" alt="image-20240408111222882"></p>
+<p><img src="E:\Blog\source_posts\assets\image-20240408111222882-1713452721015-3.png" alt="image-20240408111222882"></p>
 <p>仅仅需要大概6次就可以重复？？虽然这是个概率论问题，但我们可以注意到我们所使用的容器——向量。答案在于 RunProcess 函数的实现。此函数的核心是一个 for 循环，用于检查向量中是否包含特定值。直观地说，向量保持元素的有序序列。对向量的主要操作通过在该序列中添加和删除元素、查找该序列中特定位置的元素等来维护该序列。对于此应用程序，我们希望存储一个无序的数字集合。我们不关心元素何时被添加到向量中或它们占据什么位置。相反，我们感兴趣的是向量中有哪些元素，特别是给定的元素是否在向量中。</p>
-<h2 id="set"><a href="#set" class="headerlink" title="set"></a>set</h2><p>当元素集合的内容比元素所在的容器内的实际序列更重要时，便可以采用set容器。跟向量相比，set提供了一个任意的，无序的特殊容器，并且对以下的操作有很好的支持：</p>
+<h2 id="容器-set"><a href="#容器-set" class="headerlink" title="容器:set"></a>容器:set</h2><p>当元素集合的内容比元素所在的容器内的实际序列更重要时，便可以采用set容器。跟向量相比，set提供了一个任意的，无序的特殊容器，并且对以下的操作有很好的支持：</p>
 <ul>
 <li><p>将元素添加到集合中</p>
 </li>
@@ -549,7 +549,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Populate a map using [ ] */</span></span><br><span class="line">    map&lt;string, string&gt; one;</span><br><span class="line">    one[<span class="string">&quot;C++&quot;</span>] = <span class="string">&quot;sad&quot;</span>;</span><br><span class="line">    one[<span class="string">&quot;C++&quot;</span>] = <span class="string">&quot;happy&quot;</span>;</span><br><span class="line"><span class="comment">/* Populate a map using insert */</span></span><br><span class="line">    map&lt;string, string&gt; two;</span><br><span class="line">    two.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(<span class="string">&quot;C++&quot;</span>, <span class="string">&quot;sad&quot;</span>));</span><br><span class="line">    two.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(<span class="string">&quot;C++&quot;</span>, <span class="string">&quot;happy&quot;</span>));</span><br></pre></td></tr></table></figure>
 
 <p>运行后结果：</p>
-<p><img src="E:\Blog\source_posts\assets\image-20240417164442494-1713451253312-5.png" alt="image-20240417164442494"></p>
+<p><img src="E:\Blog\source_posts\assets\image-20240417164442494-1713452721015-5.png" alt="image-20240417164442494"></p>
 <p>为什么会出现这种情况呢？原因是：map和set相似，key一旦被创建就不能再进行修改，而使用方括号对map进行的更新都是永久性的。当检测到后续增加的key与已有的重复时，会对原有的值进行覆盖。但是insert函数就没有这种权限，遇见已有的键时不能进行修改。也不会更新与现有键关联的值。为了缓解这种情况，我们可以</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Try to insert normally. */</span></span><br><span class="line">pair&lt;map&lt;string, <span class="type">int</span>&gt;::iterator, <span class="type">bool</span>&gt; result = </span><br><span class="line">       myMap.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(<span class="string">&quot;STL&quot;</span>, <span class="number">137</span>));</span><br><span class="line"><span class="comment">/* If insertion failed, manually set the value. */</span></span><br><span class="line"><span class="keyword">if</span>(!result.second)</span><br><span class="line">       result.first-&gt;second = <span class="number">137</span>;</span><br></pre></td></tr></table></figure>
 
@@ -648,42 +648,70 @@
 <td>返回一个指向第一个键值对的迭代器，其键严格大于指定值。因为这个元素必须严格大于指定值，所以可以在迭代器等于 <code>upper_bound</code> 之前迭代一个范围，以获取所有小于或等于参数的元素。</td>
 </tr>
 </tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+<h2 id="Practice-Problems"><a href="#Practice-Problems" class="headerlink" title="Practice Problems"></a>Practice Problems</h2><ol>
+<li><p>您如何检查一个元素是否包含在STL set中？</p>
+<ul>
+<li>使用STL set的成员函数<code>count</code>来检查元素是否存在。如果元素存在，则<code>count</code>函数返回1；如果不存在，则返回0。</li>
+</ul>
+</li>
+<li><p>对于STL set，存储的类型必须支持严格的弱序比较（<code>strict weak ordering</code>）。这意味着类型必须具有定义了小于运算符（<code>operator&lt;</code>）的排序规则。相比之下，vector或deque没有这个限制。</p>
+</li>
+<li><p>您如何将一个元素插入到一个集合中？如何从集合中移除一个元素？</p>
+<ul>
+<li>若要将元素插入到set中，可以使用成员函数<code>insert</code>。若要从集合中移除元素，可以使用成员函数<code>erase</code>。</li>
+</ul>
+</li>
+<li><p>一个单一元素在set中可以存在多少个副本？在multiset中呢？</p>
+<ul>
+<li>在set中，由于元素必须唯一，因此只能有一个副本。而在multiset中，可以包含多个相同的元素。</li>
+</ul>
+</li>
+<li><p>您如何迭代遍历set的内容？</p>
+<ul>
+<li>可以使用迭代器进行遍历，例如使用<code>begin()</code>和<code>end()</code>函数，或者使用范围循环（range-based loop）。</li>
+</ul>
+</li>
+<li><p>您如何检查一个键是否包含在STL map中？</p>
+<ul>
+<li>使用STL map的成员函数<code>find</code>来检查键是否存在。如果键存在，<code>find</code>函数返回指向该键-值对的迭代器；如果不存在，则返回指向map末尾的迭代器。</li>
+</ul>
+</li>
+<li><p>列举两种您可以向STL map中插入键&#x2F;值对的方法。</p>
+<ul>
+<li>可以使用<code>insert</code>函数插入键&#x2F;值对，或者使用下标运算符<code>[]</code>直接赋值。</li>
+</ul>
+</li>
+<li><p>如果您使用方括号在STL map中查找与不存在的键关联的值会发生什么？如果使用<code>find</code>函数呢？</p>
+<ul>
+<li>如果使用方括号运算符<code>[]</code>查找不存在的键，则会在map中插入一个新的键-值对，值为默认值。而如果使用<code>find</code>函数，则返回指向map末尾的迭代器。</li>
+</ul>
+</li>
+<li><p>回想一下，在迭代STL multiset的内容时，元素将按照排序顺序进行访问。利用这一特性，重写上一章的程序，该程序从用户处读取一系列数字，然后按排序顺序打印它们。为什么需要使用multiset而不是常规的set？</p>
+<ul>
+<li>使用multiset而不是set的原因是multiset允许存储多个相同的元素，因此可以按顺序保存重复的数字。</li>
+</ul>
+</li>
+<li><p>两个集合的并集是包含在两个集合中至少一个集合中的元素的集合。编写一个函数Union，它接受两个set<int>，并返回它们的并集。</p>
+</li>
+<li><p>两个集合的交集是包含在两个集合中的元素的集合。编写一个函数Intersection，它接受两个set<int>，并返回它们的交集。</p>
+</li>
+<li><p>在本章中的早些时候，我们编写了一个程序，它连续掷骰子直到相同的数字连续出现两次，然后打印出投掷的次数。重写此程序，以便相同的数字必须连续出现三次才能终止该过程。当掷20面骰子时，您预计此过程将进行多少次？（提示：您可能希望从使用set切换到使用multiset。还要记住set的count函数和multiset的count函数之间的区别。）</p>
+</li>
+<li><p>正如本章中提到的，您可以使用lower_bound和upper_bound的组合来迭代闭区间[min，max]中的元素。使用这两个函数的什么组合可以用来迭代区间[min，max）？[min，max]和（min，max）呢？</p>
+</li>
+<li><p>编写一个函数NumberDuplicateEntries，它接受一个map&lt;string，string&gt;，并返回map中重复值的数量（即，map中具有相同值的键&#x2F;值对的数量）。</p>
+</li>
+<li><p>编写一个函数InvertMap，它接受一个map&lt;string, string&gt;作为输入，并返回一个multimap&lt;string, string&gt;，其中源map中的每对（键，值）在生成的multimap中都由（值，键）表示。为什么在这里使用multimap是必要的？您如何使用上一个问题中的NumberDuplicateEntries函数来确定是否可以将map反转为另一个map？</p>
+</li>
+</ol>
+<p>使用multimap的原因是在原始映射中，键是唯一的，但值不一定是唯一的。当将键映射到值时，可能会出现多个键映射到相同的值的情况。因此，使用multimap允许我们将多个键映射到相同的值。我们可以使用NumberDuplicateEntries函数来检查源映射中是否存在重复的值。如果NumberDuplicateEntries返回0，则表示源映射中的值是唯一的，可以进行反转。</p>
+<ol start="16">
+<li>假设我们有两个名为one和two的map&lt;string, string&gt;。我们可以定义one和two的组合（表示为two ○ one）如下：对于任意字符串r，如果one[r]是s，且two[s]是t，则(two ○ one)[r] &#x3D; t。也就是说，在组合映射中查找元素x等效于在one中查找与x关联的值，然后在two中查找其关联的值。如果one不包含r作为键，或者one[r]不是two中的键，则(two ○ one)[r]是未定义的。</li>
+</ol>
+<p>​		编写一个名为ComposeMaps的函数，它接受两个map&lt;string, string&gt;，并返回一个包含它们组合的		map&lt;string, string&gt;。</p>
+<ol start="17">
+<li>（挑战问题！）编写一个函数PrintMatchingPrefixes，它接受一个set<string>和一个包含前缀的字符串，并打印出所有以该前缀开头的集合条目。您的函数应仅迭代最终打印出的条目。您可以假设前缀是非空的，仅由字母数字字符组成，并且应区分大小写。 （提示：在set<string>中，字符串按字典顺序排序，因此所有以“abc”开头的字符串将位于所有以“abd”开头的字符串之前。）</li>
+</ol>
 
       
     </div>
