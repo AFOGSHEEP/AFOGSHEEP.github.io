@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-mac-osx.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"afogsheep.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="用一个示例来结束我们对 STL 的旋风式之旅是恰当的，该示例展示了编写良好的 STL 代码是多么简洁和强大。 回文回文是向前或向后阅读时相同的单词或短语，例如“racecar”或“Malayalam”。阅读回文时，习惯上会忽略空格、标点符号和大写字母，因此“Mr. Owl ate my metal worm”和“Go hang a salami! I’m a lasagna hog。”这两句话将被">
+<meta property="og:type" content="article">
+<meta property="og:title" content="回文判断">
+<meta property="og:url" content="https://afogsheep.github.io/2024/05/01/%E5%9B%9E%E6%96%87%E5%88%A4%E6%96%AD/index.html">
+<meta property="og:site_name" content="杜鹃声">
+<meta property="og:description" content="用一个示例来结束我们对 STL 的旋风式之旅是恰当的，该示例展示了编写良好的 STL 代码是多么简洁和强大。 回文回文是向前或向后阅读时相同的单词或短语，例如“racecar”或“Malayalam”。阅读回文时，习惯上会忽略空格、标点符号和大写字母，因此“Mr. Owl ate my metal worm”和“Go hang a salami! I’m a lasagna hog。”这两句话将被">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-05-01T07:47:46.000Z">
+<meta property="article:modified_time" content="2024-05-01T07:48:01.562Z">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://afogsheep.github.io/2024/05/01/%E5%9B%9E%E6%96%87%E5%88%A4%E6%96%AD/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>回文判断 | 杜鹃声</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">杜鹃声</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">此情可待成追忆，只是当时已惘然</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://afogsheep.github.io/2024/05/01/%E5%9B%9E%E6%96%87%E5%88%A4%E6%96%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="We losers do nothing so winners keeping winning <br> </br> 仍在施工中">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杜鹃声">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          回文判断
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-05-01 15:47:46 / 修改时间：15:48:01" itemprop="dateCreated datePublished" datetime="2024-05-01T15:47:46+08:00">2024-05-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>用一个示例来结束我们对 STL 的旋风式之旅是恰当的，该示例展示了编写良好的 STL 代码是多么简洁和强大。</p>
+<h2 id="回文"><a href="#回文" class="headerlink" title="回文"></a>回文</h2><p>回文是向前或向后阅读时相同的单词或短语，例如“racecar”或“Malayalam”。阅读回文时，习惯上会忽略空格、标点符号和大写字母，因此“Mr. Owl ate my metal worm”和“Go hang a salami! I’m a lasagna hog。”这两句话将被视为回文，</p>
+<h2 id="判断实现"><a href="#判断实现" class="headerlink" title="判断实现"></a>判断实现</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">IsPalindrome</span><span class="params">(string input)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> k = <span class="number">0</span>; k &lt; input.<span class="built_in">size</span>() / <span class="number">2</span>; ++k)</span><br><span class="line">            <span class="keyword">if</span>(input[k] != input[input.<span class="built_in">length</span>() - <span class="number">1</span> – k])</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种方法只需遍历字符串的前半部分，检查每个字符是否等于字符串另一半上的相应字符。作为一种可能是头一个出现在脑海里的方法，他并没有错，但是太不优雅了。让我们用STL的方法试试。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">IsPalindrome</span><span class="params">(string input)</span> </span>&#123;</span><br><span class="line">    string reversed = input;</span><br><span class="line">	 <span class="built_in">reverse</span>(input.<span class="built_in">begin</span>(), input.<span class="built_in">end</span>());</span><br><span class="line">    <span class="keyword">return</span> reversed == input;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种方法看起来好多了，但需要我们创建字符串的副本，因此效率低于我们的原始实现。我们可以使用迭代器以某种方式模拟初始 for 循环的功能吗？答案是肯定的，多亏了reverse_iterators。每个 STL 容器类都导出一个类型reverse_iterator，该类型类似于迭代器，只是它向后遍历容器。正如 begin 和 end 函数定义容器上的迭代器范围一样，rbegin 和 rend 函数定义跨容器的reverse_iterator范围。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">isPalindrome</span><span class="params">(string input)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">equal</span>(input.<span class="built_in">begin</span>(),input.<span class="built_in">begin</span>()+ input.<span class="built_in">length</span>()/<span class="number">2</span>,input.<span class="built_in">rbegin</span>()); </span><br><span class="line">    <span class="comment">// rbegin()从end开始向前遍历</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上的这个代码一行即可实现判断的功能。</p>
+<p>但这还不能正确处理大写、空格或标点符号。如何改进呢？让我们首先从字符串中剥离除字母字符之外的所有内容。对于此任务，我们可以使用 STL remove_if 算法，该算法接受迭代器范围和谓词作为输入，然后通过删除谓词返回 true 的所有元素来修改范围。与它的伙伴算法 remove 一样，remove_if 实际上并没有从序列中删除元素，因此我们需要在之后擦除剩余的元素。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">IsNotAlpha</span><span class="params">(<span class="type">char</span> ch)</span> </span>&#123; <span class="comment">//&lt;cctype&gt;</span></span><br><span class="line">    <span class="keyword">return</span> !<span class="built_in">isalpha</span>(ch);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">IsPalindrome</span><span class="params">(string input)</span></span>&#123;</span><br><span class="line">        input.<span class="built_in">erase</span>(<span class="built_in">remove_if</span>(input.<span class="built_in">begin</span>(), input.<span class="built_in">end</span>(), IsNotAlpha),input.<span class="built_in">end</span>());</span><br><span class="line">        <span class="built_in">transform</span>(input.<span class="built_in">begin</span>(), input.<span class="built_in">end</span>(), input.<span class="built_in">begin</span>(), ::toupper);</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">equal</span>(input.<span class="built_in">begin</span>(), input.<span class="built_in">begin</span>() + input.<span class="built_in">size</span>() / <span class="number">2</span>,input.<span class="built_in">rbegin</span>());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在三行代码中，我们去除了字符串中所有不是字母的字符，将剩下的字符转换为大写，并返回字符串是否向前和向后相同。</p>
+<p>的技术的力量。在结束这个例子之前，让我们考虑回文上的一个变体，我们检查短语中的单词是否向前和向后相同。例如，“Did mom pop?  Mom did!”是回文，无论是字母还是文字，而”This is this“是一个短语，它不是回文，而是回文。与常规回文一样，我们将忽略空格和标点符号，因此“It’s an its”算作单词回文，即使它使用了两种不同形式的单词 its&#x2F;it’s。我们上面使用的算法适用于整个string，我们可以修改它以逐字工作吗？</p>
+<p>我们仍然要忽略空格、标点符号和大写字母，但现在需要将单词而不是字母视为有意义的单位。有许多可能的算法可以检查此属性，但有一种解决方案特别好。思路如下：</p>
+<p>1.清理输入：去掉除字母和空格以外的所有内容，然后将结果转换为大写。</p>
+<p>2.将输入分解为单词列表。</p>
+<p>3.向前和向后返回列表是否相同</p>
+<p>这是一个完整的代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span>  </span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cctype&gt;</span>  </span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span>  </span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span>  </span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span>  </span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">IsNotAlphaOrSpace</span><span class="params">(<span class="type">char</span> ch)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> !<span class="built_in">isalpha</span>(ch) &amp;&amp; !<span class="built_in">isspace</span>(ch);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">IsWordPalindrome</span><span class="params">(string input)</span> </span>&#123;</span><br><span class="line">        input.<span class="built_in">erase</span>(<span class="built_in">remove_if</span>(input.<span class="built_in">begin</span>(), input.<span class="built_in">end</span>(), IsNotAlphaOrSpace),</span><br><span class="line">                    input.<span class="built_in">end</span>());</span><br><span class="line">        <span class="built_in">transform</span>(input.<span class="built_in">begin</span>(), input.<span class="built_in">end</span>(), input.<span class="built_in">begin</span>(), ::toupper);</span><br><span class="line">        <span class="function">stringstream <span class="title">tokenizer</span><span class="params">(input)</span></span>;</span><br><span class="line">        vector&lt;string&gt; tokens;</span><br><span class="line">        tokens.<span class="built_in">insert</span>(tokens.<span class="built_in">begin</span>(),</span><br><span class="line">                      <span class="built_in">istream_iterator</span>&lt;string&gt;(tokenizer),</span><br><span class="line">                      <span class="built_in">istream_iterator</span>&lt;string&gt;());</span><br><span class="line">        <span class="comment">// 手动检查单词列表是否为回文,书里的equal()可能出现问题，具体https://blog.csdn.net/qq_52828510/article/details/121213451?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522171454848816800184139758%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&amp;request_id=171454848816800184139758&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~baidu_landing_v2~default-1-121213451-null-null.142</span></span><br><span class="line">        <span class="type">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> end = input.<span class="built_in">length</span>() - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (start &lt; end) &#123;</span><br><span class="line">        <span class="keyword">if</span> (input[start] != input[end]) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        start++;</span><br><span class="line">        end--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    string input;</span><br><span class="line">    <span class="built_in">getline</span>(cin,input);</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">IsWordPalindrome</span>(input))&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;yes&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;no&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="remove的使用介绍"><a href="#remove的使用介绍" class="headerlink" title="remove的使用介绍"></a>remove的使用介绍</h2><p>代码中，<code>input.erase(...)</code> 这一部分是用来清除字符串中不需要的字符。具体来说，它结合了 <code>remove_if</code> 函数和 <code>erase</code> 方法来实现这个功能。这里是它的工作原理详解：</p>
+<ol>
+<li><p><strong><code>remove_if</code> 函数</strong>：</p>
+<ul>
+<li><code>remove_if</code> 是 C++ STL (Standard Template Library) 中的一个函数，用于从一个容器中移除满足特定条件的元素。</li>
+<li>这个函数接受三个参数：容器的开始迭代器、结束迭代器和一个谓词函数（即一个返回布尔值、决定元素是否应被移除的函数）。</li>
+<li>在您的代码中，谓词函数是 <code>IsNotAlphaOrSpace</code>，它检查一个字符是否既不是字母也不是空格。如果字符不是字母也不是空格，谓词返回 <code>true</code>，表示该字符应被移除。</li>
+<li><code>remove_if</code> 实际上并不直接删除元素，而是通过重排容器中的元素，将所有不应被移除的元素移到容器的开始部分，返回一个新的迭代器，指向重排后的最后一个有效元素的下一个位置。</li>
+</ul>
+</li>
+<li><p><strong><code>erase</code> 方法</strong>：</p>
+<ul>
+<li>一旦 <code>remove_if</code> 完成了元素的重排，<code>erase</code> 方法被用来实际从容器中删除那些不需要的元素。</li>
+<li><code>erase</code> 接受两个迭代器：开始和结束。在这里，它从 <code>remove_if</code> 返回的迭代器开始，到字符串的末尾。</li>
+<li>这意味着所有从 <code>remove_if</code> 返回的迭代器到容器末尾的元素（即被标记为移除的元素）都将被从字符串中删除。</li>
+</ul>
+</li>
+</ol>
+<p>这样的组合使用<code>remove_if</code> 和 <code>erase</code> 被称为“擦除-删除”惯用法（Erase-Remove Idiom），是一种高效清理容器的方式。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/04/25/XYCTF%20WP/" rel="prev" title="XYCTF_WP">
+      <i class="fa fa-chevron-left"></i> XYCTF_WP
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E6%96%87"><span class="nav-number">1.</span> <span class="nav-text">回文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">判断实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.</span> <span class="nav-text">remove的使用介绍</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name"></p>
+  <div class="site-description" itemprop="description">We losers do nothing so winners keeping winning <br> </br> 仍在施工中</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
