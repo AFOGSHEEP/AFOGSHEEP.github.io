@@ -185,7 +185,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-05-03 22:23:03" itemprop="dateModified" datetime="2024-05-03T22:23:03+08:00">2024-05-03</time>
+                <time title="修改时间：2024-05-03 22:34:13" itemprop="dateModified" datetime="2024-05-03T22:34:13+08:00">2024-05-03</time>
               </span>
 
           
@@ -241,8 +241,7 @@
 </li>
 </ol>
 <p>这样的组合使用<code>remove_if</code> 和 <code>erase</code> 被称为“擦除-删除”惯用法（Erase-Remove Idiom），是一种高效清理容器的方式。</p>
-<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><p>欢迎阅读我们的最新博客文章，在本文中，我们将深入探讨标准模板库（STL）算法的实用性及其功能。这篇文章采用问答形式，帮助程序员理解并最大限度地提高STL算法在编程实践中的效率。</p>
-<p><strong>1. 为什么STL算法比手写循环更受推荐？</strong></p>
+<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><p><strong>1. 为什么STL算法比手写循环更受推荐？</strong></p>
 <ul>
 <li><strong>性能优化</strong>：STL算法经过严格优化，能够比手写循环提供更好的性能。</li>
 <li><strong>可读性和维护性</strong>：使用STL算法可以使代码更加清晰和易于维护。</li>
@@ -282,9 +281,7 @@
 <li><code>remove_if</code> 将不应被移除的字符串移动到向量的前部，并返回一个新的结束迭代器。</li>
 <li><code>erase</code> 使用这个新的结束迭代器，将所有被标记为移除的字符串从向量中删除。</li>
 </ul>
-<ol start="8">
-<li>计算 n 维空间中点到原点的距离</li>
-</ol>
+<p><strong>8.计算 n 维空间中点到原点的距离</strong></p>
 <p><strong>问题</strong>: 在 n 维空间中，一个点 (x1, x2, x3, …, xn) 到原点的距离是 sqrt(x1^2 + x2^2 + x3^2 + … + xn^2)。编写一个函数 <code>DistanceToOrigin</code>，它接受一个代表空间中点的 <code>vector&lt;double&gt;</code>，并返回该点到原点的距离。不要使用任何循环，让算法为你完成繁重的工作。（提示：使用 <code>inner_product</code> 算法来计算平方根下的表达式。）</p>
 <p>我们可以使用 <code>std::inner_product</code> 算法来计算向量元素的平方和，然后取平方根得到欧几里得距离。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;numeric&gt;</span> <span class="comment">// For std::inner_product</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">DistanceToOrigin</span><span class="params">(<span class="type">const</span> std::vector&lt;<span class="type">double</span>&gt;&amp; point)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> std::<span class="built_in">sqrt</span>(std::<span class="built_in">inner_product</span>(point.<span class="built_in">begin</span>(), point.<span class="built_in">end</span>(), point.<span class="built_in">begin</span>(), <span class="number">0.0</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -296,7 +293,7 @@
 <li>最终结果是所有维度平方和的平方根，即从原点到点的距离。</li>
 </ul>
 <ol start="9">
-<li>实现一个具有偏好的排序函数 BiasedSort</li>
+<li><strong>实现一个具有偏好的排序函数 BiasedSort</strong></li>
 </ol>
 <p><strong>问题</strong>: 编写一个名为 <code>BiasedSort</code> 的函数，它接受一个引用类型的 <code>vector&lt;string&gt;</code> 并按字典顺序对其进行排序，但如果向量中包含字符串 “Me First”，则该字符串始终位于排序列表的最前面。</p>
 <p><strong>解决方案</strong>：</p>
@@ -309,7 +306,7 @@
 <li>使用 <code>std::sort</code> 对除 “Me First” 外的所有元素进行排序。</li>
 </ul>
 <ol start="10">
-<li>编写一个函数 CriticsPick</li>
+<li><strong>编写一个函数 CriticsPick</strong></li>
 </ol>
 <p><strong>问题</strong>: 编写一个函数 <code>CriticsPick</code>，该函数接受一个 <code>map&lt;string, double&gt;</code>，其中包含电影及其评分（0.0 到 10.0之间），并返回一个 <code>set&lt;string&gt;</code>，其中包含地图中评分最高的前十部电影的名称。如果 map 中的元素少于十个，则结果 set 应包含 map 中的每个字符串。</p>
 <p><strong>解决方案</strong>：</p>
@@ -322,7 +319,7 @@
 <li>选取排序后的前10部电影（或者小于10部，如果元素不足的话）。</li>
 </ul>
 <ol start="11">
-<li>实现 count 算法</li>
+<li><strong>实现 count 算法</strong></li>
 </ol>
 <p><strong>问题</strong>: 为 <code>vector&lt;int&gt;</code> 实现 count 算法。你的函数应该有如下原型：<code>int count(vector&lt;int&gt;::iterator start, vector&lt;int&gt;::iterator stop, int element)</code>，并应该返回区间 [start, stop) 中等于 element 的元素数量。</p>
 <p><strong>解决方案</strong>：</p>
@@ -333,7 +330,7 @@
 <li>直接使用 STL 中的 <code>std::count</code> 函数，传递给定的迭代器和元素。</li>
 </ul>
 <ol start="12">
-<li>使用 generate_n 和 rand 函数填充随机数向量，并计算平均值</li>
+<li><strong>使用 generate_n 和 rand 函数填充随机数向量，并计算平均值</strong></li>
 </ol>
 <p><strong>问题</strong>: 使用 <code>generate_n</code> 算法、<code>rand</code> 函数和 <code>back_insert_iterator</code> 来填充一个向量，指定数量的随机值。然后使用 <code>accumulate</code> 计算该范围的平均值。</p>
 <p><strong>解决方案</strong>：</p>
@@ -346,7 +343,7 @@
 <li>使用 <code>accumulate</code> 计算总和，然后除以元素数量得到平均值。</li>
 </ul>
 <ol start="13">
-<li>计算一组数据的中位数</li>
+<li><strong>计算一组数据的中位数</strong></li>
 </ol>
 <p><strong>问题</strong>: 中位数是指在一组数据中，有一半的数据比它大，另一半数据比它小。对于拥有奇数个元素的数据集，这是排序后的中间元素；对于偶数个元素的数据集，它是两个中间元素的平均值。使用 <code>nth_element</code> 算法编写一个计算数据集中位数的函数。</p>
 <p><strong>解决方案</strong>：</p>
@@ -358,7 +355,7 @@
 <li>对于偶数元素的数据集，找到前半部分的最大值，与中间位置的下一个元素求平均。</li>
 </ul>
 <ol start="14">
-<li>使用 copy、istreambuf_iterator 和 ostreambuf_iterator 打开文件并打印其内容</li>
+<li><strong>使用 copy、istreambuf_iterator 和 ostreambuf_iterator 打开文件并打印其内容</strong></li>
 </ol>
 <p><strong>问题</strong>: 展示如何使用 <code>copy</code>、<code>istreambuf_iterator</code> 和 <code>ostreambuf_iterator</code> 打开一个文件并将其内容打印到 cout。</p>
 <p><strong>解决方案</strong>：</p>
@@ -371,7 +368,7 @@
 <li><code>copy</code> 算法在这两个迭代器之间传输内容，直接从文件流复制到输出流，无需额外缓存。</li>
 </ul>
 <ol start="15">
-<li>使用 copy 和迭代器适配器将 STL 容器的内容写入文件</li>
+<li><strong>使用 copy 和迭代器适配器将 STL 容器的内容写入文件</strong></li>
 </ol>
 <p><strong>问题</strong>: 展示如何使用 <code>copy</code> 和迭代器适配器将 STL 容器的内容写入文件，其中每个元素存储在自己的一行上。</p>
 <p><strong>解决方案</strong>：</p>
@@ -385,7 +382,7 @@
 <li><code>copy</code> 算法用于从容器复制元素到文件流，每写入一个元素后自动插入一个换行符。</li>
 </ul>
 <ol start="16">
-<li>打印两个已排序向量的共同元素</li>
+<li><strong>打印两个已排序向量的共同元素</strong></li>
 </ol>
 <p><strong>问题</strong>: 假设你有两个元素已经存储在排序顺序中的 <code>vector&lt;int&gt;</code>。展示如何使用一行代码通过 <code>set_intersection</code> 算法和适当的迭代器适配器打印出这两个向量的共有元素。</p>
 <p><strong>解决方案</strong>：</p>
