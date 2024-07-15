@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-mac-osx.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"afogsheep.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="神经网络的学习步骤前提 神经网络存在合适的权重和偏置，调整权重和偏置的过程以便拟合训练数据的过程称为“学习”。神经网络的学习分成以下四个步骤。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简单学习算法的实现">
+<meta property="og:url" content="https://afogsheep.github.io/2024/07/01/%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="杜鹃声">
+<meta property="og:description" content="神经网络的学习步骤前提 神经网络存在合适的权重和偏置，调整权重和偏置的过程以便拟合训练数据的过程称为“学习”。神经网络的学习分成以下四个步骤。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-06-30T16:22:36.000Z">
+<meta property="article:modified_time" content="2024-07-15T16:22:51.099Z">
+<meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://afogsheep.github.io/2024/07/01/%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>简单学习算法的实现 | 杜鹃声</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">杜鹃声</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">此情可待成追忆，只是当时已惘然</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://afogsheep.github.io/2024/07/01/%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="We losers do nothing so winners keeping winning <br> </br> 仍在施工中">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杜鹃声">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          简单学习算法的实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-07-01 00:22:36" itemprop="dateCreated datePublished" datetime="2024-07-01T00:22:36+08:00">2024-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-07-16 00:22:51" itemprop="dateModified" datetime="2024-07-16T00:22:51+08:00">2024-07-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="神经网络的学习步骤"><a href="#神经网络的学习步骤" class="headerlink" title="神经网络的学习步骤"></a>神经网络的学习步骤</h2><p><strong>前提</strong></p>
+<p>神经网络存在合适的权重和偏置，调整权重和偏置的过程以便拟合训练数据的过程称为“学习”。神经网络的学习分成以下四个步骤。<span id="more"></span></p>
+<h3 id="选出mini-batch"><a href="#选出mini-batch" class="headerlink" title="选出mini-batch"></a>选出mini-batch</h3><p>从训练数据中随机选出一部分数据作为mini-batch,我们的目的是尽量减少mini-batch的损失函数的值。</p>
+<h3 id="计算梯度"><a href="#计算梯度" class="headerlink" title="计算梯度"></a>计算梯度</h3><p>为了减少mini-batch损失函数的值，需要求出各个权重参数的梯度。梯度表示损失函数的值减少最多的方向。</p>
+<h3 id="更新参数"><a href="#更新参数" class="headerlink" title="更新参数"></a>更新参数</h3><p>将权重参数沿梯度方向进行更新</p>
+<h3 id="重复"><a href="#重复" class="headerlink" title="重复"></a>重复</h3><p>重复前三个步骤</p>
+<h2 id="构建神经网络"><a href="#构建神经网络" class="headerlink" title="构建神经网络"></a>构建神经网络</h2><p>接下来我们以两层神经网络为对象（隐藏层为一层），使用MNIST数据集进行学习。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys, os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加mnist.py所在的目录到Python路径</span></span><br><span class="line">sys.path.append(<span class="string">&quot;E:\\deap_learning\\ORIGAINAL&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot; # 确认common是个文件夹并包含__init__.py文件</span></span><br><span class="line"><span class="string">if not os.path.exists(&quot;E:\\deap_learning\\ORIGAINAL\\common\\__init__.py&quot;):</span></span><br><span class="line"><span class="string">    open(&quot;E:\\deap_learning\\ORIGAINAL\\common\\__init__.py&quot;, &#x27;a&#x27;).close() &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> common.functions <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> common.gradient <span class="keyword">import</span> numerical_gradient</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TwoLayerNet</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_size, hidden_size, output_size, weight_init_std=<span class="number">0.01</span></span>):</span><br><span class="line">        <span class="comment"># 初始化权重</span></span><br><span class="line">        self.params = &#123;&#125;</span><br><span class="line">        self.params[<span class="string">&#x27;W1&#x27;</span>] = weight_init_std * np.random.randn(input_size, hidden_size)</span><br><span class="line">        self.params[<span class="string">&#x27;b1&#x27;</span>] = np.zeros(hidden_size)</span><br><span class="line">        self.params[<span class="string">&#x27;W2&#x27;</span>] = weight_init_std * np.random.randn(hidden_size, output_size)</span><br><span class="line">        self.params[<span class="string">&#x27;b2&#x27;</span>] = np.zeros(output_size)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, x</span>):</span><br><span class="line">        W1, W2 = self.params[<span class="string">&#x27;W1&#x27;</span>], self.params[<span class="string">&#x27;W2&#x27;</span>]</span><br><span class="line">        b1, b2 = self.params[<span class="string">&#x27;b1&#x27;</span>], self.params[<span class="string">&#x27;b2&#x27;</span>]</span><br><span class="line">    </span><br><span class="line">        a1 = np.dot(x, W1) + b1</span><br><span class="line">        z1 = sigmoid(a1)</span><br><span class="line">        a2 = np.dot(z1, W2) + b2</span><br><span class="line">        y = softmax(a2)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># x:输入数据, t:监督数据</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">loss</span>(<span class="params">self, x, t</span>):</span><br><span class="line">        y = self.predict(x)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> cross_entropy_error(y, t)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">accuracy</span>(<span class="params">self, x, t</span>):</span><br><span class="line">        y = self.predict(x)</span><br><span class="line">        y = np.argmax(y, axis=<span class="number">1</span>)</span><br><span class="line">        t = np.argmax(t, axis=<span class="number">1</span>)</span><br><span class="line">        </span><br><span class="line">        accuracy = np.<span class="built_in">sum</span>(y == t) / <span class="built_in">float</span>(x.shape[<span class="number">0</span>])</span><br><span class="line">        <span class="keyword">return</span> accuracy</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># x:输入数据, t:监督数据</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">numerical_gradient</span>(<span class="params">self, x, t</span>):</span><br><span class="line">        loss_W = <span class="keyword">lambda</span> W: self.loss(x, t)</span><br><span class="line">        </span><br><span class="line">        grads = &#123;&#125;</span><br><span class="line">        grads[<span class="string">&#x27;W1&#x27;</span>] = numerical_gradient(loss_W, self.params[<span class="string">&#x27;W1&#x27;</span>])</span><br><span class="line">        grads[<span class="string">&#x27;b1&#x27;</span>] = numerical_gradient(loss_W, self.params[<span class="string">&#x27;b1&#x27;</span>])</span><br><span class="line">        grads[<span class="string">&#x27;W2&#x27;</span>] = numerical_gradient(loss_W, self.params[<span class="string">&#x27;W2&#x27;</span>])</span><br><span class="line">        grads[<span class="string">&#x27;b2&#x27;</span>] = numerical_gradient(loss_W, self.params[<span class="string">&#x27;b2&#x27;</span>])</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> grads</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">gradient</span>(<span class="params">self, x, t</span>):</span><br><span class="line">        W1, W2 = self.params[<span class="string">&#x27;W1&#x27;</span>], self.params[<span class="string">&#x27;W2&#x27;</span>]</span><br><span class="line">        b1, b2 = self.params[<span class="string">&#x27;b1&#x27;</span>], self.params[<span class="string">&#x27;b2&#x27;</span>]</span><br><span class="line">        grads = &#123;&#125;</span><br><span class="line">        </span><br><span class="line">        batch_num = x.shape[<span class="number">0</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># forward</span></span><br><span class="line">        a1 = np.dot(x, W1) + b1</span><br><span class="line">        z1 = sigmoid(a1)</span><br><span class="line">        a2 = np.dot(z1, W2) + b2</span><br><span class="line">        y = softmax(a2)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># backward</span></span><br><span class="line">        dy = (y - t) / batch_num</span><br><span class="line">        grads[<span class="string">&#x27;W2&#x27;</span>] = np.dot(z1.T, dy)</span><br><span class="line">        grads[<span class="string">&#x27;b2&#x27;</span>] = np.<span class="built_in">sum</span>(dy, axis=<span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line">        da1 = np.dot(dy, W2.T)</span><br><span class="line">        dz1 = sigmoid_grad(a1) * da1</span><br><span class="line">        grads[<span class="string">&#x27;W1&#x27;</span>] = np.dot(x.T, dz1)</span><br><span class="line">        grads[<span class="string">&#x27;b1&#x27;</span>] = np.<span class="built_in">sum</span>(dz1, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> grads</span><br></pre></td></tr></table></figure>
+
+
+
+<p>twolayernet类有两个字典型实列变量——params和grads。params内保存了权重参数，并且其中的权重参数会用在推理处理内。而grads内保存了各个参数的梯度。使用 <code>numberical_gradient()</code>方法计算梯度后，梯度的信息会保存在grads变量中。随后我们来看下twolayernet方法的实现。</p>
+<p>首先是__init__(self,input_size, hidden size，output_size）方法，它是类的初始化方法（所谓初始化方法，就是生成TwoLayerNet实例时被调用的方法）。从第1个参数开始，依次表示输入层的神经元数、隐藏层的神经元数、输出层的神经元数。另外，因为进行手写数字识别时，输入图像的大小是784(28×28），输出为10个类别，所以指定参数input_size&#x3D;784、output_size&#x3D;10，将隐藏层的个数hidden_size设置为一个合适的值即可。<br>此外，这个初始化方法会对权重参数进行初始化。如何设置权重参数的初始值这个问题是关系到神经网络能否成功学习的重要问题。后面我们会详细讨论权重参数的初始化，这里只需要知道，权重使用符合高斯分布的随机数进行初始化，偏置使用0进行初始化。predict(self，x）和accuracy(self，x，t)的实现和上一章的神经网络的推理处理基本一样。如果仍有不明白的地方，请再回顾一下上一章的内容。另外，loss(self，x，t)是计算损失函数值的方法。这个方法会基于predict(）的结果和正确解标签<br>计算交叉熵误差。<br>剩下的numerical_gradient(self，x，t）方法会计算各个参数的梯度。根据数值微分，计算各个参数相对于损失函数的梯度。另外，gradient(self，x，t)是之后要实现的方法，该方法使用误差反向传播法高效地计算梯度。</p>
+<h2 id="mini-batch的实现"><a href="#mini-batch的实现" class="headerlink" title="mini-batch的实现"></a>mini-batch的实现</h2><p>在这里的代码中，mini-batch的大小是100，每次需要从60000个训练数据中随机取出100个数据作为mini-batch求梯度，使用随机梯度算法更新参数。随着学习的进行，损失函数的值会逐渐减小，这说明神经网络的权重参数正在逐渐拟合数据，正在向最优参数靠近。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> mnist <span class="keyword">import</span> load_mnist</span><br><span class="line"><span class="keyword">from</span> two_layer_net <span class="keyword">import</span> TwoLayerNet</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置本地数据集路径</span></span><br><span class="line">mnist_path = <span class="string">&quot;E:\\deap_learning\\resource&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 读入数据</span></span><br><span class="line">(x_train, t_train), (x_test, t_test) = load_mnist(normalize=<span class="literal">True</span>, one_hot_label=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">network = TwoLayerNet(input_size=<span class="number">784</span>, hidden_size=<span class="number">50</span>, output_size=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">iters_num = <span class="number">10000</span>  <span class="comment"># 适当设定循环的次数</span></span><br><span class="line">train_size = x_train.shape[<span class="number">0</span>]</span><br><span class="line">batch_size = <span class="number">100</span></span><br><span class="line">learning_rate = <span class="number">0.1</span></span><br><span class="line"></span><br><span class="line">train_loss_list = []</span><br><span class="line">train_acc_list = []</span><br><span class="line">test_acc_list = []</span><br><span class="line"></span><br><span class="line">iter_per_epoch = <span class="built_in">max</span>(train_size / batch_size, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iters_num):</span><br><span class="line">    batch_mask = np.random.choice(train_size, batch_size)</span><br><span class="line">    x_batch = x_train[batch_mask]</span><br><span class="line">    t_batch = t_train[batch_mask]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算梯度</span></span><br><span class="line">    <span class="comment">#grad = network.numerical_gradient(x_batch, t_batch)</span></span><br><span class="line">    grad = network.gradient(x_batch, t_batch)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 更新参数</span></span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> (<span class="string">&#x27;W1&#x27;</span>, <span class="string">&#x27;b1&#x27;</span>, <span class="string">&#x27;W2&#x27;</span>, <span class="string">&#x27;b2&#x27;</span>):</span><br><span class="line">        network.params[key] -= learning_rate * grad[key]</span><br><span class="line">    </span><br><span class="line">    loss = network.loss(x_batch, t_batch)</span><br><span class="line">    train_loss_list.append(loss)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> i % iter_per_epoch == <span class="number">0</span>:</span><br><span class="line">        train_acc = network.accuracy(x_train, t_train)</span><br><span class="line">        test_acc = network.accuracy(x_test, t_test)</span><br><span class="line">        train_acc_list.append(train_acc)</span><br><span class="line">        test_acc_list.append(test_acc)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;train acc, test acc | &quot;</span> + <span class="built_in">str</span>(train_acc) + <span class="string">&quot;, &quot;</span> + <span class="built_in">str</span>(test_acc))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制图形</span></span><br><span class="line">markers = &#123;<span class="string">&#x27;train&#x27;</span>: <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;test&#x27;</span>: <span class="string">&#x27;s&#x27;</span>&#125;</span><br><span class="line">x = np.arange(<span class="built_in">len</span>(train_acc_list))</span><br><span class="line">plt.plot(x, train_acc_list, label=<span class="string">&#x27;train acc&#x27;</span>)</span><br><span class="line">plt.plot(x, test_acc_list, label=<span class="string">&#x27;test acc&#x27;</span>, linestyle=<span class="string">&#x27;--&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;epochs&quot;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;accuracy&quot;</span>)</span><br><span class="line">plt.ylim(<span class="number">0</span>, <span class="number">1.0</span>)</span><br><span class="line">plt.legend(loc=<span class="string">&#x27;lower right&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>附上mnist（本地数据）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> gzip</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">load_mnist</span>(<span class="params">normalize=<span class="literal">True</span>, flatten=<span class="literal">True</span>, one_hot_label=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;读入MNIST数据集</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Parameters</span></span><br><span class="line"><span class="string">    ----------</span></span><br><span class="line"><span class="string">    normalize : 将图像的像素值正规化为0.0~1.0</span></span><br><span class="line"><span class="string">    one_hot_label : </span></span><br><span class="line"><span class="string">        one_hot_label为True的情况下，标签作为one-hot数组返回</span></span><br><span class="line"><span class="string">        one-hot数组是指[0,0,1,0,0,0,0,0,0,0]这样的数组</span></span><br><span class="line"><span class="string">    flatten : 是否将图像展开为一维数组</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns</span></span><br><span class="line"><span class="string">    -------</span></span><br><span class="line"><span class="string">    (训练图像, 训练标签), (测试图像, 测试标签)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    mnist_path = <span class="string">&quot;E:\\deap_learning\\resource&quot;</span></span><br><span class="line"></span><br><span class="line">    dataset = &#123;</span><br><span class="line">        <span class="string">&#x27;train_img&#x27;</span>: load_images(os.path.join(mnist_path, <span class="string">&#x27;train-images-idx3-ubyte.gz&#x27;</span>)),</span><br><span class="line">        <span class="string">&#x27;train_label&#x27;</span>: load_labels(os.path.join(mnist_path, <span class="string">&#x27;train-labels-idx1-ubyte.gz&#x27;</span>)),</span><br><span class="line">        <span class="string">&#x27;test_img&#x27;</span>: load_images(os.path.join(mnist_path, <span class="string">&#x27;t10k-images-idx3-ubyte.gz&#x27;</span>)),</span><br><span class="line">        <span class="string">&#x27;test_label&#x27;</span>: load_labels(os.path.join(mnist_path, <span class="string">&#x27;t10k-labels-idx1-ubyte.gz&#x27;</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> normalize:</span><br><span class="line">        <span class="keyword">for</span> key <span class="keyword">in</span> (<span class="string">&#x27;train_img&#x27;</span>, <span class="string">&#x27;test_img&#x27;</span>):</span><br><span class="line">            dataset[key] = dataset[key].astype(np.float32)</span><br><span class="line">            dataset[key] /= <span class="number">255.0</span></span><br><span class="line">            </span><br><span class="line">    <span class="keyword">if</span> one_hot_label:</span><br><span class="line">        dataset[<span class="string">&#x27;train_label&#x27;</span>] = _change_one_hot_label(dataset[<span class="string">&#x27;train_label&#x27;</span>])</span><br><span class="line">        dataset[<span class="string">&#x27;test_label&#x27;</span>] = _change_one_hot_label(dataset[<span class="string">&#x27;test_label&#x27;</span>])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> flatten:</span><br><span class="line">        <span class="keyword">for</span> key <span class="keyword">in</span> (<span class="string">&#x27;train_img&#x27;</span>, <span class="string">&#x27;test_img&#x27;</span>):</span><br><span class="line">            dataset[key] = dataset[key].reshape(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (dataset[<span class="string">&#x27;train_img&#x27;</span>], dataset[<span class="string">&#x27;train_label&#x27;</span>]), (dataset[<span class="string">&#x27;test_img&#x27;</span>], dataset[<span class="string">&#x27;test_label&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">load_images</span>(<span class="params">file_path</span>):</span><br><span class="line">    <span class="keyword">with</span> gzip.<span class="built_in">open</span>(file_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data = np.frombuffer(f.read(), np.uint8, offset=<span class="number">16</span>)</span><br><span class="line">    <span class="keyword">return</span> data.reshape(-<span class="number">1</span>, <span class="number">784</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">load_labels</span>(<span class="params">file_path</span>):</span><br><span class="line">    <span class="keyword">with</span> gzip.<span class="built_in">open</span>(file_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data = np.frombuffer(f.read(), np.uint8, offset=<span class="number">8</span>)</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_change_one_hot_label</span>(<span class="params">X</span>):</span><br><span class="line">    T = np.zeros((X.size, <span class="number">10</span>))</span><br><span class="line">    <span class="keyword">for</span> idx, row <span class="keyword">in</span> <span class="built_in">enumerate</span>(T):</span><br><span class="line">        row[X[idx]] = <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> T</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+
+<p>在代码中出现了epoch作为学习时的次数单位。</p>
+<h3 id="什么是-epoch？"><a href="#什么是-epoch？" class="headerlink" title="什么是 epoch？"></a>什么是 <code>epoch</code>？</h3><p>在机器学习和深度学习中，<code>epoch</code> 是一个重要的概念。<code>epoch</code> 表示整个训练数据集通过神经网络一次。简单来说，一个 <code>epoch</code> 就是将所有的训练数据都用来更新模型参数一次。</p>
+<h3 id="epoch-在神经网络中的作用"><a href="#epoch-在神经网络中的作用" class="headerlink" title="epoch 在神经网络中的作用"></a><code>epoch</code> 在神经网络中的作用</h3><p>在训练神经网络时，我们通常不会一次性将整个训练数据集都输入到模型中进行训练，而是将数据集分成多个小批次（batch），然后依次输入模型。这样做的原因包括：</p>
+<ol>
+<li><strong>内存限制</strong>：一次性处理整个数据集可能会导致内存不足，尤其是当数据集非常大时。</li>
+<li><strong>更稳定的梯度更新</strong>：使用小批次数据可以使梯度更新更加平稳，并能有效避免一些局部最优解。</li>
+</ol>
+<p>在每个 <code>epoch</code> 中，模型会经历以下过程：</p>
+<ol>
+<li>将训练数据集分成若干个批次（batches）。</li>
+<li>对每个批次进行前向传播、计算损失、后向传播、更新模型参数。</li>
+<li>一个 <code>epoch</code> 结束后，通常会进行一次验证，检查模型在验证集上的表现，以判断模型是否在训练中取得进展。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们以损失函数为基准，找出了使神经网络的值达到最小的权重参数，也就是神经网络学习的目标。为了尽可能找到小的损失函数值，我们使用了函数斜率的梯度法。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/07/2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="prev" title="类的优化学习">
+      <i class="fa fa-chevron-left"></i> 类的优化学习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/07/15/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AD%A6%E4%B9%A0/" rel="next" title="神经网络的学习">
+      神经网络的学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AD%A6%E4%B9%A0%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.</span> <span class="nav-text">神经网络的学习步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E5%87%BAmini-batch"><span class="nav-number">1.1.</span> <span class="nav-text">选出mini-batch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%A2%AF%E5%BA%A6"><span class="nav-number">1.2.</span> <span class="nav-text">计算梯度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">更新参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D"><span class="nav-number">1.4.</span> <span class="nav-text">重复</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">2.</span> <span class="nav-text">构建神经网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mini-batch%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">mini-batch的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-epoch%EF%BC%9F"><span class="nav-number">4.1.</span> <span class="nav-text">什么是 epoch？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoch-%E5%9C%A8%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">4.2.</span> <span class="nav-text">epoch 在神经网络中的作用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name"></p>
+  <div class="site-description" itemprop="description">We losers do nothing so winners keeping winning <br> </br> 仍在施工中</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
