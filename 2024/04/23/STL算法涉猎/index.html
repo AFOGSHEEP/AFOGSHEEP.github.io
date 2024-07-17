@@ -4,26 +4,26 @@
   <meta charset="utf-8">
   
   
-  <title>STL算法涉猎 | Hexo</title>
+  <title>STL算法涉猎 | 杜鹃声</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="引子考虑以下问题：假设我们想要编写一个程序，该程序从文件中读取整数列表（可能表示作业中的成绩），然后打印出这些值的平均值。为简单起见，我们假设此数据存储在名为 data.txt 的文件中，每行一个整数。例如： 1234567891011121314151617100959298878810087898789838797998988  以下是一个可能的例子：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="STL算法涉猎">
 <meta property="og:url" content="http://example.com/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="杜鹃声">
 <meta property="og:description" content="引子考虑以下问题：假设我们想要编写一个程序，该程序从文件中读取整数列表（可能表示作业中的成绩），然后打印出这些值的平均值。为简单起见，我们假设此数据存储在名为 data.txt 的文件中，每行一个整数。例如： 1234567891011121314151617100959298878810087898789838797998988  以下是一个可能的例子：">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale">
 <meta property="og:image" content="g:\Cpp_Learn\full_course_reader\notes\assets\image-20240423225530689.png">
 <meta property="article:published_time" content="2024-04-23T15:28:45.000Z">
 <meta property="article:modified_time" content="2024-05-06T08:27:20.545Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:author" content="AAAFORGE">
 <meta property="article:tag" content="学习笔记">
 <meta property="article:tag" content="C++">
 <meta property="article:tag" content="C语言">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="g:\Cpp_Learn\full_course_reader\notes\assets\image-20240423225530689.png">
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="杜鹃声" type="application/atom+xml">
   
   
     <link rel="shortcut icon" href="/favicon.png">
@@ -48,8 +48,12 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
+        <a href="/" id="logo">杜鹃声</a>
       </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">此情可待成追忆，只是当时已惘然</a>
+        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -66,10 +70,10 @@
         
           <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
       </div>
     </div>
   </div>
@@ -319,7 +323,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/" data-id="clyq2358t0008ikva2x4n70qu" data-title="STL算法涉猎" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/" data-id="clyq2358t0008ikva2x4n70qu" data-title="STL算法涉猎" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -332,7 +336,7 @@
 <nav id="article-nav">
   
     <a href="/2024/04/25/XYCTF%20WP/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Neuer</strong>
       <div class="article-nav-title">
         
           XYCTF_WP
@@ -342,7 +346,7 @@
   
   
     <a href="/2024/04/17/bashshell%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">Älter</strong>
       <div class="article-nav-title">bashshell基础命令</div>
     </a>
   
@@ -380,7 +384,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Archiv</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li></ul>
     </div>
@@ -390,7 +394,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">letzter Beitrag</h3>
     <div class="widget">
       <ul>
         
@@ -427,7 +431,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2024 John Doe<br>
+      &copy; 2024 AAAFORGE<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
