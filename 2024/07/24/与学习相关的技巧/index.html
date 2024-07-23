@@ -6,15 +6,15 @@
   
   <title>与学习相关的技巧 | 杜鹃声</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。 参数的更新神经网络的学习的目的是找到使损失函数的值尽可能小的参数，这个过程被称作“最优化”。参数空间非常复杂，且深度神经网络中，参数的数目十分庞大">
+  <meta name="description" content="本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="与学习相关的技巧">
 <meta property="og:url" content="http://example.com/2024/07/24/%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8A%80%E5%B7%A7/index.html">
 <meta property="og:site_name" content="杜鹃声">
-<meta property="og:description" content="本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。 参数的更新神经网络的学习的目的是找到使损失函数的值尽可能小的参数，这个过程被称作“最优化”。参数空间非常复杂，且深度神经网络中，参数的数目十分庞大">
+<meta property="og:description" content="本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2024-07-23T16:00:01.000Z">
-<meta property="article:modified_time" content="2024-07-23T16:01:32.880Z">
+<meta property="article:modified_time" content="2024-07-23T16:10:28.483Z">
 <meta property="article:author" content="AAAFORGE">
 <meta property="article:tag" content="学习笔记">
 <meta property="article:tag" content="深度学习">
@@ -99,7 +99,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。</p>
+        <p>本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。<span id="more"></span></p>
 <h2 id="参数的更新"><a href="#参数的更新" class="headerlink" title="参数的更新"></a>参数的更新</h2><p>神经网络的学习的目的是找到使损失函数的值尽可能小的参数，这个过程被称作“最优化”。参数空间非常复杂，且深度神经网络中，参数的数目十分庞大，导致了最优化问题非常复杂。</p>
 <p>我们之前使用了随机梯度下降法（stochastic gradient descent）来更新参数。SGD虽然是简单的方法，但是比起无目的的在参数空间中乱逛，无疑是有效的。接下来我们复习SGD。</p>
 <p>用数学式可以把SGD写成如下的式子：<br>$$<br>W  \leftarrow W \leftarrow η \frac{\partial L}{\partial W}<br>$$<br>需要更新的权重为w，η代表学习率，通常会实现设定好为0.1或者0.01等。箭头代表更新左边的值。</p>
@@ -165,7 +165,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/07/24/%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8A%80%E5%B7%A7/" data-id="clyylt5wq0009okva3yoectb0" data-title="与学习相关的技巧" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2024/07/24/%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8A%80%E5%B7%A7/" data-id="clyym46pk0008nsva2z2r9yt1" data-title="与学习相关的技巧" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
