@@ -4,14 +4,20 @@
   <meta charset="utf-8">
   
   
-  <title>杜鹃声</title>
+  <title>与学习相关的技巧 | 杜鹃声</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="杜鹃声">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。 参数的更新神经网络的学习的目的是找到使损失函数的值尽可能小的参数，这个过程被称作“最优化”。参数空间非常复杂，且深度神经网络中，参数的数目十分庞大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="与学习相关的技巧">
+<meta property="og:url" content="http://example.com/2024/07/24/%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8A%80%E5%B7%A7/index.html">
 <meta property="og:site_name" content="杜鹃声">
+<meta property="og:description" content="本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。 参数的更新神经网络的学习的目的是找到使损失函数的值尽可能小的参数，这个过程被称作“最优化”。参数空间非常复杂，且深度神经网络中，参数的数目十分庞大">
 <meta property="og:locale">
+<meta property="article:published_time" content="2024-07-23T16:00:01.000Z">
+<meta property="article:modified_time" content="2024-07-23T16:01:32.880Z">
 <meta property="article:author" content="AAAFORGE">
+<meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="深度学习">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="杜鹃声" type="application/atom+xml">
@@ -71,9 +77,7 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-与学习相关的技巧" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-与学习相关的技巧" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2024/07/24/%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8A%80%E5%B7%A7/" class="article-date">
   <time class="dt-published" datetime="2024-07-23T16:00:01.000Z" itemprop="datePublished">2024-07-24</time>
@@ -86,8 +90,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/07/24/%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8A%80%E5%B7%A7/">与学习相关的技巧</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      与学习相关的技巧
     </h1>
   
 
@@ -170,436 +174,20 @@
     </footer>
   </div>
   
-</article>
-
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/07/18/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2024-07-17T16:26:02.043Z" itemprop="datePublished">2024-07-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/07/18/hello-world/">Hello World</a>
-    </h1>
+    <a href="/2024/07/18/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/07/18/hello-world/" data-id="clyylt5wp0006okva3lbzav8o" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-    </footer>
-  </div>
   
 </article>
 
-
-
-  
-    <article id="post-误差反向传播法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/07/18/%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/" class="article-date">
-  <time class="dt-published" datetime="2024-07-17T16:02:48.000Z" itemprop="datePublished">2024-07-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/07/18/%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/">误差反向传播法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>误差反向传播法是一种能高效计算权重参数梯度的方法。要理解它一般有两种方法，一种是基于数学式，另一种是基于<strong>计算图</strong>（computational graph）。接下来会补充讲解计算图的理解方法。</p>
-<h2 id="计算图"><a href="#计算图" class="headerlink" title="计算图"></a>计算图</h2><p>计算图会将计算过程用图表现出来。这里的图形是数据结构图，通过多个节点和边来表示。
-        
-          <p class="article-more-link">
-            <a href="/2024/07/18/%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/07/18/%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/" data-id="clyylt5wx0011okvah5dn1c1j" data-title="误差反向传播法" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-神经网络的学习" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/07/15/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AD%A6%E4%B9%A0/" class="article-date">
-  <time class="dt-published" datetime="2024-07-15T08:55:29.000Z" itemprop="datePublished">2024-07-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/07/15/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AD%A6%E4%B9%A0/">神经网络的学习</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="从数据中学习"><a href="#从数据中学习" class="headerlink" title="从数据中学习"></a>从数据中学习</h2><p>神经网络的学习指的是从数据参数中自动获取最优权重参数的值。在实际的神经网络之中，权重的数量成千上万，随着层数的递进，这个数量还在继续增加。想要人工决定这些数值的大小是不可能的。我们需要让神经网络来根据数值自动决定参数值。通过引入损失函数能够有效的获取最有的权重参数。
-        
-          <p class="article-more-link">
-            <a href="/2024/07/15/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AD%A6%E4%B9%A0/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/07/15/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AD%A6%E4%B9%A0/" data-id="clyylt5ww000zokva6inc88es" data-title="神经网络的学习" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-学习算法的实现" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/07/01/%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/" class="article-date">
-  <time class="dt-published" datetime="2024-06-30T16:22:36.000Z" itemprop="datePublished">2024-07-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/07/01/%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/">简单学习算法的实现</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="神经网络的学习步骤"><a href="#神经网络的学习步骤" class="headerlink" title="神经网络的学习步骤"></a>神经网络的学习步骤</h2><p><strong>前提</strong></p>
-<p>神经网络存在合适的权重和偏置，调整权重和偏置的过程以便拟合训练数据的过程称为“学习”。神经网络的学习分成以下四个步骤。
-        
-          <p class="article-more-link">
-            <a href="/2024/07/01/%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/07/01/%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/" data-id="clyylt5ww000xokva54802uk7" data-title="简单学习算法的实现" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-2024-05-07-类的优化学习" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/05/07/2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="article-date">
-  <time class="dt-published" datetime="2024-05-07T15:25:21.000Z" itemprop="datePublished">2024-05-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/05/07/2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/">类的优化学习</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="类模板"><a href="#类模板" class="headerlink" title="类模板"></a>类模板</h2><p>当你决定你正在编写的类最适合通过某种任意类型进行参数化时，你可以使用<code>template</code>关键字并指定模板应该参数化的类型来告诉C++，你正在定义一个模板类。
-        
-          <p class="article-more-link">
-            <a href="/2024/05/07/2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/05/07/2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/" data-id="clyylt5wl0002okva7s1wgwb3" data-title="类的优化学习" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-2024-5-7-抽象入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/05/07/2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/" class="article-date">
-  <time class="dt-published" datetime="2024-05-07T14:07:13.000Z" itemprop="datePublished">2024-05-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/05/07/2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/">抽象记忆点</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
-<li><p><strong>软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。</strong>
-        
-          <p class="article-more-link">
-            <a href="/2024/05/07/2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/05/07/2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/" data-id="clyylt5wj0001okva27o2en3i" data-title="抽象记忆点" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-回文判断" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/05/01/%E5%9B%9E%E6%96%87%E5%88%A4%E6%96%AD/" class="article-date">
-  <time class="dt-published" datetime="2024-05-01T09:24:34.000Z" itemprop="datePublished">2024-05-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/05/01/%E5%9B%9E%E6%96%87%E5%88%A4%E6%96%AD/">STL运用示例：回文判断</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>是时候用一个简短的例子来结束短暂的STL学习了。</p>
-<h2 id="回文"><a href="#回文" class="headerlink" title="回文"></a>回文</h2><p>回文是向前或向后阅读时相同的单词或短语，例如“racecar”或“Malayalam”。阅读回文时，习惯上会忽略空格、标点符号和大写字母，因此“Mr. Owl ate my metal worm”和“Go hang a salami! I’m a lasagna hog。”这两句话将被视为回文。
-        
-          <p class="article-more-link">
-            <a href="/2024/05/01/%E5%9B%9E%E6%96%87%E5%88%A4%E6%96%AD/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/05/01/%E5%9B%9E%E6%96%87%E5%88%A4%E6%96%AD/" data-id="clyylt5wv000wokva2bfnc87e" data-title="STL运用示例：回文判断" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-XYCTF WP" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/04/25/XYCTF%20WP/" class="article-date">
-  <time class="dt-published" datetime="2024-04-25T14:23:02.000Z" itemprop="datePublished">2024-04-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/04/25/XYCTF%20WP/">XYCTF_WP</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>咸鱼头一次做出比较多的比赛，学到了很多东西（虽然感觉应该早该会的），后面会逐步把没做出的re复现</p>
-<h2 id="聪明的信使"><a href="#聪明的信使" class="headerlink" title="聪明的信使 "></a>聪明的信使
-        
-          <p class="article-more-link">
-            <a href="/2024/04/25/XYCTF%20WP/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/04/25/XYCTF%20WP/" data-id="clyylt5wo0005okva0rwyhdzz" data-title="XYCTF_WP" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-STL算法涉猎" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/" class="article-date">
-  <time class="dt-published" datetime="2024-04-23T15:28:45.000Z" itemprop="datePublished">2024-04-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/">STL算法涉猎</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>考虑以下问题：假设我们想要编写一个程序，该程序从文件中读取整数列表（可能表示作业中的成绩），然后打印出这些值的平均值。为简单起见，我们假设此数据存储在名为 data.txt 的文件中，每行一个整数。例如：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">100</span><br><span class="line">95</span><br><span class="line">92</span><br><span class="line">98</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">100</span><br><span class="line">87</span><br><span class="line">89</span><br><span class="line">87</span><br><span class="line">89</span><br><span class="line">83</span><br><span class="line">87</span><br><span class="line">97</span><br><span class="line">99</span><br><span class="line">89</span><br><span class="line">88</span><br></pre></td></tr></table></figure>
-
-<p>以下是一个可能的例子：
-        
-          <p class="article-more-link">
-            <a href="/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/" data-id="clyylt5wn0004okva8gyceh6y" data-title="STL算法涉猎" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-
-
-  <nav id="page-nav">
-    
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">weiter &raquo;</a>
-  </nav>
 
 </section>
         
