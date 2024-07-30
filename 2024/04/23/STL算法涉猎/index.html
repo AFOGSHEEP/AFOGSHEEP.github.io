@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32-avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/32x32-avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="引子考虑以下问题：假设我们想要编写一个程序，该程序从文件中读取整数列表（可能表示作业中的成绩），然后打印出这些值的平均值。为简单起见，我们假设此数据存储在名为 data.txt 的文件中，每行一个整数。例如： 1234567891011121314151617100959298878810087898789838797998988  以下是一个可能的例子：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STL算法涉猎">
+<meta property="og:url" content="http://example.com/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/index.html">
+<meta property="og:site_name" content="杜鹃声">
+<meta property="og:description" content="引子考虑以下问题：假设我们想要编写一个程序，该程序从文件中读取整数列表（可能表示作业中的成绩），然后打印出这些值的平均值。为简单起见，我们假设此数据存储在名为 data.txt 的文件中，每行一个整数。例如： 1234567891011121314151617100959298878810087898789838797998988  以下是一个可能的例子：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="g:\Cpp_Learn\full_course_reader\notes\assets\image-20240423225530689.png">
+<meta property="article:published_time" content="2024-04-23T15:28:45.000Z">
+<meta property="article:modified_time" content="2024-05-06T08:27:20.545Z">
+<meta property="article:author" content="AAAFORGE">
+<meta property="article:tag" content="C语言">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="g:\Cpp_Learn\full_course_reader\notes\assets\image-20240423225530689.png">
+
+<link rel="canonical" href="http://example.com/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>STL算法涉猎 | 杜鹃声</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">杜鹃声</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">斜阳暮</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/23/STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="AAAFORGE">
+      <meta itemprop="description" content="此情可待成追忆，只是当时已惘然">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杜鹃声">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          STL算法涉猎
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-23 23:28:45" itemprop="dateCreated datePublished" datetime="2024-04-23T23:28:45+08:00">2024-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-06 16:27:20" itemprop="dateModified" datetime="2024-05-06T16:27:20+08:00">2024-05-06</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>考虑以下问题：假设我们想要编写一个程序，该程序从文件中读取整数列表（可能表示作业中的成绩），然后打印出这些值的平均值。为简单起见，我们假设此数据存储在名为 data.txt 的文件中，每行一个整数。例如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">100</span><br><span class="line">95</span><br><span class="line">92</span><br><span class="line">98</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">100</span><br><span class="line">87</span><br><span class="line">89</span><br><span class="line">87</span><br><span class="line">89</span><br><span class="line">83</span><br><span class="line">87</span><br><span class="line">97</span><br><span class="line">99</span><br><span class="line">89</span><br><span class="line">88</span><br></pre></td></tr></table></figure>
+
+<p>以下是一个可能的例子： <span id="more"></span></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;set&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function">ifstream <span class="title">input</span><span class="params">(<span class="string">&quot;G:\\Cpp_Learn\\full_course_reader\\week5\\data.txt&quot;</span>)</span></span>;</span><br><span class="line">    set&lt;<span class="type">int</span>&gt; values;</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> currVaule;</span><br><span class="line">    <span class="keyword">while</span>(input &gt;&gt; currVaule)&#123;</span><br><span class="line">        values.<span class="built_in">insert</span>(currVaule);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//习惯性的写法</span></span><br><span class="line">    <span class="type">float</span> total = <span class="number">0.000</span>; </span><br><span class="line">    <span class="keyword">for</span>(set&lt;<span class="type">int</span>&gt;::iterator itr = values.<span class="built_in">begin</span>(); itr != values.<span class="built_in">end</span>(); ++itr)&#123;</span><br><span class="line">        total += *itr;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;average is : &quot;</span> &lt;&lt; total/values.<span class="built_in">size</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果要用语言描绘这个程序，我们可以把他分为三步：</p>
+<ol>
+<li>读取文件内容</li>
+<li>将值相加</li>
+<li>除以元素个数</li>
+</ol>
+<p>我们必须以这种机械的方式向计算机发出命令的原因正是因为计算机是机械的——它是一台高效计算功能的机器。编程的挑战是找到一种方法，将一组高级命令转换为一系列控制机器的低级指令。这通常是一件苦差事，因为计算机导出的基本操作相当有限。但编程并不一定这么难。正如你所看到的，我们可以根据旧函数来定义新函数，并且可以从这些越来越强大的子程序中构建复杂的程序。从理论上讲，你可以编译一个巨大的库，其中包含所有非平凡的编程问题的解决方案。有了这个库，你就可以轻松地编写程序，只需将这些预先编写好的组件拼接在一起。</p>
+<p>不幸的是，没有一个库可以解决每个编程问题。然而，这并没有阻止STL的设计者尽最大努力建造一个。这些是 STL 算法，一个用于处理数据的非常强大的例程库。STL 算法不能做所有事情，但它们能做的事情却做得非常出色。实际上，使用 STL 算法，可以重写在四行代码中平均数字的程序。</p>
+<h2 id="第一个STL算法：Accumulate"><a href="#第一个STL算法：Accumulate" class="headerlink" title="第一个STL算法：Accumulate"></a>第一个STL算法：Accumulate</h2><p>关于先前求和的部分，可以用以下的方法替代：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;numeric&gt;</span></span></span><br><span class="line">cout &lt;&lt; <span class="string">&quot;average is : &quot;</span> &lt;&lt; <span class="built_in">accumulate</span>(values.<span class="built_in">begin</span>(),values.<span class="built_in">end</span>(),<span class="number">0.0</span>)/values.<span class="built_in">size</span>() &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+
+<p>在标头中定义的 accumulate 函数<numeric>采用三个参数 – 两个定义元素范围的迭代器，以及用于求和的初始值。然后，它计算迭代器范围内包含的所有元素的总和，加上基本值。 accumulate（以及一般的 STL 算法）的美妙之处在于，accumulate 可以接受任何类型的迭代器。也就是说，我们可以从多集、向量或 deque 中求和迭代器。这意味着，如果您发现自己需要计算容器中包含的元素的总和，则可以将该容器的 begin（） 和 end（） 迭代器传递到 accumulate 中以获得总和。此外，accumulate 可以接受任何有效的迭代器范围，而不仅仅是跨整个容器的迭代器范围。例如，如果我们想计算多集的元素之和，这些元素介于 42 和 137 之间（含 42 和 137），我们可以写成:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">accumulate</span>(values.<span class="built_in">lower_bound</span>(<span class="number">42</span>), values.<span class="built_in">upper_bound</span>(<span class="number">137</span>), <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>在幕后，accumulate 被实现为一个模板函数，它接受两个迭代器，并简单地使用循环将值相加。这是 accumulate 的一种可能实现:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> InputIterator, <span class="keyword">typename</span> Type&gt; <span class="function"><span class="keyword">inline</span></span></span><br><span class="line"><span class="function">   Type <span class="title">accumulate</span><span class="params">(InputIterator start, InputIterator stop, Type initial)</span> </span>&#123;</span><br><span class="line"><span class="keyword">while</span>(start != stop) &#123;</span><br><span class="line">           initial += *start;</span><br><span class="line">           ++start;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> initial;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码的核心是一个标准的迭代器循环，它不断向前推进启动迭代器，直到它到达目的地。累加没有什么神奇之处，函数调用是一行代码这一事实并没有改变它仍然使用循环将所有值相加的事实。</p>
+<p>如果 STL 算法只是在幕后使用循环的函数，为什么我们还要费心学习呢？有几个原因，第一个原因是简单。借助 STL 算法，您可以利用已经为您编写的代码，而不是从头开始重新编写代码。这可以节省大量时间，也导致了第二个原因，即正确性。如果你每次需要使用它们时都必须从头开始重写所有算法，那么在某个时候你很可能会犯错误。例如，您可能会编写一个排序例程，该例程在您打算&gt;时意外地使用了 &lt;，因此根本不起作用。STL 算法则不然——它们已经过全面测试，可以正常工作于任何给定的输入。使用算法的第三个原因是速度。一般来说，你可以假设，如果有一个 STL 算法来执行一项任务，它将比你手动编写的大多数代码更快。通过模板专用化和模板元编程等先进技术，STL 算法经过透明优化，以尽可能快地工作。最后，STL 算法提供了清晰度。使用算法，您可以立即判断出对累积的调用将某个范围内的数字相加。但使用求和值的 for 循环，您必须先阅读循环中的每一行，然后才能理解代码的作用。</p>
+<h2 id="算法命名的约定"><a href="#算法命名的约定" class="headerlink" title="算法命名的约定"></a>算法命名的约定</h2><p>有超过 50 种 STL 算法（定义在 中<algorithm><numeric>或 中），至少可以说，记住它们将是一件苦差事。幸运的是，它们中的许多都有通用的命名约定，因此即使我们以前从未遇到过它们，也可以轻松识别。</p>
+<h3 id="后缀-‘-if-‘"><a href="#后缀-‘-if-‘" class="headerlink" title="后缀 ‘ _if ‘"></a>后缀 ‘ _if ‘</h3><p>以 <code>_if</code> 结尾的算法基于条件执行操作。这些函数需要一个谓词——一个接受元素作为输入并返回布尔值的函数，该布尔值指示元素是否满足特定标准。示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">IsEven</span><span class="params">(<span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value % <span class="number">2</span> == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; myVec = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">137</span>, <span class="number">137</span>&#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;偶数元素数量: &quot;</span> </span><br><span class="line">              &lt;&lt; <span class="built_in">count_if</span>(myVec.<span class="built_in">begin</span>(), myVec.<span class="built_in">end</span>(), IsEven) &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="关键字-‘-copy-‘"><a href="#关键字-‘-copy-‘" class="headerlink" title="关键字 ‘ copy ‘"></a>关键字 ‘ copy ‘</h3><p>名称中包含 <code>copy</code> 的算法执行操作并将结果存储在由另一个迭代器指定的新位置。当想保留原始数据的同时处理转换后的数据时，这非常有用。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; src = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; dest;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 为新元素腾出空间</span></span><br><span class="line">    dest.<span class="built_in">resize</span>(src.<span class="built_in">size</span>());</span><br><span class="line"></span><br><span class="line">    <span class="built_in">remove_copy_if</span>(src.<span class="built_in">begin</span>(), src.<span class="built_in">end</span>(), dest.<span class="built_in">begin</span>(), [](<span class="type">int</span> x) &#123; <span class="keyword">return</span> x % <span class="number">2</span> == <span class="number">0</span>; &#125;);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> val : dest) &#123;</span><br><span class="line">        std::cout &lt;&lt; val &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    std::cout &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="后缀-‘-n-‘"><a href="#后缀-‘-n-‘" class="headerlink" title="后缀 ‘_n ‘"></a>后缀 ‘_n ‘</h3><p>算法名称中的 <code>_n</code> 后缀表明操作将执行指定次数，而不是在一个范围内执行。当确切的操作次数比数据范围更重要时，这特别有用。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;deque&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::deque&lt;<span class="type">int</span>&gt; <span class="title">myDeque</span><span class="params">(<span class="number">10</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">fill_n</span>(myDeque.<span class="built_in">begin</span>(), <span class="number">10</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> num : myDeque) &#123;</span><br><span class="line">        std::cout &lt;&lt; num &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    std::cout &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>fill_n</code> 将 <code>myDeque</code> 的前十个元素设置为零。</p>
+<h2 id="解析-STL-迭代器的分类"><a href="#解析-STL-迭代器的分类" class="headerlink" title="解析 STL 迭代器的分类"></a>解析 STL 迭代器的分类</h2><p>在 C++ 标准模板库（STL）中，迭代器是访问和操作容器中元素的关键工具。由于不同容器的内部结构差异，迭代器的功能也有所不同，因此 STL 迭代器被分为几种不同的类型，每种迭代器具有不同的能力和限制。了解这些迭代器的分类对于有效使用 STL 是非常重要的。</p>
+<h3 id="迭代器的分类及功能"><a href="#迭代器的分类及功能" class="headerlink" title="迭代器的分类及功能"></a>迭代器的分类及功能</h3><p>迭代器按照功能强弱分为五种类型，从功能最弱到功能最强依次是：</p>
+<ol>
+<li><strong>输出迭代器（Output Iterators）</strong><ul>
+<li>输出迭代器允许写入值（使用 <code>*myItr = value</code> 语法）。</li>
+<li>可以向前移动（使用 <code>++</code> 操作符）。</li>
+<li>不能读取值或使用 <code>+=</code> 或 <code>-</code> 操作符。</li>
+</ul>
+</li>
+<li><strong>输入迭代器（Input Iterators）</strong><ul>
+<li>输入迭代器允许读取值（使用 <code>value = *myItr</code> 语法）。</li>
+<li>不能写入值或遍历同一范围两次。</li>
+</ul>
+</li>
+<li><strong>前向迭代器（Forward Iterators）</strong><ul>
+<li>结合了输入和输出迭代器的功能，支持读写操作。</li>
+<li>只能向前移动（使用 <code>++</code> 操作符）。</li>
+</ul>
+</li>
+<li><strong>双向迭代器（Bidirectional Iterators）</strong><ul>
+<li>拥有前向迭代器的所有功能。</li>
+<li>可以向后移动（使用 <code>--</code> 操作符）。</li>
+<li>通常用于像 <code>map</code> 和 <code>set</code> 这样的容器。</li>
+</ul>
+</li>
+<li><strong>随机访问迭代器（Random-Access Iterators）</strong><ul>
+<li>提供最大的功能，支持任意前后移动。</li>
+<li>支持迭代器加减、使用方括号语法和 <code>+</code>、<code>+=</code> 操作。</li>
+<li>主要用于 <code>vector</code> 和 <code>deque</code>。</li>
+</ul>
+</li>
+</ol>
+<h3 id="为什么要区分迭代器类型？"><a href="#为什么要区分迭代器类型？" class="headerlink" title="为什么要区分迭代器类型？"></a>为什么要区分迭代器类型？</h3><p>由于容器的内部数据结构不同，迭代器的实现和性能也会有很大差异。例如，<code>vector</code> 和 <code>deque</code> 支持随机访问迭代器，因为它们的元素是连续存储的，可以通过简单的地址计算快速访问任何元素。相反，<code>set</code> 和 <code>map</code> 通常使用树结构存储元素，所以它们的迭代器只能一步一步地前进或后退，这种操作的复杂度是线性的。</p>
+<p>在实际编程中，了解并使用正确类型的迭代器非常关键，因为它关系到代码的性能和效率。当一个库函数需要特定类型的迭代器时，提供一个功能相当或更强大的迭代器是可行的。例如，如果一个函数需要一个前向迭代器，那么提供一个前向迭代器、双向迭代器或随机访问迭代器都是可以的。</p>
+<p>通过掌握这些迭代器的分类和功能，可以更加灵活和高效地使用 STL，从而编写出更优雅和高效的 C++ 代码。</p>
+<p><img src="G:\Cpp_Learn\full_course_reader\notes\assets\image-20240423225530689.png" alt="image-20240423225530689"></p>
+<h2 id="探索-STL-重排序算法"><a href="#探索-STL-重排序算法" class="headerlink" title="探索 STL 重排序算法"></a>探索 STL 重排序算法</h2><p>在 C++ 的标准模板库（STL）中，有一系列用于重排序容器中元素的算法。这些算法能够在不改变元素内容的前提下，改变元素的排列顺序。以下是三种主要的重排序算法：<code>sort</code>、<code>random_shuffle</code> 和 <code>rotate</code>，它们各自的用途和功能都非常实用。</p>
+<h3 id="排序算法（sort）"><a href="#排序算法（sort）" class="headerlink" title="排序算法（sort）"></a>排序算法（<code>sort</code>）</h3><p><code>sort</code> 算法是用于将容器中的元素按照升序排序。此算法要求传入的迭代器为随机访问迭代器，因此它不能用于 <code>map</code> 或 <code>set</code> 类型的容器，不过这些容器本身就是有序的。</p>
+<p><strong>基本用法：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; myVector = &#123;<span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">2</span>&#125;;</span><br><span class="line">std::<span class="built_in">sort</span>(myVector.<span class="built_in">begin</span>(), myVector.<span class="built_in">end</span>());</span><br></pre></td></tr></table></figure>
+
+<p>此外，<code>sort</code> 还允许指定一个自定义的比较函数，以实现不同的排序准则。</p>
+<p><strong>自定义比较函数示例：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">placeT</span> &#123;</span><br><span class="line">    <span class="type">int</span> x;</span><br><span class="line">    <span class="type">int</span> y;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">ComparePlaces</span><span class="params">(placeT one, placeT two)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (one.x != two.x) <span class="keyword">return</span> one.x &lt; two.x;</span><br><span class="line">    <span class="keyword">return</span> one.y &lt; two.y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::vector&lt;placeT&gt; myPlaceVector = &#123;&#123;<span class="number">1</span>, <span class="number">2</span>&#125;, &#123;<span class="number">3</span>, <span class="number">1</span>&#125;, &#123;<span class="number">1</span>, <span class="number">1</span>&#125;&#125;;</span><br><span class="line">std::<span class="built_in">sort</span>(myPlaceVector.<span class="built_in">begin</span>(), myPlaceVector.<span class="built_in">end</span>(), ComparePlaces);</span><br></pre></td></tr></table></figure>
+
+<h3 id="随机打乱算法（random-shuffle）"><a href="#随机打乱算法（random-shuffle）" class="headerlink" title="随机打乱算法（random_shuffle）"></a>随机打乱算法（<code>random_shuffle</code>）</h3><p><code>random_shuffle</code> 算法用于随机打乱容器中的元素。类似于 <code>sort</code>，这个算法也需要随机访问迭代器。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; myVector = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line">std::<span class="built_in">random_shuffle</span>(myVector.<span class="built_in">begin</span>(), myVector.<span class="built_in">end</span>());</span><br></pre></td></tr></table></figure>
+
+<p>在使用 <code>random_shuffle</code> 之前，建议使用 <code>srand</code> 函数来设定随机数生成器的种子，以确保每次程序运行结果的随机性。</p>
+<h3 id="旋转算法（rotate）"><a href="#旋转算法（rotate）" class="headerlink" title="旋转算法（rotate）"></a>旋转算法（<code>rotate</code>）</h3><p><code>rotate</code> 算法通过循环移动容器中的元素，使得指定位置的元素变为容器的开始。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; v = &#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line">std::<span class="built_in">rotate</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">begin</span>() + <span class="number">2</span>, v.<span class="built_in">end</span>());</span><br></pre></td></tr></table></figure>
+<p>在此示例中，向量 <code>v</code> 中的元素会被旋转，结果为 <code>&#123;2, 3, 4, 5, 0, 1&#125;</code>。</p>
+<p>这些重排序算法在日常编程中非常有用，它们可以帮助开发者有效地处理和变换数据。了解和运用这些算法，可以极大地提高编程效率和代码的可读性。</p>
+<h2 id="探索-STL-中的搜索算法"><a href="#探索-STL-中的搜索算法" class="headerlink" title="探索 STL 中的搜索算法"></a>探索 STL 中的搜索算法</h2><p>在数据处理过程中，常常需要在容器中查找特定的元素。例如，你可能想知道一个向量是否包含一个特定的元素。尽管 <code>map</code> 和 <code>set</code> 容器提供了内置的查找功能，<code>vector</code> 和 <code>deque</code> 等线性容器则缺少这样的功能。好在，STL 提供了多种算法来补充这一功能缺失。</p>
+<h3 id="find-算法"><a href="#find-算法" class="headerlink" title="find 算法"></a><code>find</code> 算法</h3><p><code>find</code> 函数是最基本的搜索算法，它接受两个迭代器（定义搜索范围）和一个值，返回第一个匹配该值的元素的迭代器。如果范围内没有匹配的元素，<code>find</code> 返回第二个迭代器作为哨兵值。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; myVector = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">137</span>, <span class="number">5</span>&#125;;</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">find</span>(myVector.<span class="built_in">begin</span>(), myVector.<span class="built_in">end</span>(), <span class="number">137</span>) != myVector.<span class="built_in">end</span>()) &#123;</span><br><span class="line">    <span class="comment">// 向量包含元素 137</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>虽然你可以在 <code>map</code> 和 <code>set</code> 上使用 <code>find</code>，但通常不推荐这样做。因为 <code>map</code> 和 <code>set</code> 的成员函数 <code>find</code> 使用了容器内部数据结构的信息来加快搜索速度，而 STL 的 <code>find</code> 函数则必须线性地遍历元素，效率较低。</p>
+<h3 id="binary-search-算法"><a href="#binary-search-算法" class="headerlink" title="binary_search 算法"></a><code>binary_search</code> 算法</h3><p>如果你有一个已排序的线性容器（如排序后的 <code>vector</code>），可以使用 <code>binary_search</code> 来执行搜索，这比线性搜索快得多。<code>binary_search</code> 仅返回一个布尔值，表示是否找到了指定的元素。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; myVector = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">137</span>&#125;;  <span class="comment">// 假设已排序</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">binary_search</span>(myVector.<span class="built_in">begin</span>(), myVector.<span class="built_in">end</span>(), <span class="number">137</span>)) &#123;</span><br><span class="line">    <span class="comment">// 找到了元素 137</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果容器使用了特殊的比较函数进行排序，你也可以将这个比较函数传递给 <code>binary_search</code>。但要确保使用一致的比较函数，否则可能导致 <code>binary_search</code> 工作不正常。</p>
+<h3 id="lower-bound-算法"><a href="#lower-bound-算法" class="headerlink" title="lower_bound 算法"></a><code>lower_bound</code> 算法</h3><p>如果你需要在排序的容器中找到一个元素并获取指向该元素的迭代器，可以使用 <code>lower_bound</code>。这个算法返回指向第一个不小于指定值的元素的迭代器。如果没有找到精确匹配的元素，<code>lower_bound</code> 可能返回指向一个更大元素的迭代器，因此在使用返回的迭代器前需要进行检查。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; myVector = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">137</span>&#125;;  <span class="comment">// 假设已排序</span></span><br><span class="line"><span class="keyword">auto</span> it = <span class="built_in">lower_bound</span>(myVector.<span class="built_in">begin</span>(), myVector.<span class="built_in">end</span>(), <span class="number">4</span>);</span><br><span class="line"><span class="keyword">if</span> (it != myVector.<span class="built_in">end</span>() &amp;&amp; *it == <span class="number">4</span>) &#123;</span><br><span class="line">    <span class="comment">// 找到元素 4</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 元素 4 不在向量中</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这些搜索算法是处理 STL 容器中数据的强大工具。合理使用这些算法不仅可以提高代码的效率，还能使代码更加清晰和易于维护。</p>
+<h2 id="迭代器适配器"><a href="#迭代器适配器" class="headerlink" title="迭代器适配器"></a>迭代器适配器</h2><p>在使用 C++ 标准模板库（STL）的过程中，当我们想要通过算法生成数据范围时，确保目标位置有足够的空间来存放结果是非常重要的。例如，<code>copy</code> 算法需要目标容器预先分配足够的空间以防写入数据时超出范围导致未定义行为。为了解决这个问题，STL 提供了一类特殊的工具，称为迭代器适配器，这些适配器扩展了迭代器的功能，使其更加灵活和强大。</p>
+<h3 id="ostream-iterator-——-输出流迭代器"><a href="#ostream-iterator-——-输出流迭代器" class="headerlink" title="ostream_iterator —— 输出流迭代器"></a><code>ostream_iterator</code> —— 输出流迭代器</h3><p><code>ostream_iterator</code> 是一种输出流迭代器，它不指向任何实际的容器元素，而是将数据输出到指定的流，如 <code>cout</code> 或文件流。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::ostream_iterator&lt;<span class="type">int</span>&gt; <span class="title">myItr</span><span class="params">(std::cout, <span class="string">&quot; &quot;</span>)</span></span>;</span><br><span class="line">    *myItr = <span class="number">137</span>; <span class="comment">// 输出 137 到 cout</span></span><br><span class="line">    ++myItr;</span><br><span class="line">    *myItr = <span class="number">42</span>;  <span class="comment">// 输出 42 到 cout</span></span><br><span class="line">    ++myItr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码通过 <code>ostream_iterator</code> 将整数直接写入到标准输出流 <code>cout</code>，数字之间由空格分隔。</p>
+<h3 id="使用-ostream-iterator-结合-STL-算法"><a href="#使用-ostream-iterator-结合-STL-算法" class="headerlink" title="使用 ostream_iterator 结合 STL 算法"></a>使用 <code>ostream_iterator</code> 结合 STL 算法</h3><p>由于 <code>ostream_iterator</code> 本身是一个迭代器，我们可以将其与 STL 算法结合使用，从而实现复杂的输出任务。例如，我们可以将一个容器中的所有元素复制到输出流中。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; myVector = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line">    std::<span class="built_in">copy</span>(myVector.<span class="built_in">begin</span>(), myVector.<span class="built_in">end</span>(), std::<span class="built_in">ostream_iterator</span>&lt;<span class="type">int</span>&gt;(std::cout, <span class="string">&quot; &quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此代码将 <code>myVector</code> 中的所有元素复制到 <code>cout</code>，元素之间以空格分隔，一行代码实现了整个向量的输出。</p>
+<h3 id="back-insert-iterator-——-后插迭代器"><a href="#back-insert-iterator-——-后插迭代器" class="headerlink" title="back_insert_iterator —— 后插迭代器"></a><code>back_insert_iterator</code> —— 后插迭代器</h3><p>另一个有用的迭代器适配器是 <code>back_insert_iterator</code>，这种迭代器在写入数据时会自动调用 <code>push_back</code> 方法将数据追加到容器的末尾。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; myVector;</span><br><span class="line">    std::back_insert_iterator&lt;std::vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">itr</span>(myVector);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i) &#123;</span><br><span class="line">        *itr = i; <span class="comment">// 追加值到 myVector</span></span><br><span class="line">        ++itr;</span><br><span class="line">    &#125;</span><br><span class="line">    std::<span class="built_in">copy</span>(myVector.<span class="built_in">begin</span>(), myVector.<span class="built_in">end</span>(), std::<span class="built_in">ostream_iterator</span>&lt;<span class="type">int</span>&gt;(std::cout, <span class="string">&quot; &quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这个例子中，<code>back_insert_iterator</code> 被用来动态地向 <code>myVector</code> 添加元素，之后通过 <code>copy</code> 和 <code>ostream_iterator</code> 输出所有元素。</p>
+<h3 id="insert-iterator-的应用"><a href="#insert-iterator-的应用" class="headerlink" title="insert_iterator 的应用"></a><code>insert_iterator</code> 的应用</h3><p><code>insert_iterator</code> 是一种更通用的迭代器适配器，它可以在容器的任意位置插入元素。这种迭代器在处理需要元素插入的算法，如集合操作算法 <code>set_union</code>, <code>set_intersection</code>, <code>set_difference</code> 等时尤为有用。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">std::set&lt;int&gt; setOne = &#123;1, 2, 3&#125;;</span><br><span class="line">std::set&lt;int&gt; setTwo = &#123;2, 3, 4&#125;;</span><br><span class="line">std::set&lt;int&gt; result;</span><br><span class="line">std::set_union(setOne.begin(), setOne.end(), setTwo.begin(), setTwo.end(), std::inserter(result, result.begin()));</span><br></pre></td></tr></table></figure>
+
+<p>这段代码计算了 <code>setOne</code> 和 <code>setTwo</code> 的并集，并使用 <code>insert_iterator</code> 将结果存入 <code>result</code>。</p>
+<h3 id="istream-iterator-——-输入流迭代器"><a href="#istream-iterator-——-输入流迭代器" class="headerlink" title="istream_iterator —— 输入流迭代器"></a><code>istream_iterator</code> —— 输入流迭代器</h3><p><code>istream_iterator</code> 是另一种迭代器适配器，它允许从输入流（如文件或标准输入）读取数据。这使得 <code>istream_iterator</code> 成为处理输入数据流的理想工具。</p>
+<p><strong>示例用法：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::istream_iterator&lt;int&gt; it(std::cin);</span><br><span class="line">std::istream_iterator&lt;int&gt; end;</span><br><span class="line">std::vector&lt;int&gt; values(it, end); // 从标准输入读取整数直到 EOF</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，从标准输入读取的整数被存储到 <code>values</code> 向量中，直到输入结束。</p>
+<h2 id="常见的迭代器及其应用"><a href="#常见的迭代器及其应用" class="headerlink" title="常见的迭代器及其应用"></a>常见的迭代器及其应用</h2><p>在 C++ 标准模板库（STL）中，迭代器适配器扩展了基本迭代器的功能，使它们能够在特定的上下文中更加有效地工作。下面是一些常见迭代器适配器的详细介绍，这些适配器广泛应用于处理容器和流中的数据。</p>
+<h2 id="常见的迭代器适配器及其应用"><a href="#常见的迭代器适配器及其应用" class="headerlink" title="常见的迭代器适配器及其应用"></a>常见的迭代器适配器及其应用</h2><p>在 C++ 标准模板库（STL）中，迭代器适配器扩展了基本迭代器的功能，使它们能够在特定的上下文中更加有效地工作。下面是一些常见迭代器适配器的详细介绍，这些适配器广泛应用于处理容器和流中的数据。</p>
+<h3 id="输出迭代器"><a href="#输出迭代器" class="headerlink" title="输出迭代器"></a>输出迭代器</h3><h4 id="back-insert-iterator"><a href="#back-insert-iterator" class="headerlink" title="back_insert_iterator"></a><code>back_insert_iterator</code></h4><ul>
+<li><p><strong>定义</strong>: <code>back_insert_iterator&lt;Container&gt;</code></p>
+</li>
+<li><p><strong>构造方法</strong>: <code>back_insert_iterator&lt;vector&lt;int&gt;&gt; itr(myVector);</code></p>
+</li>
+<li><p><strong>功能</strong>: 通过调用容器的 <code>push_back</code> 方法来存储元素。</p>
+</li>
+<li><p><strong>用法</strong>: 可以显式声明或使用 <code>back_inserter</code> 函数快速创建。</p>
+</li>
+<li><p>示例:</p>
+<p>使用 <code>back_insert_iterator</code> 将元素添加到 <code>vector</code> 的末尾。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; data = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; result;</span><br><span class="line">    std::<span class="built_in">copy</span>(data.<span class="built_in">begin</span>(), data.<span class="built_in">end</span>(), std::<span class="built_in">back_inserter</span>(result));</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> x : result) &#123;</span><br><span class="line">        std::cout &lt;&lt; x &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="front-insert-iterator"><a href="#front-insert-iterator" class="headerlink" title="front_insert_iterator"></a><code>front_insert_iterator</code></h4><ul>
+<li><p><strong>定义</strong>: <code>front_insert_iterator&lt;Container&gt;</code></p>
+</li>
+<li><p><strong>构造方法</strong>: <code>front_insert_iterator&lt;deque&lt;int&gt;&gt; itr(myIntDeque);</code></p>
+</li>
+<li><p><strong>功能</strong>: 通过调用容器的 <code>push_front</code> 方法来存储元素。</p>
+</li>
+<li><p><strong>限制</strong>: 不能用于不支持 <code>push_front</code> 方法的容器，如 <code>vector</code>。</p>
+</li>
+<li><p><strong>用法</strong>: 可以使用 <code>front_inserter</code> 函数创建。</p>
+</li>
+<li><p>示例:</p>
+<p>使用 <code>front_insert_iterator</code> 将元素添加到 <code>deque</code> 的前端。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;deque&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::deque&lt;<span class="type">int</span>&gt; data;</span><br><span class="line">    std::front_insert_iterator&lt;std::deque&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">inserter</span>(data);</span><br><span class="line">    *inserter = <span class="number">1</span>;</span><br><span class="line">    *inserter = <span class="number">2</span>;</span><br><span class="line">    *inserter = <span class="number">3</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> x : data) &#123;</span><br><span class="line">        std::cout &lt;&lt; x &lt;&lt; <span class="string">&quot; &quot;</span>;  <span class="comment">// Output: 3 2 1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="insert-iterator"><a href="#insert-iterator" class="headerlink" title="insert_iterator"></a><code>insert_iterator</code></h4><ul>
+<li><strong>定义</strong>: <code>insert_iterator&lt;Container&gt;</code></li>
+<li><strong>构造方法</strong>: <code>insert_iterator&lt;set&lt;int&gt;&gt; itr(mySet, mySet.begin());</code></li>
+<li><strong>功能</strong>: 在指定位置调用容器的 <code>insert</code> 方法来插入元素。</li>
+<li><strong>适用范围</strong>: 可用于任何容器，尤其适合于 <code>set</code>。</li>
+<li><strong>用法</strong>: 可以通过 <code>inserter</code> 函数生成。</li>
+<li>示例:</li>
+</ul>
+<p>​	使用 <code>insert_iterator</code> 在 <code>set</code> 中插入元素。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;set&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::set&lt;<span class="type">int</span>&gt; numbers;</span><br><span class="line">    std::insert_iterator&lt;std::set&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">inserter</span>(numbers, numbers.<span class="built_in">begin</span>());</span><br><span class="line">    *inserter = <span class="number">3</span>;</span><br><span class="line">    *inserter = <span class="number">1</span>;</span><br><span class="line">    *inserter = <span class="number">2</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> x : numbers) &#123;</span><br><span class="line">        std::cout &lt;&lt; x &lt;&lt; <span class="string">&quot; &quot;</span>;  <span class="comment">// Output: 1 2 3 (automatically sorted)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="流迭代器"><a href="#流迭代器" class="headerlink" title="流迭代器"></a>流迭代器</h3><h4 id="ostream-iterator"><a href="#ostream-iterator" class="headerlink" title="ostream_iterator"></a><code>ostream_iterator</code></h4><ul>
+<li><strong>定义</strong>: <code>ostream_iterator&lt;Type&gt;</code></li>
+<li><strong>构造方法</strong>: <code>ostream_iterator&lt;int&gt; itr(cout, &quot; &quot;);</code></li>
+<li><strong>功能</strong>: 将元素写入输出流中，可选地在每个元素后添加分隔符。</li>
+<li><strong>用法</strong>: 初始化时必须指定输出流和可选的分隔符。</li>
+<li>示例:</li>
+</ul>
+<p>​	使用 <code>ostream_iterator</code> 输出元素到标准输出。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; numbers = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line">    <span class="function">std::ostream_iterator&lt;<span class="type">int</span>&gt; <span class="title">output</span><span class="params">(std::cout, <span class="string">&quot; &quot;</span>)</span></span>;</span><br><span class="line">    std::<span class="built_in">copy</span>(numbers.<span class="built_in">begin</span>(), numbers.<span class="built_in">end</span>(), output);  <span class="comment">// Output: 1 2 3</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="istream-iterator"><a href="#istream-iterator" class="headerlink" title="istream_iterator"></a><code>istream_iterator</code></h4><ul>
+<li><strong>定义</strong>: <code>istream_iterator&lt;Type&gt;</code></li>
+<li><strong>构造方法</strong>: <code>istream_iterator&lt;int&gt; itr(cin);</code></li>
+<li><strong>功能</strong>: 从指定的输入流中读取值。</li>
+<li><strong>特性</strong>: 当到达流的末尾时，会取得一个特殊的“结束”值。</li>
+<li><strong>注意事项</strong>: 易受输入流状态影响，使用时需注意。</li>
+<li>示例:</li>
+</ul>
+<p>​	使用 <code>istream_iterator</code> 从标准输入读取整数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; numbers;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Enter numbers separated by spaces: &quot;</span>;</span><br><span class="line">    std::<span class="built_in">copy</span>(std::<span class="built_in">istream_iterator</span>&lt;<span class="type">int</span>&gt;(std::cin), std::<span class="built_in">istream_iterator</span>&lt;<span class="type">int</span>&gt;(), std::<span class="built_in">back_inserter</span>(numbers));</span><br><span class="line">    </span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;You entered: &quot;</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> num : numbers) &#123;</span><br><span class="line">        std::cout &lt;&lt; num &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ostreambuf-iterator"><a href="#ostreambuf-iterator" class="headerlink" title="ostreambuf_iterator"></a><code>ostreambuf_iterator</code></h4><ul>
+<li><strong>定义</strong>: <code>ostreambuf_iterator&lt;char&gt;</code></li>
+<li><strong>构造方法</strong>: <code>ostreambuf_iterator&lt;char&gt; itr(cout);</code></li>
+<li><strong>功能</strong>: 将原始字符数据写入输出流。</li>
+<li><strong>限制</strong>: 仅能写入字符数据。</li>
+<li>示例:</li>
+</ul>
+<p>​	使用 <code>ostreambuf_iterator</code> 输出字符到标准输出。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::ostreambuf_iterator&lt;<span class="type">char</span>&gt; <span class="title">output</span><span class="params">(std::cout)</span></span>;</span><br><span class="line">    *output = <span class="string">&#x27;H&#x27;</span>;</span><br><span class="line">    *output = <span class="string">&#x27;i&#x27;</span>;</span><br><span class="line">    *output = <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="istreambuf-iterator"><a href="#istreambuf-iterator" class="headerlink" title="istreambuf_iterator"></a><code>istreambuf_iterator</code></h4><ul>
+<li><p><strong>定义</strong>: <code>istreambuf_iterator&lt;char&gt;</code></p>
+</li>
+<li><p><strong>构造方法</strong>: <code>istreambuf_iterator&lt;char&gt; itr(cin);</code></p>
+</li>
+<li><p><strong>功能</strong>: 从输入流中读取未格式化的数据。</p>
+</li>
+<li><p><strong>特性</strong>: 始终读取字符数据，不跳过空白。</p>
+</li>
+<li><p><strong>用途</strong>: 常用于从文件中读取原始数据进行处理。</p>
+</li>
+<li><p>示例:</p>
+<p>使用 <code>istreambuf_iterator</code> 从标准输入读取原始字符数据。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Enter text, followed by EOF: &quot;</span>;</span><br><span class="line">    <span class="function">std::istreambuf_iterator&lt;<span class="type">char</span>&gt; <span class="title">start</span><span class="params">(std::cin)</span>, end</span>;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">char</span>&gt; <span class="title">characters</span><span class="params">(start, end)</span></span>;</span><br><span class="line">    </span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;You entered: &quot;</span>;</span><br><span class="line">    std::<span class="built_in">copy</span>(characters.<span class="built_in">begin</span>(), characters.<span class="built_in">end</span>(), std::<span class="built_in">ostream_iterator</span>&lt;<span class="type">char</span>&gt;(std::cout, <span class="string">&quot;&quot;</span>));</span><br><span class="line">    std::cout &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag"># C语言</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/04/17/bashshell%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" rel="prev" title="bashshell基础命令">
+      <i class="fa fa-chevron-left"></i> bashshell基础命令
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/04/25/XYCTF%20WP/" rel="next" title="XYCTF_WP">
+      XYCTF_WP <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E5%AD%90"><span class="nav-number">1.</span> <span class="nav-text">引子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AASTL%E7%AE%97%E6%B3%95%EF%BC%9AAccumulate"><span class="nav-number">2.</span> <span class="nav-text">第一个STL算法：Accumulate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%91%BD%E5%90%8D%E7%9A%84%E7%BA%A6%E5%AE%9A"><span class="nav-number">3.</span> <span class="nav-text">算法命名的约定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E7%BC%80-%E2%80%98-if-%E2%80%98"><span class="nav-number">3.1.</span> <span class="nav-text">后缀 ‘ _if ‘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97-%E2%80%98-copy-%E2%80%98"><span class="nav-number">3.2.</span> <span class="nav-text">关键字 ‘ copy ‘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E7%BC%80-%E2%80%98-n-%E2%80%98"><span class="nav-number">3.3.</span> <span class="nav-text">后缀 ‘_n ‘</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90-STL-%E8%BF%AD%E4%BB%A3%E5%99%A8%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">解析 STL 迭代器的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8A%9F%E8%83%BD"><span class="nav-number">4.1.</span> <span class="nav-text">迭代器的分类及功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%8C%BA%E5%88%86%E8%BF%AD%E4%BB%A3%E5%99%A8%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="nav-number">4.2.</span> <span class="nav-text">为什么要区分迭代器类型？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A2%E7%B4%A2-STL-%E9%87%8D%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">探索 STL 重排序算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%EF%BC%88sort%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">排序算法（sort）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E6%89%93%E4%B9%B1%E7%AE%97%E6%B3%95%EF%BC%88random-shuffle%EF%BC%89"><span class="nav-number">5.2.</span> <span class="nav-text">随机打乱算法（random_shuffle）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%8B%E8%BD%AC%E7%AE%97%E6%B3%95%EF%BC%88rotate%EF%BC%89"><span class="nav-number">5.3.</span> <span class="nav-text">旋转算法（rotate）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A2%E7%B4%A2-STL-%E4%B8%AD%E7%9A%84%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95"><span class="nav-number">6.</span> <span class="nav-text">探索 STL 中的搜索算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#find-%E7%AE%97%E6%B3%95"><span class="nav-number">6.1.</span> <span class="nav-text">find 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#binary-search-%E7%AE%97%E6%B3%95"><span class="nav-number">6.2.</span> <span class="nav-text">binary_search 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lower-bound-%E7%AE%97%E6%B3%95"><span class="nav-number">6.3.</span> <span class="nav-text">lower_bound 算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8"><span class="nav-number">7.</span> <span class="nav-text">迭代器适配器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ostream-iterator-%E2%80%94%E2%80%94-%E8%BE%93%E5%87%BA%E6%B5%81%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">7.1.</span> <span class="nav-text">ostream_iterator —— 输出流迭代器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-ostream-iterator-%E7%BB%93%E5%90%88-STL-%E7%AE%97%E6%B3%95"><span class="nav-number">7.2.</span> <span class="nav-text">使用 ostream_iterator 结合 STL 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#back-insert-iterator-%E2%80%94%E2%80%94-%E5%90%8E%E6%8F%92%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">7.3.</span> <span class="nav-text">back_insert_iterator —— 后插迭代器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#insert-iterator-%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">7.4.</span> <span class="nav-text">insert_iterator 的应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#istream-iterator-%E2%80%94%E2%80%94-%E8%BE%93%E5%85%A5%E6%B5%81%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">7.5.</span> <span class="nav-text">istream_iterator —— 输入流迭代器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E8%BF%AD%E4%BB%A3%E5%99%A8%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8"><span class="nav-number">8.</span> <span class="nav-text">常见的迭代器及其应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E8%BF%AD%E4%BB%A3%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8"><span class="nav-number">9.</span> <span class="nav-text">常见的迭代器适配器及其应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">9.1.</span> <span class="nav-text">输出迭代器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#back-insert-iterator"><span class="nav-number">9.1.1.</span> <span class="nav-text">back_insert_iterator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#front-insert-iterator"><span class="nav-number">9.1.2.</span> <span class="nav-text">front_insert_iterator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-iterator"><span class="nav-number">9.1.3.</span> <span class="nav-text">insert_iterator</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">9.2.</span> <span class="nav-text">流迭代器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ostream-iterator"><span class="nav-number">9.2.1.</span> <span class="nav-text">ostream_iterator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#istream-iterator"><span class="nav-number">9.2.2.</span> <span class="nav-text">istream_iterator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ostreambuf-iterator"><span class="nav-number">9.2.3.</span> <span class="nav-text">ostreambuf_iterator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#istreambuf-iterator"><span class="nav-number">9.2.4.</span> <span class="nav-text">istreambuf_iterator</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">AAAFORGE</p>
+  <div class="site-description" itemprop="description">此情可待成追忆，只是当时已惘然</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AAAFORGE</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">本博客全站共42.4k字</span>
+</div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
