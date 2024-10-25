@@ -17,21 +17,21 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":"ture"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="小结 软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。">
+  <meta name="description" content="小结  软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="抽象记忆点">
 <meta property="og:url" content="http://example.com/2024/05/07/2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/index.html">
 <meta property="og:site_name" content="杜鹃声">
-<meta property="og:description" content="小结 软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。">
+<meta property="og:description" content="小结  软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-07T14:07:13.000Z">
 <meta property="article:modified_time" content="2024-05-07T14:26:24.000Z">
 <meta property="article:author" content="AAAFORGE">
-<meta property="article:tag" content="C++">
 <meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://example.com/2024/05/07/2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/">
@@ -78,11 +78,7 @@
   </style>
 </noscript>
 
-<!-- hexo injector head_end start -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --></head>
+</head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -110,6 +106,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -134,20 +131,43 @@
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
 
     
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
 
 
     <main class="main">
@@ -202,158 +222,136 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
-<li><p><strong>软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。</strong><span id="more"></span></p>
+        <h1 id="section"></h1>
+<h2 id="小结">小结</h2>
+<ol type="1">
+<li><strong>软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。</strong><span id="more"></span>
 <ul>
 <li>这表明现代软件的规模和复杂性，需要采取有效的管理和设计方法。</li>
-</ul>
-</li>
-<li><p><strong>软件系统中的单个错误值可能导致整个系统失败。</strong></p>
+</ul></li>
+<li><strong>软件系统中的单个错误值可能导致整个系统失败。</strong>
 <ul>
 <li>这凸显了在编写软件时准确性和健壮性的重要性。</li>
-</ul>
-</li>
-<li><p><strong>软件系统中可能的交互数量随着系统组件数量的增加呈指数增长。</strong></p>
+</ul></li>
+<li><strong>软件系统中可能的交互数量随着系统组件数量的增加呈指数增长。</strong>
 <ul>
 <li>这提醒我们，随着系统复杂性的增加，需要考虑和管理其交互。</li>
-</ul>
-</li>
-<li><p><strong>抽象提供了一种以更简单的术语呈现复杂对象的方法。</strong></p>
+</ul></li>
+<li><strong>抽象提供了一种以更简单的术语呈现复杂对象的方法。</strong>
 <ul>
 <li>通过抽象，我们可以隐藏细节，使用户能够更轻松地理解和操作对象。</li>
-</ul>
-</li>
-<li><p><strong>抽象将用户分为客户端和实现者，每个都有不同的任务。这种分离有时被称为抽象屏障。</strong></p>
+</ul></li>
+<li><strong>抽象将用户分为客户端和实现者，每个都有不同的任务。这种分离有时被称为抽象屏障。</strong>
 <ul>
 <li>这种分离使系统的设计更模块化和可维护，同时提供了清晰的界面和实现。</li>
-</ul>
-</li>
-<li><p><strong>抽象描述了许多可能的实现方式，而封装防止客户端窥视这些实现。</strong></p>
+</ul></li>
+<li><strong>抽象描述了许多可能的实现方式，而封装防止客户端窥视这些实现。</strong>
 <ul>
 <li>封装确保了实现细节的安全性和私密性，使得对象的内部状态可以受到保护。</li>
-</ul>
-</li>
-<li><p><strong>客户端与对象交互的方式称为该对象的接口。</strong></p>
+</ul></li>
+<li><strong>客户端与对象交互的方式称为该对象的接口。</strong>
 <ul>
 <li>接口定义了对象可用的方法和操作，隐藏了实现的细节。</li>
-</ul>
-</li>
-<li><p><strong>抽象减少了软件系统中的组件数量，降低了系统的最大复杂性。</strong></p>
+</ul></li>
+<li><strong>抽象减少了软件系统中的组件数量，降低了系统的最大复杂性。</strong>
 <ul>
 <li>通过抽象，我们可以简化系统的设计和实现，减少潜在的错误和复杂度。</li>
-</ul>
-</li>
-<li><p><strong>C++的结构体缺乏封装性，因为它们的实现即为接口。</strong></p>
+</ul></li>
+<li><strong>C++的结构体缺乏封装性，因为它们的实现即为接口。</strong>
 <ul>
 <li>这强调了使用类而不是结构体的重要性，以实现更好的封装和抽象。</li>
-</ul>
-</li>
-<li><p><strong>C++类的概念是接口与实现的实现。</strong></p>
+</ul></li>
+<li><strong>C++类的概念是接口与实现的实现。</strong>
 <ul>
 <li>类提供了一种结构化的方法来组织代码和数据，同时隐藏了实现的细节。</li>
-</ul>
-</li>
-<li><p><strong>类中列为public的成员形成了该类的接口，并对任何人可见。</strong></p>
+</ul></li>
+<li><strong>类中列为public的成员形成了该类的接口，并对任何人可见。</strong>
 <ul>
 <li>这强调了设计良好的接口的重要性，以促进代码的重用和可维护性。</li>
-</ul>
-</li>
-<li><p><strong>类中列为private的成员属于类的实现部分，只能被该类的成员函数查看。</strong></p>
+</ul></li>
+<li><strong>类中列为private的成员属于类的实现部分，只能被该类的成员函数查看。</strong>
 <ul>
 <li>封装私有成员确保了对实现细节的访问限制，提高了代码的安全性和可靠性。</li>
-</ul>
-</li>
-<li><p><strong>构造函数允许实现者从类被创建的那一刻开始强制执行不变量。</strong></p>
+</ul></li>
+<li><strong>构造函数允许实现者从类被创建的那一刻开始强制执行不变量。</strong>
 <ul>
 <li>构造函数确保了对象的有效初始化，并在创建对象时执行必要的设置和验证。</li>
-</ul>
-</li>
-<li><p><strong>私有成员函数允许实现者在不暴露实现细节给客户端的情况下分解代码。</strong></p>
+</ul></li>
+<li><strong>私有成员函数允许实现者在不暴露实现细节给客户端的情况下分解代码。</strong>
 <ul>
 <li>私有成员函数提供了一种将代码组织成更小、更易管理的部分的方法，同时保持了接口的简洁性和清晰性。</li>
-</ul>
-</li>
-<li><p><strong>类的实现通常分为包含类定义的.h文件和包含类实现的.cpp文件。</strong></p>
+</ul></li>
+<li><strong>类的实现通常分为包含类定义的.h文件和包含类实现的.cpp文件。</strong>
 <ul>
 <li>这种文件分区方法有助于组织代码，并使其更易于维护和理解。</li>
-</ul>
-</li>
-<li><p><strong>在实现之前设计类接口，以避免过度专门化接口。</strong></p>
+</ul></li>
+<li><strong>在实现之前设计类接口，以避免过度专门化接口。</strong>
 <ul>
 <li>这强调了设计良好的接口对于软件系统的灵活性和可维护性的重要性。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
-<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><ol>
-<li><strong>在我们讨论抽象时，我们谈到接口和模块化如何指数地降低了系统的最大复杂性。你能想到现实世界中引入间接性如何使得复杂系统更易于管理的例子吗？</strong><ul>
+<h2 id="练习">练习</h2>
+<ol type="1">
+<li><strong>在我们讨论抽象时，我们谈到接口和模块化如何指数地降低了系统的最大复杂性。你能想到现实世界中引入间接性如何使得复杂系统更易于管理的例子吗？</strong>
+<ul>
 <li>在现实世界中，一个例子是网络路由器。路由器通过在网络设备之间引入抽象层，如IP地址和路由表，来管理网络流量的路由。这种抽象层使得网络管理员可以轻松地管理和配置网络，而不必直接处理底层硬件和协议细节。</li>
-</ul>
-</li>
-<li><strong>getFrequency和setFrequency等函数的动机是什么，相对于只有一个公有频率数据成员来说？</strong><ul>
+</ul></li>
+<li><strong>getFrequency和setFrequency等函数的动机是什么，相对于只有一个公有频率数据成员来说？</strong>
+<ul>
 <li>使用getFrequency和setFrequency函数而不是公有频率数据成员的动机在于封装。通过提供访问和修改频率的公共接口，类可以隐藏其内部实现细节，并且可以在必要时对这些操作进行验证和限制，确保数据的一致性和有效性。</li>
-</ul>
-</li>
-<li><strong>构造函数是在什么时候调用的？为什么构造函数有用？</strong><ul>
+</ul></li>
+<li><strong>构造函数是在什么时候调用的？为什么构造函数有用？</strong>
+<ul>
 <li>构造函数在创建类的新实例时被调用。它用于初始化新对象的状态，确保对象在被使用之前处于一个已知的有效状态。构造函数可以执行必要的设置和验证，以确保对象的一致性和完整性。</li>
-</ul>
-</li>
-<li><strong>公有成员函数和私有成员函数有什么区别？</strong><ul>
+</ul></li>
+<li><strong>公有成员函数和私有成员函数有什么区别？</strong>
+<ul>
 <li>公有成员函数是类的接口的一部分，可以被任何人访问和调用。私有成员函数是类的实现的一部分，只能被类的其他成员函数调用，对外部代码不可见。</li>
-</ul>
-</li>
-<li><strong>类的.h文件中放置什么？.cpp文件中呢？</strong><ul>
+</ul></li>
+<li><strong>类的.h文件中放置什么？.cpp文件中呢？</strong>
+<ul>
 <li>类的.h文件包含类的声明和接口，包括成员变量和公有成员函数的声明。.cpp文件包含类的实现细节，包括构造函数、析构函数和其他私有成员函数的定义。</li>
-</ul>
-</li>
-<li><strong>我们在很大程度上谈论了流库和STL，却没有提及这些库在幕后是如何实现的。解释一下为什么抽象使得可以在不完全了解其工作原理的情况下使用这些库。</strong><ul>
+</ul></li>
+<li><strong>我们在很大程度上谈论了流库和STL，却没有提及这些库在幕后是如何实现的。解释一下为什么抽象使得可以在不完全了解其工作原理的情况下使用这些库。</strong>
+<ul>
 <li>抽象使得可以在不了解其实现细节的情况下使用这些库，因为它们提供了清晰简洁的接口，隐藏了复杂的内部实现。通过使用这些接口，开发人员可以方便地使用库中提供的功能，而不必担心其底层的实现细节。</li>
-</ul>
-</li>
-<li><strong>假设C++的设计略有不同，即标记为私有的数据成员只能读取但不能写入。也就是说，如果一个名为volume的数据成员被标记为私有，那么客户端可以通过写入myObject.volume来读取值，但不能直接写入volume变量。这将阻止类的客户端错误地修改实现，因为任何可能改变对象数据成员的操作都必须通过公共接口进行。然而，这种设置存在严重的设计缺陷，会使得类的实现变得困难。这个缺陷是什么？（提示：回想一下之前的音量&#x2F;衰减例子）</strong><ul>
+</ul></li>
+<li><strong>假设C++的设计略有不同，即标记为私有的数据成员只能读取但不能写入。也就是说，如果一个名为volume的数据成员被标记为私有，那么客户端可以通过写入myObject.volume来读取值，但不能直接写入volume变量。这将阻止类的客户端错误地修改实现，因为任何可能改变对象数据成员的操作都必须通过公共接口进行。然而，这种设置存在严重的设计缺陷，会使得类的实现变得困难。这个缺陷是什么？（提示：回想一下之前的音量/衰减例子）</strong>
+<ul>
 <li>这种设置的主要设计缺陷在于它破坏了封装性。封装的一个关键原则是将数据和操作放在一起，并确保它们是一致的。如果数据成员只能读取而不能写入，那么类的内部状态可能会在未受控制的情况下被外部修改，这会导致不一致和不可预测的行为，从而破坏了类的封装性和可维护性。</li>
-</ul>
-</li>
+</ul></li>
 <li>下面是一个表示购物清单的类的接口：</li>
 </ol>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
 <p>实现GroceryList类的代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    map&lt;string, string&gt; items;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span> </span>&#123;</span><br><span class="line">        items[item] = quantity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        items.<span class="built_in">erase</span>(item);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            <span class="keyword">return</span> items[item];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>; <span class="comment">// Return empty string if item not found</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<ol start="9">
-<li><p>为什么使用GroceryList类而不只是使用原始的map&lt;string, string&gt;？  </p>
+<ol start="9" type="1">
+<li>为什么使用GroceryList类而不只是使用原始的map&lt;string, string&gt;？
 <ul>
 <li>GroceryList类提供了更高层次的抽象，使得添加、删除和查询商品更加简单和直观。它封装了map的细节，提供了更清晰的接口，使得代码更易于维护和理解。</li>
-</ul>
-</li>
-<li><p>GroceryList类需要构造函数吗？为什么或为什么不？  </p>
+</ul></li>
+<li>GroceryList类需要构造函数吗？为什么或为什么不？
 <ul>
 <li>是的，GroceryList类需要构造函数。构造函数用于初始化类的内部状态，例如清单中包含的商品列表。</li>
-</ul>
-</li>
-<li><p>给出你在STL中遇到的带参数的构造函数的一个例子。  </p>
+</ul></li>
+<li>给出你在STL中遇到的带参数的构造函数的一个例子。
 <ul>
 <li>一个例子是vector的构造函数，它接受一个初始大小作为参数：<code>vector&lt;int&gt; vec(10);</code></li>
-</ul>
-</li>
-<li><p>参数化构造函数有什么用？  </p>
+</ul></li>
+<li>参数化构造函数有什么用？
 <ul>
 <li>参数化构造函数允许我们在创建对象时提供初始值，从而初始化对象的状态。这使得对象在创建时可以立即设置为特定的状态，而不需要调用额外的初始化函数。</li>
-</ul>
-</li>
-<li><p>下面是一个代表Keno游戏的类KenoGame的接口：</p>
-</li>
+</ul></li>
+<li>下面是一个代表Keno游戏的类KenoGame的接口：</li>
 </ol>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
 <p>实现KenoGame类的代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; chosenNumbers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line">        chosenNumbers.<span class="built_in">push_back</span>(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> chosenNumbers.<span class="built_in">size</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span> </span>&#123;</span><br><span class="line">        <span class="type">size_t</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : chosenNumbers) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">find</span>(values.<span class="built_in">begin</span>(), values.<span class="built_in">end</span>(), num) != values.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<ol start="14">
-<li>参考STL容器章节中Snake的实现。设计并实现一个代表蛇的类。在公共接口中支持哪些操作？如何实现它？<ul>
+<ol start="14" type="1">
+<li>参考STL容器章节中Snake的实现。设计并实现一个代表蛇的类。在公共接口中支持哪些操作？如何实现它？
+<ul>
 <li>蛇类的公共接口可能包括移动、增长、检查碰撞等操作。它可以通过一个链表或数组来存储蛇的身体部分，每次移动时更新身体部分的位置。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 
     </div>
@@ -364,8 +362,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/C/" rel="tag"># C++</a>
               <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
           </div>
 
         
@@ -439,7 +437,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text"></span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.1.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.2.</span> <span class="nav-text">练习</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#section"><span class="nav-number">1.</span> <span class="nav-text"></span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.1.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.2.</span> <span class="nav-text">练习</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -534,6 +532,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
