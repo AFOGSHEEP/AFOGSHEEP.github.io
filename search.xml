@@ -237,8 +237,8 @@ map 中的元素少于十个，则结果 set 应包含 map 中的每个字符串
 C++ 提供的强大功能来处理复杂的数据结构和算法操作。</p>
 ]]></content>
       <tags>
-        <tag>学习笔记</tag>
         <tag>C++</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -273,8 +273,8 @@ n = 0 \\ n \times (n - 1)! &amp; \text{otherwise} \end{cases}
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span> <span class="comment">// 包含 reverse 函数</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    string s;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 读取输入字符串</span></span><br><span class="line">    cin &gt;&gt; s;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出字符串长度</span></span><br><span class="line">    cout &lt;&lt; s.<span class="built_in">length</span>() &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 遍历并输出原始字符串的每个字符，字符之间用空格分隔</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> fw : s) &#123;</span><br><span class="line">        cout &lt;&lt; fw &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 逆转字符串</span></span><br><span class="line">    <span class="built_in">reverse</span>(s.<span class="built_in">begin</span>(), s.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出逆转后的字符串</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> fw : s) &#123;</span><br><span class="line">        cout &lt;&lt; fw;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>学习笔记</tag>
         <tag>C++</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -1653,8 +1653,8 @@ constness）</strong>：指对象从逻辑上看不发生变化，即即使成�
 <code>const</code>。静态成员函数的行为与常量性无关，因为它们不操作类的实例状态。</p>
 ]]></content>
       <tags>
-        <tag>学习笔记</tag>
         <tag>C++</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -1793,8 +1793,8 @@ constness）</strong>：指对象从逻辑上看不发生变化，即即使成�
 </ol>
 ]]></content>
       <tags>
-        <tag>学习笔记</tag>
         <tag>C++</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -1878,8 +1878,8 @@ XYCTF{Z2I_T3IL_YOU_2991b3d1fb37}</p>
 <p>发现无法解压后010打开，发现flag：XYCTF{59bd0e77d13c_1406b23219e_f91cf3a_153e8ea4_77508ba}</p>
 ]]></content>
       <tags>
-        <tag>CTF</tag>
         <tag>学习笔记</tag>
+        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -2224,8 +2224,8 @@ id="back_insert_iterator-后插迭代器"><code>back_insert_iterator</code>
 </ul>
 ]]></content>
       <tags>
-        <tag>学习笔记</tag>
         <tag>C++</tag>
+        <tag>学习笔记</tag>
         <tag>C语言</tag>
       </tags>
   </entry>
