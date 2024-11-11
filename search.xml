@@ -242,6 +242,100 @@ C++ 提供的强大功能来处理复杂的数据结构和算法操作。</p>
       </tags>
   </entry>
   <entry>
+    <title>Compute 101</title>
+    <url>/2024/11/11/Compute%20101%20record/</url>
+    <content><![CDATA[<p>记录在pwncollege里的一些学习笔记<span id="more"></span></p>
+<h2 id="tracing-syscalls">Tracing Syscalls</h2>
+<p>As you write larger and larger programs, you (yes, even you!) might
+make mistakes when implementing certain functionality, introducing
+<em>bugs</em> into your programs. Throughout this module, we'll go over
+a few tools and techniques for <em>debugging</em> your program. The
+first one is pretty simple: the <strong>s</strong>yscall
+<strong>trace</strong>r, <code>strace</code>.</p>
+<p>Given a program to run, <code>strace</code> will use functionality of
+the Linux operating system to introspect and record every system call
+that the program invokes, and its result. For example, let's look at our
+program from the previous challenge:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hacker@dojo:~$ strace /tmp/your-program</span><br><span class="line">execve(&quot;/tmp/your-program&quot;, [&quot;/tmp/your-program&quot;], 0x7ffd48ae28b0 /* 53 vars */) = 0</span><br><span class="line">exit(42)                                 = ?</span><br><span class="line">+++ exited with 42 +++</span><br><span class="line">hacker@dojo:~$</span><br></pre></td></tr></table></figure>
+<p>As you can see, <code>strace</code> reports what system calls are
+triggered, what parameters were passed to them, and what data they
+returned. The syntax used here for output is
+<code>system_call(parameter, parameter, parameter, ...)</code>. This
+syntax is borrowed from a programming language called C, but we don't
+have to worry about that yet. Just keep in mind how to read this
+specific syntax.</p>
+<p>In this example, <code>strace</code> reports two system calls: the
+second is the <code>exit</code> system call that your program uses to
+request its own termination, and you can see the parameter you passed to
+it (42). The first is an <code>execve</code> system call. We'll learn
+about this system call later, but it's somewhat of a yin to
+<code>exit</code>'s yang: it starts a new program (in this case,
+<code>your-program</code>). It's not actually invoked by
+<code>your-program</code> in this case: its detection by
+<code>strace</code> is a weird artifact of how <code>strace</code>
+works, that we'll investigate later.</p>
+<p>In the final line, you can see the result of <code>exit(42)</code>,
+which is that the program exits with an exit code of
+<code>42</code>!</p>
+<p>Now, the <code>exit</code> syscall is easy to introspect without
+using <code>strace</code> --- after all, part of the point of
+<code>exit</code> is to give you an exit code that you can access. But
+other system calls are less visible. For example, the <code>alarm</code>
+system call (syscall number 37!) will set a timer in the operating
+system, and when that many seconds pass, Linux will terminate the
+program. The point of <code>alarm</code> is to, e.g., kill the program
+when it's frozen, but in this case, we'll use <code>alarm</code> to
+practice our <code>strace</code> snooping!</p>
+<p>In this challenge, you must <code>strace</code> the
+<code>/challenge/trace-me</code> program to figure out what value it
+passes as a parameter to the <code>alarm</code> system call, then call
+<code>/challenge/submit-number</code> with the number you've retrieved
+as the argument. Good luck!</p>
+<p>总结：</p>
+<ol type="1">
+<li>使用strace跟踪/challenge/trace-me程序。</li>
+<li>观察并记录alarm系统调用的参数值。</li>
+<li>调用/challenge/submit-number，将上一步中找到的数字作为参数传递。</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hacker@your<span class="literal">-first-program</span>~tracing<span class="literal">-syscalls</span>:/challenge<span class="variable">$</span> strace  ./<span class="built_in">trace-me</span> </span><br><span class="line">execve(<span class="string">&quot;./trace-me&quot;</span>, [<span class="string">&quot;./trace-me&quot;</span>], <span class="number">0</span>x7ffd869ca7f0 /* <span class="number">28</span> vars */) = <span class="number">0</span></span><br><span class="line">alarm(<span class="number">18759</span>)                            = <span class="number">0</span></span><br><span class="line"><span class="keyword">exit</span>(<span class="number">0</span>)                                 = ?</span><br><span class="line">+++ exited with <span class="number">0</span> +++</span><br><span class="line"><span class="comment"># 提交数字即可</span></span><br></pre></td></tr></table></figure>
+<h2 id="moving-betweening-registers">moving betweening registers</h2>
+<p>Okay, let's learn about one more register: <code>rsi</code>! Like
+<code>rdi</code>, <code>rsi</code> is a place you can park some data.
+For example:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br></pre></td></tr></table></figure>
+<p>Of course, you can also move data around between registers!
+Watch:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br><span class="line">mov rdi, rsi</span><br></pre></td></tr></table></figure>
+<p>Just like the first line there moves <code>42</code> into
+<code>rsi</code>, the second like moves the value in <code>rsi</code> to
+<code>rdi</code>. Here, we have to mention one complication: by
+<em>move</em>, we really mean <em>set</em>. After the snippet above,
+<code>rsi</code> <em>and</em> <code>rdi</code> will be <code>42</code>.
+It's a mystery as to why the <code>mov</code> was chosen rather than
+something reasonable like <code>set</code> (even very knowledgeable
+people resort to <a
+href="https://retrocomputing.stackexchange.com/questions/12968/why-is-the-processor-instruction-called-move-not-copy">diverse
+speculation</a> when asked), but it was, and here we are.</p>
+<p>Anyways, on to the challenge! In this challenge, we will store a
+secret value in the <code>rsi</code> register, and your program must
+exit with that value as the return code. Since <code>exit</code> uses
+the value stored in <code>rdi</code> as the return code, you'll need to
+move the secret value in <code>rsi</code> into <code>rdi</code>. Good
+luck!</p>
+<p>总结：</p>
+<ol type="1">
+<li>在rsi寄存器中存储一个秘密值。</li>
+<li>编写一个程序，该程序需要将rsi寄存器中的秘密值移动到rdi寄存器中。</li>
+<li>程序必须使用exit函数退出，并且退出时的返回码应为rsi寄存器中存储的秘密值（此时已移动到rdi中，因为exit函数使用rdi的值作为返回码）。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, rsi</span><br><span class="line">mov rax,60 ;设置syscall号为exit（60）</span><br><span class="line">syscall </span><br><span class="line">;调用check即可</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>学习笔记</tag>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>递归小谈</title>
     <url>/2024/09/28/%E9%80%92%E5%BD%92%E5%B0%8F%E8%B0%88/</url>
     <content><![CDATA[<h1 id="递归小谈">递归小谈</h1>
