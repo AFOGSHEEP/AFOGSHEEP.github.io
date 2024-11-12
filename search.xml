@@ -683,7 +683,7 @@ propagation），后面我们还会遇见反向传播（backward propagation）<
 rule）的。下面是关于链式法则的解释。</p>
 <p>假设存在 y = f(x)的计算，这个计算的反向传播如图所示：</p>
 <figure>
-<img src="assets\IMG_20240717_215331.jpg" alt="IMG_20240717_215331" />
+<img src="/images/IMG_20240717_215331.jpg" alt="IMG_20240717_215331" />
 <figcaption aria-hidden="true">IMG_20240717_215331</figcaption>
 </figure>
 <p>在反向传播里，加法的是将上游的值赋予下游的值；乘法的则为 <span
@@ -718,7 +718,7 @@ x &amp; \text{if } x \geq 0
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ReLu</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        self.mask = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x</span>):</span><br><span class="line">        self.mask = (x &lt;=<span class="number">0</span> )</span><br><span class="line">        out = x.copy()</span><br><span class="line">        out[self.mask] = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backward</span>(<span class="params">self,dout</span>):</span><br><span class="line">        dout[self.mask] = <span class="number">0</span></span><br><span class="line">        dx = dout</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> dx</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sigmoid</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.out = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        out = <span class="number">1</span> / (<span class="number">1</span> + np.exp(-x))</span><br><span class="line">        self.out = out</span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backward</span>(<span class="params">self, dout</span>):</span><br><span class="line">        dx = dout * (<span class="number">1.0</span> - self.out) * self.out</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> dx</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>附上ReLu和Sigmoid的计算图</p>
 <figure>
-<img src="assets\IMG_20240717_232529.jpg" alt="IMG_20240717_232529" />
+<img src="/images/IMG_20240717_232529.jpg" alt="IMG_20240717_232529" />
 <figcaption aria-hidden="true">IMG_20240717_232529</figcaption>
 </figure>
 <figure>
@@ -728,7 +728,7 @@ x &amp; \text{if } x \geq 0
 <h2 id="affinesoftmax层的实现">Affine/Softmax层的实现</h2>
 <p>神经网络的正向传播中，为了计算加权信号的总和，使用了乘积运算。</p>
 <figure>
-<img src="assets\IMG_20240717_233625.jpg" alt="IMG_20240717_233625" />
+<img src="/images/IMG_20240717_233625.jpg" alt="IMG_20240717_233625" />
 <figcaption aria-hidden="true">IMG_20240717_233625</figcaption>
 </figure>
 <p>当输入X为单个变量的计算图。</p>
@@ -743,7 +743,7 @@ x &amp; \text{if } x \geq 0
 entropy
 error），所以称为"Softmax-with-Loss"层。softmax层的计算图有些复杂，这里给出一个简化版的：</p>
 <figure>
-<img src="assets\IMG_20240717_234920.jpg" alt="IMG_20240717_234920" />
+<img src="/images/IMG_20240717_234920.jpg" alt="IMG_20240717_234920" />
 <figcaption aria-hidden="true">IMG_20240717_234920</figcaption>
 </figure>
 <p>图中要注意的是反向传播的结果。Softmax层的反向传播得到了(y_1-t_1,y_2-t_2,y_3-t_3)这样“漂亮”的结果。由于（y_1，y_2，y_3）是Softmax层的出、（t_1，t2,t_3)是监督数据，所以（y_1-t_1，y_2-t_2，y_3-t_3）是Softmax层的输出和监督标签的差分。神经网络的反向传播会把这个差分表示的误差传递给前面的层，这是神经网络学习中的重要性质。
