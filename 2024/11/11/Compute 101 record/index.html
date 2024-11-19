@@ -30,7 +30,7 @@
 <meta property="og:description" content="记录在pwncollege里的一些学习笔记">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-11-10T16:00:01.000Z">
-<meta property="article:modified_time" content="2024-11-11T15:50:10.565Z">
+<meta property="article:modified_time" content="2024-11-19T16:18:25.151Z">
 <meta property="article:author" content="AAAFORGE">
 <meta property="article:tag" content="学习笔记">
 <meta property="article:tag" content="网安">
@@ -209,10 +209,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2024-11-11 00:00:01 / 修改时间：23:50:10" itemprop="dateCreated datePublished" datetime="2024-11-11T00:00:01+08:00">2024-11-11</time>
+              <time title="创建时间：2024-11-11 00:00:01" itemprop="dateCreated datePublished" datetime="2024-11-11T00:00:01+08:00">2024-11-11</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-20 00:18:25" itemprop="dateModified" datetime="2024-11-20T00:18:25+08:00">2024-11-20</time>
+              </span>
 
           
 
@@ -310,6 +316,187 @@ luck!</p>
 <li>程序必须使用exit函数退出，并且退出时的返回码应为rsi寄存器中存储的秘密值（此时已移动到rdi中，因为exit函数使用rdi的值作为返回码）。</li>
 </ol>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mov rdi, rsi</span><br><span class="line">mov rax,60 ;设置syscall号为exit（60）</span><br><span class="line">syscall </span><br><span class="line">;调用check即可</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="loading-from-memory">loading from memory</h2>
+<p>As seen by your program, computer memory is a huge place where data
+is housed. Like houses on a street, every part of memory has a numeric
+<em>address</em>, and like houses on a street, these numbers are
+(mostly) sequential. Modern computers have enormous amounts of memory,
+and the view of memory of a typical modern program actually has large
+gaps (think: a portion of the street that hasn't had houses built on it,
+and so those addresses are skipped). But these are all details: the
+point is, computers store data, mostly sequentially, in memory.</p>
+<p>In this level, we will practice accessing data stored in memory. How
+might we do this? Recall that to move a value into a register, we did
+something like:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov rdi, 31337</span><br></pre></td></tr></table></figure>
+<p>After this, the value of is . Cool. Well, we can use the same
+instruction to access memory! There is another format of the command
+that, instead, uses the second parameter as an address to access memory!
+Consider that our memory looks like this:<code>rdi``31337</code></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+<p>To access the memory contents at memory address 31337, you would can
+do:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov rdi, [31337]</span><br></pre></td></tr></table></figure>
+<p>When the CPU executes this instruction, it of course understands that
+is an <em>address</em>, not a raw value. If you think of the instruction
+as a person telling the CPU what to do, and we stick with our "houses on
+a street" analogy, then instead of just handing the CPU data, the
+instruction/person <em>points at a house on the street</em>. The CPU
+will then go to that address, ring its doorbell, open its front door,
+drag the data that's in there out, and put it into . Thus, the in this
+context is the <em>memory address</em> and serves to <em>point to</em>
+the data stored at that memory address. After this instruction executes,
+the value stored in will be !<code>31337``rdi``31337``rdi``42</code></p>
+<p>Let's put this into practice! I've stored a secret number at memory
+address , as so:<code>133700</code></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ ???      │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+<p>You must retrieve this secret number and use it as the exit code for
+your program. To do this, you must read it into , whose value, if you
+recall, is the first parameter to and is used as the exit code. Good
+luck!<code>rdi``exit</code></p>
+<p>总结:</p>
+<ol type="1">
+<li>访问地址133700处的数据</li>
+<li>把该地址的数据读取到rdi中</li>
+<li>使用这个数据作为退出参数</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mov rdi ,[133700] <span class="comment">#记住地址的表示</span></span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="dereferencing-pointers">dereferencing pointers</h2>
+<p>Did you prefer to access memory at <code>133700</code> or at
+<code>123400</code>? Your answer might say something about your
+personality, but it's not super relevant from a technical perspective.
+In fact, in most cases, you don't deal with actual memory addresses when
+writing programs at all!</p>
+<p>How is this possible? Well, typically, memory addresses are stored in
+registers, and we use the values in the registers to point to data in
+memory! Let's start with this memory configuration:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+<p>And consider this assembly snippet:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov rdi, 133700</span><br></pre></td></tr></table></figure>
+<p>Now, what you have is the following situation:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │◂┐</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+<p><code>rdi</code> now holds a value that corresponds with the address
+of the data that want to load! Let's load it:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov rdi, [rax]</span><br></pre></td></tr></table></figure>
+<p>Here, we are accessing memory, but instead of specifying a fixed
+address like <code>133700</code> for the memory read, we're using the
+value stored in <code>rax</code> as the memory address. By containing
+the memory address, <code>rax</code> is a <em>pointer</em> that
+<em>points to</em> the data we want to access! When we use
+<code>rax</code> in lieu of directly specifying the address that it
+stores to access the memory address that it references, we call this
+<em>dereferencing</em> the pointer. In the above example, we
+<em>dereference</em> <code>rax</code> to load the data it points to (the
+value <code>42</code> at address <code>133700</code>) into
+<code>rdi</code>. Neat!</p>
+<p>This also drives home another point: these registers are <em>general
+purpose</em>! Just because we've been using <code>rax</code> as the
+syscall index in our challenges so far doesn't mean that it can't have
+other uses as well. Here, it's used as a pointer to our secret data in
+memory.</p>
+<p>Similarly, the <em>data</em> in the registers doesn't have an
+implicit purpose. If <code>rax</code> contains the value
+<code>133700</code> and we write <code>mov rdi, [rax]</code>, the CPU
+uses the value as a memory address to dereference. But if we write
+<code>mov rdi, rax</code> in the same conditions, the CPU just happily
+puts <code>133700</code> into <code>rdi</code>. To the CPU, data is
+data; it only becomes differentiated when it's used in different
+ways.</p>
+<p>In this challenge, we've initialized <code>rax</code> to contain the
+address of the secret data we've stored in memory. Dereference
+<code>rax</code> to the secret data into <code>rdi</code> and use it as
+the exit code of the program to get the flag!</p>
+<p>讲了个类似C语言中指针的用法。第一次做成了这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mov rdi, [rax]</span><br><span class="line">mov eax, rdi</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line">;报错：Your assembly did not assemble cleanly. The errors:</span><br><span class="line">;Error: unsupported instruction `mov&#x27;</span><br></pre></td></tr></table></figure>
+<p>后来发现<code>mov eax, rdi</code>的问题。<code>eax</code> 是 32
+位寄存器，而 <code>rdi</code> 是 64
+位寄存器，不能直接传参,而且没搞懂程序的运行原理。修改为以下后通过：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mov rdi,[rax]	;rdi 负责传参</span><br><span class="line">mov rax,60 	;rax负责调起exit()</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>补充：<code>60</code> -&gt; <code>exit</code>：退出程序</p>
+<p>​ <code>1</code> -&gt; <code>write</code>：写数据</p>
+<p>​ <code>3</code> -&gt; <code>read</code>：读数据</p>
+<p>​ <code>9</code> -&gt; <code>mmap</code>：内存映射</p>
+<p>等等。</p>
+<h2 id="dereferencing-with-offsets">dereferencing with offsets</h2>
+<p>So now you can dereference pointers in memory like a pro! But
+pointers don't always point directly at the data you need. Sometimes,
+for example, a pointer might point to a collection of data (say, an
+entire book), and you'll need to reference partway into this collection
+for the specific data you need.</p>
+<p>For example, if your pointer (say, <code>rdi</code>) points to a
+sequence of numbers in memory, as so:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 50       │◂┐</span><br><span class="line">│ 133701  │ 42       │ │</span><br><span class="line">│ 133702  │ 99       │ │</span><br><span class="line">│ 133703  │ 14       │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+<p>If you want the second number of that sequence, you could do:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov rax, [rdi+1]</span><br></pre></td></tr></table></figure>
+<p>Wow, super simple! In memory terms, we call these number slots
+<em>bytes</em>: each memory address represents a specific byte of
+memory. The above example is accessing memory 1 byte after the memory
+address pointed to by <code>rax</code>. In memory terms, we call this 1
+byte difference an <em>offset</em>, so in this example, there is an
+offset of 1 from the address pointed to by <code>rdi</code>.</p>
+<p>Let's practice this concept. As before, we will initialize
+<code>rdi</code> to point at the secret value, but not <em>directly</em>
+at it. This time, the secret value will have an offset of 8 bytes from
+where <code>rdi</code> points, something analogous to this:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 0        │◂┐</span><br><span class="line">│ 31337+1 │ 0        │ │</span><br><span class="line">│ 31337+2 │ 0        │ │</span><br><span class="line">│ 31337+3 │ 0        │ │</span><br><span class="line">│ 31337+4 │ 0        │ │</span><br><span class="line">│ 31337+5 │ 0        │ │</span><br><span class="line">│ 31337+6 │ 0        │ │</span><br><span class="line">│ 31337+7 │ 0        │ │</span><br><span class="line">│ 31337+8 │ ???      │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 31337    │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+<p>Of course, the actual memory address is not <code>31337</code>. We'll
+choose it randomly, and store it in <code>rdi</code>. Go dereference
+<code>rdi</code> with offset <code>8</code> and get the flag!</p>
+<p>仍然是类似指针的操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mov rdi,[rdi+8]</span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="double-dereference">double dereference</h2>
+<p>In the last few levels, you have:</p>
+<ul>
+<li>Used an address that we told you (in one level, <code>133700</code>,
+and in another, <code>123400</code>) to load a secret value from
+memory.</li>
+<li>Used an address that we put into <code>rax</code> for you to load a
+secret value from memory.</li>
+<li>Used an address that we told you (in the last level,
+<code>567800</code>) to load <em>the address</em> of a secret value from
+memory into a register, then used that register as a pointer to retrieve
+the secret value from memory!</li>
+</ul>
+<p>Let's put those last two together. In this challenge, we stored our
+<code>SECRET_VALUE</code> in memory at the address
+<code>SECRET_LOCATION_1</code>, then stored
+<code>SECRET_LOCATION_1</code> in memory at the address
+<code>SECRET_LOCATION_2</code>. Then, we put
+<code>SECRET_ADDRESS_2</code> into <code>rax</code>! The result looks
+something like this, using <code>133700</code> for
+<code>SECRET_LOCATION_1</code> and 123400 for
+<code>SECRET_LOCATION_2</code> (not, in the real challenge, these values
+will be different and hidden from you!):</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂┐</span><br><span class="line">│ +────────────────────+ │</span><br><span class="line">└▸│ 123400  │ 42       │ │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">   Register │ Contents   │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">  │ rdi     │ 133700   │─┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
+<p>Here, you will need to perform two memory reads: one dereferencing
+<code>rax</code> to read <code>SECRET_LOCATION_1</code> from the
+location that <code>rax</code> is pointing to (which is
+<code>SECRET_LOCATION_2</code>), and the second one dereferencing
+whatever register now holds <code>SECRET_LOCATION_1</code> to read
+<code>SECRET_VALUE</code> into <code>rdi</code>, so you can use it as
+the exit code!</p>
+<p>That sounds like a lot, but you've done basically all of this
+already. Go put it together!</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mov rax, [rax]    ; 第一步：通过rax指向的地址读取SECRET_LOCATION_1（第二层地址）</span><br><span class="line">mov rdi, [rax]    ; 第二步：通过rax指向的地址读取SECRET_VALUE</span><br><span class="line">mov rax, 60       </span><br><span class="line">syscall           </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在 x86-64
+架构中，系统调用的参数是通过寄存器传递的。根据系统调用的约定：</p>
+<ul>
+<li><code>rdi</code> 用于传递第一个参数。</li>
+<li><code>rsi</code> 用于传递第二个参数。</li>
+</ul>
+<h2 id="triple-dereference">triple dereference</h2>
+<p>Okay, let's stretch that to one more depth! We've added an additional
+level of indirection in this challenge, so now you'll need
+<em>three</em> dereferences to find the secret value. Something like
+this:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂──┐</span><br><span class="line">│ +────────────────────+   │</span><br><span class="line">└▸│ 123400  │ 100000   │─┐ │</span><br><span class="line">  +────────────────────+ │ │</span><br><span class="line">  │ 100000  │ 42       │◂┘ │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">                           │</span><br><span class="line">                           │</span><br><span class="line">   Register │ Contents     │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">  │ rdi     │ 133700   │───┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
+<p>As you can see, we'll place the first address that you must
+dereference into rdi. Go get the value!</p>
+<p>类似的操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mov rdi,[rdi]</span><br><span class="line">mov rax,[rdi]</span><br><span class="line">mov rdi,[rax]</span><br><span class="line">mov rax,60</span><br><span class="line">syscall</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><code>rsi</code> 是用于传递参数的寄存器，而
+<strong><code>rdi</code></strong>
+才是系统调用时的退出代码传递寄存器。</p>
 
     </div>
 
@@ -332,7 +519,10 @@ luck!</p>
     <a href="/2024/09/28/%E9%80%92%E5%BD%92%E5%B0%8F%E8%B0%88/" rel="prev" title="递归小谈">
       <i class="fa fa-chevron-left"></i> 递归小谈
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/11/20/PCB/" rel="next" title="鹏城杯三道">
+      鹏城杯三道 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -391,7 +581,7 @@ luck!</p>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tracing-syscalls"><span class="nav-number">1.</span> <span class="nav-text">Tracing Syscalls</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#moving-betweening-registers"><span class="nav-number">2.</span> <span class="nav-text">moving betweening registers</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tracing-syscalls"><span class="nav-number">1.</span> <span class="nav-text">Tracing Syscalls</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#moving-betweening-registers"><span class="nav-number">2.</span> <span class="nav-text">moving betweening registers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loading-from-memory"><span class="nav-number">3.</span> <span class="nav-text">loading from memory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dereferencing-pointers"><span class="nav-number">4.</span> <span class="nav-text">dereferencing pointers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dereferencing-with-offsets"><span class="nav-number">5.</span> <span class="nav-text">dereferencing with offsets</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#double-dereference"><span class="nav-number">6.</span> <span class="nav-text">double dereference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#triple-dereference"><span class="nav-number">7.</span> <span class="nav-text">triple dereference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -407,7 +597,7 @@ luck!</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -456,7 +646,7 @@ luck!</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">本博客全站共46.3k字</span>
+  <span class="post-count">本博客全站共48.5k字</span>
 </div>
         
 
