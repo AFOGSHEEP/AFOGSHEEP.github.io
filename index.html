@@ -269,6 +269,152 @@ hog。”这两句话将被视为回文。
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/01/06/%E9%85%8D%E7%BD%AEwsl%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/1312386.jpeg">
+      <meta itemprop="name" content="AAAFORGE">
+      <meta itemprop="description" content="此情可待成追忆，只是当时已惘然">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杜鹃声">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/01/06/%E9%85%8D%E7%BD%AEwsl%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/" class="post-title-link" itemprop="url">wsl图形化界面安装踩坑</a>
+        </h2>
+
+        <div class="post-meta">
+        
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-01-06 00:53:29 / 修改时间：00:54:21" itemprop="dateCreated datePublished" datetime="2025-01-06T00:53:29+08:00">2025-01-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>安装wsl后只有终端界面太单调了，遂网上寻找给Ubuntu添加图形界面的方法。中间遇见了一些坑，记下来以备查阅。</p>
+<blockquote>
+<p>主要参考：<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/150555651?native.theme=1">WSL2中使用VcXsrv实现xfce4图形界面+声音传输
+- 知乎</a></p>
+</blockquote>
+<h2 id="vcxsrv安装与配置">VcXsrv安装与配置</h2>
+<p>从SourceForge上下载最新的即可，</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://sourceforge.net/projects/vcxsrv/">VcXsrv Windows X
+Server download | SourceForge.net</a></p>
+</blockquote>
+<p>网站内会保持更新。</p>
+<p>我下载的是<code>vcxsrv-64.1.20.14.0.installer.exe</code>,直接安装即可。</p>
+<p>安装完成之后在开始菜单搜索或者在其文件夹里找到
+<code>xlaunch.exe</code>并启动</p>
+<figure>
+<img src="assets\image-20250104213215978-1735997822590-5.png"
+alt="image-20250104213215978" />
+<figcaption aria-hidden="true">image-20250104213215978</figcaption>
+</figure>
+<p>配置启动设置时，窗口模式使用 <code>One large window</code>，并在
+<code>Extra settings</code>里勾选
+<code>Disable access control</code>其他配置选择默认。</p>
+<p>启动的窗口此时保持全黑。</p>
+<figure>
+<img src="assets\image-20250104213556580-1735997782254-3.png"
+alt="image-20250104213556580" />
+<figcaption aria-hidden="true">image-20250104213556580</figcaption>
+</figure>
+<p>并且一定要给VcXsrv设置通过防火墙。</p>
+<p>启动一次xlaunch后在开始菜单里搜索
+<code>允许应用通过windows防火墙</code>,其中<code>VcXsrv windows xserver</code>一定要把专用和公用都设置上，不然后续会出现无法连接的情况。</p>
+<figure>
+<img src="assets\image-20250104214035451-1735998074299-8.png"
+alt="image-20250104214035451" />
+<figcaption aria-hidden="true">image-20250104214035451</figcaption>
+</figure>
+<h2 id="配置与启动xfce4">配置与启动xfce4</h2>
+<p>安装<code>xfce4</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install -y xfce4</span><br></pre></td></tr></table></figure>
+<p>下载好后配置 <strong><code>DISPLAY</code>[环境变量]</strong>
+，这里有许多坑。</p>
+<ol type="1">
+<li>直接启动会出现如下问题</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">DESKTOP-14VK3K3%:~$ startxfce4</span><br><span class="line">/usr/bin/startxfce4: X server already running on display :0.0</span><br><span class="line">xrdb: Connection refused</span><br><span class="line">xrdb: Can<span class="string">&#x27;t open display &#x27;</span>:0.0<span class="string">&#x27;</span></span><br><span class="line"><span class="string">Unable to init server: Could not connect: Connection refused</span></span><br><span class="line"><span class="string">xfce4-session: Cannot open display: .</span></span><br><span class="line"><span class="string">Type &#x27;</span>xfce4-session --<span class="built_in">help</span><span class="string">&#x27; for usage.</span></span><br></pre></td></tr></table></figure>
+<p>没有配置ip地址和端口，或者直接配置成<code>0:0</code>是不能顺利启动。原因是<code>WSL2</code>其实是用<code>Hyper-V</code>技术实现的一个虚拟机,和<code>WSL1</code>的工作原理不一样。</p>
+<ol start="2" type="1">
+<li>配置 <code>DISPLAY</code>信息</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首先需要查看Windows系统和WSL2通信使用的虚拟网卡地址</span></span><br><span class="line">$ sudo vim /etc/resolv.conf</span><br><span class="line"><span class="comment"># nameserver后面的地址就是Windows系统虚拟网卡的地址,记一下,同时需要取消下面两行内容的注释,禁用自动重新生成配置文件,否则重启后这个地址会变</span></span><br><span class="line">[network]</span><br><span class="line">generateResolvConf = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ vim ~/.bashrc</span><br><span class="line"><span class="comment"># 在文件最后追加下面内容,地址使用上面查看到的</span></span><br><span class="line"><span class="built_in">export</span> DISPLAY=192.168.112.1:0</span><br></pre></td></tr></table></figure>
+<p>或者使用下面的配置来动态获取ip信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自动在对应文件中检索相应信息</span></span><br><span class="line"><span class="built_in">export</span> DISPLAY=<span class="string">&quot;`grep nameserver /etc/resolv.conf | sed &#x27;s/nameserver //&#x27;`:0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下面的效率更高。使用这两种就不用去掉/etc/resolv.conf文件中那两行的注释</span></span><br><span class="line"><span class="built_in">export</span> DISPLAY=$(<span class="built_in">cat</span> /etc/resolv.conf | grep nameserver | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>):0</span><br></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>同时，如果是是使用最新的Ubuntu系统，也就是<code>ubuntu 22.04</code>或者之后的，需要在<code>.bashrc</code>加入<code>export WAYLAND_DISPLAY=$DISPLAY</code>，因为</li>
+</ol>
+<p><code>ubuntu22</code>默认使用WAYLAND而不是x11作为显示服务。之后记得<code>source ~/.bashrc</code>
+保存一下配置。</p>
+<ol start="4" type="1">
+<li>如果上面都没起效，可以看看wsl版本是否有问题，
+在powershell里输入<code>wsl update</code>更新一下。当然如果是现在开始弄wsl的大概率是最新版本。</li>
+</ol>
+<h2 id="图形界面显示问题">图形界面显示问题</h2>
+<p>折腾好后<code>xlaunch</code>的界面仍然是一片黑</p>
+<figure>
+<img src="assets\image-20250105215526302.png"
+alt="image-20250105215526302" />
+<figcaption aria-hidden="true">image-20250105215526302</figcaption>
+</figure>
+<p>但是任务栏里却有Ubuntu的面板</p>
+<figure>
+<img src="assets\image-20250105215618102.png"
+alt="image-20250105215618102" />
+<figcaption aria-hidden="true">image-20250105215618102</figcaption>
+</figure>
+<p>除了浏览器，其余应用，终端，文件管理器等都能正常使用。屏幕最上面还有横栏</p>
+<figure>
+<img src="assets\image-20250106002134830.png"
+alt="image-20250106002134830" />
+<figcaption aria-hidden="true">image-20250106002134830</figcaption>
+</figure>
+<p>启动时的报错信息如下，每次点击应用都会增加报错，估计是因为没有在正确的屏幕上显示。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">DESKTOP-14VK3K3% startxfce4</span><br><span class="line">/usr/bin/startxfce4: X server already running on display :0</span><br><span class="line">gpg-agent: a gpg-agent is already running - not starting a new one</span><br><span class="line">Another Window Manager (Weston WM) is already running on screen :0.0</span><br><span class="line">To replace the current window manager, try <span class="string">&quot;--replace&quot;</span></span><br><span class="line"></span><br><span class="line">(xfwm4:1871): xfwm4-WARNING **: 22:49:38.642: Could not find a screen to manage, exiting</span><br><span class="line">xfsettingsd: Another clipboard manager is already running.</span><br><span class="line"></span><br><span class="line">(xfsettingsd:1876): xfsettingsd-WARNING **: 22:49:38.771: Failed to get the _NET_NUMBER_OF_DESKTOPS property.</span><br></pre></td></tr></table></figure>
+<p>像是没有和xserver的服务器连接。</p>
+<p>另一方面，安装wslg的应用并不能完整的体验图形化linux的使用，里面只有分散的图形化程序，并非完全的linux桌面。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/20/PCB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -509,10 +655,16 @@ n = 0 \\ n \times (n - 1)! &amp; \text{otherwise} \end{cases}
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2024-09-16 14:45:29 / 修改时间：14:45:31" itemprop="dateCreated datePublished" datetime="2024-09-16T14:45:29+08:00">2024-09-16</time>
+              <time title="创建时间：2024-09-16 14:45:29" itemprop="dateCreated datePublished" datetime="2024-09-16T14:45:29+08:00">2024-09-16</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-06 00:53:03" itemprop="dateModified" datetime="2025-01-06T00:53:03+08:00">2025-01-06</time>
+              </span>
 
           
 
@@ -848,81 +1000,6 @@ graph）。接下来会补充讲解计算图的理解方法。</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/07/2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/1312386.jpeg">
-      <meta itemprop="name" content="AAAFORGE">
-      <meta itemprop="description" content="此情可待成追忆，只是当时已惘然">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="杜鹃声">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/05/07/2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">类的优化学习</a>
-        </h2>
-
-        <div class="post-meta">
-        
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-05-07 23:25:21" itemprop="dateCreated datePublished" datetime="2024-05-07T23:25:21+08:00">2024-05-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-05-08 22:54:20" itemprop="dateModified" datetime="2024-05-08T22:54:20+08:00">2024-05-08</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="类模板">类模板</h2>
-<p>当你决定你正在编写的类最适合通过某种任意类型进行参数化时，你可以使用<code>template</code>关键字并指定模板应该参数化的类型来告诉C++，你正在定义一个模板类。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/05/07/2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -994,14 +1071,14 @@ graph）。接下来会补充讲解计算图的理解方法。</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1032,7 +1109,7 @@ graph）。接下来会补充讲解计算图的理解方法。</p>
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1043,7 +1120,7 @@ graph）。接下来会补充讲解计算图的理解方法。</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">本博客全站共50.1k字</span>
+  <span class="post-count">本博客全站共51.1k字</span>
 </div>
         
 
