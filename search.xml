@@ -250,6 +250,7 @@ C++ 提供的强大功能来处理复杂的数据结构和算法操作。</p>
 href="https://zhuanlan.zhihu.com/p/150555651?native.theme=1">WSL2中使用VcXsrv实现xfce4图形界面+声音传输
 - 知乎</a></p>
 </blockquote>
+<span id="more"></span>
 <h2 id="vcxsrv安装与配置">VcXsrv安装与配置</h2>
 <p>从SourceForge上下载最新的即可，</p>
 <blockquote>
@@ -261,7 +262,7 @@ Server download | SourceForge.net</a></p>
 <p>安装完成之后在开始菜单搜索或者在其文件夹里找到
 <code>xlaunch.exe</code>并启动</p>
 <figure>
-<img src="assets\image-20250104213215978-1735997822590-5.png"
+<img src="\images\image-20250104213215978-1735997822590-5.png"
 alt="image-20250104213215978" />
 <figcaption aria-hidden="true">image-20250104213215978</figcaption>
 </figure>
@@ -270,7 +271,7 @@ alt="image-20250104213215978" />
 <code>Disable access control</code>其他配置选择默认。</p>
 <p>启动的窗口此时保持全黑。</p>
 <figure>
-<img src="assets\image-20250104213556580-1735997782254-3.png"
+<img src="/images/image-20250104213556580-1735997782254-3.png"
 alt="image-20250104213556580" />
 <figcaption aria-hidden="true">image-20250104213556580</figcaption>
 </figure>
@@ -278,7 +279,7 @@ alt="image-20250104213556580" />
 <p>启动一次xlaunch后在开始菜单里搜索
 <code>允许应用通过windows防火墙</code>,其中<code>VcXsrv windows xserver</code>一定要把专用和公用都设置上，不然后续会出现无法连接的情况。</p>
 <figure>
-<img src="assets\image-20250104214035451-1735998074299-8.png"
+<img src="/images/image-20250104214035451-1735998074299-8.png"
 alt="image-20250104214035451" />
 <figcaption aria-hidden="true">image-20250104214035451</figcaption>
 </figure>
@@ -310,19 +311,19 @@ alt="image-20250104214035451" />
 <h2 id="图形界面显示问题">图形界面显示问题</h2>
 <p>折腾好后<code>xlaunch</code>的界面仍然是一片黑</p>
 <figure>
-<img src="assets\image-20250105215526302.png"
+<img src="/images/image-20250105215526302.png"
 alt="image-20250105215526302" />
 <figcaption aria-hidden="true">image-20250105215526302</figcaption>
 </figure>
 <p>但是任务栏里却有Ubuntu的面板</p>
 <figure>
-<img src="assets\image-20250105215618102.png"
+<img src="/images/image-20250105215618102.png"
 alt="image-20250105215618102" />
 <figcaption aria-hidden="true">image-20250105215618102</figcaption>
 </figure>
 <p>除了浏览器，其余应用，终端，文件管理器等都能正常使用。屏幕最上面还有横栏</p>
 <figure>
-<img src="assets\image-20250106002134830.png"
+<img src="/images/image-20250106002134830.png"
 alt="image-20250106002134830" />
 <figcaption aria-hidden="true">image-20250106002134830</figcaption>
 </figure>
