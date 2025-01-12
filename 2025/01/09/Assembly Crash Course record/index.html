@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32-avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/32x32-avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":"ture","sidebar":"ture","scrollpercent":"ture"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="set-register 题目要求： In this level, you will be working with registers. You will be asked to modify or read from registers. In this level, you will work with registers! Please set the following:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Assembly Crash Course record">
+<meta property="og:url" content="http://example.com/2025/01/09/Assembly%20Crash%20Course%20record/index.html">
+<meta property="og:site_name" content="杜鹃声">
+<meta property="og:description" content="set-register 题目要求： In this level, you will be working with registers. You will be asked to modify or read from registers. In this level, you will work with registers! Please set the following:">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-09T08:16:48.000Z">
+<meta property="article:modified_time" content="2025-01-12T18:04:15.285Z">
+<meta property="article:author" content="AAAFORGE">
+<meta property="article:tag" content="网安">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2025/01/09/Assembly%20Crash%20Course%20record/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Assembly Crash Course record | 杜鹃声</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/rss2.xml" title="杜鹃声" type="application/rss+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">杜鹃声</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">斜阳暮</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/01/09/Assembly%20Crash%20Course%20record/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/1312386.jpeg">
+      <meta itemprop="name" content="AAAFORGE">
+      <meta itemprop="description" content="此情可待成追忆，只是当时已惘然">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杜鹃声">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Assembly Crash Course record
+        </h1>
+
+        <div class="post-meta">
+        
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-01-09 16:16:48" itemprop="dateCreated datePublished" datetime="2025-01-09T16:16:48+08:00">2025-01-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-13 02:04:15" itemprop="dateModified" datetime="2025-01-13T02:04:15+08:00">2025-01-13</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="set-register">set-register</h2>
+<p>题目要求：</p>
+<p>In this level, you will be working with registers. You will be asked
+to modify or read from registers.</p>
+<p>In this level, you will work with registers! Please set the
+following:<span id="more"></span></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdi = 0x1337</span><br></pre></td></tr></table></figure>
+<p>似乎很简单，要求我们将rdi的值设置成
+<code>0x1337</code>，但是会得到</p>
+<p>==WARNING: It looks like your input might not be assembled binary
+code, but assembly source code. This challenge needs the raw binary
+assembled code as input.==</p>
+<p>程序并不能理解我们输入的汇编代码，所以我们要使用pwntools的工具来构造机器码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p=process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line">p.recvline()<span class="comment">#这行代码从进程 p 中接收一行数据。它会读取数据直到遇到换行符（\n），然后返回这一行的内容。默认情况下，recvline() 会保留行				尾的换行符。在这里，它用于读取目标程序输出的第一行数据，可能是程序的提示信息或其他初始输出，以便知道程序已经准备好接收后续				的输入。</span></span><br><span class="line">p.send(asm(<span class="string">&#x27;mov rdi,0x1337&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.readallS())<span class="comment">#首先调用 p.readall() 函数，读取进程 p 的所有剩余输出，直到进程结束。它会阻塞当前线程，直到目标进程关闭其输出流。					并自动转换成字符串，之后用print()输出</span></span><br></pre></td></tr></table></figure>
+<p>得到<code>flag:pwn.college&#123;QRxMx73Zr7Op3kSe-GPyic6TjdY.0FN5EDL4EDOxYzW&#125;</code></p>
+<h2 id="set-multiple-registers">set-multiple-registers</h2>
+<p>In this level, you will be working with registers. You will be asked
+to modify or read from registers.</p>
+<p>In this level, you will work with multiple registers. Please set the
+following:</p>
+<ul>
+<li><code>rax = 0x1337</code></li>
+<li><code>r12 = 0xCAFED00D1337BEEF</code></li>
+<li><code>rsp = 0x31337</code></li>
+</ul>
+<p>类似的题目，从设置一个寄存器变为了设置多个</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line">p.recv()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">	mov rax ,0x1337</span></span><br><span class="line"><span class="string">	mov r12 ,0xCAFED00D1337BEEF</span></span><br><span class="line"><span class="string">	mov rsp ,0x31337</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.recvall())</span><br></pre></td></tr></table></figure>
+<h2 id="add-to-register">add-to-register</h2>
+<p>In this level, you will be working with registers. You will be asked
+to modify or read from registers.</p>
+<p>We will set some values in memory dynamically before each run. On
+each run, the values will change. This means you will need to perform
+some formulaic operation with registers. We will tell you which
+registers are set beforehand and where you should put the result. In
+most cases, it's <code>rax</code>.</p>
+<p>Many instructions exist in x86 that allow you to perform all the
+normal math operations on registers and memory.</p>
+<p>For shorthand, when we say <code>A += B</code>, it really means
+<code>A = A + B</code>.</p>
+<p>Here are some useful instructions:</p>
+<ul>
+<li><code>add reg1, reg2</code> &lt;=&gt; <code>reg1 += reg2</code></li>
+<li><code>sub reg1, reg2</code> &lt;=&gt; <code>reg1 -= reg2</code></li>
+<li><code>imul reg1, reg2</code> &lt;=&gt;
+<code>reg1 *= reg2</code></li>
+</ul>
+<p><code>div</code> is more complicated, and we will discuss it later.
+Note: all <code>regX</code> can be replaced by a constant or memory
+location.</p>
+<p>Do the following:</p>
+<ul>
+<li>Add <code>0x331337</code> to <code>rdi</code></li>
+</ul>
+<p>要求对寄存器进行加法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    add rdi, 0x331337&#x27;&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.recvallS())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>得到<code>flag:pwn.college&#123;oQeaHikpX98CEqAk6biPBYRAxUc.0VN5EDL4EDOxYzW&#125;</code></p>
+<h2 id="linear-equation-registers">linear-equation-registers</h2>
+<p>In this level, you will be working with registers. You will be asked
+to modify or read from registers.</p>
+<p>We will now set some values in memory dynamically before each run. On
+each run, the values will change. This means you will need to do some
+type of formulaic operation with registers. We will tell you which
+registers are set beforehand and where you should put the result. In
+most cases, it's <code>rax</code>.</p>
+<p>Using your new knowledge, please compute the following:</p>
+<ul>
+<li>``` f(x) = mx + b <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  , where:</span><br><span class="line"></span><br><span class="line">  - `m = rdi`</span><br><span class="line">  - `x = rsi`</span><br><span class="line">  - `b = rdx`</span><br><span class="line"></span><br><span class="line">Place the result into `rax`.</span><br><span class="line"></span><br><span class="line">Note: There is an important difference between `mul` (unsigned multiply) and `imul` (signed multiply) in terms of which registers are used. Look at the documentation on these instructions to see the difference.</span><br><span class="line"></span><br><span class="line">In this case, you will want to use `imul`.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">练习一下乘法</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">from pwn import *</span><br><span class="line">context.arch = &#x27;amd64&#x27;</span><br><span class="line">p= process(&quot;/challenge/run&quot;)</span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(&#x27;&#x27;&#x27;</span><br><span class="line">	xor rax,rax		#初始化寄存器</span><br><span class="line">	imul rdi,rsi</span><br><span class="line">	mov rax,rdx</span><br><span class="line">	add rax,rdi</span><br><span class="line">&#x27;&#x27;&#x27;))</span><br><span class="line">print(p.recvall())</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>获取答案。后面还是不要直接写出flag了。</p>
+<h2 id="integer-division">integer-division</h2>
+<p>Division in x86 is more special than in normal math. Math here is
+called integer math, meaning every value is a whole number.</p>
+<p>As an example: <code>10 / 3 = 3</code> in integer math.</p>
+<p>Why?</p>
+<p>Because <code>3.33</code> is rounded down to an integer.</p>
+<p>The relevant instructions for this level are:</p>
+<ul>
+<li><code>mov rax, reg1</code></li>
+<li><code>div reg2</code></li>
+</ul>
+<p>Note: <code>div</code> is a special instruction that can divide a
+128-bit dividend by a 64-bit divisor while storing both the quotient and
+the remainder, using only one register as an operand.</p>
+<p>How does this complex <code>div</code> instruction work and operate
+on a 128-bit dividend (which is twice as large as a register)?</p>
+<p>For the instruction <code>div reg</code>, the following happens:</p>
+<ul>
+<li><code>rax = rdx:rax / reg</code></li>
+<li><code>rdx = remainder</code></li>
+</ul>
+<p><code>rdx:rax</code> means that <code>rdx</code> will be the upper
+64-bits of the 128-bit dividend and <code>rax</code> will be the lower
+64-bits of the 128-bit dividend.</p>
+<p>You must be careful about what is in <code>rdx</code> and
+<code>rax</code> before you call <code>div</code>.</p>
+<p>Please compute the following:</p>
+<ul>
+<li>``` speed = distance / time <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  , where:</span><br><span class="line"></span><br><span class="line">  - `distance = rdi`</span><br><span class="line">  - `time = rsi`</span><br><span class="line">  - `speed = rax`</span><br><span class="line"></span><br><span class="line">Note that distance will be at most a 64-bit value, so `rdx` should be 0 when dividing.</span><br><span class="line"></span><br><span class="line">在x86汇编中，`div`指令用于执行整数除法，它可以将一个128位的被除数除以一个64位的除数，并同时存储商和余数。这个指令的特殊之处在于它使用了两个寄存器来表示被除数：`rdx`和`rax`。其中，`rdx`存储被除数的高64位，而`rax`存储被除数的低64位。</span><br><span class="line"></span><br><span class="line">在执行`div reg`指令时，以下操作会发生：</span><br><span class="line"></span><br><span class="line">1. `rax`寄存器将被设置为`rdx:rax`（即由`rdx`和`rax`组成的128位数）除以`reg`的商。</span><br><span class="line">2. `rdx`寄存器将被设置为除法的余数。</span><br><span class="line"></span><br><span class="line">接下来就是练习除法</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">from pwn import *</span><br><span class="line">context.arch = &#x27;amd64&#x27;</span><br><span class="line">p= process(&quot;/challenge/run&quot;)</span><br><span class="line">p.recv()</span><br><span class="line">p.send(asm(&#x27;&#x27;&#x27;</span><br><span class="line">    mov rax,rdi</span><br><span class="line">    xor rdx,rdx</span><br><span class="line">    div rsi</span><br><span class="line">&#x27;&#x27;&#x27;))</span><br><span class="line">print(p.recvall())</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="module-opretion">module-opretion</h2>
+<p>Modulo in assembly is another interesting concept!</p>
+<p>x86 allows you to get the remainder after a <code>div</code>
+operation.</p>
+<p>For instance: <code>10 / 3</code> results in a remainder of
+<code>1</code>.</p>
+<p>The remainder is the same as modulo, which is also called the "mod"
+operator.</p>
+<p>In most programming languages, we refer to mod with the symbol
+<code>%</code>.</p>
+<p>Please compute the following: <code>rdi % rsi</code></p>
+<p>Place the value in <code>rax</code>.</p>
+<p>关于模的运算。但是x86没有直接求模的运算。所以需要手动算一下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p= process(<span class="string">&quot;/challenge/run&quot;</span>)</span><br><span class="line">p.recv()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">	xor rdx,rdx</span></span><br><span class="line"><span class="string">	mov rax,rdi</span></span><br><span class="line"><span class="string">	div rsi</span></span><br><span class="line"><span class="string">	xor rax,rax</span></span><br><span class="line"><span class="string">	mov rax,rdx</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.recvall())</span><br></pre></td></tr></table></figure>
+<p>记得寄存器用前要清零，还有就是一般用<code>rax</code>作为函数返还数值的寄存器。</p>
+<h2 id="set-upper-byte">set-upper-byte</h2>
+<p>Another cool concept in x86 is the ability to independently access
+the lower register bytes.</p>
+<p>Each register in x86_64 is 64 bits in size, and in the previous
+levels, we have accessed the full register using <code>rax</code>,
+<code>rdi</code>, or <code>rsi</code>.</p>
+<p>We can also access the lower bytes of each register using different
+register names.</p>
+<p>For example, the lower 32 bits of <code>rax</code> can be accessed
+using <code>eax</code>, the lower 16 bits using <code>ax</code>, and the
+lower 8 bits using <code>al</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MSB                                    LSB</span><br><span class="line">+----------------------------------------+</span><br><span class="line">|                   rax                  |</span><br><span class="line">+--------------------+-------------------+</span><br><span class="line">                     |        eax        |</span><br><span class="line">                     +---------+---------+</span><br><span class="line">                               |   ax    |</span><br><span class="line">                               +----+----+</span><br><span class="line">                               | ah | al |</span><br><span class="line">                               +----+----+</span><br></pre></td></tr></table></figure>
+<p>Lower register bytes access is applicable to almost all
+registers.</p>
+<p>Using only one move instruction, please set the upper 8 bits of the
+<code>ax</code> register to <code>0x42</code>.</p>
+<p>介绍了<code>x86</code>架构中寄存器的特性——寄存器可以被划分为不同的部分，以便可以单独访问其部分位。这种设计允许程序员更灵活地处理数据，尤其是在需要对数据的特定部分进行操作时。</p>
+<p>以<code>rax</code>寄存器为例，它是一个64位的寄存器，可以被分为不同的部分：</p>
+<ul>
+<li><code>rax</code>：整个64位寄存器。</li>
+<li><code>eax</code>：<code>rax</code>的低32位。</li>
+<li><code>ax</code>：<code>eax</code>的低16位。</li>
+<li><code>al</code>：<code>ax</code>的低8位。</li>
+<li><code>ah</code>：<code>ax</code>的高8位。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov ah,0x42</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(output)  </span><br></pre></td></tr></table></figure>
+<p>补充:</p>
+<p>MSB和LSB是位的两种称呼：</p>
+<ul>
+<li><strong>MSB (Most Significant
+Bit)</strong>：最高有效位。在二进制数中，MSB是位于最左侧的位，具有最大的数值权重。例如，在一个8位的二进制数<code>10110101</code>中，最左边的<code>1</code>就是MSB，它代表了<code>2^7</code>的权重。</li>
+<li><strong>LSB (Least Significant
+Bit)</strong>：最低有效位。在二进制数中，LSB是位于最右侧的位，具有最小的数值权重。例如，在同一个8位的二进制数<code>10110101</code>中，最右边的<code>1</code>就是LSB，它代表了<code>2^0</code>的权重。</li>
+</ul>
+<p>常用寄存器</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th>x64调用约定</th>
+<th>64位寄存器</th>
+<th>32位寄存器</th>
+<th>16位寄存器</th>
+<th>8位寄存器（低）</th>
+<th>8位寄存器（高）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>函数返回值</td>
+<td>rax</td>
+<td>eax</td>
+<td>ax</td>
+<td>al</td>
+<td>al</td>
+</tr>
+<tr>
+<td></td>
+<td>rbx</td>
+<td>ebx</td>
+<td>bx</td>
+<td>bl</td>
+<td>bl</td>
+</tr>
+<tr>
+<td>第四个参数</td>
+<td>rcx</td>
+<td>ecb</td>
+<td>cx</td>
+<td>cl</td>
+<td>cl</td>
+</tr>
+<tr>
+<td>第三个参数</td>
+<td>rdx</td>
+<td>edx</td>
+<td>dx</td>
+<td>dl</td>
+<td>dl</td>
+</tr>
+<tr>
+<td>第一个参数</td>
+<td>rdi</td>
+<td>edi</td>
+<td>di</td>
+<td>dil</td>
+<td></td>
+</tr>
+<tr>
+<td>第二个参数</td>
+<td>rsi</td>
+<td>esi</td>
+<td>si</td>
+<td>sil</td>
+<td></td>
+</tr>
+<tr>
+<td>下一条指令的地址</td>
+<td>rip</td>
+<td>eip</td>
+<td>ip</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>栈底指针</td>
+<td>rbp</td>
+<td>ebp</td>
+<td>bp</td>
+<td>bpl</td>
+<td></td>
+</tr>
+<tr>
+<td>栈顶指针</td>
+<td>rsp</td>
+<td>esp</td>
+<td>sp</td>
+<td>spl</td>
+<td></td>
+</tr>
+<tr>
+<td>第五个参数</td>
+<td>r8</td>
+<td>r8d</td>
+<td>r8w</td>
+<td>r8b</td>
+<td></td>
+</tr>
+<tr>
+<td>第六个参数</td>
+<td>r9</td>
+<td>r9d</td>
+<td>r9w</td>
+<td>r9b</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="efficient-modulo">efficient-modulo</h2>
+<p>It turns out that using the <code>div</code> operator to compute the
+modulo operation is slow!</p>
+<p>We can use a math trick to optimize the modulo operator
+(<code>%</code>). Compilers use this trick a lot.</p>
+<p>If we have <code>x % y</code>, and <code>y</code> is a power of 2,
+such as <code>2^n</code>, the result will be the lower <code>n</code>
+bits of <code>x</code>.</p>
+<p>Therefore, we can use the lower register byte access to efficiently
+implement modulo!</p>
+<p>Using only the following instruction(s):</p>
+<ul>
+<li><code>mov</code></li>
+</ul>
+<p>Please compute the following:</p>
+<ul>
+<li><code>rax = rdi % 256</code></li>
+<li><code>rbx = rsi % 65536</code></li>
+</ul>
+<p>如何使用寄存器的低位字节来高效地实现模运算？不难发现，当模数是2的幂时，例如2^n，模数就是低n位，也就是说可以通过直接取寄存器的低位字节来得到模运算的结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov al, dil</span></span><br><span class="line"><span class="string">    mov bx, si</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br></pre></td></tr></table></figure>
+<h2 id="byte-extraction">byte-extraction</h2>
+<p>Shifting bits around in assembly is another interesting concept!</p>
+<p>x86 allows you to 'shift' bits around in a register.</p>
+<p>Take, for instance, <code>al</code>, the lowest 8 bits of
+<code>rax</code>.</p>
+<p>The value in <code>al</code> (in bits) is:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rax = 10001010</span><br></pre></td></tr></table></figure>
+<p>If we shift once to the left using the <code>shl</code>
+instruction:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shl al, 1</span><br></pre></td></tr></table></figure>
+<p>The new value is:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">al = 00010100</span><br></pre></td></tr></table></figure>
+<p>Everything shifted to the left, and the highest bit fell off while a
+new 0 was added to the right side.</p>
+<p>You can use this to do special things to the bits you care about.</p>
+<p>Shifting has the nice side effect of doing quick multiplication (by
+2) or division (by 2), and can also be used to compute modulo.</p>
+<p>Here are the important instructions:</p>
+<ul>
+<li><code>shl reg1, reg2</code> &lt;=&gt; Shift <code>reg1</code> left
+by the amount in <code>reg2</code></li>
+<li><code>shr reg1, reg2</code> &lt;=&gt; Shift <code>reg1</code> right
+by the amount in <code>reg2</code></li>
+</ul>
+<p>Note: 'reg2' can be replaced by a constant or memory location.</p>
+<p>Using only the following instructions:</p>
+<ul>
+<li><code>mov</code>, <code>shr</code>, <code>shl</code></li>
+</ul>
+<p>Please perform the following: Set <code>rax</code> to the 5th least
+significant byte of <code>rdi</code>.</p>
+<p>For example:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rdi = | B7 | B6 | B5 | B4 | B3 | B2 | B1 | B0 |</span><br><span class="line">Set rax to the value of B4</span><br></pre></td></tr></table></figure>
+<p>移位时最高位遗弃，填充最低位置零。<code>shl rax, rbx</code>意思是rax左移rbx的值，rbx为8则左移8位。</p>
+<p>当一个寄存器的高位都是0时，读取的数值实际上就是其最低有效位（LSB）部分的值。这是因为高位的0对数值没有贡献。</p>
+<p>例如，假设有一个64位寄存器，其值为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">00000000000000000000000000000000000000000000000000000000001010</span><br></pre></td></tr></table></figure>
+<p>这个寄存器的值实际上是10（十进制），因为只有最低的4位是有效的（<code>1010</code>表示的是10）。高位的0并不影响最终的数值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    shl rdi,24</span></span><br><span class="line"><span class="string">    shr rdi,56</span></span><br><span class="line"><span class="string">    mov rax,rdi&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>AAAFORGE
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2025/01/09/Assembly%20Crash%20Course%20record/" title="Assembly Crash Course record">http://example.com/2025/01/09/Assembly Crash Course record/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E5%AE%89/" rel="tag"># 网安</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/01/06/%E9%85%8D%E7%BD%AEwsl%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/" rel="prev" title="wsl图形化界面安装踩坑">
+      <i class="fa fa-chevron-left"></i> wsl图形化界面安装踩坑
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/01/13/%E8%BD%AC%E8%BD%BD%E7%9A%84pwntools%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/" rel="next" title="[转载文章]菜鸟笔记之pwn工具篇--pwntools库的基本使用">
+      [转载文章]菜鸟笔记之pwn工具篇--pwntools库的基本使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#set-register"><span class="nav-number">1.</span> <span class="nav-text">set-register</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set-multiple-registers"><span class="nav-number">2.</span> <span class="nav-text">set-multiple-registers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-to-register"><span class="nav-number">3.</span> <span class="nav-text">add-to-register</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linear-equation-registers"><span class="nav-number">4.</span> <span class="nav-text">linear-equation-registers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#integer-division"><span class="nav-number">5.</span> <span class="nav-text">integer-division</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#module-opretion"><span class="nav-number">6.</span> <span class="nav-text">module-opretion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set-upper-byte"><span class="nav-number">7.</span> <span class="nav-text">set-upper-byte</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#efficient-modulo"><span class="nav-number">8.</span> <span class="nav-text">efficient-modulo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#byte-extraction"><span class="nav-number">9.</span> <span class="nav-text">byte-extraction</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="AAAFORGE"
+      src="/images/1312386.jpeg">
+  <p class="site-author-name" itemprop="name">AAAFORGE</p>
+  <div class="site-description" itemprop="description">此情可待成追忆，只是当时已惘然</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:g2420844892@gmail.com" title="E-Mail → mailto:g2420844892@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AAAFORGE</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">本博客全站共56.3k字</span>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_sphere.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'neutral',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

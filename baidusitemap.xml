@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://example.com/2025/01/09/Assembly%20Crash%20Course%20record/</loc>
+    <lastmod>2025-01-12</lastmod>
+  </url>
+  <url>
     <loc>http://example.com/2025/01/06/%E9%85%8D%E7%BD%AEwsl%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</loc>
-    <lastmod>2025-01-05</lastmod>
+    <lastmod>2025-01-12</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2025/01/13/%E8%BD%AC%E8%BD%BD%E7%9A%84pwntools%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/</loc>
+    <lastmod>2025-01-12</lastmod>
   </url>
   <url>
     <loc>http://example.com/2024/09/16/1.%20%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>

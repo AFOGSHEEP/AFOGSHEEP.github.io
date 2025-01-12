@@ -242,6 +242,423 @@ C++ 提供的强大功能来处理复杂的数据结构和算法操作。</p>
       </tags>
   </entry>
   <entry>
+    <title>[转载文章]菜鸟笔记之pwn工具篇--pwntools库的基本使用</title>
+    <url>/2025/01/13/%E8%BD%AC%E8%BD%BD%E7%9A%84pwntools%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[<p>==原文章链接：==<code>[菜鸟笔记之pwn工具篇--pwntools库的基本使用 - XiDP - 博客园](https://www.cnblogs.com/XiDP0/p/18445564)</code></p>
+<h2 id="啥是pwntools">啥是pwntools?</h2>
+<p><strong>Pwntools</strong> 是一个用于漏洞利用和二进制分析的
+<code>Python 库</code>，广泛应用于安全研究、渗透测试和竞争性编程（如
+CTF，Capture The
+Flag）它为用户提供了一套强大的工具和功能，以<code>简化与二进制文件的交互</code>、<code>网络通信</code>以及各种<code>常见任务的执行</code>。<span id="more"></span></p>
+<p>简而言之，<code>pwntools</code>可以说是pwn手必备的工具，它帮助pwn手<code>连接远程服务器</code>，<code>发送信息</code>，<code>接收信息</code>，以及提供了很多工具来帮助pwn手快速攻克题目</p>
+<h2 id="如何安装pwntools">如何安装pwntools?</h2>
+<p>按照以下流程在python3中安装pwntools</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; apt-get update</span><br><span class="line">&gt;&gt;&gt; apt-get install python3 python3-pip python3-dev git libssl-dev libffi-dev build-essential</span><br><span class="line">&gt;&gt;&gt; python3 -m pip install --upgrade pip</span><br><span class="line">&gt;&gt;&gt; python3 -m pip install --upgrade pwntools</span><br></pre></td></tr></table></figure>
+<h2 id="如何使用pwntools">如何使用pwntools?</h2>
+<p>显然我们需要学会使用python,并在编写脚本的时候导入pwntools库</p>
+<h3 id="导入pwntools">导入pwntools:</h3>
+<p>这大概会是每一个pwn手的编写脚本时的第一句话</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> * <span class="comment">#使用from来导入pwntools模块</span></span><br></pre></td></tr></table></figure>
+<h3 id="设置基本信息">设置基本信息:</h3>
+<p>在打靶机前需要按照靶机的类型设置好基本信息,因为<code>pwntools</code>中很多工具需要依靠<code>contest</code>来自动选择类型，比如<code>shellcraft(用于生成shellcode代码的工具)</code>等
+<code>os</code>是靶机的系统类型一般就是<code>linux系统</code>
+<code>arch</code>是指题目的架构,我们可以使用<code>checksec</code>工具来查看具体的架构，一般是<code>AMD64</code>或<code>i386</code>
+<code>log_level</code>是指日志输出等级，可以设置为<code>debug</code>或者直接不设置删掉也行，设置为debug在脚本运行的时候会输出我们具体发送了什么信息，靶机反馈了什么信息。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">context(os=<span class="string">&#x27;linux&#x27;</span>, arch=<span class="string">&#x27;AMD64&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="连接远程靶机">连接远程靶机:</h3>
+<p>在pwn(1.0.0)中曾经介绍过，我们启动靶机后会得到一个靶机地址，把靶机地址的前缀和端口分别输入在<code>remote</code>里面，<code>ip</code>用<code>''</code>包裹起来用逗号隔开<code>端口</code>，这样就实现了远程连接</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">用于连接远程服务器，并把连接到的进程命名为p，后续的函数都围绕这个p进程展开</span><br><span class="line">p = remote(<span class="string">&quot;ip&quot;</span>,port) </span><br><span class="line">比如:p = remote(<span class="string">&quot;node5.buuoj.cn&quot;</span>,<span class="number">5555</span>)</span><br></pre></td></tr></table></figure>
+<p>当然偶尔也有题目需要用ssh来连接靶机的</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">通过使用ssh来连接靶机</span><br><span class="line">p = ssh(host=<span class="string">&#x27;192.168.xx.xxx&#x27;</span>, user=<span class="string">&#x27;xidp&#x27;</span>, port=<span class="number">6666</span>, password=<span class="string">&#x27;88888888&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="本地调试">本地调试:</h3>
+<p>在远程之前，我们可以在本地先进行一些测试,那么我们可以本地运行文件</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">本地调试程序,并且将进程命名为p</span><br><span class="line">p = process(<span class="string">&quot;文件名&quot;</span>)</span><br><span class="line">比如:p = process(<span class="string">&quot;./pwn&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="发送信息">发送信息:</h3>
+<p>假设我们需要发送的是<code>payload</code>这个变量</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">**************************************************</span><br><span class="line">p.send(payload) <span class="comment"># 直接发送payload</span></span><br><span class="line">**************************************************</span><br><span class="line">p.sendline(payload) <span class="comment"># 发送payload，但是结尾会有一个\n</span></span><br><span class="line">**************************************************</span><br><span class="line">p.sendafter(<span class="string">&quot;string&quot;</span>, payload) <span class="comment"># 接收到 string (这里说的string可以替换成任何信息) 之后会发送payload，但是如果没有接收到string，那么就会导致脚本一直卡在这里不动</span></span><br><span class="line">**************************************************</span><br><span class="line">p.sendlineafer(<span class="string">&quot;string&quot;</span>, payload) <span class="comment"># 接收到 string 之后会发送payload 并且在payload最后添加\n</span></span><br></pre></td></tr></table></figure>
+<p>一般常用的发送就这几种，此时可能会有一个疑问，<code>p.send</code> 和
+<code>p.sendline</code> 就差一个<code>\n</code>有什么区别?
+有区别，比如<code>gets()</code>和<code>scanf()</code>这类函数它们会以<code>\n</code>作为结束符号，如果我们没有发送<code>\n</code>,它们就会一直卡着等待输入，所以遇到这类输入函数就必须要用<code>p.sendline</code>来添加<code>\n</code>(当然如果我们手动在payload里面添加<code>\n</code>也OK)。遇到<code>read()</code>这类函数则使用<code>p.sendline</code>和<code>p.send</code>都可以.</p>
+<p>那如果我们都使用<code>p.sendline</code>不就好了吗?
+NO，这并不好，比如我们遇到<code>read()</code>并且希望发送一些字符串比如<code>"flag"</code>,如果你用<code>p.send("flag")</code>那么没错你发送的是<code>flag</code>，计算机解析后是<code>\x67\x61\x6C\x66</code>，而如果你用的是<code>p.sendline("flag")</code>，则你发送的是<code>flag\n</code>,计算机解析后是<code>\x0a\x67\x61\x6C\x66</code>,这一点细节上的差距就可能导致我们的脚本无法打通，所以我们需要面对合适的函数使用合适的方法，后续我们将会继续讨论<code>read()、scanf()、fgets()和gets()</code>这类函数在输入的时候具体有什么区别</p>
+<h3 id="接收信息">接收信息:</h3>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">**************************************************</span><br><span class="line">p.recv(<span class="built_in">int</span>) 利用recv来接收返回的数据，并且可以控制接受到的字节数</span><br><span class="line">比如:p.recv(<span class="number">7</span>) =&gt; 系统输出<span class="string">&#x27;hello world&#x27;</span> =&gt; 我们会接受到<span class="string">&#x27;hello w&#x27;</span> </span><br><span class="line">**************************************************</span><br><span class="line">p.recvline(<span class="string">&#x27;string&#x27;</span>) 设置一个标识符，接收标识符所在的那一行</span><br><span class="line">比如:p.recvline(<span class="string">&#x27;O.o&#x27;</span>)</span><br><span class="line"><span class="comment">#系统输出:</span></span><br><span class="line">Hello World </span><br><span class="line">This <span class="keyword">is</span> a test. </span><br><span class="line">O.o This <span class="keyword">is</span> the target line. </span><br><span class="line">Goodbye.</span><br><span class="line"><span class="comment">#我们接收:</span></span><br><span class="line">O.o This <span class="keyword">is</span> the target line. </span><br><span class="line">**************************************************</span><br><span class="line">p.recvlines(N) 接收 N 行输出</span><br><span class="line">**************************************************</span><br><span class="line">p.recvuntil(<span class="string">&#x27;string&#x27;</span>) 可以指定接收到某一字符串的时候停止 ,还有第二个参数 drop，drop=<span class="literal">True</span>(默认为false) 表示丢弃设定的停止符号</span><br><span class="line">比如:p.recvuntil(<span class="string">&#x27;or&#x27;</span>) </span><br><span class="line"><span class="comment">#系统输出:</span></span><br><span class="line">hello world </span><br><span class="line"><span class="comment">#我们接收:</span></span><br><span class="line">hello wor  </span><br><span class="line">比如:a = io.recvuntil(<span class="string">&#x27;]&#x27;</span>, drop=<span class="literal">True</span>)</span><br><span class="line">就是一直获取到`]`符号出现就停止，并且不接收`]`符号</span><br><span class="line">**************************************************</span><br></pre></td></tr></table></figure>
+<h3 id="传递到终端">传递到终端:</h3>
+<p>大概是每个脚本的最后一句话</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">p.interactive()</span><br><span class="line">接受信息并且在终端操作，程序拿到shell，然后就可以转接到linux终端上，让pwn手享受拿flag的乐趣</span><br></pre></td></tr></table></figure>
+<h3 id="构造发送地址类型">构造发送地址类型:</h3>
+<p><code>p64/p32/u64/u32</code>这类函数的作用:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">**************************************************</span><br><span class="line">p64(<span class="built_in">int</span>) </span><br><span class="line">p64(<span class="number">0xfaceb00c</span>) =&gt; <span class="string">&#x27;\x0c\xb0\xce\xfa\x00\x00\x00\x00\x00&#x27;</span></span><br><span class="line">**************************************************</span><br><span class="line">u64(<span class="built_in">str</span>) </span><br><span class="line">u64(<span class="string">&#x27;\x0c\xb0\xce\xfa\x00\x00\x00\x00&#x27;</span>) =&gt;<span class="number">0xfaceb00c</span></span><br><span class="line">**************************************************</span><br><span class="line">p32(<span class="built_in">int</span>)  </span><br><span class="line">p32(<span class="number">0xfaceb00c</span>) =&gt; <span class="string">&#x27;\x0c\xb0\xce\xfa&#x27;</span></span><br><span class="line">**************************************************</span><br><span class="line">u32(<span class="built_in">str</span>) </span><br><span class="line">u32(<span class="string">&#x27;\x0c\xb0\xce\xfa&#x27;</span>) =&gt; <span class="number">0xfaceb00c</span></span><br><span class="line">**************************************************</span><br></pre></td></tr></table></figure>
+<p><code>p64()</code>这种类型用于将消息变成对应的进制流（因为原本程序里面的数据都是已经编译过的，所以打入的数据也需要是编译过的,所以需要使用p64()这类工具）
+<code>u64()</code>这种类型<code>用于泄露地址</code>的时候将泄露的进制流变成对应的原本的样子，方便来辨认查找glibc版本</p>
+<p>因为一般计算机都是小端程序，所以这两个函数都自带有将数据变成小端需要的样子，如果遇到大端程序可能需要额外注意</p>
+<p>除了<code>p32()</code>这种转化方式还有，<code>flat()</code>，它可以将多个数据结构（如字符串、整数等）连接在一起，并将它们转换为二进制数据。通常用于构建复杂的ROP链的<code>shellcode</code>。flat
+函数会将数据扁平化，将它们按照顺序连接在一起，不做任何其他处理。在提供的代码中，<code>flat</code>
+被用于构建一个包含多个元素的列表，然后将它们连接起来形成一个二进制数据。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">payload = flat([<span class="number">0x12345678</span>, <span class="string">&#x27;AAAA&#x27;</span>, <span class="number">0xdeadbeef</span>], word_size=<span class="number">4</span>/<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="的汇编与反汇编">的汇编与反汇编:</h4>
+<p>pwntools提供了两个工具:
+<code>asm</code>函数可以将汇编代码转为对应的二进制
+<code>disasm</code>函数则相反可以将二进制转化为汇编代码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>asm(<span class="string">&#x27;mov eax, 0&#x27;</span>)   <span class="comment">#汇编</span></span><br><span class="line"><span class="string">&#x27;\xb8\x00\x00\x00\x00&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>disasm(<span class="string">&#x27;\xb8\x0b\x00\x00\x00&#x27;</span>)  <span class="comment">#反汇编</span></span><br><span class="line"><span class="string">&#x27;mov    eax,0xb&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="生成shllcode后门">生成shllcode后门:</h4>
+<p><strong>pwnlib.shellcraft模块</strong>包含<strong>生成shell代码</strong>的函数。
+在使用之前我们需要通过<strong>context设置架构</strong>，然后<strong>生成shellcode</strong>也就是生成后门</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">context(os=<span class="string">&#x27;linux&#x27;</span>, arch=<span class="string">&#x27;i386&#x27;</span>)</span><br><span class="line"><span class="comment"># 表示将当前执行上下文的体系结构设置为i386(这里的i386可以通过checksec来查看文件是什么架构的  </span></span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"><span class="comment"># asm()是把括号内的内容编译成机器码(只有机器码才可以执行)，一般用来打入后门。pwntools自带的后门函数，可以生成类似system(&#x27;/bin/sh/&#x27;)这样功能的汇编代码 </span></span><br><span class="line"><span class="comment"># 通常可以配合  .ljust() 来使用  </span></span><br><span class="line">shellcode.ljust(<span class="number">112</span>, <span class="string">b&#x27;A&#x27;</span>)  </span><br><span class="line"><span class="comment"># 这里的 .ljust() 是 Python 中字符串对象的方法，用于在字符串的右侧填充指定的字符，使字符串达到指定的长度。</span></span><br></pre></td></tr></table></figure>
+<p>纯净版shellcode</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;i386&#x27;</span>, os=<span class="string">&#x27;linux&#x27;</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">shellcode.ljust(<span class="number">112</span>, <span class="string">b&#x27;A&#x27;</span>)  </span><br></pre></td></tr></table></figure>
+<p>当然也有专门的网站收集shellcode shellcode的网址：
+https://www.exploit-db.com/shellcodes/43550
+下面也提供一些已经编译好的shellcode: 64位linux的24Byte的shellcode</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">shellcode_x64 =<span class="string">&quot;\x6a\x3b\x58\x99\x52\x48\xbb\x2f\x2f\x62\x69\x6e\x2f\x73\x68\x53\x54\x5f\x52\x57\x54\x5e\x0f\x05&quot;</span></span><br></pre></td></tr></table></figure>
+<p>64位Linux的23Byte的shellcode</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">shellcode_x64 =<span class="string">&quot;\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05&quot;</span></span><br></pre></td></tr></table></figure>
+<p>更多的时候根据题目的要求，我们需要自己手动编写shellcode来绕过一些检测，所以编写<code>shellcode</code>是后续必须要掌握的一种技巧</p>
+<p>运行时调用gdb调试: 使用<code>gdb.attach</code>函数</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">gdb.attach(p, gdbscript=<span class="string">&quot;&quot;&quot; b main; commands; silent printf &quot;Breakpoint hit\n&quot;; continue; end &quot;&quot;&quot;</span>)</span><br><span class="line">在需要进行调试的位置插入gdb.attach(p)即可在执行到的时候打开gdb进行调试</span><br><span class="line">p是指定的需要调试的进程(必须要本地调试，否则会报错)</span><br><span class="line">gdbscript是打开gdb后需要进行的操作，使用 ; 进行隔离</span><br></pre></td></tr></table></figure>
+<p>一般<code>gdb.attach(p)</code>可以和<code>pause()</code>函数连用，可以确保在gdb完全打开之前脚本不运行
+<code>pause()</code>函数用于暂停脚本的运行，直到用户输入任意数据</p>
+<h4 id="elf模块">ELF模块:</h4>
+<p>我们可以通过这个模块来快速获取pwn文件的<code>got表地址</code>以及<code>plt表地址</code>
+用于获取<code>ELF文件的信息</code>，首先使用<code>ELF()</code>获取这个文件的句柄，然后使用这个句柄调用函数，和IO模块很相似。
+下面演示了：获取基地址、获取函数地址（基于符号）、获取函数got地址、获取函数plt地址，和LibcSearcher库联动使用</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">elf = ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"></span><br><span class="line">elf.address <span class="comment"># 文件装载的基地址 =&gt; 0x400000</span></span><br><span class="line"></span><br><span class="line">main_addr = elf.symbols[<span class="string">&#x27;main&#x27;</span>] <span class="comment"># 获取函数地址 =&gt; 0x401680</span></span><br><span class="line"></span><br><span class="line">write_got = elf.got[<span class="string">&#x27;write&#x27;</span>] <span class="comment"># 获取对应函数在GOT表的地址 =&gt; 0x60b070</span></span><br><span class="line"></span><br><span class="line">write_plt = elf.plt[<span class="string">&#x27;write&#x27;</span>] <span class="comment"># 获取对应函数在PLT表的地址 =&gt; 0x401680</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>网安</tag>
+        <tag>学习笔记</tag>
+        <tag>转载</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Assembly Crash Course record</title>
+    <url>/2025/01/09/Assembly%20Crash%20Course%20record/</url>
+    <content><![CDATA[<h2 id="set-register">set-register</h2>
+<p>题目要求：</p>
+<p>In this level, you will be working with registers. You will be asked
+to modify or read from registers.</p>
+<p>In this level, you will work with registers! Please set the
+following:<span id="more"></span></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rdi = 0x1337</span><br></pre></td></tr></table></figure>
+<p>似乎很简单，要求我们将rdi的值设置成
+<code>0x1337</code>，但是会得到</p>
+<p>==WARNING: It looks like your input might not be assembled binary
+code, but assembly source code. This challenge needs the raw binary
+assembled code as input.==</p>
+<p>程序并不能理解我们输入的汇编代码，所以我们要使用pwntools的工具来构造机器码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p=process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line">p.recvline()<span class="comment">#这行代码从进程 p 中接收一行数据。它会读取数据直到遇到换行符（\n），然后返回这一行的内容。默认情况下，recvline() 会保留行				尾的换行符。在这里，它用于读取目标程序输出的第一行数据，可能是程序的提示信息或其他初始输出，以便知道程序已经准备好接收后续				的输入。</span></span><br><span class="line">p.send(asm(<span class="string">&#x27;mov rdi,0x1337&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.readallS())<span class="comment">#首先调用 p.readall() 函数，读取进程 p 的所有剩余输出，直到进程结束。它会阻塞当前线程，直到目标进程关闭其输出流。					并自动转换成字符串，之后用print()输出</span></span><br></pre></td></tr></table></figure>
+<p>得到<code>flag:pwn.college&#123;QRxMx73Zr7Op3kSe-GPyic6TjdY.0FN5EDL4EDOxYzW&#125;</code></p>
+<h2 id="set-multiple-registers">set-multiple-registers</h2>
+<p>In this level, you will be working with registers. You will be asked
+to modify or read from registers.</p>
+<p>In this level, you will work with multiple registers. Please set the
+following:</p>
+<ul>
+<li><code>rax = 0x1337</code></li>
+<li><code>r12 = 0xCAFED00D1337BEEF</code></li>
+<li><code>rsp = 0x31337</code></li>
+</ul>
+<p>类似的题目，从设置一个寄存器变为了设置多个</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line">p.recv()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">	mov rax ,0x1337</span></span><br><span class="line"><span class="string">	mov r12 ,0xCAFED00D1337BEEF</span></span><br><span class="line"><span class="string">	mov rsp ,0x31337</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.recvall())</span><br></pre></td></tr></table></figure>
+<h2 id="add-to-register">add-to-register</h2>
+<p>In this level, you will be working with registers. You will be asked
+to modify or read from registers.</p>
+<p>We will set some values in memory dynamically before each run. On
+each run, the values will change. This means you will need to perform
+some formulaic operation with registers. We will tell you which
+registers are set beforehand and where you should put the result. In
+most cases, it's <code>rax</code>.</p>
+<p>Many instructions exist in x86 that allow you to perform all the
+normal math operations on registers and memory.</p>
+<p>For shorthand, when we say <code>A += B</code>, it really means
+<code>A = A + B</code>.</p>
+<p>Here are some useful instructions:</p>
+<ul>
+<li><code>add reg1, reg2</code> &lt;=&gt; <code>reg1 += reg2</code></li>
+<li><code>sub reg1, reg2</code> &lt;=&gt; <code>reg1 -= reg2</code></li>
+<li><code>imul reg1, reg2</code> &lt;=&gt;
+<code>reg1 *= reg2</code></li>
+</ul>
+<p><code>div</code> is more complicated, and we will discuss it later.
+Note: all <code>regX</code> can be replaced by a constant or memory
+location.</p>
+<p>Do the following:</p>
+<ul>
+<li>Add <code>0x331337</code> to <code>rdi</code></li>
+</ul>
+<p>要求对寄存器进行加法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    add rdi, 0x331337&#x27;&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.recvallS())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>得到<code>flag:pwn.college&#123;oQeaHikpX98CEqAk6biPBYRAxUc.0VN5EDL4EDOxYzW&#125;</code></p>
+<h2 id="linear-equation-registers">linear-equation-registers</h2>
+<p>In this level, you will be working with registers. You will be asked
+to modify or read from registers.</p>
+<p>We will now set some values in memory dynamically before each run. On
+each run, the values will change. This means you will need to do some
+type of formulaic operation with registers. We will tell you which
+registers are set beforehand and where you should put the result. In
+most cases, it's <code>rax</code>.</p>
+<p>Using your new knowledge, please compute the following:</p>
+<ul>
+<li>``` f(x) = mx + b <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">  , where:</span><br><span class="line"></span><br><span class="line">  - `m = rdi`</span><br><span class="line">  - `x = rsi`</span><br><span class="line">  - `b = rdx`</span><br><span class="line"></span><br><span class="line">Place the result into `rax`.</span><br><span class="line"></span><br><span class="line">Note: There is an important difference between `mul` (unsigned multiply) and `imul` (signed multiply) in terms of which registers are used. Look at the documentation on these instructions to see the difference.</span><br><span class="line"></span><br><span class="line">In this case, you will want to use `imul`.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">练习一下乘法</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">from pwn import *</span><br><span class="line">context.arch = &#x27;amd64&#x27;</span><br><span class="line">p= process(&quot;/challenge/run&quot;)</span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(&#x27;&#x27;&#x27;</span><br><span class="line">	xor rax,rax		#初始化寄存器</span><br><span class="line">	imul rdi,rsi</span><br><span class="line">	mov rax,rdx</span><br><span class="line">	add rax,rdi</span><br><span class="line">&#x27;&#x27;&#x27;))</span><br><span class="line">print(p.recvall())</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>获取答案。后面还是不要直接写出flag了。</p>
+<h2 id="integer-division">integer-division</h2>
+<p>Division in x86 is more special than in normal math. Math here is
+called integer math, meaning every value is a whole number.</p>
+<p>As an example: <code>10 / 3 = 3</code> in integer math.</p>
+<p>Why?</p>
+<p>Because <code>3.33</code> is rounded down to an integer.</p>
+<p>The relevant instructions for this level are:</p>
+<ul>
+<li><code>mov rax, reg1</code></li>
+<li><code>div reg2</code></li>
+</ul>
+<p>Note: <code>div</code> is a special instruction that can divide a
+128-bit dividend by a 64-bit divisor while storing both the quotient and
+the remainder, using only one register as an operand.</p>
+<p>How does this complex <code>div</code> instruction work and operate
+on a 128-bit dividend (which is twice as large as a register)?</p>
+<p>For the instruction <code>div reg</code>, the following happens:</p>
+<ul>
+<li><code>rax = rdx:rax / reg</code></li>
+<li><code>rdx = remainder</code></li>
+</ul>
+<p><code>rdx:rax</code> means that <code>rdx</code> will be the upper
+64-bits of the 128-bit dividend and <code>rax</code> will be the lower
+64-bits of the 128-bit dividend.</p>
+<p>You must be careful about what is in <code>rdx</code> and
+<code>rax</code> before you call <code>div</code>.</p>
+<p>Please compute the following:</p>
+<ul>
+<li>``` speed = distance / time <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">  , where:</span><br><span class="line"></span><br><span class="line">  - `distance = rdi`</span><br><span class="line">  - `time = rsi`</span><br><span class="line">  - `speed = rax`</span><br><span class="line"></span><br><span class="line">Note that distance will be at most a 64-bit value, so `rdx` should be 0 when dividing.</span><br><span class="line"></span><br><span class="line">在x86汇编中，`div`指令用于执行整数除法，它可以将一个128位的被除数除以一个64位的除数，并同时存储商和余数。这个指令的特殊之处在于它使用了两个寄存器来表示被除数：`rdx`和`rax`。其中，`rdx`存储被除数的高64位，而`rax`存储被除数的低64位。</span><br><span class="line"></span><br><span class="line">在执行`div reg`指令时，以下操作会发生：</span><br><span class="line"></span><br><span class="line">1. `rax`寄存器将被设置为`rdx:rax`（即由`rdx`和`rax`组成的128位数）除以`reg`的商。</span><br><span class="line">2. `rdx`寄存器将被设置为除法的余数。</span><br><span class="line"></span><br><span class="line">接下来就是练习除法</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">from pwn import *</span><br><span class="line">context.arch = &#x27;amd64&#x27;</span><br><span class="line">p= process(&quot;/challenge/run&quot;)</span><br><span class="line">p.recv()</span><br><span class="line">p.send(asm(&#x27;&#x27;&#x27;</span><br><span class="line">    mov rax,rdi</span><br><span class="line">    xor rdx,rdx</span><br><span class="line">    div rsi</span><br><span class="line">&#x27;&#x27;&#x27;))</span><br><span class="line">print(p.recvall())</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="module-opretion">module-opretion</h2>
+<p>Modulo in assembly is another interesting concept!</p>
+<p>x86 allows you to get the remainder after a <code>div</code>
+operation.</p>
+<p>For instance: <code>10 / 3</code> results in a remainder of
+<code>1</code>.</p>
+<p>The remainder is the same as modulo, which is also called the "mod"
+operator.</p>
+<p>In most programming languages, we refer to mod with the symbol
+<code>%</code>.</p>
+<p>Please compute the following: <code>rdi % rsi</code></p>
+<p>Place the value in <code>rax</code>.</p>
+<p>关于模的运算。但是x86没有直接求模的运算。所以需要手动算一下。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p= process(<span class="string">&quot;/challenge/run&quot;</span>)</span><br><span class="line">p.recv()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">	xor rdx,rdx</span></span><br><span class="line"><span class="string">	mov rax,rdi</span></span><br><span class="line"><span class="string">	div rsi</span></span><br><span class="line"><span class="string">	xor rax,rax</span></span><br><span class="line"><span class="string">	mov rax,rdx</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.recvall())</span><br></pre></td></tr></table></figure>
+<p>记得寄存器用前要清零，还有就是一般用<code>rax</code>作为函数返还数值的寄存器。</p>
+<h2 id="set-upper-byte">set-upper-byte</h2>
+<p>Another cool concept in x86 is the ability to independently access
+the lower register bytes.</p>
+<p>Each register in x86_64 is 64 bits in size, and in the previous
+levels, we have accessed the full register using <code>rax</code>,
+<code>rdi</code>, or <code>rsi</code>.</p>
+<p>We can also access the lower bytes of each register using different
+register names.</p>
+<p>For example, the lower 32 bits of <code>rax</code> can be accessed
+using <code>eax</code>, the lower 16 bits using <code>ax</code>, and the
+lower 8 bits using <code>al</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">MSB                                    LSB</span><br><span class="line">+----------------------------------------+</span><br><span class="line">|                   rax                  |</span><br><span class="line">+--------------------+-------------------+</span><br><span class="line">                     |        eax        |</span><br><span class="line">                     +---------+---------+</span><br><span class="line">                               |   ax    |</span><br><span class="line">                               +----+----+</span><br><span class="line">                               | ah | al |</span><br><span class="line">                               +----+----+</span><br></pre></td></tr></table></figure>
+<p>Lower register bytes access is applicable to almost all
+registers.</p>
+<p>Using only one move instruction, please set the upper 8 bits of the
+<code>ax</code> register to <code>0x42</code>.</p>
+<p>介绍了<code>x86</code>架构中寄存器的特性——寄存器可以被划分为不同的部分，以便可以单独访问其部分位。这种设计允许程序员更灵活地处理数据，尤其是在需要对数据的特定部分进行操作时。</p>
+<p>以<code>rax</code>寄存器为例，它是一个64位的寄存器，可以被分为不同的部分：</p>
+<ul>
+<li><code>rax</code>：整个64位寄存器。</li>
+<li><code>eax</code>：<code>rax</code>的低32位。</li>
+<li><code>ax</code>：<code>eax</code>的低16位。</li>
+<li><code>al</code>：<code>ax</code>的低8位。</li>
+<li><code>ah</code>：<code>ax</code>的高8位。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov ah,0x42</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(output)  </span><br></pre></td></tr></table></figure>
+<p>补充:</p>
+<p>MSB和LSB是位的两种称呼：</p>
+<ul>
+<li><strong>MSB (Most Significant
+Bit)</strong>：最高有效位。在二进制数中，MSB是位于最左侧的位，具有最大的数值权重。例如，在一个8位的二进制数<code>10110101</code>中，最左边的<code>1</code>就是MSB，它代表了<code>2^7</code>的权重。</li>
+<li><strong>LSB (Least Significant
+Bit)</strong>：最低有效位。在二进制数中，LSB是位于最右侧的位，具有最小的数值权重。例如，在同一个8位的二进制数<code>10110101</code>中，最右边的<code>1</code>就是LSB，它代表了<code>2^0</code>的权重。</li>
+</ul>
+<p>常用寄存器</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th>x64调用约定</th>
+<th>64位寄存器</th>
+<th>32位寄存器</th>
+<th>16位寄存器</th>
+<th>8位寄存器（低）</th>
+<th>8位寄存器（高）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>函数返回值</td>
+<td>rax</td>
+<td>eax</td>
+<td>ax</td>
+<td>al</td>
+<td>al</td>
+</tr>
+<tr>
+<td></td>
+<td>rbx</td>
+<td>ebx</td>
+<td>bx</td>
+<td>bl</td>
+<td>bl</td>
+</tr>
+<tr>
+<td>第四个参数</td>
+<td>rcx</td>
+<td>ecb</td>
+<td>cx</td>
+<td>cl</td>
+<td>cl</td>
+</tr>
+<tr>
+<td>第三个参数</td>
+<td>rdx</td>
+<td>edx</td>
+<td>dx</td>
+<td>dl</td>
+<td>dl</td>
+</tr>
+<tr>
+<td>第一个参数</td>
+<td>rdi</td>
+<td>edi</td>
+<td>di</td>
+<td>dil</td>
+<td></td>
+</tr>
+<tr>
+<td>第二个参数</td>
+<td>rsi</td>
+<td>esi</td>
+<td>si</td>
+<td>sil</td>
+<td></td>
+</tr>
+<tr>
+<td>下一条指令的地址</td>
+<td>rip</td>
+<td>eip</td>
+<td>ip</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>栈底指针</td>
+<td>rbp</td>
+<td>ebp</td>
+<td>bp</td>
+<td>bpl</td>
+<td></td>
+</tr>
+<tr>
+<td>栈顶指针</td>
+<td>rsp</td>
+<td>esp</td>
+<td>sp</td>
+<td>spl</td>
+<td></td>
+</tr>
+<tr>
+<td>第五个参数</td>
+<td>r8</td>
+<td>r8d</td>
+<td>r8w</td>
+<td>r8b</td>
+<td></td>
+</tr>
+<tr>
+<td>第六个参数</td>
+<td>r9</td>
+<td>r9d</td>
+<td>r9w</td>
+<td>r9b</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="efficient-modulo">efficient-modulo</h2>
+<p>It turns out that using the <code>div</code> operator to compute the
+modulo operation is slow!</p>
+<p>We can use a math trick to optimize the modulo operator
+(<code>%</code>). Compilers use this trick a lot.</p>
+<p>If we have <code>x % y</code>, and <code>y</code> is a power of 2,
+such as <code>2^n</code>, the result will be the lower <code>n</code>
+bits of <code>x</code>.</p>
+<p>Therefore, we can use the lower register byte access to efficiently
+implement modulo!</p>
+<p>Using only the following instruction(s):</p>
+<ul>
+<li><code>mov</code></li>
+</ul>
+<p>Please compute the following:</p>
+<ul>
+<li><code>rax = rdi % 256</code></li>
+<li><code>rbx = rsi % 65536</code></li>
+</ul>
+<p>如何使用寄存器的低位字节来高效地实现模运算？不难发现，当模数是2的幂时，例如2^n，模数就是低n位，也就是说可以通过直接取寄存器的低位字节来得到模运算的结果。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov al, dil</span></span><br><span class="line"><span class="string">    mov bx, si</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br></pre></td></tr></table></figure>
+<h2 id="byte-extraction">byte-extraction</h2>
+<p>Shifting bits around in assembly is another interesting concept!</p>
+<p>x86 allows you to 'shift' bits around in a register.</p>
+<p>Take, for instance, <code>al</code>, the lowest 8 bits of
+<code>rax</code>.</p>
+<p>The value in <code>al</code> (in bits) is:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rax = 10001010</span><br></pre></td></tr></table></figure>
+<p>If we shift once to the left using the <code>shl</code>
+instruction:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">shl al, 1</span><br></pre></td></tr></table></figure>
+<p>The new value is:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">al = 00010100</span><br></pre></td></tr></table></figure>
+<p>Everything shifted to the left, and the highest bit fell off while a
+new 0 was added to the right side.</p>
+<p>You can use this to do special things to the bits you care about.</p>
+<p>Shifting has the nice side effect of doing quick multiplication (by
+2) or division (by 2), and can also be used to compute modulo.</p>
+<p>Here are the important instructions:</p>
+<ul>
+<li><code>shl reg1, reg2</code> &lt;=&gt; Shift <code>reg1</code> left
+by the amount in <code>reg2</code></li>
+<li><code>shr reg1, reg2</code> &lt;=&gt; Shift <code>reg1</code> right
+by the amount in <code>reg2</code></li>
+</ul>
+<p>Note: 'reg2' can be replaced by a constant or memory location.</p>
+<p>Using only the following instructions:</p>
+<ul>
+<li><code>mov</code>, <code>shr</code>, <code>shl</code></li>
+</ul>
+<p>Please perform the following: Set <code>rax</code> to the 5th least
+significant byte of <code>rdi</code>.</p>
+<p>For example:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rdi = | B7 | B6 | B5 | B4 | B3 | B2 | B1 | B0 |</span><br><span class="line">Set rax to the value of B4</span><br></pre></td></tr></table></figure>
+<p>移位时最高位遗弃，填充最低位置零。<code>shl rax, rbx</code>意思是rax左移rbx的值，rbx为8则左移8位。</p>
+<p>当一个寄存器的高位都是0时，读取的数值实际上就是其最低有效位（LSB）部分的值。这是因为高位的0对数值没有贡献。</p>
+<p>例如，假设有一个64位寄存器，其值为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">00000000000000000000000000000000000000000000000000000000001010</span><br></pre></td></tr></table></figure>
+<p>这个寄存器的值实际上是10（十进制），因为只有最低的4位是有效的（<code>1010</code>表示的是10）。高位的0并不影响最终的数值。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    shl rdi,24</span></span><br><span class="line"><span class="string">    shr rdi,56</span></span><br><span class="line"><span class="string">    mov rax,rdi&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>网安</tag>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>wsl图形化界面安装踩坑</title>
     <url>/2025/01/06/%E9%85%8D%E7%BD%AEwsl%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</url>
     <content><![CDATA[<p>安装wsl后只有终端界面太单调了，遂网上寻找给Ubuntu添加图形界面的方法。中间遇见了一些坑，记下来以备查阅。</p>
@@ -331,6 +748,9 @@ alt="image-20250106002134830" />
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">DESKTOP-14VK3K3% startxfce4</span><br><span class="line">/usr/bin/startxfce4: X server already running on display :0</span><br><span class="line">gpg-agent: a gpg-agent is already running - not starting a new one</span><br><span class="line">Another Window Manager (Weston WM) is already running on screen :0.0</span><br><span class="line">To replace the current window manager, try <span class="string">&quot;--replace&quot;</span></span><br><span class="line"></span><br><span class="line">(xfwm4:1871): xfwm4-WARNING **: 22:49:38.642: Could not find a screen to manage, exiting</span><br><span class="line">xfsettingsd: Another clipboard manager is already running.</span><br><span class="line"></span><br><span class="line">(xfsettingsd:1876): xfsettingsd-WARNING **: 22:49:38.771: Failed to get the _NET_NUMBER_OF_DESKTOPS property.</span><br></pre></td></tr></table></figure>
 <p>像是没有和xserver的服务器连接。</p>
 <p>另一方面，安装wslg的应用并不能完整的体验图形化linux的使用，里面只有分散的图形化程序，并非完全的linux桌面。</p>
+<p>+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+<p>​ <strong>以上是分割线</strong></p>
+<p>最近折腾neovim发现自己之前稀里糊涂的安装了<code>zsh</code>作为shell，<code>bash</code>根本就不管事，我还把所有的配置都放在了<code>bashrc</code>里,也难怪没有图形界面没有正常出现。。。。麻烦的是后面还得自己把配置都写进<code>zshrc</code>。。</p>
 ]]></content>
       <tags>
         <tag>linux</tag>
@@ -846,8 +1266,8 @@ descriptor）。<code>1</code> 表示标准输出（stdout）。</li>
 </ol>
 ]]></content>
       <tags>
-        <tag>学习笔记</tag>
         <tag>网安</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -1060,8 +1480,8 @@ Key）指定一个关系中的属性必须映射到另一个关系中的元组�
 <figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"><span class="addition">+----+--------+-----+---------+------------+</span></span><br><span class="line">| ID | Name   | Age | CourseID| CourseName |</span><br><span class="line"><span class="addition">+----+--------+-----+---------+------------+</span></span><br><span class="line">| 1  | Alice  | 20  | 101     | Math       |</span><br><span class="line">| 2  | Bob    | 22  | 102     | English    |</span><br><span class="line">| 2  | Bob    | 22  | 104     | Math       |</span><br><span class="line">| 3  | Charlie| 23  | 103     | History    |</span><br><span class="line"><span class="addition">+----+--------+-----+---------+------------+</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>数据库</tag>
         <tag>学习笔记</tag>
+        <tag>数据库</tag>
       </tags>
   </entry>
   <entry>
