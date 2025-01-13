@@ -325,8 +325,8 @@ https://www.exploit-db.com/shellcodes/43550
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">elf = ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"></span><br><span class="line">elf.address <span class="comment"># 文件装载的基地址 =&gt; 0x400000</span></span><br><span class="line"></span><br><span class="line">main_addr = elf.symbols[<span class="string">&#x27;main&#x27;</span>] <span class="comment"># 获取函数地址 =&gt; 0x401680</span></span><br><span class="line"></span><br><span class="line">write_got = elf.got[<span class="string">&#x27;write&#x27;</span>] <span class="comment"># 获取对应函数在GOT表的地址 =&gt; 0x60b070</span></span><br><span class="line"></span><br><span class="line">write_plt = elf.plt[<span class="string">&#x27;write&#x27;</span>] <span class="comment"># 获取对应函数在PLT表的地址 =&gt; 0x401680</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>网安</tag>
         <tag>学习笔记</tag>
+        <tag>网安</tag>
         <tag>转载</tag>
       </tags>
   </entry>
@@ -338,16 +338,18 @@ https://www.exploit-db.com/shellcodes/43550
 <p>In this level, you will be working with registers. You will be asked
 to modify or read from registers.</p>
 <p>In this level, you will work with registers! Please set the
-following:<span id="more"></span></p>
+following: <span id="more"></span></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rdi = 0x1337</span><br></pre></td></tr></table></figure>
-<p>似乎很简单，要求我们将rdi的值设置成
+<p>似乎很简单，要求我们将 rdi 的值设置成
 <code>0x1337</code>，但是会得到</p>
-<p>==WARNING: It looks like your input might not be assembled binary
+<p>=="WARNING: It looks like your input might not be assembled binary
 code, but assembly source code. This challenge needs the raw binary
-assembled code as input.==</p>
-<p>程序并不能理解我们输入的汇编代码，所以我们要使用pwntools的工具来构造机器码。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p=process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line">p.recvline()<span class="comment">#这行代码从进程 p 中接收一行数据。它会读取数据直到遇到换行符（\n），然后返回这一行的内容。默认情况下，recvline() 会保留行				尾的换行符。在这里，它用于读取目标程序输出的第一行数据，可能是程序的提示信息或其他初始输出，以便知道程序已经准备好接收后续				的输入。</span></span><br><span class="line">p.send(asm(<span class="string">&#x27;mov rdi,0x1337&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.readallS())<span class="comment">#首先调用 p.readall() 函数，读取进程 p 的所有剩余输出，直到进程结束。它会阻塞当前线程，直到目标进程关闭其输出流。					并自动转换成字符串，之后用print()输出</span></span><br></pre></td></tr></table></figure>
-<p>得到<code>flag:pwn.college&#123;QRxMx73Zr7Op3kSe-GPyic6TjdY.0FN5EDL4EDOxYzW&#125;</code></p>
+assembled code as input."==</p>
+<p>程序并不能理解我们输入的汇编代码，所以我们要使用 pwntools
+的工具来构造机器码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p=process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line">p.recvline()<span class="comment">#这行代码从进程 p 中接收一行数据。它会读取数据直到遇到换行符##（\n），然后返回这一行的内容。默认情况下，recvline() 会保留行尾的换行符。在这里，它用于读取目标程序输出的第一行数据，可能是程序的提示信息或其他初始输出，以便知#道程序已经准备好接收后续的输入。</span></span><br><span class="line">p.send(asm(<span class="string">&#x27;mov rdi,0x1337&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.readallS())<span class="comment">#首先调用 p.readall() 函数，读取进程 p 的所有剩余输出直到进程结束。它会阻塞当前线程，直到目标进程关闭其输出流。并自动转换成字符串，之后用print()输出</span></span><br></pre></td></tr></table></figure>
+<p>得到
+<code>flag:pwn.college&#123;QRxMx73Zr7Op3kSe-GPyic6TjdY.0FN5EDL4EDOxYzW&#125;</code></p>
 <h2 id="set-multiple-registers">set-multiple-registers</h2>
 <p>In this level, you will be working with registers. You will be asked
 to modify or read from registers.</p>
@@ -388,7 +390,8 @@ location.</p>
 </ul>
 <p>要求对寄存器进行加法。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    add rdi, 0x331337&#x27;&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.recvallS())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>得到<code>flag:pwn.college&#123;oQeaHikpX98CEqAk6biPBYRAxUc.0VN5EDL4EDOxYzW&#125;</code></p>
+<p>得到
+<code>flag:pwn.college&#123;oQeaHikpX98CEqAk6biPBYRAxUc.0VN5EDL4EDOxYzW&#125;</code></p>
 <h2 id="linear-equation-registers">linear-equation-registers</h2>
 <p>In this level, you will be working with registers. You will be asked
 to modify or read from registers.</p>
@@ -401,7 +404,7 @@ most cases, it's <code>rax</code>.</p>
 <ul>
 <li>``` f(x) = mx + b <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">  , where:</span><br><span class="line"></span><br><span class="line">  - `m = rdi`</span><br><span class="line">  - `x = rsi`</span><br><span class="line">  - `b = rdx`</span><br><span class="line"></span><br><span class="line">Place the result into `rax`.</span><br><span class="line"></span><br><span class="line">Note: There is an important difference between `mul` (unsigned multiply) and `imul` (signed multiply) in terms of which registers are used. Look at the documentation on these instructions to see the difference.</span><br><span class="line"></span><br><span class="line">In this case, you will want to use `imul`.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">练习一下乘法</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">from pwn import *</span><br><span class="line">context.arch = &#x27;amd64&#x27;</span><br><span class="line">p= process(&quot;/challenge/run&quot;)</span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(&#x27;&#x27;&#x27;</span><br><span class="line">	xor rax,rax		#初始化寄存器</span><br><span class="line">	imul rdi,rsi</span><br><span class="line">	mov rax,rdx</span><br><span class="line">	add rax,rdi</span><br><span class="line">&#x27;&#x27;&#x27;))</span><br><span class="line">print(p.recvall())</span><br></pre></td></tr></table></figure></li>
 </ul>
-<p>获取答案。后面还是不要直接写出flag了。</p>
+<p>获取答案。后面还是不要直接写出 flag 了。</p>
 <h2 id="integer-division">integer-division</h2>
 <p>Division in x86 is more special than in normal math. Math here is
 called integer math, meaning every value is a whole number.</p>
@@ -430,7 +433,7 @@ on a 128-bit dividend (which is twice as large as a register)?</p>
 <code>rax</code> before you call <code>div</code>.</p>
 <p>Please compute the following:</p>
 <ul>
-<li>``` speed = distance / time <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">  , where:</span><br><span class="line"></span><br><span class="line">  - `distance = rdi`</span><br><span class="line">  - `time = rsi`</span><br><span class="line">  - `speed = rax`</span><br><span class="line"></span><br><span class="line">Note that distance will be at most a 64-bit value, so `rdx` should be 0 when dividing.</span><br><span class="line"></span><br><span class="line">在x86汇编中，`div`指令用于执行整数除法，它可以将一个128位的被除数除以一个64位的除数，并同时存储商和余数。这个指令的特殊之处在于它使用了两个寄存器来表示被除数：`rdx`和`rax`。其中，`rdx`存储被除数的高64位，而`rax`存储被除数的低64位。</span><br><span class="line"></span><br><span class="line">在执行`div reg`指令时，以下操作会发生：</span><br><span class="line"></span><br><span class="line">1. `rax`寄存器将被设置为`rdx:rax`（即由`rdx`和`rax`组成的128位数）除以`reg`的商。</span><br><span class="line">2. `rdx`寄存器将被设置为除法的余数。</span><br><span class="line"></span><br><span class="line">接下来就是练习除法</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">from pwn import *</span><br><span class="line">context.arch = &#x27;amd64&#x27;</span><br><span class="line">p= process(&quot;/challenge/run&quot;)</span><br><span class="line">p.recv()</span><br><span class="line">p.send(asm(&#x27;&#x27;&#x27;</span><br><span class="line">    mov rax,rdi</span><br><span class="line">    xor rdx,rdx</span><br><span class="line">    div rsi</span><br><span class="line">&#x27;&#x27;&#x27;))</span><br><span class="line">print(p.recvall())</span><br></pre></td></tr></table></figure></li>
+<li>``` speed = distance / time <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">  , where:</span><br><span class="line"></span><br><span class="line">  - `distance = rdi`</span><br><span class="line">  - `time = rsi`</span><br><span class="line">  - `speed = rax`</span><br><span class="line"></span><br><span class="line">Note that distance will be at most a 64-bit value, so `rdx` should be 0 when dividing.</span><br><span class="line"></span><br><span class="line">在 x86 汇编中，`div` 指令用于执行整数除法，它可以将一个 128 位的被除数除以一个 64 位的除数，并同时存储商和余数。这个指令的特殊之处在于它使用了两个寄存器来表示被除数：`rdx` 和 `rax`。其中，`rdx` 存储被除数的高 64 位，而 `rax` 存储被除数的低 64 位。</span><br><span class="line"></span><br><span class="line">在执行 `div reg` 指令时，以下操作会发生：</span><br><span class="line"></span><br><span class="line">1. `rax` 寄存器将被设置为 `rdx:rax`（即由 `rdx` 和 `rax` 组成的 128 位数）除以 `reg` 的商。</span><br><span class="line">2. `rdx` 寄存器将被设置为除法的余数。</span><br><span class="line"></span><br><span class="line">接下来就是练习除法</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">from pwn import *</span><br><span class="line">context.arch = &#x27;amd64&#x27;</span><br><span class="line">p= process(&quot;/challenge/run&quot;)</span><br><span class="line">p.recv()</span><br><span class="line">p.send(asm(&#x27;&#x27;&#x27;</span><br><span class="line">    mov rax,rdi</span><br><span class="line">    xor rdx,rdx</span><br><span class="line">    div rsi</span><br><span class="line">&#x27;&#x27;&#x27;))</span><br><span class="line">print(p.recvall())</span><br></pre></td></tr></table></figure></li>
 </ul>
 <h2 id="module-opretion">module-opretion</h2>
 <p>Modulo in assembly is another interesting concept!</p>
@@ -444,9 +447,10 @@ operator.</p>
 <code>%</code>.</p>
 <p>Please compute the following: <code>rdi % rsi</code></p>
 <p>Place the value in <code>rax</code>.</p>
-<p>关于模的运算。但是x86没有直接求模的运算。所以需要手动算一下。</p>
+<p>关于模的运算。但是 x86 没有直接求模的运算。所以需要手动算一下。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p= process(<span class="string">&quot;/challenge/run&quot;</span>)</span><br><span class="line">p.recv()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">	xor rdx,rdx</span></span><br><span class="line"><span class="string">	mov rax,rdi</span></span><br><span class="line"><span class="string">	div rsi</span></span><br><span class="line"><span class="string">	xor rax,rax</span></span><br><span class="line"><span class="string">	mov rax,rdx</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(p.recvall())</span><br></pre></td></tr></table></figure>
-<p>记得寄存器用前要清零，还有就是一般用<code>rax</code>作为函数返还数值的寄存器。</p>
+<p>记得寄存器用前要清零，还有就是一般用 <code>rax</code>
+作为函数返还数值的寄存器。</p>
 <h2 id="set-upper-byte">set-upper-byte</h2>
 <p>Another cool concept in x86 is the ability to independently access
 the lower register bytes.</p>
@@ -463,23 +467,31 @@ lower 8 bits using <code>al</code>.</p>
 registers.</p>
 <p>Using only one move instruction, please set the upper 8 bits of the
 <code>ax</code> register to <code>0x42</code>.</p>
-<p>介绍了<code>x86</code>架构中寄存器的特性——寄存器可以被划分为不同的部分，以便可以单独访问其部分位。这种设计允许程序员更灵活地处理数据，尤其是在需要对数据的特定部分进行操作时。</p>
-<p>以<code>rax</code>寄存器为例，它是一个64位的寄存器，可以被分为不同的部分：</p>
+<p>介绍了 <code>x86</code>
+架构中寄存器的特性——寄存器可以被划分为不同的部分，以便可以单独访问其部分位。这种设计允许程序员更灵活地处理数据，尤其是在需要对数据的特定部分进行操作时。</p>
+<p>以 <code>rax</code> 寄存器为例，它是一个 64
+位的寄存器，可以被分为不同的部分：</p>
 <ul>
-<li><code>rax</code>：整个64位寄存器。</li>
-<li><code>eax</code>：<code>rax</code>的低32位。</li>
-<li><code>ax</code>：<code>eax</code>的低16位。</li>
-<li><code>al</code>：<code>ax</code>的低8位。</li>
-<li><code>ah</code>：<code>ax</code>的高8位。</li>
+<li><code>rax</code>：整个 64 位寄存器。</li>
+<li><code>eax</code>：<code>rax</code> 的低 32 位。</li>
+<li><code>ax</code>：<code>eax</code> 的低 16 位。</li>
+<li><code>al</code>：<code>ax</code> 的低 8 位。</li>
+<li><code>ah</code>：<code>ax</code> 的高 8 位。</li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov ah,0x42</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(output)  </span><br></pre></td></tr></table></figure>
 <p>补充:</p>
-<p>MSB和LSB是位的两种称呼：</p>
+<p>MSB 和 LSB 是位的两种称呼：</p>
 <ul>
 <li><strong>MSB (Most Significant
-Bit)</strong>：最高有效位。在二进制数中，MSB是位于最左侧的位，具有最大的数值权重。例如，在一个8位的二进制数<code>10110101</code>中，最左边的<code>1</code>就是MSB，它代表了<code>2^7</code>的权重。</li>
+Bit)</strong>：最高有效位。在二进制数中，MSB
+是位于最左侧的位，具有最大的数值权重。例如，在一个 8 位的二进制数
+<code>10110101</code> 中，最左边的 <code>1</code> 就是 MSB，它代表了
+<code>2^7</code> 的权重。</li>
 <li><strong>LSB (Least Significant
-Bit)</strong>：最低有效位。在二进制数中，LSB是位于最右侧的位，具有最小的数值权重。例如，在同一个8位的二进制数<code>10110101</code>中，最右边的<code>1</code>就是LSB，它代表了<code>2^0</code>的权重。</li>
+Bit)</strong>：最低有效位。在二进制数中，LSB
+是位于最右侧的位，具有最小的数值权重。例如，在同一个 8 位的二进制数
+<code>10110101</code> 中，最右边的 <code>1</code> 就是 LSB，它代表了
+<code>2^0</code> 的权重。</li>
 </ul>
 <p>常用寄存器</p>
 <table>
@@ -493,12 +505,12 @@ Bit)</strong>：最低有效位。在二进制数中，LSB是位于最右侧的�
 </colgroup>
 <thead>
 <tr>
-<th>x64调用约定</th>
-<th>64位寄存器</th>
-<th>32位寄存器</th>
-<th>16位寄存器</th>
-<th>8位寄存器（低）</th>
-<th>8位寄存器（高）</th>
+<th>x64 调用约定</th>
+<th>64 位寄存器</th>
+<th>32 位寄存器</th>
+<th>16 位寄存器</th>
+<th>8 位寄存器（低）</th>
+<th>8 位寄存器（高）</th>
 </tr>
 </thead>
 <tbody>
@@ -611,7 +623,9 @@ implement modulo!</p>
 <li><code>rax = rdi % 256</code></li>
 <li><code>rbx = rsi % 65536</code></li>
 </ul>
-<p>如何使用寄存器的低位字节来高效地实现模运算？不难发现，当模数是2的幂时，例如2^n，模数就是低n位，也就是说可以通过直接取寄存器的低位字节来得到模运算的结果。</p>
+<p>如何使用寄存器的低位字节来高效地实现模运算？不难发现，当模数是 2
+的幂时，例如 2^n，模数就是低 n
+位，也就是说可以通过直接取寄存器的低位字节来得到模运算的结果。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov al, dil</span></span><br><span class="line"><span class="string">    mov bx, si</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br></pre></td></tr></table></figure>
 <h2 id="byte-extraction">byte-extraction</h2>
 <p>Shifting bits around in assembly is another interesting concept!</p>
@@ -646,16 +660,335 @@ by the amount in <code>reg2</code></li>
 significant byte of <code>rdi</code>.</p>
 <p>For example:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rdi = | B7 | B6 | B5 | B4 | B3 | B2 | B1 | B0 |</span><br><span class="line">Set rax to the value of B4</span><br></pre></td></tr></table></figure>
-<p>移位时最高位遗弃，填充最低位置零。<code>shl rax, rbx</code>意思是rax左移rbx的值，rbx为8则左移8位。</p>
-<p>当一个寄存器的高位都是0时，读取的数值实际上就是其最低有效位（LSB）部分的值。这是因为高位的0对数值没有贡献。</p>
-<p>例如，假设有一个64位寄存器，其值为：</p>
+<p>移位时最高位遗弃，填充最低位置零。<code>shl rax, rbx</code> 意思是
+rax 左移 rbx 的值，rbx 为 8 则左移 8 位。</p>
+<p>当一个寄存器的高位都是 0
+时，读取的数值实际上就是其最低有效位（LSB）部分的值。这是因为高位的 0
+对数值没有贡献。</p>
+<p>例如，假设有一个 64 位寄存器，其值为：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">00000000000000000000000000000000000000000000000000000000001010</span><br></pre></td></tr></table></figure>
-<p>这个寄存器的值实际上是10（十进制），因为只有最低的4位是有效的（<code>1010</code>表示的是10）。高位的0并不影响最终的数值。</p>
+<p>这个寄存器的值实际上是 10（十进制），因为只有最低的 4
+位是有效的（<code>1010</code> 表示的是 10）。高位的 0
+并不影响最终的数值。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    shl rdi,24</span></span><br><span class="line"><span class="string">    shr rdi,56</span></span><br><span class="line"><span class="string">    mov rax,rdi&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br></pre></td></tr></table></figure>
+<h2 id="bitwise-and">bitwise-and</h2>
+<p>In this level, you will be working with bit logic and operations.
+This will involve heavy use of directly interacting with bits stored in
+a register or memory location. You will also likely need to make use of
+the logic instructions in x86: <code>and</code>, <code>or</code>,
+<code>not</code>, <code>xor</code>.</p>
+<p>Bitwise logic in assembly is yet another interesting concept! x86
+allows you to perform logic operations bit by bit on registers.</p>
+<p>For the sake of this example, say registers only store 8 bits.</p>
+<p>The values in <code>rax</code> and <code>rbx</code> are:</p>
+<ul>
+<li><code>rax = 10101010</code></li>
+<li><code>rbx = 00110011</code></li>
+</ul>
+<p>If we were to perform a bitwise AND of <code>rax</code> and
+<code>rbx</code> using the <code>and rax, rbx</code> instruction, the
+result would be calculated by ANDing each bit pair one by one, hence why
+it's called bitwise logic.</p>
+<p>So from left to right:</p>
+<ul>
+<li>1 AND 0 = 0</li>
+<li>0 AND 0 = 0</li>
+<li>1 AND 1 = 1</li>
+<li>0 AND 1 = 0</li>
+<li>...</li>
+</ul>
+<p>Finally, we combine the results together to get:</p>
+<ul>
+<li><code>rax = 00100010</code></li>
+</ul>
+<p>Without using the following instructions: <code>mov</code>,
+<code>xchg</code>, please perform the following:</p>
+<p>Set <code>rax</code> to the value of <code>(rdi AND rsi)</code></p>
+<p>学习 <code>x86</code> 中的逻辑运算符，此处是 <code>and</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    xor rax,rax</span></span><br><span class="line"><span class="string">    and rdi,rsi</span></span><br><span class="line"><span class="string">    add rax,rdi		#题目要求不能直接用mov,那就先初始化后加上</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="check-even">check-even</h2>
+<p>In this level, you will be working with bit logic and operations.
+This will involve heavy use of directly interacting with bits stored in
+a register or memory location. You will also likely need to make use of
+the logic instructions in x86: <code>and</code>, <code>or</code>,
+<code>not</code>, <code>xor</code>.</p>
+<p>Using only the following instructions:</p>
+<ul>
+<li><code>and</code></li>
+<li><code>or</code></li>
+<li><code>xor</code></li>
+</ul>
+<p>Implement the following logic:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">if x is even then</span><br><span class="line">  y = 1</span><br><span class="line">else</span><br><span class="line">  y = 0</span><br></pre></td></tr></table></figure>
+<p>Where:</p>
+<ul>
+<li><code>x = rdi</code></li>
+<li><code>y = rax</code></li>
+</ul>
+<p>经典的判断奇偶性，但是 <code>x86</code> 只用逻辑运算符</p>
+<p>二进制下的数字的奇偶性由最低位的那个 <code>1</code>
+来决定，因为其他位置的变化都是在十进制下增减 <code>2</code> 的倍数。</p>
+<p>故先用 <code>add</code>
+运算来提取出最低位的数字，题目要求正好和当前结果相反，用
+<code>xor</code> 来获得相对的数。最后把这个数字打入清零后的
+<code>rax</code> 即可</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"></span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    and rdi,1</span></span><br><span class="line"><span class="string">    xor rdi,1</span></span><br><span class="line"><span class="string">    xor rax,rax</span></span><br><span class="line"><span class="string">    or rax,rdi</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">          ))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="memory-read">memory-read</h2>
+<p>Recall that memory can be addressed, and each address contains
+something at that location. Note that this is similar to addresses in
+real life!</p>
+<p>As an example: the real address '699 S Mill Ave, Tempe, AZ 85281'
+maps to the 'ASU Brickyard'. We would also say it points to 'ASU
+Brickyard'. We can represent this like:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[&#x27;699 S Mill Ave, Tempe, AZ 85281&#x27;] = &#x27;ASU Brickyard&#x27;</span><br></pre></td></tr></table></figure>
+<p>The address is special because it is unique. But that also does not
+mean other addresses can't point to the same thing (as someone can have
+multiple houses).</p>
+<p>Memory is exactly the same!</p>
+<p>For instance, the address in memory where your code is stored (when
+we take it from you) is <code>0x400000</code>.</p>
+<p>In x86, we can access the thing at a memory location, called
+dereferencing, like so:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [some_address]        &lt;=&gt;     Moves the thing at &#x27;some_address&#x27; into rax</span><br></pre></td></tr></table></figure>
+<p>This also works with things in registers:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [rdi]         &lt;=&gt;     Moves the thing stored at the address of what rdi holds to rax</span><br></pre></td></tr></table></figure>
+<p>This works the same for writing to memory:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov [rax], rdi         &lt;=&gt;     Moves rdi to the address of what rax holds.</span><br></pre></td></tr></table></figure>
+<p>So if <code>rax</code> was <code>0xdeadbeef</code>, then
+<code>rdi</code> would get stored at the address
+<code>0xdeadbeef</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[0xdeadbeef] = rdi</span><br></pre></td></tr></table></figure>
+<p>Note: Memory is linear, and in x86_64, it goes from <code>0</code> to
+<code>0xffffffffffffffff</code> (yes, huge).</p>
+<p>Please perform the following: Place the value stored at
+<code>0x404000</code> into <code>rax</code>. Make sure the value in
+<code>rax</code> is the original value stored at
+<code>0x404000</code>.</p>
+<p>类似上个模块里的练习，不过这次得通过 <code>pwntools</code>
+给的渠道而不是直接运行汇编代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov rax,[0x404000]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="memory-write">memory-write</h2>
+<p>In this level, you will be working with memory. This will require you
+to read or write to things stored linearly in memory. If you are
+confused, go look at the linear addressing module in 'ike. You may also
+be asked to dereference things, possibly multiple times, to things we
+dynamically put in memory for your use.</p>
+<p>Please perform the following: Place the value stored in
+<code>rax</code> to <code>0x404000</code>.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov [0x404000],rax</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="memory-increment">memory-increment</h2>
+<p>In this level, you will be working with memory. This will require you
+to read or write to things stored linearly in memory. If you are
+confused, go look at the linear addressing module in 'ike. You may also
+be asked to dereference things, possibly multiple times, to things we
+dynamically put in memory for your use.</p>
+<p>Please perform the following:</p>
+<ul>
+<li>Place the value stored at <code>0x404000</code> into
+<code>rax</code>.</li>
+<li>Increment the value stored at the address <code>0x404000</code> by
+<code>0x1337</code>.</li>
+</ul>
+<p>Make sure the value in <code>rax</code> is the original value stored
+at <code>0x404000</code> and make sure that <code>[0x404000]</code> now
+has the incremented value.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov rax,[0x404000]</span></span><br><span class="line"><span class="string">    mov rsi,0x1337</span></span><br><span class="line"><span class="string">    add [0x404000],rsi</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>记得灵活运用可以调用的寄存器</p>
+<p>更多相关信息参考
+==<strong>汇编的寻址模式和过程调用约定</strong>==</p>
+<h2 id="byte-access">byte-access</h2>
+<p>Recall that registers in x86_64 are 64 bits wide, meaning they can
+store 64 bits. Similarly, each memory location can be treated as a
+64-bit value. We refer to something that is 64 bits (8 bytes) as a quad
+word.</p>
+<p>Here is the breakdown of the names of memory sizes:</p>
+<ul>
+<li>Quad Word = 8 Bytes = 64 bits</li>
+<li>Double Word = 4 bytes = 32 bits</li>
+<li>Word = 2 bytes = 16 bits</li>
+<li>Byte = 1 byte = 8 bits</li>
+</ul>
+<p>In x86_64, you can access each of these sizes when dereferencing an
+address, just like using bigger or smaller register accesses:</p>
+<ul>
+<li><code>mov al, [address]</code> &lt;=&gt; moves the least significant
+byte from address to <code>rax</code></li>
+<li><code>mov ax, [address]</code> &lt;=&gt; moves the least significant
+word from address to <code>rax</code></li>
+<li><code>mov eax, [address]</code> &lt;=&gt; moves the least
+significant double word from address to <code>rax</code></li>
+<li><code>mov rax, [address]</code> &lt;=&gt; moves the full quad word
+from address to <code>rax</code></li>
+</ul>
+<p>Remember that moving into <code>al</code> does not fully clear the
+upper bytes.</p>
+<p>Please perform the following: Set <code>rax</code> to the byte at
+<code>0x404000</code>.</p>
+<p><span style="font-family:serif;"><strong>四字 = 8 字节 =
+64bits</strong></span> <span style="font-family:serif;"><strong>双字 = 4
+字节 = 32bits</strong></span> <span
+style="font-family:serif;"><strong>字 = 2 字节 = 16bits</strong></span>
+<span style="font-family:serif;"><strong>1 字节 =
+8bits</strong></span></p>
+<p><span style="font-family:serif;"><strong>rax = 四字</strong></span>
+<span style="font-family:serif;"><strong>eax = 双字</strong></span>
+<span style="font-family:serif;"><strong>ax = 字</strong></span> <span
+style="font-family:serif;"><strong>al = 字节</strong></span></p>
+<p>按要求给寄存器按字节设置即可</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov al,[0x404000]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="memory-size-access">memory-size-access</h2>
+<p>Recall the following:</p>
+<ul>
+<li>The breakdown of the names of memory sizes:
+<ul>
+<li>Quad Word = 8 Bytes = 64 bits</li>
+<li>Double Word = 4 bytes = 32 bits</li>
+<li>Word = 2 bytes = 16 bits</li>
+<li>Byte = 1 byte = 8 bits</li>
+</ul></li>
+</ul>
+<p>In x86_64, you can access each of these sizes when dereferencing an
+address, just like using bigger or smaller register accesses:</p>
+<ul>
+<li><code>mov al, [address]</code> &lt;=&gt; moves the least significant
+byte from address to <code>rax</code></li>
+<li><code>mov ax, [address]</code> &lt;=&gt; moves the least significant
+word from address to <code>rax</code></li>
+<li><code>mov eax, [address]</code> &lt;=&gt; moves the least
+significant double word from address to <code>rax</code></li>
+<li><code>mov rax, [address]</code> &lt;=&gt; moves the full quad word
+from address to <code>rax</code></li>
+</ul>
+<p>Please perform the following:</p>
+<ul>
+<li>Set <code>rax</code> to the byte at <code>0x404000</code></li>
+<li>Set <code>rbx</code> to the word at <code>0x404000</code></li>
+<li>Set <code>rcx</code> to the double word at
+<code>0x404000</code></li>
+<li>Set <code>rdx</code> to the quad word at <code>0x404000</code></li>
+</ul>
+<p>加量训练</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov al,[0x404000]</span></span><br><span class="line"><span class="string">    mov bx,[0x404000]</span></span><br><span class="line"><span class="string">    mov ecx,[0x404000]</span></span><br><span class="line"><span class="string">    mov rdx,[0x404000]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>不记得该用哪个寄存器可以去七号题 <code>set-upper-byte</code>
+回忆一下</p>
+<h2 id="little-endian-write">little-endian-write</h2>
+<p>It is worth noting, as you may have noticed, that values are stored
+in reverse order of how we represent them.</p>
+<p>As an example, say:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[0x1330] = 0x00000000deadc0de</span><br></pre></td></tr></table></figure>
+<p>If you examined how it actually looked in memory, you would see:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[0x1330] = 0xde</span><br><span class="line">[0x1331] = 0xc0</span><br><span class="line">[0x1332] = 0xad</span><br><span class="line">[0x1333] = 0xde</span><br><span class="line">[0x1334] = 0x00</span><br><span class="line">[0x1335] = 0x00</span><br><span class="line">[0x1336] = 0x00</span><br><span class="line">[0x1337] = 0x00</span><br></pre></td></tr></table></figure>
+<p>This format of storing things in 'reverse' is intentional in x86, and
+it's called "Little Endian".</p>
+<p>For this challenge, we will give you two addresses created
+dynamically each run.</p>
+<p>The first address will be placed in <code>rdi</code>. The second will
+be placed in <code>rsi</code>.</p>
+<p>Using the earlier mentioned info, perform the following:</p>
+<ul>
+<li>Set <code>[rdi] = 0xdeadbeef00001337</code></li>
+<li>Set <code>[rsi] = 0xc0ffee0000</code></li>
+</ul>
+<p>Hint: it may require some tricks to assign a big constant to a
+dereferenced register. Try setting a register to the constant value,
+then assigning that register to the dereferenced register.</p>
+<p>小端序以字为单位逆顺序排列，题目给了个提示：要将一个大常量赋值给一个内存地址，可以将大常量先加载到一个寄存器中，然后将寄存器的值存储到内存地址处。依次赋值即可。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov rax,0xdeadbeef00001337</span></span><br><span class="line"><span class="string">    mov [rdi],rax</span></span><br><span class="line"><span class="string">    mov rax,0xc0ffee0000</span></span><br><span class="line"><span class="string">    mov [rsi],rax</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="memory-sum">memory-sum</h2>
+<p>Recall that memory is stored linearly.</p>
+<p>What does that mean?</p>
+<p>Say we access the quad word at <code>0x1337</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[0x1337] = 0x00000000deadbeef</span><br></pre></td></tr></table></figure>
+<p>The real way memory is laid out is byte by byte, little endian:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[0x1337] = 0xef</span><br><span class="line">[0x1337 + 1] = 0xbe</span><br><span class="line">[0x1337 + 2] = 0xad</span><br><span class="line">...</span><br><span class="line">[0x1337 + 7] = 0x00</span><br></pre></td></tr></table></figure>
+<p>What does this do for us?</p>
+<p>Well, it means that we can access things next to each other using
+offsets, similar to what was shown above.</p>
+<p>Say you want the 5th <em>byte</em> from an address, you can access it
+like:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov al, [address+4]</span><br></pre></td></tr></table></figure>
+<p>Remember, offsets start at 0.</p>
+<p>Perform the following:</p>
+<ul>
+<li>Load two consecutive quad words from the address stored in
+<code>rdi</code>.</li>
+<li>Calculate the sum of the previous steps' quad words.</li>
+<li>Store the sum at the address in <code>rsi</code>.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov rax,[rdi]</span></span><br><span class="line"><span class="string">    add rax,[rdi+8]</span></span><br><span class="line"><span class="string">    mov [rsi],rax 	#不要忘记给rsi添加括号，不然就只是修改寄存器的值而不是指向的内存地址中的值</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="stack-subtraction">stack-subtraction</h2>
+<p>In these levels, we are going to introduce the stack.</p>
+<p>The stack is a region of memory that can store values for later.</p>
+<p>To store a value on the stack, we use the <code>push</code>
+instruction, and to retrieve a value, we use <code>pop</code>.</p>
+<p>The stack is a last in, first out (LIFO) memory structure, and this
+means the last value pushed is the first value popped.</p>
+<p>Imagine unloading plates from the dishwasher. Let's say there are 1
+red, 1 green, and 1 blue. First, we place the red one in the cabinet,
+then the green on top of the red, then the blue.</p>
+<p>Our stack of plates would look like:</p>
+<figure class="highlight livescript"><table><tr><td class="code"><pre><span class="line">Top ----&gt; Blue</span><br><span class="line">          Green</span><br><span class="line">Bottom -&gt; Red</span><br></pre></td></tr></table></figure>
+<p>Now, if we wanted a plate to make a sandwich, we would retrieve the
+top plate from the stack, which would be the blue one that was last into
+the cabinet, ergo the first one out.</p>
+<p>On x86, the <code>pop</code> instruction will take the value from the
+top of the stack and put it into a register.</p>
+<p>Similarly, the <code>push</code> instruction will take the value in a
+register and push it onto the top of the stack.</p>
+<p>Using these instructions, take the top value of the stack, subtract
+<code>rdi</code> from it, then put it back.</p>
+<p>终于学到栈了/(ㄒoㄒ)/~~。</p>
+<p>想象一下你有一叠书放在桌子上，你只能从最上面拿书或放书，不能从中间或底部操作。这就像一个栈，只能从栈顶进行操作。</p>
+<ul>
+<li><strong>入栈（Push）</strong>：
+<ul>
+<li><strong>比喻</strong>：就像在书堆的最上面再放一本书。</li>
+<li><strong>操作</strong>：将一个新元素添加到栈顶。在计算机中，这通常意味着将数据存储到栈的顶部，并更新栈指针（指向栈顶的指针）。</li>
+<li><strong>效果</strong>：栈的大小增加，新元素成为栈顶元素。</li>
+</ul></li>
+<li><strong>出栈（Pop）</strong>：
+<ul>
+<li><strong>比喻</strong>：从书堆的最上面拿走一本书。</li>
+<li><strong>操作</strong>：从栈顶移除一个元素，并返回该元素的值。同时更新栈指针。</li>
+<li><strong>效果</strong>：栈的大小减少，原来位于栈顶下面的元素成为新的栈顶元素。</li>
+</ul></li>
+<li><strong>查看栈顶（Peek）</strong>：
+<ul>
+<li><strong>比喻</strong>：查看书堆最上面的书是什么，但不拿走它。</li>
+<li><strong>操作</strong>：获取栈顶元素的值，但不移除该元素。</li>
+<li><strong>效果</strong>：栈的大小和内容不变，只是查看了栈顶元素。</li>
+</ul></li>
+</ul>
+<p>他这里没提具体用汇编代码如何操作，其实直接<code>pop</code>弹出，<code>push</code>压入即可。</p>
+<p>栈是一种线性数据结构，遵循“后进先出”（Last In, First Out,
+LIFO）的原则。这意味着最后放入栈中的元素将是第一个被取出的元素。由于寄存器数量有限，使用栈来储存数据便是一个极佳的选择。后面会经常和它打交道。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    pop rax</span></span><br><span class="line"><span class="string">    sub,rax,rdi</span></span><br><span class="line"><span class="string">    push rax</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="swap-satck-values">swap-satck-values</h2>
+<p>In this level, you will be working with the stack, the memory region
+that dynamically expands and shrinks. You will be required to read and
+write to the stack, which may require you to use the <code>pop</code>
+and <code>push</code> instructions. You may also need to use the stack
+pointer register (<code>rsp</code>) to know where the stack is
+pointing.</p>
+<p>In this level, we are going to explore the last in first out (LIFO)
+property of the stack.</p>
+<p>Using only the following instructions:</p>
+<ul>
+<li><code>push</code></li>
+<li><code>pop</code></li>
+</ul>
+<p>Swap values in <code>rdi</code> and <code>rsi</code>.</p>
+<p>Example:</p>
+<ul>
+<li>If to start <code>rdi = 2</code> and <code>rsi = 5</code></li>
+<li>Then to end <code>rdi = 5</code> and <code>rsi = 2</code></li>
+</ul>
+<p>仅用<code>pop</code>和<code>push</code>进行数值交换，栈的基本用法</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    push rdi</span></span><br><span class="line"><span class="string">    pop rax</span></span><br><span class="line"><span class="string">    push rsi</span></span><br><span class="line"><span class="string">    pop rdi</span></span><br><span class="line"><span class="string">    push rax</span></span><br><span class="line"><span class="string">    pop rsi</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>网安</tag>
         <tag>学习笔记</tag>
+        <tag>网安</tag>
       </tags>
   </entry>
   <entry>
@@ -1266,8 +1599,8 @@ descriptor）。<code>1</code> 表示标准输出（stdout）。</li>
 </ol>
 ]]></content>
       <tags>
-        <tag>网安</tag>
         <tag>学习笔记</tag>
+        <tag>网安</tag>
       </tags>
   </entry>
   <entry>
@@ -1480,8 +1813,8 @@ Key）指定一个关系中的属性必须映射到另一个关系中的元组�
 <figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"><span class="addition">+----+--------+-----+---------+------------+</span></span><br><span class="line">| ID | Name   | Age | CourseID| CourseName |</span><br><span class="line"><span class="addition">+----+--------+-----+---------+------------+</span></span><br><span class="line">| 1  | Alice  | 20  | 101     | Math       |</span><br><span class="line">| 2  | Bob    | 22  | 102     | English    |</span><br><span class="line">| 2  | Bob    | 22  | 104     | Math       |</span><br><span class="line">| 3  | Charlie| 23  | 103     | History    |</span><br><span class="line"><span class="addition">+----+--------+-----+---------+------------+</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>学习笔记</tag>
         <tag>数据库</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
