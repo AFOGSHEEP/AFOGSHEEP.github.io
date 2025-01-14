@@ -31,7 +31,7 @@
 <meta property="og:description" content="set-register 题目要求： In this level, you will be working with registers. You will be asked to modify or read from registers. In this level, you will work with registers! Please set the following:">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-01-09T08:16:48.000Z">
-<meta property="article:modified_time" content="2025-01-13T17:54:10.818Z">
+<meta property="article:modified_time" content="2025-01-14T18:14:06.493Z">
 <meta property="article:author" content="AAAFORGE">
 <meta property="article:tag" content="学习笔记">
 <meta property="article:tag" content="网安">
@@ -229,7 +229,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-14 01:54:10" itemprop="dateModified" datetime="2025-01-14T01:54:10+08:00">2025-01-14</time>
+                <time title="修改时间：2025-01-15 02:14:06" itemprop="dateModified" datetime="2025-01-15T02:14:06+08:00">2025-01-15</time>
               </span>
 
           
@@ -902,6 +902,232 @@ property of the stack.</p>
 </ul>
 <p>仅用<code>pop</code>和<code>push</code>进行数值交换，栈的基本用法</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    push rdi</span></span><br><span class="line"><span class="string">    pop rax</span></span><br><span class="line"><span class="string">    push rsi</span></span><br><span class="line"><span class="string">    pop rdi</span></span><br><span class="line"><span class="string">    push rax</span></span><br><span class="line"><span class="string">    pop rsi</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="average-stack-values">average-stack-values</h2>
+<p>In the previous levels, you used <code>push</code> and
+<code>pop</code> to store and load data from the stack. However, you can
+also access the stack directly using the stack pointer.</p>
+<p>On x86, the stack pointer is stored in the special register,
+<code>rsp</code>. <code>rsp</code> always stores the memory address of
+the top of the stack, i.e., the memory address of the last value
+pushed.</p>
+<p>Similar to the memory levels, we can use <code>[rsp]</code> to access
+the value at the memory address in <code>rsp</code>.</p>
+<p>Without using <code>pop</code>, please calculate the average of 4
+consecutive quad words stored on the stack. Push the average on the
+stack.</p>
+<p>Hint:</p>
+<ul>
+<li><code>RSP+0x??</code> Quad Word A</li>
+<li><code>RSP+0x??</code> Quad Word B</li>
+<li><code>RSP+0x??</code> Quad Word C</li>
+<li><code>RSP</code> Quad Word D</li>
+</ul>
+<p>介绍了栈指针<code>rsp</code>,提示了我们用栈指针的具体操作。</p>
+<ul>
+<li><strong>栈指针的操作</strong>：
+<ul>
+<li><strong>入栈（Push）</strong>：将数据推入栈时，<code>RSP</code>会减小（向下移动），因为x86-64架构的栈是向下增长的。</li>
+<li><strong>出栈（Pop）</strong>：从栈中弹出数据时，<code>RSP</code>会增加（向上移动）。</li>
+<li><strong>直接访问</strong>：可以通过<code>[RSP + offset]</code>的形式直接访问栈上的数据，其中<code>offset</code>是相对于栈顶的偏移量。</li>
+</ul></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov rax,[rsp]</span></span><br><span class="line"><span class="string">    add rax,[rsp+8]</span></span><br><span class="line"><span class="string">    add rax,[rsp+16]</span></span><br><span class="line"><span class="string">    add rax,[rsp+24]</span></span><br><span class="line"><span class="string">    mov rsi,4			; rax存储被除数的低 64 位。</span></span><br><span class="line"><span class="string">    div rsi	</span></span><br><span class="line"><span class="string">    push rax</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="abusolute-jump">abusolute-jump</h2>
+<p>Earlier, you learned how to manipulate data in a pseudo-control way,
+but x86 gives us actual instructions to manipulate control flow
+directly.</p>
+<p>There are two major ways to manipulate control flow:</p>
+<ul>
+<li>Through a jump</li>
+<li>Through a call</li>
+</ul>
+<p>In this level, you will work with jumps.</p>
+<p>There are two types of jumps:</p>
+<ul>
+<li>Unconditional jumps</li>
+<li>Conditional jumps</li>
+</ul>
+<p>Unconditional jumps always trigger and are not based on the results
+of earlier instructions.</p>
+<p>As you know, memory locations can store data and instructions. Your
+code will be stored at <code>0x400042</code> (this will change each
+run).</p>
+<p>For all jumps, there are three types:</p>
+<ul>
+<li>Relative jumps: jump + or - the next instruction.</li>
+<li>Absolute jumps: jump to a specific address.</li>
+<li>Indirect jumps: jump to the memory address specified in a
+register.</li>
+</ul>
+<p>In x86, absolute jumps (jump to a specific address) are accomplished
+by first putting the target address in a register <code>reg</code>, then
+doing <code>jmp reg</code>.</p>
+<p>In this level, we will ask you to do an absolute jump. Perform the
+following: Jump to the absolute address <code>0x403000</code>.</p>
+<p>x86_64用法 jmp <register></p>
+<p>绝对跳转和相对跳转也是两个经久不衰的话题。题目里说到的<code>reg</code>其实就是regitser，寄存器的缩写，并不是特指某一个寄存器。当然jmp指令也不能直接给出地址进行跳转，必须要用寄存器作为中介。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">	mov rax,0x403000</span></span><br><span class="line"><span class="string">    jmp rax</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="relative-jump">relative-jump</h2>
+<p>Recall that for all jumps, there are three types:</p>
+<ul>
+<li>Relative jumps</li>
+<li>Absolute jumps</li>
+<li>Indirect jumps</li>
+</ul>
+<p>In this level, we will ask you to do a relative jump. You will need
+to fill space in your code with something to make this relative jump
+possible. We suggest using the <code>nop</code> instruction. It's 1 byte
+long and very predictable.</p>
+<p>In fact, the assembler that we're using has a handy
+<code>.rept</code> directive that you can use to repeat assembly
+instructions some number of times: <a
+target="_blank" rel="noopener" href="https://ftp.gnu.org/old-gnu/Manuals/gas-2.9.1/html_chapter/as_7.html">GNU
+Assembler Manual</a></p>
+<p>Useful instructions for this level:</p>
+<ul>
+<li><code>jmp (reg1 | addr | offset)</code></li>
+<li><code>nop</code></li>
+</ul>
+<p>Hint: For the relative jump, look up how to use <code>labels</code>
+in x86.</p>
+<p>Using the above knowledge, perform the following:</p>
+<ul>
+<li>Make the first instruction in your code a <code>jmp</code>.</li>
+<li>Make that <code>jmp</code> a relative jump to 0x51 bytes from the
+current position.</li>
+<li>At the code location where the relative jump will redirect control
+flow, set <code>rax</code> to 0x1.</li>
+</ul>
+<p>头一次看晕乎乎的，问了几遍kimi终于明白了。</p>
+<p>题目要求的相对跳转实际上是通过设置一个<code>label</code>地址后，不断填充无意义的<code>nop</code>空指令来实现的跳转。当我们执行到<code>label</code>时，结果的确是相对于目前的地址进行了一定字节的跳转。</p>
+<p><code>.rept 0x??</code></p>
+<p><code>instructions</code></p>
+<p><code>.endr</code></p>
+<p>相当于一个循环语句.</p>
+<p><code>address</code>是一个标签（label）,它用于标记代码中的某个位置,通常用于指示跳转指令的目标位置或其他重要的代码段。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">p.recvline()</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    jmp address</span></span><br><span class="line"><span class="string">    .rept 0x51</span></span><br><span class="line"><span class="string">    nop</span></span><br><span class="line"><span class="string">    .endr</span></span><br><span class="line"><span class="string">    address:</span></span><br><span class="line"><span class="string">    mov rax,0x1</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>关于代码的可能问题：</p>
+<ol type="1">
+<li><strong>执行<code>jmp address</code>指令</strong>：
+<ul>
+<li>这条指令告诉CPU跳转到<code>address</code>标签所标记的位置。由于<code>address</code>标签标记的是<code>mov rax, 0x1</code>指令的起始位置，所以CPU会跳过接下来的81个<code>nop</code>指令，直接跳转到<code>mov rax, 0x1</code>指令处开始执行。</li>
+</ul></li>
+<li><strong>跳转到<code>address</code>标签后，执行<code>mov rax, 0x1</code>指令</strong>：
+<ul>
+<li>在跳转到<code>address</code>标签后，CPU会执行<code>mov rax, 0x1</code>指令，将<code>rax</code>寄存器的值设置为1。</li>
+</ul></li>
+<li><strong>关于81个<code>nop</code>指令</strong></li>
+</ol>
+<ul>
+<li><strong>填充作用</strong>：这81个<code>nop</code>指令实际上是用来填充代码空间的。它们确保从<code>jmp address</code>指令到<code>address</code>标签之间的距离正好是81字节。这是为了满足相对跳转的要求，使得<code>jmp</code>指令能够正确地跳转到目标位置。</li>
+<li><strong>不执行</strong>：在程序执行过程中，这81个<code>nop</code>指令并不会被实际执行。因为<code>jmp address</code>指令已经将控制流跳转到了<code>address</code>标签处，所以CPU会跳过这些<code>nop</code>指令，直接执行<code>mov rax, 0x1</code>指令。</li>
+</ul>
+<h2 id="conditional-jump">conditional-jump</h2>
+<p>In this level, you will be working with control flow manipulation.
+This involves using instructions to both indirectly and directly control
+the special register <code>rip</code>, the instruction pointer. You will
+use instructions such as <code>jmp</code>, <code>call</code>,
+<code>cmp</code>, and their alternatives to implement the requested
+behavior.</p>
+<p>We will be testing your code multiple times in this level with
+dynamic values! This means we will be running your code in a variety of
+random ways to verify that the logic is robust enough to survive normal
+use.</p>
+<p>We will now introduce you to conditional jumps--one of the most
+valuable instructions in x86. In higher-level programming languages, an
+if-else structure exists to do things like:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if x is even:</span><br><span class="line">    is_even = 1</span><br><span class="line">else:</span><br><span class="line">    is_even = 0</span><br></pre></td></tr></table></figure>
+<p>This should look familiar since it is implementable in only
+bit-logic, which you've done in a prior level. In these structures, we
+can control the program's control flow based on dynamic values provided
+to the program.</p>
+<p>Implementing the above logic with jmps can be done like so:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">; assume rdi = x, rax is output</span><br><span class="line">; rdx = rdi mod 2</span><br><span class="line">mov rax, rdi</span><br><span class="line">mov rsi, 2</span><br><span class="line">div rsi</span><br><span class="line">; remainder is 0 if even</span><br><span class="line">cmp rdx, 0</span><br><span class="line">; jump to not_even code if it&#x27;s not 0</span><br><span class="line">jne not_even</span><br><span class="line">; fall through to even code</span><br><span class="line">mov rbx, 1</span><br><span class="line">jmp done</span><br><span class="line">; jump to this only when not_even</span><br><span class="line">not_even:</span><br><span class="line">mov rbx, 0</span><br><span class="line">done:</span><br><span class="line">mov rax, rbx</span><br><span class="line">; more instructions here</span><br></pre></td></tr></table></figure>
+<p>Often though, you want more than just a single 'if-else'. Sometimes
+you want two if checks, followed by an else. To do this, you need to
+make sure that you have control flow that 'falls-through' to the next
+<code>if</code> after it fails. All must jump to the same
+<code>done</code> after execution to avoid the else.</p>
+<p>There are many jump types in x86, it will help to learn how they can
+be used. Nearly all of them rely on something called the ZF, the Zero
+Flag. The ZF is set to 1 when a <code>cmp</code> is equal, 0
+otherwise.</p>
+<p>Using the above knowledge, implement the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if [x] is 0x7f454c46:</span><br><span class="line">    y = [x+4] + [x+8] + [x+12]</span><br><span class="line">else if [x] is 0x00005A4D:</span><br><span class="line">    y = [x+4] - [x+8] - [x+12]</span><br><span class="line">else:</span><br><span class="line">    y = [x+4] * [x+8] * [x+12]</span><br></pre></td></tr></table></figure>
+<p>Where:</p>
+<ul>
+<li><code>x = rdi</code>, <code>y = rax</code>.</li>
+</ul>
+<p>Assume each dereferenced value is a signed dword. This means the
+values can start as a negative value at each memory position.</p>
+<p>A valid solution will use the following at least once:</p>
+<ul>
+<li><code>jmp</code> (any variant), <code>cmp</code></li>
+</ul>
+<p>接下来的挑战是进行流操作，后悔没在下午开始学。。最后十道题几乎要花上做之前二十道两倍的时间。。。😭😭😭😅😅😅</p>
+<p>还好有没脾气的ai，不然去discord或者bing上早不知道要猴年马月才能做完。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.update(arch=<span class="string">&quot;amd64&quot;</span>)</span><br><span class="line">p = process(<span class="string">&quot;/challenge/run&quot;</span>)</span><br><span class="line">p.write(asm(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">mov eax, [rdi]</span></span><br><span class="line"><span class="string">mov ebx, [rdi + 4]</span></span><br><span class="line"><span class="string">mov ecx, [rdi + 8]</span></span><br><span class="line"><span class="string">mov edx, [rdi + 12]</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">cmp eax, 0x7f454c46</span></span><br><span class="line"><span class="string">je con1</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">cmp eax, 0x00005A4D</span></span><br><span class="line"><span class="string">je con2</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">imul ebx, ecx</span></span><br><span class="line"><span class="string">imul ebx, edx</span></span><br><span class="line"><span class="string">jmp done</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">con1:</span></span><br><span class="line"><span class="string">add ebx, ecx</span></span><br><span class="line"><span class="string">add ebx, edx</span></span><br><span class="line"><span class="string">jmp done</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">con2:</span></span><br><span class="line"><span class="string">sub ebx, ecx</span></span><br><span class="line"><span class="string">sub ebx, edx</span></span><br><span class="line"><span class="string">done:</span></span><br><span class="line"><span class="string">mov eax, ebx&quot;&quot;&quot;</span>))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="indirect-jump">indirect-jump</h2>
+<p>The last jump type is the indirect jump, often used for switch
+statements in the real world. Switch statements are a special case of
+if-statements that use only numbers to determine where the control flow
+will go.</p>
+<p>Here is an example:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">switch(number):</span><br><span class="line">  0: jmp do_thing_0</span><br><span class="line">  1: jmp do_thing_1</span><br><span class="line">  2: jmp do_thing_2</span><br><span class="line">  default: jmp do_default_thing</span><br></pre></td></tr></table></figure>
+<p>The switch in this example works on <code>number</code>, which can
+either be 0, 1, or 2. If <code>number</code> is not one of those
+numbers, the default triggers. You can consider this a reduced else-if
+type structure. In x86, you are already used to using numbers, so it
+should be no surprise that you can make if statements based on something
+being an exact number. Additionally, if you know the range of the
+numbers, a switch statement works very well.</p>
+<p>Take, for instance, the existence of a jump table. A jump table is a
+contiguous section of memory that holds addresses of places to jump.</p>
+<p>In the above example, the jump table could look like:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[0x1337] = address of do_thing_0</span><br><span class="line">[0x1337+0x8] = address of do_thing_1</span><br><span class="line">[0x1337+0x10] = address of do_thing_2</span><br><span class="line">[0x1337+0x18] = address of do_default_thing</span><br></pre></td></tr></table></figure>
+<p>Using the jump table, we can greatly reduce the amount of
+<code>cmps</code> we use. Now all we need to check is if
+<code>number</code> is greater than 2. If it is, always do:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmp [0x1337+0x18]</span><br></pre></td></tr></table></figure>
+<p>Otherwise:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmp [jump_table_address + number * 8]</span><br></pre></td></tr></table></figure>
+<p>Using the above knowledge, implement the following logic:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">if rdi is 0:</span><br><span class="line">  jmp 0x40301e</span><br><span class="line">else if rdi is 1:</span><br><span class="line">  jmp 0x4030da</span><br><span class="line">else if rdi is 2:</span><br><span class="line">  jmp 0x4031d5</span><br><span class="line">else if rdi is 3:</span><br><span class="line">  jmp 0x403268</span><br><span class="line">else:</span><br><span class="line">  jmp 0x40332c</span><br></pre></td></tr></table></figure>
+<p>Please do the above with the following constraints:</p>
+<ul>
+<li>Assume <code>rdi</code> will NOT be negative.</li>
+<li>Use no more than 1 <code>cmp</code> instruction.</li>
+<li>Use no more than 3 jumps (of any variant).</li>
+<li>We will provide you with the number to 'switch' on in
+<code>rdi</code>.</li>
+<li>We will provide you with a jump table base address in
+<code>rsi</code>.</li>
+</ul>
+<p>Here is an example table:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[0x40427c] = 0x40301e (addrs will change)</span><br><span class="line">[0x404284] = 0x4030da</span><br><span class="line">[0x40428c] = 0x4031d5</span><br><span class="line">[0x404294] = 0x403268</span><br><span class="line">[0x40429c] = 0x40332c</span><br></pre></td></tr></table></figure>
+<p>学会使用跳转表来实现<code>switch</code>的功能，这就是底层代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">cmp rdi, 4</span></span><br><span class="line"><span class="string">jae default</span></span><br><span class="line"><span class="string">jmp [rsi + rdi * 8]</span></span><br><span class="line"><span class="string">jmp end</span></span><br><span class="line"><span class="string">default:</span></span><br><span class="line"><span class="string">jmp [rsi + 4 * 8]</span></span><br><span class="line"><span class="string">end:</span></span><br><span class="line"><span class="string">nop</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="average-loop">average-loop</h2>
+<p>In a previous level, you computed the average of 4 integer quad
+words, which was a fixed amount of things to compute. But how do you
+work with sizes you get when the program is running?</p>
+<p>In most programming languages, a structure exists called the
+for-loop, which allows you to execute a set of instructions for a
+bounded amount of times. The bounded amount can be either known before
+or during the program's run, with "during" meaning the value is given to
+you dynamically.</p>
+<p>As an example, a for-loop can be used to compute the sum of the
+numbers 1 to n:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sum = 0</span><br><span class="line">i = 1</span><br><span class="line">while i &lt;= n:</span><br><span class="line">    sum += i</span><br><span class="line">    i += 1</span><br></pre></td></tr></table></figure>
+<p>Please compute the average of <code>n</code> consecutive quad words,
+where:</p>
+<ul>
+<li><code>rdi</code> = memory address of the 1st quad word</li>
+<li><code>rsi</code> = <code>n</code> (amount to loop for)</li>
+<li><code>rax</code> = average computed</li>
+</ul>
+<p>就像是在实现高级语言</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> </span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;/challenge/run&#x27;</span>)</span><br><span class="line">p.send(asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    mov rax,0</span></span><br><span class="line"><span class="string">    mov rcx,0</span></span><br><span class="line"><span class="string">    loop_start:</span></span><br><span class="line"><span class="string">        cmp rcx, rsi</span></span><br><span class="line"><span class="string">        jge loop_end</span></span><br><span class="line"><span class="string">        add rax, [rdi + rcx * 8]</span></span><br><span class="line"><span class="string">        inc rcx</span></span><br><span class="line"><span class="string">        jmp loop_start</span></span><br><span class="line"><span class="string">    loop_end:</span></span><br><span class="line"><span class="string">    div rsi</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>))</span><br><span class="line">output = p.recvall().decode()  </span><br><span class="line"><span class="built_in">print</span>(output)  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -1022,7 +1248,7 @@ property of the stack.</p>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#set-register"><span class="nav-number">1.</span> <span class="nav-text">set-register</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set-multiple-registers"><span class="nav-number">2.</span> <span class="nav-text">set-multiple-registers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-to-register"><span class="nav-number">3.</span> <span class="nav-text">add-to-register</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linear-equation-registers"><span class="nav-number">4.</span> <span class="nav-text">linear-equation-registers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#integer-division"><span class="nav-number">5.</span> <span class="nav-text">integer-division</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#module-opretion"><span class="nav-number">6.</span> <span class="nav-text">module-opretion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set-upper-byte"><span class="nav-number">7.</span> <span class="nav-text">set-upper-byte</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#efficient-modulo"><span class="nav-number">8.</span> <span class="nav-text">efficient-modulo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#byte-extraction"><span class="nav-number">9.</span> <span class="nav-text">byte-extraction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bitwise-and"><span class="nav-number">10.</span> <span class="nav-text">bitwise-and</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#check-even"><span class="nav-number">11.</span> <span class="nav-text">check-even</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-read"><span class="nav-number">12.</span> <span class="nav-text">memory-read</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-write"><span class="nav-number">13.</span> <span class="nav-text">memory-write</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-increment"><span class="nav-number">14.</span> <span class="nav-text">memory-increment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#byte-access"><span class="nav-number">15.</span> <span class="nav-text">byte-access</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-size-access"><span class="nav-number">16.</span> <span class="nav-text">memory-size-access</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#little-endian-write"><span class="nav-number">17.</span> <span class="nav-text">little-endian-write</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-sum"><span class="nav-number">18.</span> <span class="nav-text">memory-sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stack-subtraction"><span class="nav-number">19.</span> <span class="nav-text">stack-subtraction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#swap-satck-values"><span class="nav-number">20.</span> <span class="nav-text">swap-satck-values</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#set-register"><span class="nav-number">1.</span> <span class="nav-text">set-register</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set-multiple-registers"><span class="nav-number">2.</span> <span class="nav-text">set-multiple-registers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-to-register"><span class="nav-number">3.</span> <span class="nav-text">add-to-register</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linear-equation-registers"><span class="nav-number">4.</span> <span class="nav-text">linear-equation-registers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#integer-division"><span class="nav-number">5.</span> <span class="nav-text">integer-division</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#module-opretion"><span class="nav-number">6.</span> <span class="nav-text">module-opretion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set-upper-byte"><span class="nav-number">7.</span> <span class="nav-text">set-upper-byte</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#efficient-modulo"><span class="nav-number">8.</span> <span class="nav-text">efficient-modulo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#byte-extraction"><span class="nav-number">9.</span> <span class="nav-text">byte-extraction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bitwise-and"><span class="nav-number">10.</span> <span class="nav-text">bitwise-and</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#check-even"><span class="nav-number">11.</span> <span class="nav-text">check-even</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-read"><span class="nav-number">12.</span> <span class="nav-text">memory-read</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-write"><span class="nav-number">13.</span> <span class="nav-text">memory-write</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-increment"><span class="nav-number">14.</span> <span class="nav-text">memory-increment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#byte-access"><span class="nav-number">15.</span> <span class="nav-text">byte-access</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-size-access"><span class="nav-number">16.</span> <span class="nav-text">memory-size-access</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#little-endian-write"><span class="nav-number">17.</span> <span class="nav-text">little-endian-write</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-sum"><span class="nav-number">18.</span> <span class="nav-text">memory-sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stack-subtraction"><span class="nav-number">19.</span> <span class="nav-text">stack-subtraction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#swap-satck-values"><span class="nav-number">20.</span> <span class="nav-text">swap-satck-values</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#average-stack-values"><span class="nav-number">21.</span> <span class="nav-text">average-stack-values</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abusolute-jump"><span class="nav-number">22.</span> <span class="nav-text">abusolute-jump</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#relative-jump"><span class="nav-number">23.</span> <span class="nav-text">relative-jump</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conditional-jump"><span class="nav-number">24.</span> <span class="nav-text">conditional-jump</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#indirect-jump"><span class="nav-number">25.</span> <span class="nav-text">indirect-jump</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#average-loop"><span class="nav-number">26.</span> <span class="nav-text">average-loop</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -1092,7 +1318,7 @@ property of the stack.</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">本博客全站共59.2k字</span>
+  <span class="post-count">本博客全站共61.6k字</span>
 </div>
 
 
