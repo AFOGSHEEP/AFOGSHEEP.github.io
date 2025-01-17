@@ -274,6 +274,124 @@ hog。”这两句话将被视为回文。
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://midnightr3d.top/2025/01/17/embryogdb%20record/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/1312386.jpeg">
+      <meta itemprop="name" content="AAAFORGE">
+      <meta itemprop="description" content="此情可待成追忆，只是当时已惘然">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杜鹃声">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/01/17/embryogdb%20record/" class="post-title-link" itemprop="url">embryogdb-襁褓中的调试</a>
+        </h2>
+
+        <div class="post-meta">
+        
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-01-17 23:37:45" itemprop="dateCreated datePublished" datetime="2025-01-17T23:37:45+08:00">2025-01-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-18 01:10:13" itemprop="dateModified" datetime="2025-01-18T01:10:13+08:00">2025-01-18</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="level6">level6</h2>
+<p>主要提下level6和level8，前者是靠<code>call (void)win()</code>水过的，后者是花了比较多的精力才理解</p>
+<p>You can modify the state of your target program with the
+<code>set</code> command. For example, you can use
+<code>set $rdi = 0</code> to zero out $rdi. You can use
+<code>set *((uint64_t *) $rsp) = 0x1234</code> to set the first value on
+the stack to 0x1234. You can use
+<code>set *((uint16_t *) 0x31337000) = 0x1337</code> to set 2 bytes at
+0x31337000 to 0x1337.</p>
+<p>Suppose your target is some networked application which reads from
+some socket on fd 42. Maybe it would be easier for the purposes of your
+analysis if the target instead read from stdin. You could achieve
+something like that with the following gdb script:</p>
+<p>start catch syscall read commands silent if ($rdi == 42) set $rdi = 0
+end continue end continue</p>
+<p>This example gdb script demonstrates how you can automatically break
+on system calls, and how you can use conditions within your commands to
+conditionally perform gdb commands.</p>
+<p>In the previous level, your gdb scripting solution likely still
+required you to copy and paste your solutions. This time, try to write a
+script that doesn't require you to ever talk to the program, and instead
+automatically solves each challenge by correctly modifying registers /
+memory.</p>
+<p>level5是通过实时在终端中打印出对应位置的随机值，再手动输入；这题更进一步，要求脚本自动给随机值找到并输入。</p>
+<p>在卡了几天后参考这位师傅的博客找到了解决方案：<code>[Debugging Refresher](https://j-shiro.github.io/p/debugging-refresher/)</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">0x00005798218a7d0b in main ()</span><br><span class="line">(gdb) x/16i $rip</span><br><span class="line">=&gt; 0x5798218a7d0b &lt;main+613&gt;:   lea    0xbfd(%rip),%rdi        # 0x5798218a890f</span><br><span class="line">   0x5798218a7d12 &lt;main+620&gt;:   mov    $0x0,%eax</span><br><span class="line">   0x5798218a7d17 &lt;main+625&gt;:   callq  0x5798218a7260 &lt;__isoc99_scanf@plt&gt;</span><br><span class="line">   0x5798218a7d1c &lt;main+630&gt;:   mov    -0x10(%rbp),%rax</span><br><span class="line">   0x5798218a7d20 &lt;main+634&gt;:   mov    %rax,%rsi</span><br><span class="line">   0x5798218a7d23 &lt;main+637&gt;:   lea    0xbea(%rip),%rdi        # 0x5798218a8914</span><br><span class="line">   0x5798218a7d2a &lt;main+644&gt;:   mov    $0x0,%eax</span><br><span class="line">   0x5798218a7d2f &lt;main+649&gt;:   callq  0x5798218a71d0 &lt;printf@plt&gt;</span><br><span class="line">   0x5798218a7d34 &lt;main+654&gt;:   mov    -0x18(%rbp),%rax</span><br><span class="line">   0x5798218a7d38 &lt;main+658&gt;:   mov    %rax,%rsi</span><br><span class="line">   0x5798218a7d3b &lt;main+661&gt;:   lea    0xbe3(%rip),%rdi        # 0x5798218a8925</span><br><span class="line">   0x5798218a7d42 &lt;main+668&gt;:   mov    $0x0,%eax</span><br><span class="line">   0x5798218a7d47 &lt;main+673&gt;:   callq  0x5798218a71d0 &lt;printf@plt&gt;</span><br><span class="line">   0x5798218a7d4c &lt;main+678&gt;:   mov    -0x10(%rbp),%rdx</span><br><span class="line">   0x5798218a7d50 &lt;main+682&gt;:   mov    -0x18(%rbp),%rax</span><br><span class="line">   0x5798218a7d54 &lt;main+686&gt;:   cmp    %rax,%rdx</span><br></pre></td></tr></table></figure>
+<p>运行22次空指令后能找到<code>cmp %rax,%rdx</code>
+,再运行一次就会发现要让函数往下走的要求就是要<code>rax</code>和<code>rdx</code>相等。脚本就很好写了.</p>
+<p>在<code>main+686</code>中断并修改两个寄存器的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">start</span><br><span class="line">run</span><br><span class="line">break *main+686</span><br><span class="line">commands</span><br><span class="line">        silent</span><br><span class="line">        set $rdx = $rax</span><br><span class="line">        continue</span><br><span class="line">end</span><br><span class="line">continue</span><br></pre></td></tr></table></figure>
+<p>然后最多运行64次<code>continue</code>就可以得到flag了</p>
+<h2 id="level8">level8</h2>
+<p>As we demonstrated in the previous level, gdb has FULL control over
+the target process. Under normal circumstances, gdb running as your
+regular user cannot attach to a privileged process. This is why gdb
+isn't a massive security issue which would allow you to just immediately
+solve all the levels. Nevertheless, gdb is still an extremely powerful
+tool.</p>
+<p>Running within this elevated instance of gdb gives you elevated
+control over the entire system. To clearly demonstrate this, see what
+happens when you run the command <code>call (void)win()</code>.</p>
+<p>Note that this will <em>not</em> get you the flag (it seems that we
+broke the win function!), so you'll need to work a bit harder to get
+this flag!</p>
+<p>As it turns out, all of the levels other levels in module could be
+solved in this way.</p>
+<p>GDB is very powerful!</p>
+<p>当我们想要调用<code>win（）</code>函数时会发生什么？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">0x00005b9bc84e6b99 in main ()</span><br><span class="line">(gdb) call (void)win()</span><br><span class="line"></span><br><span class="line">Program received signal SIGSEGV, Segmentation fault.</span><br><span class="line">0x00005b9bc84e6969 in win ()</span><br><span class="line">The program being debugged was signaled while in a function called from GDB.</span><br><span class="line">GDB remains in the frame where the signal was received.</span><br><span class="line">To change this behavior use &quot;set unwindonsignal on&quot;.</span><br><span class="line">Evaluation of the expression containing the function</span><br><span class="line">(win) will be abandoned.</span><br><span class="line">When the function is done executing, GDB will silently stop.</span><br></pre></td></tr></table></figure>
+<p>查看一下<code>win()</code>的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">   0x00005b9bc84e6951 &lt;+0&gt;:     endbr64 </span><br><span class="line">   0x00005b9bc84e6955 &lt;+4&gt;:     push   %rbp</span><br><span class="line">   0x00005b9bc84e6956 &lt;+5&gt;:     mov    %rsp,%rbp</span><br><span class="line">   0x00005b9bc84e6959 &lt;+8&gt;:     sub    $0x10,%rsp</span><br><span class="line">   0x00005b9bc84e695d &lt;+12&gt;:    movq   $0x0,-0x8(%rbp)</span><br><span class="line">   0x00005b9bc84e6965 &lt;+20&gt;:    mov    -0x8(%rbp),%rax</span><br><span class="line">=&gt; 0x00005b9bc84e6969 &lt;+24&gt;:    mov    (%rax),%eax</span><br><span class="line">   0x00005b9bc84e696b &lt;+26&gt;:    lea    0x1(%rax),%edx</span><br><span class="line">   0x00005b9bc84e696e &lt;+29&gt;:    mov    -0x8(%rbp),%rax</span><br><span class="line">   0x00005b9bc84e6972 &lt;+33&gt;:    mov    %edx,(%rax)</span><br><span class="line">   0x00005b9bc84e6974 &lt;+35&gt;:    lea    0x73e(%rip),%rdi        # 0x5b9bc84e70b9</span><br><span class="line">   0x00005b9bc84e697b &lt;+42&gt;:    callq  0x5b9bc84e6180 &lt;puts@plt&gt;</span><br><span class="line">   0x00005b9bc84e6980 &lt;+47&gt;:    mov    $0x0,%esi</span><br><span class="line">   0x00005b9bc84e6985 &lt;+52&gt;:    lea    0x749(%rip),%rdi        # 0x5b9bc84e70d5</span><br><span class="line">   0x00005b9bc84e698c &lt;+59&gt;:    mov    $0x0,%eax</span><br><span class="line">   0x00005b9bc84e6991 &lt;+64&gt;:    callq  0x5b9bc84e6240 &lt;open@plt&gt;</span><br><span class="line">   0x00005b9bc84e6996 &lt;+69&gt;:    mov    %eax,0x26a4(%rip)        # 0x5b9bc84e9040 &lt;flag_fd.5712&gt;</span><br><span class="line">   0x00005b9bc84e699c &lt;+75&gt;:    mov    0x269e(%rip),%eax        # 0x5b9bc84e9040 &lt;flag_fd.5712&gt;</span><br><span class="line">   0x00005b9bc84e69a2 &lt;+81&gt;:    test   %eax,%eax</span><br><span class="line">   0x00005b9bc84e69a4 &lt;+83&gt;:    jns    0x5b9bc84e69ef &lt;win+158&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set $rip = 0x5bb43cb6b980 	#实际上从win+35到win+47都行</span><br><span class="line">c</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://midnightr3d.top/2025/01/13/%E8%BD%AC%E8%BD%BD%E7%9A%84pwntools%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -868,83 +986,6 @@ Spotify）的数据库。假设这个数据库存储了关于艺术家及其发�
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://midnightr3d.top/2024/07/18/%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/1312386.jpeg">
-      <meta itemprop="name" content="AAAFORGE">
-      <meta itemprop="description" content="此情可待成追忆，只是当时已惘然">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="杜鹃声">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/07/18/%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/" class="post-title-link" itemprop="url">误差反向传播法</a>
-        </h2>
-
-        <div class="post-meta">
-        
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-07-18 00:02:48" itemprop="dateCreated datePublished" datetime="2024-07-18T00:02:48+08:00">2024-07-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-12 22:22:20" itemprop="dateModified" datetime="2024-11-12T22:22:20+08:00">2024-11-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>误差反向传播法是一种能高效计算权重参数梯度的方法。要理解它一般有两种方法，一种是基于数学式，另一种是基于<strong>计算图</strong>（computational
-graph）。接下来会补充讲解计算图的理解方法。</p>
-<h2 id="计算图">计算图</h2>
-<p>计算图会将计算过程用图表现出来。这里的图形是数据结构图，通过多个节点和边来表示。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/07/18/%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1016,7 +1057,7 @@ graph）。接下来会补充讲解计算图的理解方法。</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1070,7 +1111,7 @@ graph）。接下来会补充讲解计算图的理解方法。</p>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">本博客全站共63.2k字</span>
+  <span class="post-count">本博客全站共64.1k字</span>
 </div>
 
 
