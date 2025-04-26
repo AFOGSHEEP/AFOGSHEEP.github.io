@@ -274,6 +274,144 @@ hog。”这两句话将被视为回文。
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://midnightr3d.top/2025/02/01/building_web_server_record/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/1312386.jpeg">
+      <meta itemprop="name" content="AAAFORGE">
+      <meta itemprop="description" content="此情可待成追忆，只是当时已惘然">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="杜鹃声">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/01/building_web_server_record/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+        
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-02-01 00:01:57" itemprop="dateCreated datePublished" datetime="2025-02-01T00:01:57+08:00">2025-02-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-02-02 01:27:55" itemprop="dateModified" datetime="2025-02-02T01:27:55+08:00">2025-02-02</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="level1">level1</h2>
+<p>跟着题目做即可</p>
+<h2 id="level2">level2</h2>
+<p>晃眼看好像和第一题一样，运行server又不正确，看了几遍题目，问了DS明白了这是要我用上socket套接字。当前的汇编代码只是调用了
+<code>exit(0)</code>，需要修改它，使其调用 <code>socket()</code>
+系统调用来创建一个套接字。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 41</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 60</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">.section .data</span><br></pre></td></tr></table></figure>
+<ol type="1">
+<li><p><strong><code>mov rdi, 2</code></strong>:</p>
+<ul>
+<li>将 <code>2</code> 赋值给 <code>rdi</code> 寄存器。<code>rdi</code>
+是系统调用的第一个参数寄存器，<code>2</code> 表示
+<code>AF_INET</code>（IPv4 协议族）。</li>
+</ul></li>
+<li><p><strong><code>mov rsi, 1</code></strong>:</p>
+<ul>
+<li>将 <code>1</code> 赋值给 <code>rsi</code> 寄存器。<code>rsi</code>
+是系统调用的第二个参数寄存器，<code>1</code> 表示
+<code>SOCK_STREAM</code>（TCP 套接字类型）。</li>
+</ul></li>
+<li><p><strong><code>mov rdx, 0</code></strong>:</p>
+<ul>
+<li>将 <code>0</code> 赋值给 <code>rdx</code> 寄存器。<code>rdx</code>
+是系统调用的第三个参数寄存器，<code>0</code> 表示默认协议。</li>
+</ul></li>
+<li><p><strong><code>mov rax, 41</code></strong>:</p>
+<ul>
+<li>将 <code>41</code> 赋值给 <code>rax</code> 寄存器。<code>rax</code>
+是系统调用号寄存器，<code>41</code> 是 <code>socket()</code>
+系统调用的系统调用号。</li>
+</ul>
+<p>执行系统调用后会自动生成TCP套接字。</p></li>
+</ol>
+<p>当然，创建一个 TCP 套接字只是进行完整的TCP通信的第一步。</p>
+<h2 id="level3">level3</h2>
+<p>将一个地址绑定到套接字（In this challenge you will bind an address to
+a socket.）</p>
+<p>继续在原有代码上进行增添：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line">#数据段</span><br><span class="line">.section .data</span><br><span class="line">    socketadd:</span><br><span class="line">        .2byte 2</span><br><span class="line">        .2byte 0x5000</span><br><span class="line">        .4byte 0</span><br><span class="line">        .8byte 0</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    # socket</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 41</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    #bind</span><br><span class="line">    mov rdi,rax</span><br><span class="line">    lea rsi,[rip+socketadd]	</span><br><span class="line">    mov rdx, 16</span><br><span class="line">    mov rax, 0x31</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    #exit</span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 60</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.section .data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>lea</code> 是 <strong>Load Effective Address</strong>
+指令，用于计算地址并将其加载到寄存器中。</li>
+<li><code>[rip+sockaddr]</code> 表示 <code>sockaddr</code>
+结构体的地址相对于当前指令指针（<code>rip</code>）的偏移量。</li>
+</ul>
+<ol type="1">
+<li><strong>设置参数</strong>:
+<ul>
+<li>将套接字文件描述符（<code>3</code>）赋值给 <code>rdi</code>。</li>
+<li>将 <code>sockaddr</code> 结构体的地址赋值给 <code>rsi</code>。</li>
+<li>将 <code>sockaddr</code> 结构体的大小（<code>16</code>）赋值给
+<code>rdx</code>。</li>
+<li>将 <code>bind()</code> 的系统调用号（<code>0x31</code>）赋值给
+<code>rax</code>。</li>
+</ul></li>
+<li><strong>执行系统调用</strong>:
+<ul>
+<li>调用 <code>syscall</code>，执行 <code>bind()</code> 系统调用。</li>
+<li>操作系统会将 <code>sockaddr</code> 中的地址信息绑定到套接字。</li>
+</ul></li>
+</ol>
+<h2 id="level4">level4</h2>
+<p>监听端口（In this challenge you will listen on a socket.）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.section .data</span><br><span class="line">    socketadd:</span><br><span class="line">        .2byte 2</span><br><span class="line">        .2byte 0x5000 </span><br><span class="line">        .4byte 0</span><br><span class="line">        .8byte 0</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    # socket</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 41</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    #bind</span><br><span class="line">    mov rdi, rax</span><br><span class="line">    lea rsi,[rip+socketadd]</span><br><span class="line">    mov rdx, 16</span><br><span class="line">    mov rax, 0x31</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    #listen</span><br><span class="line">    mov rdi, 3      # 参数1：套接字文件描述符（假设为 3）</span><br><span class="line">	mov rsi, 0      # 参数2：backlog（等待连接队列长度）</span><br><span class="line">	mov rax, 0x32   # 系统调用号：listen()</span><br><span class="line">	syscall</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    #exit</span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 60</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>backlog设置为零会导致操作系统拒绝所有连接请求。通常应设置为正整数。</p>
+<p>不过接受请求在下一个level里。</p>
+<h2 id="level5">level5</h2>
+<p>接受连接（In this challenge you will accept a connection.）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.section .data</span><br><span class="line">    socketadd:</span><br><span class="line">        .2byte 2</span><br><span class="line">        .2byte 0x5000 </span><br><span class="line">        .4byte 0</span><br><span class="line">        .8byte 0</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    # socket</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 41</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    #bind</span><br><span class="line">    mov rdi, rax</span><br><span class="line">    lea rsi,[rip+socketadd]</span><br><span class="line">    mov rdx, 16</span><br><span class="line">    mov rax, 0x31</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    #listen</span><br><span class="line">    mov rdi, 3</span><br><span class="line">	mov rsi, 0</span><br><span class="line">	mov rax, 0x32</span><br><span class="line">	syscall</span><br><span class="line"></span><br><span class="line">    # Accept </span><br><span class="line">	mov rdi, 3</span><br><span class="line">	mov rsi, 0</span><br><span class="line">	mov rdx, 0</span><br><span class="line">	mov rax, 0x2b</span><br><span class="line">	syscall</span><br><span class="line"></span><br><span class="line">    #exit</span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 60</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="level6">level6</h2>
+<p>静态响应http请求（In this challenge you will respond to an http
+request.）</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://midnightr3d.top/2025/01/25/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%84%E7%AD%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1029,84 +1167,6 @@ n = 0 \\ n \times (n - 1)! &amp; \text{otherwise} \end{cases}
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://midnightr3d.top/2024/09/16/1.%20%E6%95%B0%E6%8D%AE%E5%BA%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/1312386.jpeg">
-      <meta itemprop="name" content="AAAFORGE">
-      <meta itemprop="description" content="此情可待成追忆，只是当时已惘然">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="杜鹃声">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/16/1.%20%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-title-link" itemprop="url">初识数据库</a>
-        </h2>
-
-        <div class="post-meta">
-        
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-09-16 14:45:29" itemprop="dateCreated datePublished" datetime="2024-09-16T14:45:29+08:00">2024-09-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-06 00:53:03" itemprop="dateModified" datetime="2025-01-06T00:53:03+08:00">2025-01-06</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="数据库">数据库</h2>
-<p>数据库是一个有组织的、相互关联的数据集合，用来模拟现实世界中的某些方面（例如，模拟班级中的学生或数字音乐商店）。人们常常将“数据库”和“数据库管理系统”（例如
-MySQL、Oracle、MongoDB）混为一谈。数据库管理系统（DBMS）是用于管理数据库的软件。</p>
-<p>考虑一个模拟数字音乐商店（例如
-Spotify）的数据库。假设这个数据库存储了关于艺术家及其发行的专辑的信息。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/09/16/1.%20%E6%95%B0%E6%8D%AE%E5%BA%93/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1178,7 +1238,7 @@ Spotify）的数据库。假设这个数据库存储了关于艺术家及其发�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">20</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1232,7 +1292,7 @@ Spotify）的数据库。假设这个数据库存储了关于艺术家及其发�
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">本博客全站共65k字</span>
+  <span class="post-count">本博客全站共65.8k字</span>
 </div>
 
 
