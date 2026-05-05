@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f /Users/gwen/Downloads/AFOGSHEEP.github.io-main/.DS_Store)",
+      "Bash(npx hexo *)",
+      "Read(//private/tmp/**)",
+      "Bash(rm -rf hexo-init-temp)",
+      "Bash(cp -r /tmp/hexo-init-temp/* /Users/gwen/Downloads/AFOGSHEEP.github.io-main/)",
+      "Bash(cp /tmp/hexo-init-temp/.github /Users/gwen/Downloads/AFOGSHEEP.github.io-main/ -r)",
+      "Bash(tar cf *)",
+      "Bash(cp *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"console.log\\(require\\('/Users/gwen/Downloads/AFOGSHEEP.github.io-main/node_modules/hexo-theme-next/package.json'\\).version\\)\")",
+      "Bash(node *)",
+      "Bash(curl *)",
+      "Bash(pkill -f \"hexo server\")",
+      "Bash(npm uninstall *)",
+      "Bash(perl *)",
+      "Bash(ping *)",
+      "Bash(git ls-remote *)",
+      "Bash(git config *)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}

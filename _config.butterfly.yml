@@ -1,0 +1,317 @@
+# --------------------------------------
+# Butterfly Theme - Full Dynamic Config
+# --------------------------------------
+
+nav:
+  logo:
+  display_title: true
+  fixed: false
+
+menu:
+  首页: / || fas fa-home
+  归档: /archives/ || fas fa-archive
+  分类: /categories/ || fas fa-folder-open
+  标签: /tags/ || fas fa-tags
+  关于: /about/ || fas fa-user
+
+# ---------- Code Blocks ----------
+code_blocks:
+  theme: darker
+  macStyle: true
+  height_limit: false
+  word_wrap: false
+  copy: true
+  language: true
+  shrink: false
+  fullpage: false
+
+# ---------- Social Links ----------
+social:
+  fab fa-github: https://github.com/AFOGSHEEP || Github || '#24292e'
+
+# ---------- Images ----------
+favicon:
+avatar:
+  img: https://pic1.imgdb.cn/item/67f0b9e6e38117f37e12cad1.jpg
+  effect: true
+
+# Banner images - use gradient placeholders
+default_top_img: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+index_img: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+archive_img: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+tag_img: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+category_img: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+footer_img: false
+
+# Dynamic background - particles
+background: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)'
+
+cover:
+  index_enable: true
+  aside_enable: true
+  archives_enable: true
+  default_cover:
+    - 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    - 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+    - 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+    - 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+
+error_img:
+  flink: https://pic1.imgdb.cn/item/67f0b9e6e38117f37e12cad1.jpg
+  post_page: https://pic1.imgdb.cn/item/67f0b9e6e38117f37e12cad1.jpg
+
+error_404:
+  enable: true
+  subtitle: '页面未找到...'
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+
+# ---------- Post Meta ----------
+post_meta:
+  page:
+    date_type: created
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+  post:
+    position: left
+    date_type: both
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+
+# ---------- Homepage ----------
+index_site_info_top: 40%
+index_top_img_height: 400px
+
+subtitle:
+  enable: true
+  effect: true
+  source: 1
+  sub:
+    - 此情可待成追忆
+    - 只是当时已惘然
+    - 欢迎来到我的博客
+    - 记录学习与成长
+
+index_layout: 5
+index_post_content:
+  method: 3
+  length: 300
+
+# ---------- Post Settings ----------
+toc:
+  post: true
+  page: false
+  number: true
+  expand: false
+  style_simple: false
+  scroll_percent: true
+
+post_copyright:
+  enable: true
+  license: CC BY-NC-SA 4.0
+  license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+reward:
+  enable: false
+
+related_post:
+  enable: true
+  limit: 6
+  date_type: created
+
+post_pagination: 1
+
+noticeOutdate:
+  enable: true
+  style: flat
+  limit_day: 180
+  position: top
+  message_prev: 距离上次更新已过
+  message_next: 天，文章内容可能已过时。
+
+# ---------- Footer ----------
+footer:
+  owner:
+    enable: true
+    since: 2024
+  copyright:
+    enable: true
+    version: true
+  custom_text: 杜鹃声 - 此情可待成追忆，只是当时已惘然
+
+# ---------- Aside (Sidebar) ----------
+aside:
+  enable: true
+  hide: false
+  button: true
+  mobile: true
+  position: right
+  display:
+    archive: true
+    tag: true
+    category: true
+  card_author:
+    enable: true
+    description: 安全 / 系统 / C++
+    button:
+      enable: true
+      icon: fab fa-github
+      text: GitHub
+      link: https://github.com/AFOGSHEEP
+  card_announcement:
+    enable: true
+    content: 杜鹃声里斜阳暮，零落成泥碾作尘，只有香如故。
+  card_recent_post:
+    enable: true
+    limit: 5
+    sort: date
+  card_categories:
+    enable: true
+    limit: 8
+    expand: none
+  card_tags:
+    enable: true
+    limit: 40
+    color: true
+    orderby: random
+    order: 1
+  card_archives:
+    enable: true
+    type: monthly
+    format: MMMM YYYY
+    order: -1
+    limit: 8
+  card_webinfo:
+    enable: true
+    post_count: true
+    last_push_date: true
+
+# ---------- Bottom Right Buttons ----------
+readmode: true
+
+darkmode:
+  enable: true
+  button: true
+  autoChangeMode: 1
+
+rightside_scroll_percent: true
+rightside_config_animation: true
+
+# ---------- Global ----------
+copy:
+  enable: true
+  copyright:
+    enable: true
+    limit_count: 50
+
+wordcount:
+  enable: true
+  post_wordcount: true
+  min2read: true
+  total_wordcount: true
+
+busuanzi:
+  site_uv: true
+  site_pv: true
+  page_pv: true
+
+# ---------- Search ----------
+search:
+  use: local_search
+  placeholder: 搜索文章...
+  local_search:
+    preload: false
+    top_n_per_article: 1
+    unescape: false
+
+# ---------- Share ----------
+share:
+  use: sharejs
+  sharejs:
+    sites: wechat,weibo,qq,copy_link
+
+# ---------- Comments ----------
+comments:
+  use:
+  text: true
+  lazyload: false
+  count: false
+  card_post_count: false
+
+# ---------- Beautify / Effects ----------
+rounded_corners_ui: true
+
+mask:
+  header: true
+  footer: true
+
+preloader:
+  enable: true
+  source: 2
+
+enter_transitions: true
+
+display_mode: light
+
+hr_icon:
+  enable: true
+  icon: '\f127'
+
+# ---- Background Effects ----
+
+# Colorful ribbon background
+canvas_ribbon:
+  enable: true
+  size: 150
+  alpha: 0.6
+  zIndex: -1
+  click_to_change: true
+  mobile: false
+
+# Mouse click - fireworks
+fireworks:
+  enable: true
+  zIndex: 9999
+  mobile: false
+
+# Mouse click - show random text
+clickShowText:
+  enable: true
+  text:
+    - '❤'
+    - '✨'
+    - '🎉'
+    - '🌟'
+    - '💻'
+    - '🔒'
+    - '⚡'
+    - '🔥'
+  fontSize: 16px
+  random: true
+  mobile: false
+
+# Activate power mode (typewriter particles)
+activate_power_mode:
+  enable: true
+  colorful: true
+  shake: false
+  mobile: false
+
+# ---------- Lightbox ----------
+lightbox: fancybox
+
+# ---------- Pjax ----------
+pjax:
+  enable: false
+
+# ---------- Instant Page ----------
+instantpage: true
+
+# ---------- CDN ----------
+CDN:
+  internal_provider: local
+  third_party_provider: jsdelivr
+  version: true

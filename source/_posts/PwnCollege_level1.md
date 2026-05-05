@@ -1,0 +1,20 @@
+---
+title: level1
+date: 2025-03-01 00:00:00
+categories:
+  - PwnCollege
+tags:
+  - PwnCollege
+  - CTF
+---
+
+```cpp
+vim runme
+
+```
+
+
+
+
+
+level2
