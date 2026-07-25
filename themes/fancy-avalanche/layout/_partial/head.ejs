@@ -12,6 +12,9 @@
 <% if (page.description || config.description) { %><meta property="og:description" content="<%= page.description || config.description %>"><% } %>
 <meta property="og:locale" content="<%= config.language || 'zh_CN' %>">
 <meta name="twitter:card" content="summary">
+<% if (theme.seo && theme.seo.google_site_verification) { %><meta name="google-site-verification" content="<%= theme.seo.google_site_verification %>"><% } %>
+<% if (theme.seo && theme.seo.baidu_site_verification) { %><meta name="baidu-site-verification" content="<%= theme.seo.baidu_site_verification %>"><% } %>
+<% if (theme.seo && theme.seo.bing_site_verification) { %><meta name="msvalidate.01" content="<%= theme.seo.bing_site_verification %>"><% } %>
 <% if (theme.images && theme.images.favicon) { %><link rel="icon" type="image/x-icon" href="<%= theme.images.favicon %>"><% } %>
 <link rel="alternate" href="/atom.xml" title="<%= config.title %>" type="application/rss+xml">
 <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
