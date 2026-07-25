@@ -1,0 +1,86 @@
+<%# Background — slideshow with auto-rotate + manual controls %>
+<% var bg = theme.background || {}; var bgType = bg.type || 'image'; %>
+
+<% if (bgType === 'image' || bgType === 'slideshow') { %>
+<div id="bg-layer-a" class="bg-fullscreen" style="background-image:url('<%= bg.image_url || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2560&q=100' %>'); z-index:-1;"></div>
+<div id="bg-layer-b" class="bg-fullscreen" style="opacity:0; z-index:-1;"></div>
+
+<!-- Side navigation arrows -->
+<button id="bg-prev" class="bg-nav-btn left-4" aria-label="上一张"><</button>
+<button id="bg-next" class="bg-nav-btn right-4" aria-label="下一张">></button>
+
+<!-- Dot indicators -->
+<div id="bg-dots" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex gap-2"></div>
+
+<script data-no-instant>
+(function(){
+  var images = <%- JSON.stringify(bg.images && bg.images.length ? bg.images : ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2560&q=100']) %>;
+  var layerA = document.getElementById('bg-layer-a');
+  var layerB = document.getElementById('bg-layer-b');
+  var cur = parseInt(localStorage.getItem('bgIdx')||'0') % images.length;
+  var active = layerA, hidden = layerB;
+  var timer;
+
+  function preload(url, cb) {
+    var img = new Image();
+    img.onload = cb; img.onerror = cb;
+    img.src = url;
+  }
+
+  function show(i) {
+    cur = ((i % images.length) + images.length) % images.length;
+    // Load into hidden layer
+    hidden.style.backgroundImage = 'url(' + images[cur] + ')';
+    preload(images[cur], function(){
+      // Fade: show hidden, hide active
+      hidden.style.opacity = '1';
+      active.style.opacity = '0';
+      // Swap roles
+      var tmp = active; active = hidden; hidden = tmp;
+    });
+    localStorage.setItem('bgIdx', cur);
+    updateDots();
+    // Preload next
+    var nextIdx = (cur + 1) % images.length;
+    preload(images[nextIdx], function(){});
+  }
+
+  function updateDots() {
+    var dots = document.getElementById('bg-dots');
+    dots.innerHTML = images.map(function(_,i){ return '<button style="'+(i===cur?'background:#fff;border-color:#fff;width:16px':'')+'" onclick="window._bgShow('+i+')"></button>'; }).join('');
+  }
+
+  function next() { show(cur+1); resetTimer(); }
+  function prev() { show(cur-1); resetTimer(); }
+  function resetTimer() { clearInterval(timer); timer = setInterval(next, 60000); }
+
+  window._bgShow = show;
+
+  document.getElementById('bg-next').onclick = next;
+  document.getElementById('bg-prev').onclick = prev;
+
+  // Init
+  layerA.style.transition = 'opacity 0.8s ease';
+  layerB.style.transition = 'opacity 0.8s ease';
+  updateDots();
+  resetTimer();
+  // Preload next
+  preload(images[(cur+1)%images.length], function(){});
+
+  if (images.length <= 1) {
+    document.getElementById('bg-prev').style.display = 'none';
+    document.getElementById('bg-next').style.display = 'none';
+    document.getElementById('bg-dots').style.display = 'none';
+  }
+})();
+</script>
+
+<% } else if (bgType === 'gradient') { %>
+<div class="fixed inset-0 -z-[1] pointer-events-none" style="background: <%= bg.gradient || 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' %>;"></div>
+<% } else if (bgType === 'canvas') { %>
+<div class="fixed inset-0 -z-[1] pointer-events-none"><canvas id="bg-canvas" class="w-full h-full"></canvas></div>
+<script id="bg-config" type="application/json" data-no-instant>{ "type":"canvas","preset":"<%= (bg.canvas||{}).preset||'particles' %>","color":"<%= (bg.canvas||{}).color||'#6366F1' %>","density":<%= (bg.canvas||{}).density||50 %>,"speed":<%= (bg.canvas||{}).speed||0.5 %>,"interactive":<%= (bg.canvas||{}).interactive!==false %> }</script>
+<% } else if (bgType === 'three') { %>
+<div class="fixed inset-0 -z-[1] pointer-events-none"><canvas id="bg-three-canvas" class="w-full h-full"></canvas></div>
+<script id="bg-config" type="application/json" data-no-instant>{ "type":"three","effect":"<%= (bg.three||{}).effect||'waves' %>","color":"<%= (bg.three||{}).color||'#6366F1' %>","speed":<%= (bg.three||{}).speed||1 %> }</script>
+<% } %>

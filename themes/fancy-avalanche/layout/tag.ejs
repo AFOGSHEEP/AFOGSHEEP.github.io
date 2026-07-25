@@ -1,0 +1,6 @@
+<div data-aos="fade-up" class="max-w-3xl mx-auto">
+  <h1 class="text-center text-3xl font-bold mb-2">#<%= page.tag %></h1>
+  <p class="text-center text-zinc-400 dark:text-zinc-500 mb-12"><%= page.posts.length %> 篇文章</p>
+  <div class="space-y-4"><% page.posts.each(function(post) { %><%- partial('_partial/post-card', { post: post, isIndex: false }) %><% }) %></div>
+  <% if (page.total > 1) { %><div class="pagination mt-8"><%- paginator({ mid_size: 2, end_size: 1 }) %></div><% } %>
+</div>

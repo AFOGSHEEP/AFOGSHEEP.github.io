@@ -1,0 +1,6 @@
+<% if (page.content) { %>
+<div class="toc-container glass">
+  <div class="toc-title"><%= __('toc') %></div>
+  <%- toc(page.content, { list_number: true, max_depth: 3 }) %>
+</div>
+<% } %>

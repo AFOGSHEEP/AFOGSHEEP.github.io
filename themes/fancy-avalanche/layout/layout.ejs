@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark overflow-x-hidden">
+<head><%- partial('_partial/head', { page, config, theme }) %></head>
+<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 font-sans antialiased transition-colors duration-300 overflow-x-hidden">
+
+  <%- partial('_partial/background', { page, config, theme }) %>
+
+  <%- partial('_partial/navbar', { page, config, theme }) %>
+
+  <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 min-h-screen">
+    <%- body %>
+  </main>
+
+  <%- partial('_partial/footer', { page, config, theme }) %>
+  <%- partial('_partial/search', { page, config, theme, site }) %>
+
+  <% if (theme.effects && theme.effects.back_to_top) { %>
+  <button id="back-to-top" class="fixed bottom-8 right-8 z-50 w-10 h-10 rounded-full flex items-center justify-center glass opacity-0 invisible" aria-label="回到顶部">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
+  <% } %>
+
+  <script src="<%= theme.cdn.lucide %>" data-no-instant></script>
+  <script data-no-instant>lucide.createIcons();</script>
+
+  <% if (theme.effects && theme.effects.scroll_reveal) { %>
+  <link rel="stylesheet" href="<%= theme.cdn.aos_css %>">
+  <script src="<%= theme.cdn.aos_js %>" data-no-instant></script>
+  <script data-no-instant>AOS.init({ duration: 600, once: true, offset: 80 });</script>
+  <% } %>
+
+  <% if (theme.code_highlight) { %>
+  <link rel="stylesheet" href="<%= theme.cdn.highlight_css %>">
+  <script src="<%= theme.cdn.highlight_js %>" data-no-instant></script>
+  <script data-no-instant>hljs.configure({ tabReplace: '  ' }); hljs.highlightAll();</script>
+  <% } %>
+
+  <% if (theme.color_scheme && theme.color_scheme.toggle) { %>
+  <script data-no-instant>
+    (function(){var h=document.documentElement;function icon(m){var t=document.getElementById('theme-toggle'),b=document.getElementById('theme-toggle-mobile');[t,b].forEach(function(e){if(!e)return;var i=e.querySelector('[data-lucide]');if(i)i.setAttribute('data-lucide',m?'sun':'moon')});lucide.createIcons()}var saved=localStorage.getItem('theme');if(saved==='light'){h.classList.remove('dark');icon(false)}else{h.classList.add('dark');icon(true)}var bt=document.getElementById('theme-toggle');if(bt)bt.addEventListener('click',function(){var isDark=h.classList.toggle('dark');localStorage.setItem('theme',isDark?'dark':'light');icon(isDark)});var bm=document.getElementById('theme-toggle-mobile');if(bm)bm.addEventListener('click',function(){if(bt)bt.click()})})();
+  </script>
+  <% } %>
+
+  <% if (theme.effects && theme.effects.pjax) { %>
+  <script src="<%= theme.cdn.instantclick %>" data-no-instant></script>
+  <script data-no-instant>InstantClick.init('mousedown');InstantClick.on('change',function(){lucide.createIcons();if(typeof AOS!=='undefined')AOS.refresh();if(typeof hljs!=='undefined')hljs.highlightAll()});</script>
+  <% } %>
+
+  <script src="/js/main.js" data-no-instant></script>
+
+  <% var bgType = (theme.background && theme.background.type) || 'gradient'; if (bgType === 'canvas' || bgType === 'three') { %>
+  <script src="/js/background.js" data-no-instant></script>
+  <% } %>
+</body>
+</html>

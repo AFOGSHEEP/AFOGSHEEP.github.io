@@ -1,0 +1,42 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#0B0B0F">
+<title><%= page.title ? page.title + ' | ' + config.title : config.title %></title>
+<% if (page.description || config.description) { %><meta name="description" content="<%= page.description || config.description %>"><% } %>
+<meta name="author" content="<%= config.author %>">
+<link rel="canonical" href="<%= url_for(page.path) %>">
+<meta property="og:type" content="<%= page.layout === 'post' ? 'article' : 'website' %>">
+<meta property="og:title" content="<%= page.title || config.title %>">
+<meta property="og:url" content="<%= url_for(page.path) %>">
+<meta property="og:site_name" content="<%= config.title %>">
+<% if (page.description || config.description) { %><meta property="og:description" content="<%= page.description || config.description %>"><% } %>
+<meta property="og:locale" content="<%= config.language || 'zh_CN' %>">
+<meta name="twitter:card" content="summary">
+<% if (theme.images && theme.images.favicon) { %><link rel="icon" type="image/x-icon" href="<%= theme.images.favicon %>"><% } %>
+<link rel="alternate" href="/atom.xml" title="<%= config.title %>" type="application/rss+xml">
+
+<!-- Tailwind CSS v3 CDN (battle-tested) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          accent: { 400: '#818CF8', 500: '#6366F1', 600: '#4F46E5' },
+          surface: { DEFAULT: '#1A1A21', light: '#FFFFFF' },
+        }
+      }
+    }
+  }
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;700&family=Press+Start+2P&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+
+<!-- Custom CSS (theme variables + components) -->
+<link rel="stylesheet" href="/css/style.css">
+
+<% if (theme.custom && theme.custom.css) { theme.custom.css.forEach(function(p) { %><link rel="stylesheet" href="<%= p %>"><% }) } %>

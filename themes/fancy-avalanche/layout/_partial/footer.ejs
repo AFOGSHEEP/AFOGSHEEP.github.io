@@ -1,0 +1,16 @@
+<footer class="relative z-10 border-t border-zinc-200 dark:border-zinc-800">
+  <div class="max-w-7xl mx-auto px-4 py-4 text-center">
+    <% if (theme.social) { %>
+    <div class="flex justify-center gap-6 mb-3">
+      <% var si = { github:'github', email:'mail', twitter:'twitter', zhihu:'message-circle', rss:'rss' }; for (var key in theme.social) { %>
+      <a href="<%= theme.social[key] %>" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-full text-zinc-400 dark:text-zinc-500 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-all" aria-label="<%= key %>"><i data-lucide="<%= si[key] || 'link' %>" class="w-5 h-5"></i></a>
+      <% } %>
+    </div>
+    <% } %>
+    <div class="text-sm text-zinc-400 dark:text-zinc-500">
+      <p>&copy; <%= theme.footer.since ? theme.footer.since + ' - ' : '' %><%= new Date().getFullYear() %> <%= config.author || config.title %>. Powered by <a href="https://hexo.io" target="_blank" class="hover:text-indigo-500">Hexo</a> &amp; Fancy Avalanche.</p>
+      <% if (theme.footer.custom_text) { %><p class="mt-2"><%- theme.footer.custom_text %></p><% } %>
+      <% if (theme.footer.icp) { %><p class="mt-2"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow"><%= theme.footer.icp %></a></p><% } %>
+    </div>
+  </div>
+</footer>

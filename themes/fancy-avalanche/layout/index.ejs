@@ -1,0 +1,4 @@
+<%- partial('_partial/hero-banner', { config, theme }) %>
+<%- partial('_partial/terminal-quote', { config, theme }) %>
+<%- partial('_partial/bento-grid', { page, config, theme }) %>
+<% if (page.total > 1) { %><div class="pagination"><%- paginator({ prev_text: '←', next_text: '→', space: '…', mid_size: 2, end_size: 1 }) %></div><% } %>

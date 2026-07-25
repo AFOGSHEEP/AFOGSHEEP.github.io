@@ -1,0 +1,4 @@
+<div data-aos="fade-up" class="max-w-4xl mx-auto">
+  <h1 class="text-center text-3xl font-bold mb-12"><%= __('tags') %></h1>
+  <div class="tag-cloud"><% site.tags.sort('length', -1).each(function(tag) { %><a href="<%= url_for(tag.path) %>" style="font-size:<%= Math.min(2, 0.8 + tag.length/site.tags.first().length*1.2).toFixed(1) %>rem"><%= tag.name %> <sup class="opacity-50"><%= tag.length %></sup></a><% }) %></div>
+</div>

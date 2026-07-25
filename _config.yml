@@ -84,7 +84,7 @@ search:
   format: html
 
 # Extensions
-theme: butterfly
+theme: fancy-avalanche
 
 # Deployment
 deploy:

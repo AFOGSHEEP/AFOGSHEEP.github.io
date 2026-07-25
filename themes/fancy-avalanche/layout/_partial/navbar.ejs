@@ -1,0 +1,33 @@
+<nav class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-xl transition-colors duration-300">
+  <div class="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6 lg:px-8">
+
+    <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">
+      <% if (theme.images && theme.images.avatar && theme.images.avatar.url) { %><img src="<%= theme.images.avatar.url %>" alt="avatar" class="w-8 h-8 rounded-full ring-2 ring-zinc-200 dark:ring-zinc-700"><% } %>
+      <%= config.title %>
+    </a>
+
+    <div class="hidden md:flex items-center gap-1">
+      <% if (theme.navbar.menu) { for (var key in theme.navbar.menu) { var path = theme.navbar.menu[key]; var isActive = (page.path === path) || (path !== '/' && page.path && page.path.indexOf(path.replace(/\//g,'')) === 0); %>
+      <a href="<%= path %>" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <%= isActive ? 'text-indigo-500 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800' %>"><%= key %></a>
+      <% }} %>
+      <% if (theme.search && theme.search.enable) { %>
+      <button onclick="toggleSearch()" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="搜索"><i data-lucide="search" class="w-4 h-4"></i></button>
+      <% } %>
+      <% if (theme.color_scheme && theme.color_scheme.toggle) { %>
+      <button id="theme-toggle" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="切换主题"><i data-lucide="sun" class="w-4 h-4"></i></button>
+      <% } %>
+    </div>
+
+    <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-zinc-500" aria-label="菜单"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+
+  <div id="mobile-menu" class="md:hidden hidden border-t border-zinc-200 dark:border-zinc-800 px-4 pb-4 pt-2">
+    <% if (theme.navbar.menu) { for (var key in theme.navbar.menu) { var path = theme.navbar.menu[key]; var isActive = (page.path === path) || (path !== '/' && page.path && page.path.indexOf(path.replace(/\//g,'')) === 0); %>
+    <a href="<%= path %>" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all <%= isActive ? 'text-indigo-500 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10' : 'text-zinc-500 dark:text-zinc-400' %>"><%= key %></a>
+    <% }} %>
+    <div class="flex gap-2 px-4 pt-2">
+      <% if (theme.search && theme.search.enable) { %><button onclick="toggleSearch()" class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400">搜索</button><% } %>
+      <% if (theme.color_scheme && theme.color_scheme.toggle) { %><button id="theme-toggle-mobile" class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400">切换主题</button><% } %>
+    </div>
+  </div>
+</nav>

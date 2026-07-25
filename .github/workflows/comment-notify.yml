@@ -1,0 +1,38 @@
+# Comment Notification Workflow
+# Triggers when a new discussion comment is created (via Giscus),
+# sends email notification to the blog owner.
+
+name: Comment Notification
+
+on:
+  discussion_comment:
+    types: [created]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: github.event.discussion.repository.name == 'AFOGSHEEP.github.io'
+    steps:
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.163.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[博客评论] ${{ github.event.discussion.title }}"
+          to: q2420844892@163.com
+          from: ${{ secrets.MAIL_USERNAME }}
+          body: |
+            你的博客收到了一条新评论。
+
+            文章：${{ github.event.discussion.title }}
+            评论者：${{ github.event.comment.user.login }}
+            评论内容：
+            ${{ github.event.comment.body }}
+
+            查看：${{ github.event.comment.html_url }}
+
+            ---
+            此邮件由 GitHub Actions 自动发送

@@ -1,0 +1,7 @@
+<div class="max-w-3xl mx-auto" data-aos="fade-up">
+  <h1 class="text-center text-3xl font-bold mb-12"><%= page.title %></h1>
+  <article class="prose dark:prose-invert max-w-none"><%- page.content %></article>
+  <% if (theme.comment && theme.comment.enable && theme.comment.giscus && page.comment !== false) { %>
+  <div class="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800"><% var g = theme.comment.giscus; %><script src="https://giscus.app/client.js" data-repo="<%= g.repo %>" data-repo-id="<%= g.repo_id %>" data-category="<%= g.category %>" data-category-id="<%= g.category_id %>" data-mapping="<%= g.mapping %>" data-strict="<%= g.strict %>" data-reactions-enabled="<%= g.reactions %>" data-emit-metadata="0" data-input-position="<%= g.input_position %>" data-theme="preferred_color_scheme" data-lang="<%= g.lang %>" crossorigin="anonymous" async data-no-instant></script></div>
+  <% } %>
+</div>

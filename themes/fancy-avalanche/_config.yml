@@ -1,0 +1,250 @@
+# ============================================================
+# Fancy Avalanche Theme Configuration
+# 暗色优先 Bento Grid + 玻璃拟物化 + Canvas 背景 Hexo 主题
+# ============================================================
+
+# ---------- 导航栏 ----------
+navbar:
+  # 毛玻璃效果开关
+  glass_effect: true
+  # 固定顶栏
+  fixed: true
+  # 显示博客标题
+  display_title: true
+  # 导航菜单项
+  menu:
+    首页: /
+    归档: /archives/
+    分类: /categories/
+    标签: /tags/
+    关于: /about/
+
+# ---------- 搜索 ----------
+search:
+  enable: true
+  # localsearch | algolia
+  type: localsearch
+  # 搜索热键 (可选)
+  hotkey: '/'
+
+# ---------- 代码高亮 ----------
+code_highlight:
+  theme: dracula
+  mac_style: true
+  copy_button: true
+  line_numbers: true
+  word_wrap: false
+
+# ---------- 暗色/亮色双主题 ----------
+color_scheme:
+  # 默认主题模式
+  default: dark
+  # 允许用户手动切换
+  toggle: true
+  # 自动跟随系统
+  follow_system: false
+
+# ---------- 首页布局 ----------
+homepage:
+  # 首页布局类型
+  layout: bento  # bento | list
+  # Hero Banner
+  hero:
+    enable: true
+    # 打字机副标题
+    typewriter: true
+    # 显示社交链接
+    social_links: true
+  # 每页显示文章数
+  posts_per_page: 10
+  # 卡片摘要截取方式: auto | manual | none
+  excerpt_method: auto
+  # 自动截取长度（字符数）
+  excerpt_length: 200
+
+# ---------- 文章页 ----------
+post:
+  # 阅读进度条
+  reading_progress: true
+  # 文章目录 (TOC)
+  toc: true
+  # 上一篇/下一篇导航
+  post_nav: true
+  # 版权声明
+  copyright: true
+  # 元数据位置
+  meta_position: center
+
+# ---------- 评论系统 ----------
+comment:
+  enable: false
+  # Giscus 配置
+  giscus:
+    repo: AFOGSHEEP/AFOGSHEEP.github.io
+    repo_id: ''   # 在 https://giscus.app 获取
+    category: Announcements
+    category_id: ''
+    mapping: pathname
+    strict: 0
+    reactions: 1
+    input_position: bottom
+    lang: zh-CN
+  # 邮件通知 (新评论时发送)
+  email_notify:
+    enable: true
+    email: q2420844892@163.com
+
+# ---------- 社交链接 ----------
+social:
+  github: https://github.com/AFOGSHEEP
+  # email: mailto:xxx@xxx.com
+  # twitter: https://twitter.com/xxx
+  # zhihu: https://zhihu.com/people/xxx
+  # rss: /atom.xml
+
+# ---------- 图片配置 ----------
+images:
+  # 网站图标
+  favicon: /images/favicon.ico
+  # 头像 — 替换 /source/images/avatar.jpg 即可更换
+  avatar:
+    url: /images/avatar.jpg
+    effect: true  # 鼠标悬浮旋转效果
+
+# ---------- 背景系统 ----------
+background:
+  # 全局默认背景类型
+  type: slideshow  # slideshow | image | static | gradient | canvas | three
+  # 单张背景图（type=image 时生效）
+  image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80'
+  # 背景轮播图（type=slideshow 时生效，可任意增减）
+  images:
+    - 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2560&q=100'   # 山脉晨雾
+    - 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=2560&q=100'   # 绿色山谷
+    - 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=2560&q=100'   # 森林阳光
+    - 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=2560&q=100'   # 秋色草原
+    - 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=2560&q=100'   # 湖面倒影
+    - 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=2560&q=100'   # 海浪星空
+    - 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=2560&q=100'   # 极光雪山
+    - 'https://images.unsplash.com/photo-1532274402911-5a369e4c4bb5?w=2560&q=100'   # 湖泊山脉
+    - 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=2560&q=100'   # 山雾森林
+    - 'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=2560&q=100'   # 竹叶光影
+    - 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2560&q=100'   # 热带海滩
+    - 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=2560&q=100'   # 瀑布雨林
+    - 'https://images.unsplash.com/photo-1518173946687-a1e4e3e6a4e6?w=2560&q=100'   # 樱花富士山
+    - 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=2560&q=100'   # 沙漠星空
+    - 'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=2560&q=100'   # 深秋树林
+    - 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=2560&q=100'   # 透过枝叶的阳光
+  # 静态图配置
+  static:
+    url: ''
+    opacity: 0.3
+    # CSS background 属性
+    size: cover
+    position: center
+    attachment: fixed
+  # 渐变配置
+  gradient: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)'
+  # Canvas 粒子配置
+  canvas:
+    preset: particles  # particles | waves | stars | fluid
+    color: '#6366F1'
+    density: 50
+    speed: 0.5
+    # 交互模式
+    interactive: true
+    # 移动端密度减半
+    mobile_density_half: true
+  # Three.js / Vanta 配置
+  three:
+    effect: waves  # waves | birds | fog | net | globe | halo | dots
+    color: '#6366F1'
+    speed: 1.0
+    # 移动端降级为渐变
+    mobile_degrade: true
+  # 叠加遮罩层
+  overlay:
+    enable: false
+    color: 'rgba(0, 0, 0, 0.2)'
+
+# ---------- 按分类覆盖背景 ----------
+category_backgrounds:
+  # Leetcode:
+  #   type: canvas
+  #   canvas:
+  #     preset: stars
+  #     color: '#22C55E'
+  # 学习笔记:
+  #   type: static
+  #   static:
+  #     url: /images/study-bg.webp
+
+# ---------- 特效开关 ----------
+effects:
+  # 卡片悬浮上浮
+  card_hover_lift: true
+  # 滚动渐显 (AOS)
+  scroll_reveal: true
+  # 页面切换 (PJAX)
+  pjax: true
+  # 回到顶部按钮
+  back_to_top: true
+
+# ---------- 组件开关 ----------
+components:
+  notification: false    # 公告弹窗
+  music_player: false    # 背景音乐
+  friend_links: false    # 友链
+  view_counter: false    # 阅读量统计
+  timeline: false        # 时间轴页面
+
+# ---------- 页脚 ----------
+footer:
+  since: 2024
+  # 自定义文字 (支持 HTML)
+  custom_text: ''
+  # ICP 备案号
+  icp: ''
+
+# ---------- CDN 配置 ----------
+cdn:
+  # 使用 CDN 加速静态资源
+  enable: true
+  tailwindcss: https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4
+  aos_css: https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css
+  aos_js: https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js
+  highlight_js: https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js
+  highlight_css: https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/dracula.min.css
+  instantclick: https://cdn.jsdelivr.net/npm/instantclick@3.1.1/instantclick.min.js
+  lucide: https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js
+
+# ---------- SEO ----------
+seo:
+  google_site_verification: ''
+  baidu_site_verification: ''
+  bing_site_verification: ''
+
+# ---------- 友情链接 ----------
+friend_links:
+  # - name: 示例博客
+  #   url: https://example.com
+  #   avatar: https://example.com/avatar.jpg
+  #   description: 一句话描述
+
+# ---------- 自定义样式/脚本注入 ----------
+custom:
+  # 自定义 CSS (可填 CDN 或本地路径)
+  css: []
+  # 自定义 JS
+  js: []
+
+# ---------- 其他 ----------
+misc:
+  # 显示字数统计
+  word_count: true
+  # 显示阅读时间
+  reading_time: true
+  # 阅读速度 (中文，字/分钟)
+  reading_speed: 300
+  # 开启 lazyload 图片
+  lazyload: true
