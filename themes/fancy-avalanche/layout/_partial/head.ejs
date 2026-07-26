@@ -1,6 +1,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#0B0B0F">
+<meta name="theme-color" content="#FEFBF7">
 <title><%= page.title ? page.title + ' | ' + config.title : config.title %></title>
 <% if (page.description || config.description) { %><meta name="description" content="<%= page.description || config.description %>"><% } %>
 <meta name="author" content="<%= config.author %>">
@@ -27,8 +27,8 @@
     theme: {
       extend: {
         colors: {
-          accent: { 400: '#818CF8', 500: '#6366F1', 600: '#4F46E5' },
-          surface: { DEFAULT: '#1A1A21', light: '#FFFFFF' },
+          accent: { 50: '#fdf8f0', 100: '#faf0dc', 200: '#f2dfb4', 300: '#ECD08C', 400: '#E2BE6E', 500: '#D4A853', 600: '#B8892F', 700: '#9A6F22' },
+          surface: { DEFAULT: '#FEFBF7', dark: '#1A1815' },
         }
       }
     }
@@ -38,7 +38,7 @@
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;700&family=Press+Start+2P&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Press+Start+2P&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
 
 <!-- Custom CSS (theme variables + components) -->
 <link rel="stylesheet" href="/css/style.css">

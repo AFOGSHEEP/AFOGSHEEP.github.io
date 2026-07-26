@@ -1,9 +1,9 @@
 <% var hero = (theme.homepage && theme.homepage.hero) ? theme.homepage.hero : {}; %>
 <% if (hero.enable !== false) { %>
-<section class="hero-banner glass-strong flex flex-col items-center justify-center text-center px-6 py-16 mb-8" data-aos="fade-down" data-aos-duration="800">
-  <h1 class="text-4xl sm:text-5xl font-bold mb-3 bg-gradient-to-r from-indigo-400 via-indigo-500 to-emerald-400 bg-clip-text text-transparent"><%= config.title %></h1>
+<section class="hero-banner glass-strong flex flex-col items-center justify-center text-center px-4 py-4 mb-4 mx-auto max-w-3xl" data-aos="fade-down" data-aos-duration="800">
+  <h1 class="text-2xl sm:text-3xl font-bold mb-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-rose-400 bg-clip-text text-transparent"><%= config.title %></h1>
   <% if (hero.typewriter !== false) { %>
-  <div class="text-lg text-zinc-500 dark:text-zinc-400 font-mono mb-6 min-h-[1.6em]"><span id="typewriter-text"></span><span class="cursor"></span></div>
+  <div class="text-sm text-zinc-500 dark:text-zinc-400 font-mono mb-3 min-h-[1.4em]"><span id="typewriter-text"></span><span class="cursor"></span></div>
   <script data-no-instant>(function(){var s=<%- JSON.stringify((theme.subtitle&&theme.subtitle.sub)?theme.subtitle.sub:[config.subtitle||'']) %>;if(!s.length)return;var i=0,j=0,d=false,e=document.getElementById('typewriter-text');function t(){var c=s[i];if(!d){e.textContent=c.slice(0,j+1);j++;if(j===c.length){d=true;setTimeout(t,2000);return}}else{e.textContent=c.slice(0,j-1);j--;if(j===0){d=false;i=(i+1)%s.length}}setTimeout(t,d?40:100+Math.random()*80)}t()})();</script>
   <% } %>
   <% if (hero.social_links !== false && theme.social) { %>

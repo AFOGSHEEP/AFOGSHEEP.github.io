@@ -4,7 +4,7 @@
   <% if (cover) { %><div class="rounded-lg bg-cover bg-center flex-shrink-0" style="background-image:url('<%= cover %>'); height:120px;"></div><% } %>
 
   <% if (post.categories && post.categories.length > 0) { %>
-  <div class="inline-flex items-center gap-1 text-xs font-medium uppercase tracking-wider text-indigo-500 dark:text-indigo-400">
+  <div class="inline-flex items-center gap-1 text-xs font-medium uppercase tracking-wider text-accent-500 dark:text-accent-400">
     <i data-lucide="folder" class="w-3 h-3"></i>
     <%= post.categories.data ? post.categories.data[0].name : (typeof post.categories[0] === 'object' ? post.categories[0].name : post.categories[0]) %>
   </div>

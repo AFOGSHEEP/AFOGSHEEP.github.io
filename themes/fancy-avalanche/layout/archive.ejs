@@ -3,11 +3,11 @@
   <% var posts = site.posts.sort('date', -1); var cy = null; %>
   <div class="timeline">
     <% posts.each(function(post) { var yr = format_date(post.date, 'year'); if (yr !== cy) { cy = yr; if (cy !== null) { %></div></div><% } %>
-    <div class="timeline-year relative mb-8"><h2 class="text-2xl font-bold mb-4 text-indigo-500 dark:text-indigo-400"><%= yr %></h2><div>
+    <div class="timeline-year relative mb-8"><h2 class="text-2xl font-bold mb-4 text-accent-500 dark:text-accent-400"><%= yr %></h2><div>
     <% } %>
       <div class="timeline-item flex items-baseline gap-4 py-2" data-aos="fade-right" data-aos-duration="400">
         <span class="text-xs text-zinc-400 dark:text-zinc-500 font-mono whitespace-nowrap"><%= format_date(post.date, 'month') %></span>
-        <a href="<%= url_for(post.path) %>" class="font-medium text-zinc-700 dark:text-zinc-300 hover:text-indigo-500 dark:hover:text-indigo-400"><%= post.title %></a>
+        <a href="<%= url_for(post.path) %>" class="font-medium text-zinc-700 dark:text-zinc-300 hover:text-accent-500 dark:hover:text-accent-400"><%= post.title %></a>
       </div>
     <% }) %>
   </div>

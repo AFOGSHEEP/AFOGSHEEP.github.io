@@ -38,7 +38,7 @@ code_highlight:
 # ---------- 暗色/亮色双主题 ----------
 color_scheme:
   # 默认主题模式
-  default: dark
+  default: light
   # 允许用户手动切换
   toggle: true
   # 自动跟随系统
@@ -108,7 +108,7 @@ images:
   favicon: /images/favicon.ico
   # 头像 — 替换 /source/images/avatar.jpg 即可更换
   avatar:
-    url: /images/avatar.jpg
+    url: /images/avatar.webp
     effect: true  # 鼠标悬浮旋转效果
 
 # ---------- 背景系统 ----------

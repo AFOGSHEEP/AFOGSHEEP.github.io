@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="dark overflow-x-hidden">
+<html lang="zh-CN" class="overflow-x-hidden">
 <head><%- partial('_partial/head', { page, config, theme }) %></head>
-<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 font-sans antialiased transition-colors duration-300 overflow-x-hidden">
+<body class="bg-[#fefbf7] text-stone-900 dark:bg-[#1a1815] dark:text-stone-100 font-sans antialiased transition-colors duration-500 overflow-x-hidden">
 
   <%- partial('_partial/background', { page, config, theme }) %>
 
   <%- partial('_partial/navbar', { page, config, theme }) %>
 
-  <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 min-h-screen">
+  <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[4.5rem] pb-16 min-h-screen">
     <%- body %>
   </main>
 
@@ -47,6 +47,31 @@
   <% } %>
 
   <script src="/js/main.js" data-no-instant></script>
+
+  <!-- Font Switcher -->
+  <script data-no-instant>
+    (function(){
+      var FONTS = ['plus-jakarta', 'inter', 'source-serif'];
+      var saved = localStorage.getItem('font-preference') || 'plus-jakarta';
+      var cur = FONTS.indexOf(saved);
+      if (cur < 0) cur = 0;
+      applyFont(FONTS[cur]);
+
+      function applyFont(name) {
+        var h = document.documentElement;
+        FONTS.forEach(function(f) { h.removeAttribute('data-font'); });
+        if (name !== 'plus-jakarta') h.setAttribute('data-font', name);
+      }
+
+      var btn = document.getElementById('font-switcher');
+      if (btn) btn.addEventListener('click', function() {
+        cur = (cur + 1) % FONTS.length;
+        var name = FONTS[cur];
+        applyFont(name);
+        localStorage.setItem('font-preference', name);
+      });
+    })();
+  </script>
 
   <% var bgType = (theme.background && theme.background.type) || 'gradient'; if (bgType === 'canvas' || bgType === 'three') { %>
   <script src="/js/background.js" data-no-instant></script>

@@ -12,8 +12,8 @@
     <h1 class="text-center text-3xl font-bold mb-12"><%= __('categories') %></h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <% site.categories.each(function(cat) { %>
-      <a href="<%= url_for(cat.path) %>" class="flex items-center gap-4 p-6 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-lg transition-all">
-        <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center text-2xl"><i data-lucide="folder" class="w-6 h-6 text-indigo-500 dark:text-indigo-400"></i></div>
+      <a href="<%= url_for(cat.path) %>" class="flex items-center gap-4 p-6 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent-300 dark:hover:border-accent-600 hover:shadow-lg transition-all">
+        <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-accent-100 dark:bg-accent-500/20 flex items-center justify-center text-2xl"><i data-lucide="folder" class="w-6 h-6 text-accent-500 dark:text-accent-400"></i></div>
         <div><h3 class="font-semibold text-lg"><%= cat.name %></h3><p class="text-sm text-zinc-400 dark:text-zinc-500"><%= cat.posts.length %> 篇文章</p></div>
       </a>
       <% }) %>
