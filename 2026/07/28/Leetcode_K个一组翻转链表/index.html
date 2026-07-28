@@ -3,13 +3,13 @@
 <head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#FEFBF7">
-<title>三数之和 | 杜鹃声</title>
+<title>K 个一组翻转链表 (Reverse Nodes in k-Group) | 杜鹃声</title>
 <meta name="description" content="AAAFORGE的技术博客">
 <meta name="author" content="AAAFORGE">
-<link rel="canonical" href="/2025/03/01/Leetcode_%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C/">
+<link rel="canonical" href="/2026/07/28/Leetcode_K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/">
 <meta property="og:type" content="article">
-<meta property="og:title" content="三数之和">
-<meta property="og:url" content="/2025/03/01/Leetcode_%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C/">
+<meta property="og:title" content="K 个一组翻转链表 (Reverse Nodes in k-Group)">
+<meta property="og:url" content="/2026/07/28/Leetcode_K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/">
 <meta property="og:site_name" content="杜鹃声">
 <meta property="og:description" content="AAAFORGE的技术博客">
 <meta property="og:locale" content="zh-CN">
@@ -189,42 +189,51 @@
 <article class="max-w-6xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
 
   <header class="text-center mb-10">
-    <h1 class="text-3xl sm:text-4xl font-bold mb-4" data-aos="fade-down">三数之和</h1>
+    <h1 class="text-3xl sm:text-4xl font-bold mb-4" data-aos="fade-down">K 个一组翻转链表 (Reverse Nodes in k-Group)</h1>
     <div class="flex justify-center items-center flex-wrap gap-4 text-sm text-zinc-400 dark:text-zinc-500" data-aos="fade-up" data-aos-delay="100">
-      <span class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2025-03-01</span>
+      <span class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026-07-28</span>
       <span class="inline-flex items-center gap-1"><i data-lucide="folder" class="w-3.5 h-3.5"></i><a href="/categories/Leetcode/" class="text-accent-500 hover:text-accent-600">Leetcode</a></span>
-      <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 1 min</span><span class="inline-flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> 149 字</span>
+      <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 2 min</span><span class="inline-flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> 451 字</span>
     </div>
-    <img src="/2025/03/01/Leetcode_%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C/image-0.png" alt="三数之和" class="w-full h-auto rounded-xl mt-6" data-aos="fade-up" data-aos-delay="200">
+    
   </header>
 
   <div class="post-layout">
 
+    
+    <aside class="toc-sidebar" data-aos="fade-right" data-aos-delay="200">
+      <div class="toc-sticky">
+        <div class="toc-sidebar-title">toc</div>
+        <nav class="toc-vertical">
+          <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Problem-statement"><span class="toc-number">1.</span> <span class="toc-text">Problem statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#My-Solution"><span class="toc-number">2.</span> <span class="toc-text">My Solution</span></a></li></ol>
+        </nav>
+      </div>
+    </aside>
     
 
     <div class="post-main max-w-3xl">
 
       <div class="article-card" data-aos="fade-up" data-aos-delay="300">
         <div class="article-body">
-          <img src="/2025/03/01/Leetcode_%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C/image-0.png" class="">
+          <h2 id="Problem-statement"><a href="#Problem-statement" class="headerlink" title="Problem statement"></a>Problem statement</h2><p>给你一个链表，每 k 个节点一组进行翻转，返回修改后的链表。k 是一个正整数，小于等于链表长度。如果节点总数不是 k 的整数倍，最后剩余的节点保持原样。不能修改节点的值，只能改节点指向。要求 O(1) 额外空间。</p>
+<p>Example: <code>head = [1,2,3,4,5], k=2 → [2,1,4,3,5]</code> &#x2F; <code>k=3 → [3,2,1,4,5]</code></p>
+<h2 id="My-Solution"><a href="#My-Solution" class="headerlink" title="My Solution"></a>My Solution</h2><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>先处理特殊情况：空链表或 k&#x3D;1 直接返回。建哑节点接在 head 前。每次翻转前从当前节点往后数 k 个，不够 k 就说明到了最后一组不足量的尾巴，退出循环。</p>
+<p>翻转部分用头插法：遍历 k 个节点，逐个摘下插入 reversed 链。翻完后 reversed 是新头，原来的第一个节点变成了尾。用 prevGroup 保存上一组的尾节点，翻完一组后：prevGroup 指向新头（reversed）、新尾指向剩余节点（cur）、prevGroup 移动到新尾。简化为三步——数 k 个、翻 k 个、接回去。</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseKGroup</span><span class="params">(ListNode* head, <span class="type">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!head || k == <span class="number">1</span>) <span class="keyword">return</span> head;</span><br><span class="line"></span><br><span class="line">        <span class="function">ListNode <span class="title">dummy</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line">        dummy.next = head;</span><br><span class="line">        ListNode* prevGroup = &amp;dummy;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (prevGroup-&gt;next) &#123;</span><br><span class="line">            <span class="comment">// 检查剩余是否够 k 个</span></span><br><span class="line">            ListNode* end = prevGroup-&gt;next;</span><br><span class="line">            <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (end &amp;&amp; i &lt; k) &#123; end = end-&gt;next; i++; &#125;</span><br><span class="line">            <span class="keyword">if</span> (i &lt; k) <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 头插法翻转 k 个节点</span></span><br><span class="line">            ListNode* cur = prevGroup-&gt;next;</span><br><span class="line">            ListNode* reversed = <span class="literal">nullptr</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; k; j++) &#123;</span><br><span class="line">                ListNode* nxt = cur-&gt;next;</span><br><span class="line">                cur-&gt;next = reversed;</span><br><span class="line">                reversed = cur;</span><br><span class="line">                cur = nxt;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 接回原链</span></span><br><span class="line">            ListNode* oldHead = prevGroup-&gt;next;</span><br><span class="line">            prevGroup-&gt;next = reversed;</span><br><span class="line">            oldHead-&gt;next = cur;</span><br><span class="line">            prevGroup = oldHead;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> dummy.next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
+<p>哑节点统一处理头部翻转问题。头插法是反转单链表的标准写法，不需要单独写 reverse 函数。关键是翻转后保持前后连接不断掉。</p>
 
-
-
-
-<p>固定左边界，两个指针在右半区间夹逼</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">threeSum</span>(vector&lt;<span class="type">int</span>&gt;&amp; nums)&#123;</span><br><span class="line">        vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; ans;</span><br><span class="line">        <span class="built_in">sort</span>(nums.<span class="built_in">begin</span>(), nums.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">if</span>(nums.<span class="built_in">size</span>() &lt; <span class="number">3</span>) <span class="keyword">return</span> ans;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>() - <span class="number">2</span>; i++)&#123;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span>(i&gt;<span class="number">0</span>&amp;&amp;nums[i] == nums[i<span class="number">-1</span>]) <span class="keyword">continue</span>;<span class="comment">//去掉重复的i，由于i已经变动过，所以要和上一个进行比较</span></span><br><span class="line">            </span><br><span class="line">            <span class="type">int</span> left = i + <span class="number">1</span>;</span><br><span class="line">            <span class="type">int</span> right = nums.<span class="built_in">size</span>() <span class="number">-1</span> ;</span><br><span class="line">            <span class="keyword">while</span>( left &lt; right)&#123;</span><br><span class="line">                <span class="type">int</span> sum = nums[i] + nums[left] + nums[right];</span><br><span class="line">                <span class="keyword">if</span>(sum == <span class="number">0</span>)&#123;</span><br><span class="line">                    ans.<span class="built_in">push_back</span>(&#123;nums[i],nums[left],nums[right]&#125;);</span><br><span class="line">                    left++;</span><br><span class="line">                    right--;</span><br><span class="line">                    <span class="keyword">while</span>(left &lt; right &amp;&amp; nums[left] == nums[left<span class="number">-1</span>]) left++; <span class="comment">//新的left和right和之前的left和right相同，继续移动</span></span><br><span class="line">                    <span class="keyword">while</span>(left &lt; right &amp;&amp; nums[right] == nums[right <span class="number">+1</span> ]) right-- ;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span>(sum &lt; <span class="number">0</span>)&#123;</span><br><span class="line">                    left++;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span>&#123;</span><br><span class="line">                    right--;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
           
           <div class="flex flex-wrap items-center gap-2 mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
             <i data-lucide="tag" class="w-4 h-4 text-zinc-400 dark:text-zinc-500"></i>
-            <a href="/tags/%E7%AE%97%E6%B3%95/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#算法</a><a href="/tags/Leetcode/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#Leetcode</a>
+            <a href="/tags/%E7%AE%97%E6%B3%95/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#算法</a><a href="/tags/%E9%93%BE%E8%A1%A8/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#链表</a><a href="/tags/%E7%BF%BB%E8%BD%AC/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#翻转</a>
           </div>
           
           
           <div class="mt-8 p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-500 dark:text-zinc-400">
             <p class="font-semibold text-zinc-700 dark:text-zinc-300 mb-1">copyright</p>
             <p>copyright_text</p>
-            <p class="mt-1">本文链接：<a target="_blank" rel="noopener" href="https://afogsheep.github.io2025/03/01/Leetcode_三数之和/" class="text-accent-500">https://afogsheep.github.io2025/03/01/Leetcode_三数之和/</a></p>
+            <p class="mt-1">本文链接：<a target="_blank" rel="noopener" href="https://afogsheep.github.io2026/07/28/Leetcode_K个一组翻转链表/" class="text-accent-500">https://afogsheep.github.io2026/07/28/Leetcode_K个一组翻转链表/</a></p>
           </div>
           
         </div>
@@ -232,8 +241,8 @@
 
     
     <nav class="grid grid-cols-2 gap-4 mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800" data-aos="fade-up">
-      <a href="/2025/03/01/Leetcode_%E4%B8%80%E5%91%A8%E5%88%B7%E9%A2%98/" class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent-300 dark:hover:border-accent-600 transition-all"><span class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-500"><i data-lucide="arrow-left" class="w-3 h-3 inline"></i> prev</span><span class="text-sm font-semibold">一周刷题</span></a>
-      <a href="/2025/03/01/Leetcode_%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C/" class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent-300 dark:hover:border-accent-600 transition-all text-right"><span class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-500">next <i data-lucide="arrow-right" class="w-3 h-3 inline"></i></span><span class="text-sm font-semibold">两数之和</span></a>
+      <div></div>
+      <a href="/2026/07/28/%E8%BD%AC%E8%BD%BD_%E4%BA%86%E4%B8%8D%E8%B5%B7%E7%9A%84%E7%9B%96%E8%8C%A8%E6%AF%94%E5%88%B0%E5%BA%95%E5%A5%BD%E5%9C%A8%E5%93%AA%E9%87%8C/" class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent-300 dark:hover:border-accent-600 transition-all text-right"><span class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-500">next <i data-lucide="arrow-right" class="w-3 h-3 inline"></i></span><span class="text-sm font-semibold">小说《了不起的盖茨比》到底好在哪里？</span></a>
     </nav>
     
 
