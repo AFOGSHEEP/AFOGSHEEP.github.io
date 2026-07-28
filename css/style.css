@@ -19,9 +19,9 @@ h1, h2, h3, h4 {
 }
 h1 { font-size: 2rem; margin: 2.25rem 0 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e8dfcb; }
 .dark h1 { color: #efe8d8; border-color: #3d3830; }
-h2 { font-size: 1.5rem; margin: 2.25rem 0 0.85rem; padding-left: 0.85rem; border-left: 3px solid #d4a853; color: #2d261b; }
+h2 { font-size: 1.75rem; margin: 2.25rem 0 0.85rem; padding-left: 0.85rem; border-left: 3px solid #d4a853; color: #2d261b; }
 .dark h2 { color: #ddd4c0; }
-h3 { font-size: 1.2rem; margin: 1.75rem 0 0.65rem; color: #b8892f; }
+h3 { font-size: 1.35rem; margin: 1.75rem 0 0.65rem; color: #b8892f; }
 .dark h3 { color: #e2be6e; }
 h4 { font-size: 1.05rem; margin: 1.5rem 0 0.5rem; font-weight: 600; letter-spacing: 0.03em; color: #8c826a; text-transform: uppercase; }
 .dark h4 { color: #8a8070; }
