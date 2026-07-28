@@ -1444,6 +1444,234 @@
       </tags>
   </entry>
   <entry>
+    <title>Compute 101</title>
+    <url>/2024/11/11/OLD_Compute%20101%20record/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-11-11 00:00:01<br>记录在pwncollege里的一些学习笔记</p>
+<h2 id="Tracing-Syscalls"><a href="#Tracing-Syscalls" class="headerlink" title="Tracing Syscalls"></a>Tracing Syscalls</h2><p>As you write larger and larger programs, you (yes, even you!) might make mistakes when implementing certain functionality, introducing <em>bugs</em> into your programs. Throughout this module, we’ll go over a few tools and techniques for <em>debugging</em> your program. The first one is pretty simple: the <strong>s</strong>yscall <strong>trace</strong>r, <code>strace</code>.</p>
+<p>Given a program to run, <code>strace</code> will use functionality of the Linux operating system to introspect and record every system call that the program invokes, and its result. For example, let’s look at our program from the previous challenge:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hacker@dojo:~$ strace /tmp/your-program</span><br><span class="line">execve(&quot;/tmp/your-program&quot;, [&quot;/tmp/your-program&quot;], 0x7ffd48ae28b0 /* 53 vars */) = 0</span><br><span class="line">exit(42)                                 = ?</span><br><span class="line">+++ exited with 42 +++</span><br><span class="line">hacker@dojo:~$</span><br></pre></td></tr></table></figure>
+
+<p>As you can see, <code>strace</code> reports what system calls are triggered, what parameters were passed to them, and what data they returned. The syntax used here for output is <code>system_call(parameter, parameter, parameter, ...)</code>. This syntax is borrowed from a programming language called C, but we don’t have to worry about that yet. Just keep in mind how to read this specific syntax.</p>
+<p>In this example, <code>strace</code> reports two system calls: the second is the <code>exit</code> system call that your program uses to request its own termination, and you can see the parameter you passed to it (42). The first is an <code>execve</code> system call. We’ll learn about this system call later, but it’s somewhat of a yin to <code>exit</code>‘s yang: it starts a new program (in this case, <code>your-program</code>). It’s not actually invoked by <code>your-program</code> in this case: its detection by <code>strace</code> is a weird artifact of how <code>strace</code> works, that we’ll investigate later.</p>
+<p>In the final line, you can see the result of <code>exit(42)</code>, which is that the program exits with an exit code of <code>42</code>!</p>
+<p>Now, the <code>exit</code> syscall is easy to introspect without using <code>strace</code> — after all, part of the point of <code>exit</code> is to give you an exit code that you can access. But other system calls are less visible. For example, the <code>alarm</code> system call (syscall number 37!) will set a timer in the operating system, and when that many seconds pass, Linux will terminate the program. The point of <code>alarm</code> is to, e.g., kill the program when it’s frozen, but in this case, we’ll use <code>alarm</code> to practice our <code>strace</code> snooping!</p>
+<p>In this challenge, you must <code>strace</code> the <code>/challenge/trace-me</code> program to figure out what value it passes as a parameter to the <code>alarm</code> system call, then call <code>/challenge/submit-number</code> with the number you’ve retrieved as the argument. Good luck!</p>
+<p>总结：</p>
+<ol>
+<li>使用strace跟踪&#x2F;challenge&#x2F;trace-me程序。</li>
+<li>观察并记录alarm系统调用的参数值。</li>
+<li>调用&#x2F;challenge&#x2F;submit-number，将上一步中找到的数字作为参数传递。</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hacker@your<span class="literal">-first-program</span>~tracing<span class="literal">-syscalls</span>:/challenge<span class="variable">$</span> strace  ./<span class="built_in">trace-me</span> </span><br><span class="line">execve(<span class="string">&quot;./trace-me&quot;</span>, [<span class="string">&quot;./trace-me&quot;</span>], <span class="number">0</span>x7ffd869ca7f0 /* <span class="number">28</span> vars */) = <span class="number">0</span></span><br><span class="line">alarm(<span class="number">18759</span>)                            = <span class="number">0</span></span><br><span class="line"><span class="keyword">exit</span>(<span class="number">0</span>)                                 = ?</span><br><span class="line">+++ exited with <span class="number">0</span> +++</span><br><span class="line"><span class="comment"># 提交数字即可</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="moving-betweening-registers"><a href="#moving-betweening-registers" class="headerlink" title="moving betweening registers"></a>moving betweening registers</h2><p>Okay, let’s learn about one more register: <code>rsi</code>! Like <code>rdi</code>, <code>rsi</code> is a place you can park some data. For example:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br></pre></td></tr></table></figure>
+
+<p>Of course, you can also move data around between registers! Watch:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br><span class="line">mov rdi, rsi</span><br></pre></td></tr></table></figure>
+
+<p>Just like the first line there moves <code>42</code> into <code>rsi</code>, the second like moves the value in <code>rsi</code> to <code>rdi</code>. Here, we have to mention one complication: by <em>move</em>, we really mean <em>set</em>. After the snippet above, <code>rsi</code> <em>and</em> <code>rdi</code> will be <code>42</code>. It’s a mystery as to why the <code>mov</code> was chosen rather than something reasonable like <code>set</code> (even very knowledgeable people resort to <a href="https://retrocomputing.stackexchange.com/questions/12968/why-is-the-processor-instruction-called-move-not-copy">diverse speculation</a> when asked), but it was, and here we are.</p>
+<p>Anyways, on to the challenge! In this challenge, we will store a secret value in the <code>rsi</code> register, and your program must exit with that value as the return code. Since <code>exit</code> uses the value stored in <code>rdi</code> as the return code, you’ll need to move the secret value in <code>rsi</code> into <code>rdi</code>. Good luck!</p>
+<p>总结：</p>
+<ol>
+<li>在rsi寄存器中存储一个秘密值。</li>
+<li>编写一个程序，该程序需要将rsi寄存器中的秘密值移动到rdi寄存器中。</li>
+<li>程序必须使用exit函数退出，并且退出时的返回码应为rsi寄存器中存储的秘密值（此时已移动到rdi中，因为exit函数使用rdi的值作为返回码）。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, rsi</span><br><span class="line">mov rax,60 ;设置syscall号为exit（60）</span><br><span class="line">syscall </span><br><span class="line">;调用check即可</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="loading-from-memory"><a href="#loading-from-memory" class="headerlink" title="loading from memory"></a>loading from memory</h2><p>As seen by your program, computer memory is a huge place where data is housed. Like houses on a street, every part of memory has a numeric <em>address</em>, and like houses on a street, these numbers are (mostly) sequential. Modern computers have enormous amounts of memory, and the view of memory of a typical modern program actually has large gaps (think: a portion of the street that hasn’t had houses built on it, and so those addresses are skipped). But these are all details: the point is, computers store data, mostly sequentially, in memory.</p>
+<p>In this level, we will practice accessing data stored in memory. How might we do this? Recall that to move a value into a register, we did something like:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, 31337</span><br></pre></td></tr></table></figure>
+
+<p>After this, the value of is . Cool. Well, we can use the same instruction to access memory! There is another format of the command that, instead, uses the second parameter as an address to access memory! Consider that our memory looks like this:<code>rdi``31337</code></p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>To access the memory contents at memory address 31337, you would can do:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [31337]</span><br></pre></td></tr></table></figure>
+
+<p>When the CPU executes this instruction, it of course understands that is an <em>address</em>, not a raw value. If you think of the instruction as a person telling the CPU what to do, and we stick with our “houses on a street” analogy, then instead of just handing the CPU data, the instruction&#x2F;person <em>points at a house on the street</em>. The CPU will then go to that address, ring its doorbell, open its front door, drag the data that’s in there out, and put it into . Thus, the in this context is the <em>memory address</em> and serves to <em>point to</em> the data stored at that memory address. After this instruction executes, the value stored in will be !<code>31337``rdi``31337``rdi``42</code></p>
+<p>Let’s put this into practice! I’ve stored a secret number at memory address , as so:<code>133700</code></p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ ???      │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>You must retrieve this secret number and use it as the exit code for your program. To do this, you must read it into , whose value, if you recall, is the first parameter to and is used as the exit code. Good luck!<code>rdi``exit</code></p>
+<p>总结:</p>
+<ol>
+<li>访问地址133700处的数据</li>
+<li>把该地址的数据读取到rdi中</li>
+<li>使用这个数据作为退出参数</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mov rdi ,[133700] <span class="comment">#记住地址的表示</span></span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="dereferencing-pointers"><a href="#dereferencing-pointers" class="headerlink" title="dereferencing pointers"></a>dereferencing pointers</h2><p>Did you prefer to access memory at <code>133700</code> or at <code>123400</code>? Your answer might say something about your personality, but it’s not super relevant from a technical perspective. In fact, in most cases, you don’t deal with actual memory addresses when writing programs at all!</p>
+<p>How is this possible? Well, typically, memory addresses are stored in registers, and we use the values in the registers to point to data in memory! Let’s start with this memory configuration:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>And consider this assembly snippet:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, 133700</span><br></pre></td></tr></table></figure>
+
+<p>Now, what you have is the following situation:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │◂┐</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p><code>rdi</code> now holds a value that corresponds with the address of the data that want to load! Let’s load it:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [rax]</span><br></pre></td></tr></table></figure>
+
+<p>Here, we are accessing memory, but instead of specifying a fixed address like <code>133700</code> for the memory read, we’re using the value stored in <code>rax</code> as the memory address. By containing the memory address, <code>rax</code> is a <em>pointer</em> that <em>points to</em> the data we want to access! When we use <code>rax</code> in lieu of directly specifying the address that it stores to access the memory address that it references, we call this <em>dereferencing</em> the pointer. In the above example, we <em>dereference</em> <code>rax</code> to load the data it points to (the value <code>42</code> at address <code>133700</code>) into <code>rdi</code>. Neat!</p>
+<p>This also drives home another point: these registers are <em>general purpose</em>! Just because we’ve been using <code>rax</code> as the syscall index in our challenges so far doesn’t mean that it can’t have other uses as well. Here, it’s used as a pointer to our secret data in memory.</p>
+<p>Similarly, the <em>data</em> in the registers doesn’t have an implicit purpose. If <code>rax</code> contains the value <code>133700</code> and we write <code>mov rdi, [rax]</code>, the CPU uses the value as a memory address to dereference. But if we write <code>mov rdi, rax</code> in the same conditions, the CPU just happily puts <code>133700</code> into <code>rdi</code>. To the CPU, data is data; it only becomes differentiated when it’s used in different ways.</p>
+<p>In this challenge, we’ve initialized <code>rax</code> to contain the address of the secret data we’ve stored in memory. Dereference <code>rax</code> to the secret data into <code>rdi</code> and use it as the exit code of the program to get the flag!</p>
+<p>讲了个类似C语言中指针的用法。第一次做成了这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [rax]</span><br><span class="line">mov eax, rdi</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line">;报错：Your assembly did not assemble cleanly. The errors:</span><br><span class="line">;Error: unsupported instruction `mov&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>后来发现<code>mov eax, rdi</code>的问题。<code>eax</code> 是 32 位寄存器，而 <code>rdi</code> 是 64 位寄存器，不能直接传参,而且没搞懂程序的运行原理。修改为以下后通过：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rax]	;rdi 负责传参</span><br><span class="line">mov rax,60 	;rax负责调起exit()</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>补充：<code>60</code> -&gt; <code>exit</code>：退出程序</p>
+<pre><code>  ` 1` -&gt; `write`：写数据
+
+  `	3` -&gt; `read`：读数据
+
+  `	9` -&gt; `mmap`：内存映射
+</code></pre>
+<p>等等。</p>
+<h2 id="dereferencing-with-offsets"><a href="#dereferencing-with-offsets" class="headerlink" title="dereferencing with offsets"></a>dereferencing with offsets</h2><p>So now you can dereference pointers in memory like a pro! But pointers don’t always point directly at the data you need. Sometimes, for example, a pointer might point to a collection of data (say, an entire book), and you’ll need to reference partway into this collection for the specific data you need.</p>
+<p>For example, if your pointer (say, <code>rdi</code>) points to a sequence of numbers in memory, as so:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 50       │◂┐</span><br><span class="line">│ 133701  │ 42       │ │</span><br><span class="line">│ 133702  │ 99       │ │</span><br><span class="line">│ 133703  │ 14       │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>If you want the second number of that sequence, you could do:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [rdi+1]</span><br></pre></td></tr></table></figure>
+
+<p>Wow, super simple! In memory terms, we call these number slots <em>bytes</em>: each memory address represents a specific byte of memory. The above example is accessing memory 1 byte after the memory address pointed to by <code>rax</code>. In memory terms, we call this 1 byte difference an <em>offset</em>, so in this example, there is an offset of 1 from the address pointed to by <code>rdi</code>.</p>
+<p>Let’s practice this concept. As before, we will initialize <code>rdi</code> to point at the secret value, but not <em>directly</em> at it. This time, the secret value will have an offset of 8 bytes from where <code>rdi</code> points, something analogous to this:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 0        │◂┐</span><br><span class="line">│ 31337+1 │ 0        │ │</span><br><span class="line">│ 31337+2 │ 0        │ │</span><br><span class="line">│ 31337+3 │ 0        │ │</span><br><span class="line">│ 31337+4 │ 0        │ │</span><br><span class="line">│ 31337+5 │ 0        │ │</span><br><span class="line">│ 31337+6 │ 0        │ │</span><br><span class="line">│ 31337+7 │ 0        │ │</span><br><span class="line">│ 31337+8 │ ???      │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 31337    │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>Of course, the actual memory address is not <code>31337</code>. We’ll choose it randomly, and store it in <code>rdi</code>. Go dereference <code>rdi</code> with offset <code>8</code> and get the flag!</p>
+<p>仍然是类似指针的操作</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rdi+8]</span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="double-dereference"><a href="#double-dereference" class="headerlink" title="double dereference"></a>double dereference</h2><p>In the last few levels, you have:</p>
+<ul>
+<li>Used an address that we told you (in one level, <code>133700</code>, and in another, <code>123400</code>) to load a secret value from memory.</li>
+<li>Used an address that we put into <code>rax</code> for you to load a secret value from memory.</li>
+<li>Used an address that we told you (in the last level, <code>567800</code>) to load <em>the address</em> of a secret value from memory into a register, then used that register as a pointer to retrieve the secret value from memory!</li>
+</ul>
+<p>Let’s put those last two together. In this challenge, we stored our <code>SECRET_VALUE</code> in memory at the address <code>SECRET_LOCATION_1</code>, then stored <code>SECRET_LOCATION_1</code> in memory at the address <code>SECRET_LOCATION_2</code>. Then, we put <code>SECRET_ADDRESS_2</code> into <code>rax</code>! The result looks something like this, using <code>133700</code> for <code>SECRET_LOCATION_1</code> and 123400 for <code>SECRET_LOCATION_2</code> (not, in the real challenge, these values will be different and hidden from you!):</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂┐</span><br><span class="line">│ +────────────────────+ │</span><br><span class="line">└▸│ 123400  │ 42       │ │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">   Register │ Contents   │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">  │ rdi     │ 133700   │─┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>Here, you will need to perform two memory reads: one dereferencing <code>rax</code> to read <code>SECRET_LOCATION_1</code> from the location that <code>rax</code> is pointing to (which is <code>SECRET_LOCATION_2</code>), and the second one dereferencing whatever register now holds <code>SECRET_LOCATION_1</code> to read <code>SECRET_VALUE</code> into <code>rdi</code>, so you can use it as the exit code!</p>
+<p>That sounds like a lot, but you’ve done basically all of this already. Go put it together!</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [rax]    ; 第一步：通过rax指向的地址读取SECRET_LOCATION_1（第二层地址）</span><br><span class="line">mov rdi, [rax]    ; 第二步：通过rax指向的地址读取SECRET_VALUE</span><br><span class="line">mov rax, 60       </span><br><span class="line">syscall           </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在 x86-64 架构中，系统调用的参数是通过寄存器传递的。根据系统调用的约定：</p>
+<ul>
+<li><code>rdi</code> 用于传递第一个参数。</li>
+<li><code>rsi</code> 用于传递第二个参数。</li>
+</ul>
+<h2 id="triple-dereference"><a href="#triple-dereference" class="headerlink" title="triple dereference"></a>triple dereference</h2><p>Okay, let’s stretch that to one more depth! We’ve added an additional level of indirection in this challenge, so now you’ll need <em>three</em> dereferences to find the secret value. Something like this:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂──┐</span><br><span class="line">│ +────────────────────+   │</span><br><span class="line">└▸│ 123400  │ 100000   │─┐ │</span><br><span class="line">  +────────────────────+ │ │</span><br><span class="line">  │ 100000  │ 42       │◂┘ │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">                           │</span><br><span class="line">                           │</span><br><span class="line">   Register │ Contents     │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">  │ rdi     │ 133700   │───┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>As you can see, we’ll place the first address that you must dereference into rdi. Go get the value!</p>
+<p>类似的操作</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rdi]</span><br><span class="line">mov rax,[rdi]</span><br><span class="line">mov rdi,[rax]</span><br><span class="line">mov rax,60</span><br><span class="line">syscall</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p> <code>rsi</code> 是用于传递参数的寄存器，而 <code>rdi</code> 才是系统调用时的退出代码传递寄存器。</p>
+<h2 id="writing-output"><a href="#writing-output" class="headerlink" title="writing output"></a>writing output</h2><p>Let’s learn to write text!</p>
+<p>Unsurprisingly, your program writes text to the screen by invoking a system call. Specifically, this is the <code>write</code> system call, and its syscall number is <code>1</code>. However, the write system call also needs to specify, via its parameters, <em>what</em> data to write and <em>where</em> to write it to.</p>
+<p>You may remember, from the <a href="https://pwn.college/linux-luminarium/piping">Practicing Piping</a> module of the <a href="https://pwn.college/linux-luminarium">Linux Luminarium</a> dojo, the concept of <em>File Descriptors</em> (FDs). As a reminder, each process starts out with three FDs:</p>
+<ul>
+<li><strong>FD 0:</strong> Standard <em>Input</em> is the channel through which the process takes input. For example, your shell uses Standard Input to read the commands that you input.</li>
+<li><strong>FD 1:</strong> Standard <em>Output</em> is the channel through which processes output normal data, such as the flag when it is printed to you in previous challenges or the output of utilities such as <code>ls</code>.</li>
+<li><strong>FD 2:</strong> Standard <em>Error</em> is the channel through which processes output error details. For example, if you mistype a command, the shell will output, over standard error, that this command does not exist.</li>
+</ul>
+<p>It turns out that, in your <code>write</code> system call, this is how you specify <em>where</em> to write the data to! The first (and only) parameter to your <code>exit</code> system call was your exit code (<code>mov rdi, 42</code>), and the first (but, in this case, not only!) parameter to <code>write</code> is the file descriptor. If you want to write to standard output, you would set <code>rdi</code> to 1. If you want to write to standard error, you would set <code>rdi</code> to 2. Super simple!</p>
+<p>This leaves us with <em>what</em> to write. Now, you could imagine a world where we specify what to write through yet another register parameter to the <code>write</code> system call. But these registers don’t fit a ton of data, and to write out a long story like this challenge description, you’d need to invoke the <code>write</code> system call multiple times. Relatively speaking, this has a lot of performance cost — the CPU needs to switch from executing the instructions of your program to executing the instructions of Linux itself, do a bunch of housekeeping computation, interact with your hardware to get the actual pixels to show up on your screen, and then switch back. This is slow, and so we try to minimize the number of times we invoke system calls.</p>
+<p>Of course, the solution to this is to write multiple characters at the same time. The <code>write</code> system call does this by taking <em>two</em> parameters for the “what”: a <em>where</em> (in memory) to start writing from and a <em>how many</em> characters to write. These parameters are passed as the second and third parameter to <code>write</code>. In the kinda-C syntax that we learned from <code>strace</code>, this would be:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">write(file_descriptor, memory_address, number_of_characters_to_write)</span><br></pre></td></tr></table></figure>
+
+<p>For a more concrete example, if you wanted to write 10 characters from memory address 1337000 to standard output (file descriptor 1), this would be:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">write(<span class="number">1</span>, <span class="number">1337000</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+
+<p>Wow, that’s simple! Now, how do we actually specify these parameters?</p>
+<ol>
+<li>We’ll pass the first parameter of a system call, as we reviewed above, in the <code>rdi</code> register.</li>
+<li>We’ll pass the second parameter via the <code>rsi</code> register. The agreed-upon convention in Linux is that <code>rsi</code> is used as the second parameter to system calls.</li>
+<li>We’ll pass the third parameter via the <code>rdx</code> register. This is the most confusing part of this entire module: <code>rdi</code> (the register holding the first parameter) has such a similar name to <code>rdx</code> that it’s really easy to mix up and, unfortunately, the naming is this way for historic reasons and is here to stay. Oh well… It’s just something we have to be careful about. Maybe a mnemonic like “<code>rdi</code> is the <strong>i</strong>nitial parameter while <code>rdx</code> is the <strong>x</strong>tra parameter”? Or just think of it as having to keep track of different friends with similar names, and you’ll be fine.</li>
+</ol>
+<p>And, of course, the <code>write</code> syscall index into <code>rax</code> itself: <code>1</code>. Other than the <code>rdi</code> vs <code>rdx</code> confusion, this is really easy!</p>
+<p>Now, you know how to point a register at a memory address (from the <a href="https://pwn.college/computing-101/memory">Memory</a> module!), and yo know how to set the system call number, and how to set the rest of the registers. So, this should be cake!</p>
+<p>Similar to before, we wrote a single secret character value into memory at address <code>1337000</code>. Call <code>write</code> to that single character (for now! We’ll do multiple-character writes later) value onto standard out, and we’ll give you the flag!</p>
+<p>如何输出某个地址上的数值？？</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax,1</span><br><span class="line">mov rdi,1</span><br><span class="line">mov rsi,1337000</span><br><span class="line">mov rdx,1</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure>
+
+<p><code>rax</code>：存储系统调用号，<code>1</code> 对应于 <code>write</code>。</p>
+<p><code>rdi</code>：存储文件描述符，<code>1</code> 是标准输出。</p>
+<p><code>rsi</code>：存储要写的数据的内存地址，这里假设数据存储在地址 <code>0x1337000</code>。</p>
+<p><code>rdx</code>：存储要写入的字节数，这里是 1 个字节。</p>
+<p><code>syscall</code>：执行系统调用，将前面设置的寄存器参数传递给内核。</p>
+<p>依据x86_64 架构下的调用约定，即系统调用时，前四个参数分别通过 <code>rdi</code>, <code>rsi</code>, <code>rdx</code>, 和 <code>r10</code> 等寄存器传递。<code>rax</code> 存储系统调用编号，后面的寄存器则用来传递具体的参数值。</p>
+<h2 id="chaining-syscalls"><a href="#chaining-syscalls" class="headerlink" title="chaining syscalls"></a>chaining syscalls</h2><p>Okay, our previous solution wrote output but then crashed. In this level, you will write output, and then <em>not</em> crash!</p>
+<p>We’ll do this by invoking the system call, and then invoking the system call to cleanly exit the program. How do we invoke two system calls? Just like you invoke two instructions! First, you set up the necessary registers and invoke , then you set up the necessary registers and invoke <code>exit!</code>write<code>exit</code>write&#96;</p>
+<p>Your previous solution had 5 instructions (setting , setting , setting , setting , and ). This one should have those 5, plus three more for (setting to the exit code, setting to syscall index 60, and ). For this level, let’s exit with exit code !<code>rdi``rsi``rdx``rax``syscall``exit``rdi``rax``syscall``42</code></p>
+<p>为了避免程序崩溃，需要调用exit（）退出</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax,1</span><br><span class="line">mov rdi,1</span><br><span class="line">mov rsi,1337000</span><br><span class="line">mov rdx,1</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line">mov rdi,42</span><br><span class="line">mov rax,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>第一步（</strong><code>write</code><strong>）</strong>：<ul>
+<li>将 <code>rax</code> 设置为 <code>1</code>，表示调用 <code>write</code> 系统调用。</li>
+<li>将 <code>rdi</code> 设置为 <code>1</code>，表示目标文件描述符是标准输出（stdout）。</li>
+<li>将 <code>rsi</code> 设置为 <code>0x1337000</code>，这是要输出的数据的内存地址。</li>
+<li>将 <code>rdx</code> 设置为 <code>1</code>，表示只写入 1 个字节。</li>
+<li>使用 <code>syscall</code> 执行 <code>write</code>。</li>
+</ul>
+</li>
+<li><strong>第二步（</strong><code>exit</code><strong>）</strong>：<ul>
+<li>将 <code>rdi</code> 设置为 <code>42</code>，表示退出码为 42。</li>
+<li>将 <code>rax</code> 设置为 <code>60</code>，表示调用 <code>exit</code> 系统调用。</li>
+<li>使用 <code>syscall</code> 执行 <code>exit</code>。</li>
+</ul>
+</li>
+</ol>
+<p><font style="background-color:#f3bb2f;">为什么要有 </font><code>exit</code><font style="background-color:#f3bb2f;">？</font></p>
+<p>如果程序没有显式调用 <code>exit</code>，程序运行结束后可能会因为未定义的行为导致崩溃。调用 <code>exit</code> 是为了让内核知道程序已经正常终止，同时提供一个退出码供外部程序使用。</p>
+<p><code>write</code>** 系统调用**：</p>
+<ul>
+<li><strong>编号：1</strong></li>
+<li>该系统调用用于将数据写入到文件描述符指定的文件中，通常用于输出到屏幕（标准输出）。</li>
+</ul>
+<p><code>write</code>** 的参数**：</p>
+<ol>
+<li><code>rdi</code>：目标文件描述符（file descriptor）。<code>1</code> 表示标准输出（stdout）。</li>
+<li><code>rsi</code>：要写入的内存地址。即你要输出的数据所在的位置。</li>
+<li><code>rdx</code>：要写入的字节数，表示你希望写入多少数据。</li>
+</ol>
+<p><code>write</code>** 系统调用流程**：</p>
+<ol>
+<li>设置 <code>rax</code> 为系统调用编号 <code>1</code>（表示调用 <code>write</code>）。</li>
+<li>设置 <code>rdi</code> 为文件描述符 <code>1</code>（标准输出）。</li>
+<li>设置 <code>rsi</code> 为包含要输出数据的内存地址。</li>
+<li>设置 <code>rdx</code> 为数据的字节数，通常是你希望输出的字符数。</li>
+<li>执行 <code>syscall</code> 指令发起系统调用。</li>
+</ol>
+<p><code>寄存器顺序</code>：</p>
+<p>在 Linux x86_64 架构中，系统调用的参数需要按照一定的顺序存放在寄存器中，这些寄存器会被传递到内核：</p>
+<ol>
+<li><code>rdi</code>：第一个参数</li>
+<li><code>rsi</code>：第二个参数</li>
+<li><code>rdx</code>：第三个参数</li>
+<li><code>r10</code>：第四个参数</li>
+<li><code>r8</code>：第五个参数</li>
+<li><code>r9</code>：第六个参数</li>
+</ol>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Assembly Crash Course record</title>
     <url>/2025/01/09/OLD_Assembly%20Crash%20Course%20record/</url>
     <content><![CDATA[<h2 id="set-register"><a href="#set-register" class="headerlink" title="set-register"></a>set-register</h2><p>题目要求：</p>
@@ -2275,299 +2503,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Compute 101</title>
-    <url>/2024/11/11/OLD_Compute%20101%20record/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-11-11 00:00:01<br>记录在pwncollege里的一些学习笔记</p>
-<h2 id="Tracing-Syscalls"><a href="#Tracing-Syscalls" class="headerlink" title="Tracing Syscalls"></a>Tracing Syscalls</h2><p>As you write larger and larger programs, you (yes, even you!) might make mistakes when implementing certain functionality, introducing <em>bugs</em> into your programs. Throughout this module, we’ll go over a few tools and techniques for <em>debugging</em> your program. The first one is pretty simple: the <strong>s</strong>yscall <strong>trace</strong>r, <code>strace</code>.</p>
-<p>Given a program to run, <code>strace</code> will use functionality of the Linux operating system to introspect and record every system call that the program invokes, and its result. For example, let’s look at our program from the previous challenge:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hacker@dojo:~$ strace /tmp/your-program</span><br><span class="line">execve(&quot;/tmp/your-program&quot;, [&quot;/tmp/your-program&quot;], 0x7ffd48ae28b0 /* 53 vars */) = 0</span><br><span class="line">exit(42)                                 = ?</span><br><span class="line">+++ exited with 42 +++</span><br><span class="line">hacker@dojo:~$</span><br></pre></td></tr></table></figure>
-
-<p>As you can see, <code>strace</code> reports what system calls are triggered, what parameters were passed to them, and what data they returned. The syntax used here for output is <code>system_call(parameter, parameter, parameter, ...)</code>. This syntax is borrowed from a programming language called C, but we don’t have to worry about that yet. Just keep in mind how to read this specific syntax.</p>
-<p>In this example, <code>strace</code> reports two system calls: the second is the <code>exit</code> system call that your program uses to request its own termination, and you can see the parameter you passed to it (42). The first is an <code>execve</code> system call. We’ll learn about this system call later, but it’s somewhat of a yin to <code>exit</code>‘s yang: it starts a new program (in this case, <code>your-program</code>). It’s not actually invoked by <code>your-program</code> in this case: its detection by <code>strace</code> is a weird artifact of how <code>strace</code> works, that we’ll investigate later.</p>
-<p>In the final line, you can see the result of <code>exit(42)</code>, which is that the program exits with an exit code of <code>42</code>!</p>
-<p>Now, the <code>exit</code> syscall is easy to introspect without using <code>strace</code> — after all, part of the point of <code>exit</code> is to give you an exit code that you can access. But other system calls are less visible. For example, the <code>alarm</code> system call (syscall number 37!) will set a timer in the operating system, and when that many seconds pass, Linux will terminate the program. The point of <code>alarm</code> is to, e.g., kill the program when it’s frozen, but in this case, we’ll use <code>alarm</code> to practice our <code>strace</code> snooping!</p>
-<p>In this challenge, you must <code>strace</code> the <code>/challenge/trace-me</code> program to figure out what value it passes as a parameter to the <code>alarm</code> system call, then call <code>/challenge/submit-number</code> with the number you’ve retrieved as the argument. Good luck!</p>
-<p>总结：</p>
-<ol>
-<li>使用strace跟踪&#x2F;challenge&#x2F;trace-me程序。</li>
-<li>观察并记录alarm系统调用的参数值。</li>
-<li>调用&#x2F;challenge&#x2F;submit-number，将上一步中找到的数字作为参数传递。</li>
-</ol>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hacker@your<span class="literal">-first-program</span>~tracing<span class="literal">-syscalls</span>:/challenge<span class="variable">$</span> strace  ./<span class="built_in">trace-me</span> </span><br><span class="line">execve(<span class="string">&quot;./trace-me&quot;</span>, [<span class="string">&quot;./trace-me&quot;</span>], <span class="number">0</span>x7ffd869ca7f0 /* <span class="number">28</span> vars */) = <span class="number">0</span></span><br><span class="line">alarm(<span class="number">18759</span>)                            = <span class="number">0</span></span><br><span class="line"><span class="keyword">exit</span>(<span class="number">0</span>)                                 = ?</span><br><span class="line">+++ exited with <span class="number">0</span> +++</span><br><span class="line"><span class="comment"># 提交数字即可</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="moving-betweening-registers"><a href="#moving-betweening-registers" class="headerlink" title="moving betweening registers"></a>moving betweening registers</h2><p>Okay, let’s learn about one more register: <code>rsi</code>! Like <code>rdi</code>, <code>rsi</code> is a place you can park some data. For example:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br></pre></td></tr></table></figure>
-
-<p>Of course, you can also move data around between registers! Watch:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br><span class="line">mov rdi, rsi</span><br></pre></td></tr></table></figure>
-
-<p>Just like the first line there moves <code>42</code> into <code>rsi</code>, the second like moves the value in <code>rsi</code> to <code>rdi</code>. Here, we have to mention one complication: by <em>move</em>, we really mean <em>set</em>. After the snippet above, <code>rsi</code> <em>and</em> <code>rdi</code> will be <code>42</code>. It’s a mystery as to why the <code>mov</code> was chosen rather than something reasonable like <code>set</code> (even very knowledgeable people resort to <a href="https://retrocomputing.stackexchange.com/questions/12968/why-is-the-processor-instruction-called-move-not-copy">diverse speculation</a> when asked), but it was, and here we are.</p>
-<p>Anyways, on to the challenge! In this challenge, we will store a secret value in the <code>rsi</code> register, and your program must exit with that value as the return code. Since <code>exit</code> uses the value stored in <code>rdi</code> as the return code, you’ll need to move the secret value in <code>rsi</code> into <code>rdi</code>. Good luck!</p>
-<p>总结：</p>
-<ol>
-<li>在rsi寄存器中存储一个秘密值。</li>
-<li>编写一个程序，该程序需要将rsi寄存器中的秘密值移动到rdi寄存器中。</li>
-<li>程序必须使用exit函数退出，并且退出时的返回码应为rsi寄存器中存储的秘密值（此时已移动到rdi中，因为exit函数使用rdi的值作为返回码）。</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, rsi</span><br><span class="line">mov rax,60 ;设置syscall号为exit（60）</span><br><span class="line">syscall </span><br><span class="line">;调用check即可</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="loading-from-memory"><a href="#loading-from-memory" class="headerlink" title="loading from memory"></a>loading from memory</h2><p>As seen by your program, computer memory is a huge place where data is housed. Like houses on a street, every part of memory has a numeric <em>address</em>, and like houses on a street, these numbers are (mostly) sequential. Modern computers have enormous amounts of memory, and the view of memory of a typical modern program actually has large gaps (think: a portion of the street that hasn’t had houses built on it, and so those addresses are skipped). But these are all details: the point is, computers store data, mostly sequentially, in memory.</p>
-<p>In this level, we will practice accessing data stored in memory. How might we do this? Recall that to move a value into a register, we did something like:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, 31337</span><br></pre></td></tr></table></figure>
-
-<p>After this, the value of is . Cool. Well, we can use the same instruction to access memory! There is another format of the command that, instead, uses the second parameter as an address to access memory! Consider that our memory looks like this:<code>rdi``31337</code></p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>To access the memory contents at memory address 31337, you would can do:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [31337]</span><br></pre></td></tr></table></figure>
-
-<p>When the CPU executes this instruction, it of course understands that is an <em>address</em>, not a raw value. If you think of the instruction as a person telling the CPU what to do, and we stick with our “houses on a street” analogy, then instead of just handing the CPU data, the instruction&#x2F;person <em>points at a house on the street</em>. The CPU will then go to that address, ring its doorbell, open its front door, drag the data that’s in there out, and put it into . Thus, the in this context is the <em>memory address</em> and serves to <em>point to</em> the data stored at that memory address. After this instruction executes, the value stored in will be !<code>31337``rdi``31337``rdi``42</code></p>
-<p>Let’s put this into practice! I’ve stored a secret number at memory address , as so:<code>133700</code></p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ ???      │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>You must retrieve this secret number and use it as the exit code for your program. To do this, you must read it into , whose value, if you recall, is the first parameter to and is used as the exit code. Good luck!<code>rdi``exit</code></p>
-<p>总结:</p>
-<ol>
-<li>访问地址133700处的数据</li>
-<li>把该地址的数据读取到rdi中</li>
-<li>使用这个数据作为退出参数</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mov rdi ,[133700] <span class="comment">#记住地址的表示</span></span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="dereferencing-pointers"><a href="#dereferencing-pointers" class="headerlink" title="dereferencing pointers"></a>dereferencing pointers</h2><p>Did you prefer to access memory at <code>133700</code> or at <code>123400</code>? Your answer might say something about your personality, but it’s not super relevant from a technical perspective. In fact, in most cases, you don’t deal with actual memory addresses when writing programs at all!</p>
-<p>How is this possible? Well, typically, memory addresses are stored in registers, and we use the values in the registers to point to data in memory! Let’s start with this memory configuration:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>And consider this assembly snippet:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, 133700</span><br></pre></td></tr></table></figure>
-
-<p>Now, what you have is the following situation:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │◂┐</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p><code>rdi</code> now holds a value that corresponds with the address of the data that want to load! Let’s load it:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [rax]</span><br></pre></td></tr></table></figure>
-
-<p>Here, we are accessing memory, but instead of specifying a fixed address like <code>133700</code> for the memory read, we’re using the value stored in <code>rax</code> as the memory address. By containing the memory address, <code>rax</code> is a <em>pointer</em> that <em>points to</em> the data we want to access! When we use <code>rax</code> in lieu of directly specifying the address that it stores to access the memory address that it references, we call this <em>dereferencing</em> the pointer. In the above example, we <em>dereference</em> <code>rax</code> to load the data it points to (the value <code>42</code> at address <code>133700</code>) into <code>rdi</code>. Neat!</p>
-<p>This also drives home another point: these registers are <em>general purpose</em>! Just because we’ve been using <code>rax</code> as the syscall index in our challenges so far doesn’t mean that it can’t have other uses as well. Here, it’s used as a pointer to our secret data in memory.</p>
-<p>Similarly, the <em>data</em> in the registers doesn’t have an implicit purpose. If <code>rax</code> contains the value <code>133700</code> and we write <code>mov rdi, [rax]</code>, the CPU uses the value as a memory address to dereference. But if we write <code>mov rdi, rax</code> in the same conditions, the CPU just happily puts <code>133700</code> into <code>rdi</code>. To the CPU, data is data; it only becomes differentiated when it’s used in different ways.</p>
-<p>In this challenge, we’ve initialized <code>rax</code> to contain the address of the secret data we’ve stored in memory. Dereference <code>rax</code> to the secret data into <code>rdi</code> and use it as the exit code of the program to get the flag!</p>
-<p>讲了个类似C语言中指针的用法。第一次做成了这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [rax]</span><br><span class="line">mov eax, rdi</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line">;报错：Your assembly did not assemble cleanly. The errors:</span><br><span class="line">;Error: unsupported instruction `mov&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>后来发现<code>mov eax, rdi</code>的问题。<code>eax</code> 是 32 位寄存器，而 <code>rdi</code> 是 64 位寄存器，不能直接传参,而且没搞懂程序的运行原理。修改为以下后通过：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rax]	;rdi 负责传参</span><br><span class="line">mov rax,60 	;rax负责调起exit()</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>补充：<code>60</code> -&gt; <code>exit</code>：退出程序</p>
-<pre><code>  ` 1` -&gt; `write`：写数据
-
-  `	3` -&gt; `read`：读数据
-
-  `	9` -&gt; `mmap`：内存映射
-</code></pre>
-<p>等等。</p>
-<h2 id="dereferencing-with-offsets"><a href="#dereferencing-with-offsets" class="headerlink" title="dereferencing with offsets"></a>dereferencing with offsets</h2><p>So now you can dereference pointers in memory like a pro! But pointers don’t always point directly at the data you need. Sometimes, for example, a pointer might point to a collection of data (say, an entire book), and you’ll need to reference partway into this collection for the specific data you need.</p>
-<p>For example, if your pointer (say, <code>rdi</code>) points to a sequence of numbers in memory, as so:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 50       │◂┐</span><br><span class="line">│ 133701  │ 42       │ │</span><br><span class="line">│ 133702  │ 99       │ │</span><br><span class="line">│ 133703  │ 14       │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>If you want the second number of that sequence, you could do:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [rdi+1]</span><br></pre></td></tr></table></figure>
-
-<p>Wow, super simple! In memory terms, we call these number slots <em>bytes</em>: each memory address represents a specific byte of memory. The above example is accessing memory 1 byte after the memory address pointed to by <code>rax</code>. In memory terms, we call this 1 byte difference an <em>offset</em>, so in this example, there is an offset of 1 from the address pointed to by <code>rdi</code>.</p>
-<p>Let’s practice this concept. As before, we will initialize <code>rdi</code> to point at the secret value, but not <em>directly</em> at it. This time, the secret value will have an offset of 8 bytes from where <code>rdi</code> points, something analogous to this:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 0        │◂┐</span><br><span class="line">│ 31337+1 │ 0        │ │</span><br><span class="line">│ 31337+2 │ 0        │ │</span><br><span class="line">│ 31337+3 │ 0        │ │</span><br><span class="line">│ 31337+4 │ 0        │ │</span><br><span class="line">│ 31337+5 │ 0        │ │</span><br><span class="line">│ 31337+6 │ 0        │ │</span><br><span class="line">│ 31337+7 │ 0        │ │</span><br><span class="line">│ 31337+8 │ ???      │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 31337    │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>Of course, the actual memory address is not <code>31337</code>. We’ll choose it randomly, and store it in <code>rdi</code>. Go dereference <code>rdi</code> with offset <code>8</code> and get the flag!</p>
-<p>仍然是类似指针的操作</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rdi+8]</span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="double-dereference"><a href="#double-dereference" class="headerlink" title="double dereference"></a>double dereference</h2><p>In the last few levels, you have:</p>
-<ul>
-<li>Used an address that we told you (in one level, <code>133700</code>, and in another, <code>123400</code>) to load a secret value from memory.</li>
-<li>Used an address that we put into <code>rax</code> for you to load a secret value from memory.</li>
-<li>Used an address that we told you (in the last level, <code>567800</code>) to load <em>the address</em> of a secret value from memory into a register, then used that register as a pointer to retrieve the secret value from memory!</li>
-</ul>
-<p>Let’s put those last two together. In this challenge, we stored our <code>SECRET_VALUE</code> in memory at the address <code>SECRET_LOCATION_1</code>, then stored <code>SECRET_LOCATION_1</code> in memory at the address <code>SECRET_LOCATION_2</code>. Then, we put <code>SECRET_ADDRESS_2</code> into <code>rax</code>! The result looks something like this, using <code>133700</code> for <code>SECRET_LOCATION_1</code> and 123400 for <code>SECRET_LOCATION_2</code> (not, in the real challenge, these values will be different and hidden from you!):</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂┐</span><br><span class="line">│ +────────────────────+ │</span><br><span class="line">└▸│ 123400  │ 42       │ │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">   Register │ Contents   │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">  │ rdi     │ 133700   │─┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>Here, you will need to perform two memory reads: one dereferencing <code>rax</code> to read <code>SECRET_LOCATION_1</code> from the location that <code>rax</code> is pointing to (which is <code>SECRET_LOCATION_2</code>), and the second one dereferencing whatever register now holds <code>SECRET_LOCATION_1</code> to read <code>SECRET_VALUE</code> into <code>rdi</code>, so you can use it as the exit code!</p>
-<p>That sounds like a lot, but you’ve done basically all of this already. Go put it together!</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [rax]    ; 第一步：通过rax指向的地址读取SECRET_LOCATION_1（第二层地址）</span><br><span class="line">mov rdi, [rax]    ; 第二步：通过rax指向的地址读取SECRET_VALUE</span><br><span class="line">mov rax, 60       </span><br><span class="line">syscall           </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>在 x86-64 架构中，系统调用的参数是通过寄存器传递的。根据系统调用的约定：</p>
-<ul>
-<li><code>rdi</code> 用于传递第一个参数。</li>
-<li><code>rsi</code> 用于传递第二个参数。</li>
-</ul>
-<h2 id="triple-dereference"><a href="#triple-dereference" class="headerlink" title="triple dereference"></a>triple dereference</h2><p>Okay, let’s stretch that to one more depth! We’ve added an additional level of indirection in this challenge, so now you’ll need <em>three</em> dereferences to find the secret value. Something like this:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂──┐</span><br><span class="line">│ +────────────────────+   │</span><br><span class="line">└▸│ 123400  │ 100000   │─┐ │</span><br><span class="line">  +────────────────────+ │ │</span><br><span class="line">  │ 100000  │ 42       │◂┘ │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">                           │</span><br><span class="line">                           │</span><br><span class="line">   Register │ Contents     │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">  │ rdi     │ 133700   │───┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>As you can see, we’ll place the first address that you must dereference into rdi. Go get the value!</p>
-<p>类似的操作</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rdi]</span><br><span class="line">mov rax,[rdi]</span><br><span class="line">mov rdi,[rax]</span><br><span class="line">mov rax,60</span><br><span class="line">syscall</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p> <code>rsi</code> 是用于传递参数的寄存器，而 <code>rdi</code> 才是系统调用时的退出代码传递寄存器。</p>
-<h2 id="writing-output"><a href="#writing-output" class="headerlink" title="writing output"></a>writing output</h2><p>Let’s learn to write text!</p>
-<p>Unsurprisingly, your program writes text to the screen by invoking a system call. Specifically, this is the <code>write</code> system call, and its syscall number is <code>1</code>. However, the write system call also needs to specify, via its parameters, <em>what</em> data to write and <em>where</em> to write it to.</p>
-<p>You may remember, from the <a href="https://pwn.college/linux-luminarium/piping">Practicing Piping</a> module of the <a href="https://pwn.college/linux-luminarium">Linux Luminarium</a> dojo, the concept of <em>File Descriptors</em> (FDs). As a reminder, each process starts out with three FDs:</p>
-<ul>
-<li><strong>FD 0:</strong> Standard <em>Input</em> is the channel through which the process takes input. For example, your shell uses Standard Input to read the commands that you input.</li>
-<li><strong>FD 1:</strong> Standard <em>Output</em> is the channel through which processes output normal data, such as the flag when it is printed to you in previous challenges or the output of utilities such as <code>ls</code>.</li>
-<li><strong>FD 2:</strong> Standard <em>Error</em> is the channel through which processes output error details. For example, if you mistype a command, the shell will output, over standard error, that this command does not exist.</li>
-</ul>
-<p>It turns out that, in your <code>write</code> system call, this is how you specify <em>where</em> to write the data to! The first (and only) parameter to your <code>exit</code> system call was your exit code (<code>mov rdi, 42</code>), and the first (but, in this case, not only!) parameter to <code>write</code> is the file descriptor. If you want to write to standard output, you would set <code>rdi</code> to 1. If you want to write to standard error, you would set <code>rdi</code> to 2. Super simple!</p>
-<p>This leaves us with <em>what</em> to write. Now, you could imagine a world where we specify what to write through yet another register parameter to the <code>write</code> system call. But these registers don’t fit a ton of data, and to write out a long story like this challenge description, you’d need to invoke the <code>write</code> system call multiple times. Relatively speaking, this has a lot of performance cost — the CPU needs to switch from executing the instructions of your program to executing the instructions of Linux itself, do a bunch of housekeeping computation, interact with your hardware to get the actual pixels to show up on your screen, and then switch back. This is slow, and so we try to minimize the number of times we invoke system calls.</p>
-<p>Of course, the solution to this is to write multiple characters at the same time. The <code>write</code> system call does this by taking <em>two</em> parameters for the “what”: a <em>where</em> (in memory) to start writing from and a <em>how many</em> characters to write. These parameters are passed as the second and third parameter to <code>write</code>. In the kinda-C syntax that we learned from <code>strace</code>, this would be:</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">write(file_descriptor, memory_address, number_of_characters_to_write)</span><br></pre></td></tr></table></figure>
-
-<p>For a more concrete example, if you wanted to write 10 characters from memory address 1337000 to standard output (file descriptor 1), this would be:</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">write(<span class="number">1</span>, <span class="number">1337000</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
-
-<p>Wow, that’s simple! Now, how do we actually specify these parameters?</p>
-<ol>
-<li>We’ll pass the first parameter of a system call, as we reviewed above, in the <code>rdi</code> register.</li>
-<li>We’ll pass the second parameter via the <code>rsi</code> register. The agreed-upon convention in Linux is that <code>rsi</code> is used as the second parameter to system calls.</li>
-<li>We’ll pass the third parameter via the <code>rdx</code> register. This is the most confusing part of this entire module: <code>rdi</code> (the register holding the first parameter) has such a similar name to <code>rdx</code> that it’s really easy to mix up and, unfortunately, the naming is this way for historic reasons and is here to stay. Oh well… It’s just something we have to be careful about. Maybe a mnemonic like “<code>rdi</code> is the <strong>i</strong>nitial parameter while <code>rdx</code> is the <strong>x</strong>tra parameter”? Or just think of it as having to keep track of different friends with similar names, and you’ll be fine.</li>
-</ol>
-<p>And, of course, the <code>write</code> syscall index into <code>rax</code> itself: <code>1</code>. Other than the <code>rdi</code> vs <code>rdx</code> confusion, this is really easy!</p>
-<p>Now, you know how to point a register at a memory address (from the <a href="https://pwn.college/computing-101/memory">Memory</a> module!), and yo know how to set the system call number, and how to set the rest of the registers. So, this should be cake!</p>
-<p>Similar to before, we wrote a single secret character value into memory at address <code>1337000</code>. Call <code>write</code> to that single character (for now! We’ll do multiple-character writes later) value onto standard out, and we’ll give you the flag!</p>
-<p>如何输出某个地址上的数值？？</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax,1</span><br><span class="line">mov rdi,1</span><br><span class="line">mov rsi,1337000</span><br><span class="line">mov rdx,1</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure>
-
-<p><code>rax</code>：存储系统调用号，<code>1</code> 对应于 <code>write</code>。</p>
-<p><code>rdi</code>：存储文件描述符，<code>1</code> 是标准输出。</p>
-<p><code>rsi</code>：存储要写的数据的内存地址，这里假设数据存储在地址 <code>0x1337000</code>。</p>
-<p><code>rdx</code>：存储要写入的字节数，这里是 1 个字节。</p>
-<p><code>syscall</code>：执行系统调用，将前面设置的寄存器参数传递给内核。</p>
-<p>依据x86_64 架构下的调用约定，即系统调用时，前四个参数分别通过 <code>rdi</code>, <code>rsi</code>, <code>rdx</code>, 和 <code>r10</code> 等寄存器传递。<code>rax</code> 存储系统调用编号，后面的寄存器则用来传递具体的参数值。</p>
-<h2 id="chaining-syscalls"><a href="#chaining-syscalls" class="headerlink" title="chaining syscalls"></a>chaining syscalls</h2><p>Okay, our previous solution wrote output but then crashed. In this level, you will write output, and then <em>not</em> crash!</p>
-<p>We’ll do this by invoking the system call, and then invoking the system call to cleanly exit the program. How do we invoke two system calls? Just like you invoke two instructions! First, you set up the necessary registers and invoke , then you set up the necessary registers and invoke <code>exit!</code>write<code>exit</code>write&#96;</p>
-<p>Your previous solution had 5 instructions (setting , setting , setting , setting , and ). This one should have those 5, plus three more for (setting to the exit code, setting to syscall index 60, and ). For this level, let’s exit with exit code !<code>rdi``rsi``rdx``rax``syscall``exit``rdi``rax``syscall``42</code></p>
-<p>为了避免程序崩溃，需要调用exit（）退出</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax,1</span><br><span class="line">mov rdi,1</span><br><span class="line">mov rsi,1337000</span><br><span class="line">mov rdx,1</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line">mov rdi,42</span><br><span class="line">mov rax,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ol>
-<li><strong>第一步（</strong><code>write</code><strong>）</strong>：<ul>
-<li>将 <code>rax</code> 设置为 <code>1</code>，表示调用 <code>write</code> 系统调用。</li>
-<li>将 <code>rdi</code> 设置为 <code>1</code>，表示目标文件描述符是标准输出（stdout）。</li>
-<li>将 <code>rsi</code> 设置为 <code>0x1337000</code>，这是要输出的数据的内存地址。</li>
-<li>将 <code>rdx</code> 设置为 <code>1</code>，表示只写入 1 个字节。</li>
-<li>使用 <code>syscall</code> 执行 <code>write</code>。</li>
-</ul>
-</li>
-<li><strong>第二步（</strong><code>exit</code><strong>）</strong>：<ul>
-<li>将 <code>rdi</code> 设置为 <code>42</code>，表示退出码为 42。</li>
-<li>将 <code>rax</code> 设置为 <code>60</code>，表示调用 <code>exit</code> 系统调用。</li>
-<li>使用 <code>syscall</code> 执行 <code>exit</code>。</li>
-</ul>
-</li>
-</ol>
-<p><font style="background-color:#f3bb2f;">为什么要有 </font><code>exit</code><font style="background-color:#f3bb2f;">？</font></p>
-<p>如果程序没有显式调用 <code>exit</code>，程序运行结束后可能会因为未定义的行为导致崩溃。调用 <code>exit</code> 是为了让内核知道程序已经正常终止，同时提供一个退出码供外部程序使用。</p>
-<p><code>write</code>** 系统调用**：</p>
-<ul>
-<li><strong>编号：1</strong></li>
-<li>该系统调用用于将数据写入到文件描述符指定的文件中，通常用于输出到屏幕（标准输出）。</li>
-</ul>
-<p><code>write</code>** 的参数**：</p>
-<ol>
-<li><code>rdi</code>：目标文件描述符（file descriptor）。<code>1</code> 表示标准输出（stdout）。</li>
-<li><code>rsi</code>：要写入的内存地址。即你要输出的数据所在的位置。</li>
-<li><code>rdx</code>：要写入的字节数，表示你希望写入多少数据。</li>
-</ol>
-<p><code>write</code>** 系统调用流程**：</p>
-<ol>
-<li>设置 <code>rax</code> 为系统调用编号 <code>1</code>（表示调用 <code>write</code>）。</li>
-<li>设置 <code>rdi</code> 为文件描述符 <code>1</code>（标准输出）。</li>
-<li>设置 <code>rsi</code> 为包含要输出数据的内存地址。</li>
-<li>设置 <code>rdx</code> 为数据的字节数，通常是你希望输出的字符数。</li>
-<li>执行 <code>syscall</code> 指令发起系统调用。</li>
-</ol>
-<p><code>寄存器顺序</code>：</p>
-<p>在 Linux x86_64 架构中，系统调用的参数需要按照一定的顺序存放在寄存器中，这些寄存器会被传递到内核：</p>
-<ol>
-<li><code>rdi</code>：第一个参数</li>
-<li><code>rsi</code>：第二个参数</li>
-<li><code>rdx</code>：第三个参数</li>
-<li><code>r10</code>：第四个参数</li>
-<li><code>r8</code>：第五个参数</li>
-<li><code>r9</code>：第六个参数</li>
-</ol>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>鹏城杯三道</title>
-    <url>/2024/11/20/OLD_PCB/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
-<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
-
-<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
-<p>接着是tls改了表</p>
-<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
-<p>赛博厨子解密得到</p>
-<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
-<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
-<img src="/2024/11/20/OLD_PCB/image-0.png" class="">
-
-<img src="/2024/11/20/OLD_PCB/image-1.png" class="">
-
-<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
-<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/20/OLD_PCB/image-2.png" class="">
-
-
-
-<p>主要加密函数</p>
-<img src="/2024/11/20/OLD_PCB/image-3.png" class="">
-
-<p>发现是魔改的tea。</p>
-<p>我们尝试进行解密，钥匙为1 2 3 4</p>
-<p>但是不对，猜测有tls，继续找</p>
-<img src="/2024/11/20/OLD_PCB/image-4.png" class="">
-
-<p>函数挺少的，我们直接在函数窗口一个一个找</p>
-<p>然后发现这个</p>
-<img src="/2024/11/20/OLD_PCB/image-5.png" class="">
-
-<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
-<img src="/2024/11/20/OLD_PCB/image-6.png" class="">
-
-<p>第二次定位</p>
-<img src="/2024/11/20/OLD_PCB/image-7.png" class="">
-
-<p>我们动调发现了</p>
-<p>我们打印一下rand值：</p>
-<img src="/2024/11/20/OLD_PCB/image-8.png" class="">
-
-<img src="/2024/11/20/OLD_PCB/image-9.png" class="">
-
-<p>就是delta加上rand</p>
-<p>直接写个tea解密脚本就好</p>
-<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
-<img src="/2024/11/20/OLD_PCB/image-10.png" class="">
-
-<p>是通过异常来控制的</p>
-<p>这下对了</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>d555ce75ec293c8ed232d83dffb0ff82</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>STL算法涉猎</title>
     <url>/2024/04/23/OLD_STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/</url>
     <content><![CDATA[<hr>
@@ -2805,6 +2740,71 @@
       </categories>
       <tags>
         <tag>C语言</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>鹏城杯三道</title>
+    <url>/2024/11/20/OLD_PCB/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
+<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
+
+<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
+<p>接着是tls改了表</p>
+<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
+<p>赛博厨子解密得到</p>
+<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
+<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
+<img src="/2024/11/20/OLD_PCB/image-0.png" class="">
+
+<img src="/2024/11/20/OLD_PCB/image-1.png" class="">
+
+<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
+<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/20/OLD_PCB/image-2.png" class="">
+
+
+
+<p>主要加密函数</p>
+<img src="/2024/11/20/OLD_PCB/image-3.png" class="">
+
+<p>发现是魔改的tea。</p>
+<p>我们尝试进行解密，钥匙为1 2 3 4</p>
+<p>但是不对，猜测有tls，继续找</p>
+<img src="/2024/11/20/OLD_PCB/image-4.png" class="">
+
+<p>函数挺少的，我们直接在函数窗口一个一个找</p>
+<p>然后发现这个</p>
+<img src="/2024/11/20/OLD_PCB/image-5.png" class="">
+
+<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
+<img src="/2024/11/20/OLD_PCB/image-6.png" class="">
+
+<p>第二次定位</p>
+<img src="/2024/11/20/OLD_PCB/image-7.png" class="">
+
+<p>我们动调发现了</p>
+<p>我们打印一下rand值：</p>
+<img src="/2024/11/20/OLD_PCB/image-8.png" class="">
+
+<img src="/2024/11/20/OLD_PCB/image-9.png" class="">
+
+<p>就是delta加上rand</p>
+<p>直接写个tea解密脚本就好</p>
+<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
+<img src="/2024/11/20/OLD_PCB/image-10.png" class="">
+
+<p>是通过异常来控制的</p>
+<p>这下对了</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>d555ce75ec293c8ed232d83dffb0ff82</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -3534,42 +3534,6 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
-    <title>神经网络的学习</title>
-    <url>/2024/07/15/OLD_%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-7-15 16:55:29  </p>
-<h2 id="从数据中学习"><a href="#从数据中学习" class="headerlink" title="从数据中学习"></a>从数据中学习</h2><p>神经网络的学习指的是从数据参数中自动获取最优权重参数的值。在实际的神经网络之中，权重的数量成千上万，随着层数的递进，这个数量还在继续增加。想要人工决定这些数值的大小是不可能的。我们需要让神经网络来根据数值自动决定参数值。通过引入损失函数能够有效的获取最有的权重参数。</p>
-<p>比如如何用算法实现数字“5”图像的识别？。人可以简单的识别出5，但也没法明确说出是基于何种规律——同时每个人书写5的方式还可能不同，想要找出规律是非常难的。预期从零开始想出识别5的算法，不如通过已有的数据来解决，一种方案是，先从图像中提取特征量，在用机器学习的技术学习特征量的模式（如计算机视觉领域的SIFT.SURF,HOG等）。在机器学习的方法中，由机械搜集到的数据中找出规律性能更高效的解决问题。但将图像转换为特征量的算法仍然是人设计的，对于不同的问题，需要设计不同的特征量，才能有效解决。而神经网络（深度学习）则会直接学习图像本身，深度学习中连特征量都是由机器来学习的。</p>
-<p>神经网络的优点在于对于所有的问题都可以用同一个流程来解决，不管是识别数字5还是识别红绿灯，都可以通过不断学习提供的数据来尝试得到研究问题的模式。</p>
-<p>在深度学习中，一般是把数据分为训练数据和测试数据，先用训练数据寻找最优参数，再用测试数据来得到模型的实际能力，这能正确的评估模型的泛化能力。</p>
-<h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>神经网络的学习通过某个指标来寻找最优权重参数，而这个指标通常是<strong>损失函数</strong>，理论上这个函数可以使用任意的，但通常采用均方误差和交叉熵误差。</p>
-<h3 id="均方误差"><a href="#均方误差" class="headerlink" title="均方误差"></a>均方误差</h3><p>均方误差如下式所示：</p>
-<p>$ E &#x3D; \frac{1}{2} \sum_{k}(y_k ,-, t_k) ^2 $</p>
-<p>y<sub>k</sub>表示神经网络的输出，t<sub>k</sub>表示监督数据，k为数据的维数。这会求出神经网络的输出和监督数据之差的平方和再相加，用python实现如下</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mean_squared_error</span>(<span class="params">y,t</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0.5</span>* np.<span class="built_in">sum</span>((y-t) ** <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="交叉熵误差"><a href="#交叉熵误差" class="headerlink" title="交叉熵误差"></a>交叉熵误差</h3><p>交叉熵误差如下所示：</p>
-<p>$ E  &#x3D; -\sum_{k} t_k,, log ,,y_k $</p>
-<p>其中y<sub>k</sub>表示神经网络的输出，t<sub>k</sub>表示监督数据，k为数据的维数，log为以e为底数的自然对数。并且可以看出，交叉熵误差的值，是由正确解标签所对应的输出结果所决定的。</p>
-<p>python实现如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">cross_entropy_error</span>(<span class="params">y,t</span>):</span><br><span class="line">    delta = 1e -<span class="number">7</span></span><br><span class="line">    <span class="keyword">return</span> -np.<span class="built_in">sum</span>(t * np.log(y + delta ))</span><br></pre></td></tr></table></figure>
-
-<p>这里的y和t是NumPy数组。函数内部在计算np.log时，加上了一个极小量，这可以避免当np.log(0)时导致的计算错误。</p>
-<h2 id="mini-batch学习"><a href="#mini-batch学习" class="headerlink" title="mini-batch学习"></a>mini-batch学习</h2><p>机器学习使用数据进行学习。使用数据进行学习的本质是通过训练数据来计算损失函数的值，通过选择参数来使这个值不断减小来获得最优参数。所以计算损失函数时必须计算所有的训练数据作为对象。</p>
-<p>但仅以MNIST数据集为例，内涵60000多个训练数据，假如以所有的数据作为训练对象，那花费的时间将是巨大的，况且有些训练数据的数量上百万甚至千万，将他们全部放入损失函数内进行计算是不现实的，因此，我们应当从全部数据中选出一部分作为训练数据，作为全体数据的近似。神经网络通常也是从所有数据中选出一批数据，分别对每个mini-batch进行学习。 </p>
-<h2 id="为何要设定损失函数"><a href="#为何要设定损失函数" class="headerlink" title="为何要设定损失函数"></a>为何要设定损失函数</h2><p>可能有人要问：“为什么要导入损失函数呢？”以数字识别任务为例，我们想获得的是能提高识别精度的参数，特意再导入一个损失函数不是有些重复劳动吗？也就是说，既然我们的目标是获得使识别精度尽可能高的神经网络，那不是应该把识别精度作为指标吗？<br>对于这一疑问，我们可以根据“导数”在神经网络学习中的作用来回答。下一节中会详细说到，在神经网络的学习中，寻找最优参数(权重和偏置）时，要寻找使损失函数的值尽可能小的参数。为了找到使损失函数的值尽可能小的地方，需要计算参数的导数（确切地讲是梯度)，然后以这个导数为指引，逐步更新参数的值。<br>假设有一个神经网络，现在我们来关注这个神经网络中的某一个权重参数。此时，对该权重参数的损失函数求导，表示的是“如果稍微改变这个权重参数的值，损失函数的值会如何变化”。如果导数的值为负，通过使该权重参数向正方向改变，可以减小损失函数的值；反过来，如果导数的值为正,则通过使该权重参数向负方向改变，可以减小损失函数的值。不过，当导数的值为0时，无论权重参数向哪个方向变化，损失函数的值都不会改变，此时该权重参数的更新会停在此处。<br>之所以不能用识别精度作为指标，是因为这样一来绝大多数地方的导数<br>都会变为0，导致参数无法更新。话说得有点多了，我们来总结一下上面的内容。</p>
-<pre><code>**在进行神经网络的学习时，不能将识别精度作为指标。因为如果以识别精度为指标，则参数的导数在绝大多数地方都会变为0。**
-</code></pre>
-<p>为什么用识别精度作为指标时，参数的导数在绝大多数地方都会变成0呢？为了回答这个问题，我们来思考另一个具体例子。假设某个神经网络正确识别出了100笔训练数据中的32笔，此时识别精度为32%。如果以识别精度为指标，即使稍微改变权重参数的值，识别精度也仍将保持在32%，不会出现变化。也就是说，仅仅微调参数，是无法改善识别精度的。即便识别精度有所改善，它的值也不会像32.0123….%这样连续变化，而是变为33%、34%这样的不连续的、离散的值。而如果把损失函数作为指标，则当前损失函数的值可以表示为0.92543…··这样的值。并且，如果稍微改变一下参数的值，对应的损失函数也会像0.93432···这样发生连续性的变化。<br>识别精度对微小的参数变化基本上没有什么反应，即便有反应，它的值也是不连续地、突然地变化。作为激活函数的阶跃函数也有同样的情况。出于相同的原因，如果使用阶跃函数作为激活函数，神经网络的学习将无法进行。阶跃函数的导数在绝大多数地方（除了0以外的地方）均为0。也就是说，如果使用了阶跃函数，那么即便将损失函数作为指标，参数的微小变化也会被阶跃函数抹杀，导致损失函数的值不会产生任何变化。<br>阶跃函数就像“竹筒敲石”一样，只在某个瞬间产生变化。而sigmoid函数，不仅函数的输出（竖轴的值）是连续变化的，曲线的斜率（导数）也是连续变化的。也就是说，sigmoid函数的导数在任何地方都不为0。这对神经网络的学习非常重要。得益于这个斜率不会为0的性质，神经网络的学习得以正确进行。</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>深度学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>误差反向传播法</title>
     <url>/2024/07/18/OLD_%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/</url>
     <content><![CDATA[<hr>
@@ -3633,76 +3597,39 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
-    <title>&quot;[转载文章]菜鸟笔记之pwn工具篇--pwntools库的基本使用&quot;</title>
-    <url>/2025/01/13/OLD_%E8%BD%AC%E8%BD%BD%E7%9A%84pwntools%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/</url>
+    <title>神经网络的学习</title>
+    <url>/2024/07/15/OLD_%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<hr>
-<p>date: 2025-01-13 20:28:45<br><font style="background-color:#f3bb2f;">原文章链接：</font><code>[菜鸟笔记之pwn工具篇--pwntools库的基本使用 - XiDP - 博客园](https://www.cnblogs.com/XiDP0/p/18445564)</code></p>
-<h2 id="啥是pwntools"><a href="#啥是pwntools" class="headerlink" title="啥是pwntools?"></a>啥是pwntools?</h2><p><strong>Pwntools</strong> 是一个用于漏洞利用和二进制分析的 <code>Python 库</code>，广泛应用于安全研究、渗透测试和竞争性编程（如 CTF，Capture The Flag）它为用户提供了一套强大的工具和功能，以<code>简化与二进制文件的交互</code>、<code>网络通信</code>以及各种<code>常见任务的执行</code>。</p>
-<p>简而言之，<code>pwntools</code>可以说是pwn手必备的工具，它帮助pwn手<code>连接远程服务器</code>，<code>发送信息</code>，<code>接收信息</code>，以及提供了很多工具来帮助pwn手快速攻克题目</p>
-<h2 id="如何安装pwntools"><a href="#如何安装pwntools" class="headerlink" title="如何安装pwntools?"></a>如何安装pwntools?</h2><p>按照以下流程在python3中安装pwntools</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; apt-get update</span><br><span class="line">&gt;&gt;&gt; apt-get install python3 python3-pip python3-dev git libssl-dev libffi-dev build-essential</span><br><span class="line">&gt;&gt;&gt; python3 -m pip install --upgrade pip</span><br><span class="line">&gt;&gt;&gt; python3 -m pip install --upgrade pwntools</span><br></pre></td></tr></table></figure>
+<p>date: 2024-7-15 16:55:29  </p>
+<h2 id="从数据中学习"><a href="#从数据中学习" class="headerlink" title="从数据中学习"></a>从数据中学习</h2><p>神经网络的学习指的是从数据参数中自动获取最优权重参数的值。在实际的神经网络之中，权重的数量成千上万，随着层数的递进，这个数量还在继续增加。想要人工决定这些数值的大小是不可能的。我们需要让神经网络来根据数值自动决定参数值。通过引入损失函数能够有效的获取最有的权重参数。</p>
+<p>比如如何用算法实现数字“5”图像的识别？。人可以简单的识别出5，但也没法明确说出是基于何种规律——同时每个人书写5的方式还可能不同，想要找出规律是非常难的。预期从零开始想出识别5的算法，不如通过已有的数据来解决，一种方案是，先从图像中提取特征量，在用机器学习的技术学习特征量的模式（如计算机视觉领域的SIFT.SURF,HOG等）。在机器学习的方法中，由机械搜集到的数据中找出规律性能更高效的解决问题。但将图像转换为特征量的算法仍然是人设计的，对于不同的问题，需要设计不同的特征量，才能有效解决。而神经网络（深度学习）则会直接学习图像本身，深度学习中连特征量都是由机器来学习的。</p>
+<p>神经网络的优点在于对于所有的问题都可以用同一个流程来解决，不管是识别数字5还是识别红绿灯，都可以通过不断学习提供的数据来尝试得到研究问题的模式。</p>
+<p>在深度学习中，一般是把数据分为训练数据和测试数据，先用训练数据寻找最优参数，再用测试数据来得到模型的实际能力，这能正确的评估模型的泛化能力。</p>
+<h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>神经网络的学习通过某个指标来寻找最优权重参数，而这个指标通常是<strong>损失函数</strong>，理论上这个函数可以使用任意的，但通常采用均方误差和交叉熵误差。</p>
+<h3 id="均方误差"><a href="#均方误差" class="headerlink" title="均方误差"></a>均方误差</h3><p>均方误差如下式所示：</p>
+<p>$ E &#x3D; \frac{1}{2} \sum_{k}(y_k ,-, t_k) ^2 $</p>
+<p>y<sub>k</sub>表示神经网络的输出，t<sub>k</sub>表示监督数据，k为数据的维数。这会求出神经网络的输出和监督数据之差的平方和再相加，用python实现如下</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mean_squared_error</span>(<span class="params">y,t</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0.5</span>* np.<span class="built_in">sum</span>((y-t) ** <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
 
-<h2 id="如何使用pwntools"><a href="#如何使用pwntools" class="headerlink" title="如何使用pwntools?"></a>如何使用pwntools?</h2><p>显然我们需要学会使用python,并在编写脚本的时候导入pwntools库</p>
-<h3 id="导入pwntools"><a href="#导入pwntools" class="headerlink" title="导入pwntools:"></a>导入pwntools:</h3><p>这大概会是每一个pwn手的编写脚本时的第一句话</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> * <span class="comment">#使用from来导入pwntools模块</span></span><br></pre></td></tr></table></figure>
+<h3 id="交叉熵误差"><a href="#交叉熵误差" class="headerlink" title="交叉熵误差"></a>交叉熵误差</h3><p>交叉熵误差如下所示：</p>
+<p>$ E  &#x3D; -\sum_{k} t_k,, log ,,y_k $</p>
+<p>其中y<sub>k</sub>表示神经网络的输出，t<sub>k</sub>表示监督数据，k为数据的维数，log为以e为底数的自然对数。并且可以看出，交叉熵误差的值，是由正确解标签所对应的输出结果所决定的。</p>
+<p>python实现如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">cross_entropy_error</span>(<span class="params">y,t</span>):</span><br><span class="line">    delta = 1e -<span class="number">7</span></span><br><span class="line">    <span class="keyword">return</span> -np.<span class="built_in">sum</span>(t * np.log(y + delta ))</span><br></pre></td></tr></table></figure>
 
-<h3 id="设置基本信息"><a href="#设置基本信息" class="headerlink" title="设置基本信息:"></a>设置基本信息:</h3><p>在打靶机前需要按照靶机的类型设置好基本信息,因为<code>pwntools</code>中很多工具需要依靠<code>contest</code>来自动选择类型，比如<code>shellcraft(用于生成shellcode代码的工具)</code>等<br><code>os</code>是靶机的系统类型一般就是<code>linux系统</code><br><code>arch</code>是指题目的架构,我们可以使用<code>checksec</code>工具来查看具体的架构，一般是<code>AMD64</code>或<code>i386</code><br><code>log_level</code>是指日志输出等级，可以设置为<code>debug</code>或者直接不设置删掉也行，设置为debug在脚本运行的时候会输出我们具体发送了什么信息，靶机反馈了什么信息。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">context(os=<span class="string">&#x27;linux&#x27;</span>, arch=<span class="string">&#x27;AMD64&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="连接远程靶机"><a href="#连接远程靶机" class="headerlink" title="连接远程靶机:"></a>连接远程靶机:</h3><p>在pwn(1.0.0)中曾经介绍过，我们启动靶机后会得到一个靶机地址，把靶机地址的前缀和端口分别输入在<code>remote</code>里面，<code>ip</code>用<code>&#39;&#39;</code>包裹起来用逗号隔开<code>端口</code>，这样就实现了远程连接</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">用于连接远程服务器，并把连接到的进程命名为p，后续的函数都围绕这个p进程展开</span><br><span class="line">p = remote(<span class="string">&quot;ip&quot;</span>,port) </span><br><span class="line">比如:p = remote(<span class="string">&quot;node5.buuoj.cn&quot;</span>,<span class="number">5555</span>)</span><br></pre></td></tr></table></figure>
-
-<p>当然偶尔也有题目需要用ssh来连接靶机的</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">通过使用ssh来连接靶机</span><br><span class="line">p = ssh(host=<span class="string">&#x27;192.168.xx.xxx&#x27;</span>, user=<span class="string">&#x27;xidp&#x27;</span>, port=<span class="number">6666</span>, password=<span class="string">&#x27;88888888&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="本地调试"><a href="#本地调试" class="headerlink" title="本地调试:"></a>本地调试:</h3><p>在远程之前，我们可以在本地先进行一些测试,那么我们可以本地运行文件</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">本地调试程序,并且将进程命名为p</span><br><span class="line">p = process(<span class="string">&quot;文件名&quot;</span>)</span><br><span class="line">比如:p = process(<span class="string">&quot;./pwn&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="发送信息"><a href="#发送信息" class="headerlink" title="发送信息:"></a>发送信息:</h3><p>假设我们需要发送的是<code>payload</code>这个变量</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">**************************************************</span><br><span class="line">p.send(payload) <span class="comment"># 直接发送payload</span></span><br><span class="line">**************************************************</span><br><span class="line">p.sendline(payload) <span class="comment"># 发送payload，但是结尾会有一个\n</span></span><br><span class="line">**************************************************</span><br><span class="line">p.sendafter(<span class="string">&quot;string&quot;</span>, payload) <span class="comment"># 接收到 string (这里说的string可以替换成任何信息) 之后会发送payload，但是如果没有接收到string，那么就会导致脚本一直卡在这里不动</span></span><br><span class="line">**************************************************</span><br><span class="line">p.sendlineafer(<span class="string">&quot;string&quot;</span>, payload) <span class="comment"># 接收到 string 之后会发送payload 并且在payload最后添加\n</span></span><br></pre></td></tr></table></figure>
-
-<p>一般常用的发送就这几种，此时可能会有一个疑问，<code>p.send</code> 和 <code>p.sendline</code> 就差一个<code>\n</code>有什么区别?<br>有区别，比如<code>gets()</code>和<code>scanf()</code>这类函数它们会以<code>\n</code>作为结束符号，如果我们没有发送<code>\n</code>,它们就会一直卡着等待输入，所以遇到这类输入函数就必须要用<code>p.sendline</code>来添加<code>\n</code>(当然如果我们手动在payload里面添加<code>\n</code>也OK)。遇到<code>read()</code>这类函数则使用<code>p.sendline</code>和<code>p.send</code>都可以.</p>
-<p>那如果我们都使用<code>p.sendline</code>不就好了吗? NO，这并不好，比如我们遇到<code>read()</code>并且希望发送一些字符串比如<code>&quot;flag&quot;</code>,如果你用<code>p.send(&quot;flag&quot;)</code>那么没错你发送的是<code>flag</code>，计算机解析后是<code>\x67\x61\x6C\x66</code>，而如果你用的是<code>p.sendline(&quot;flag&quot;)</code>，则你发送的是<code>flag\n</code>,计算机解析后是<code>\x0a\x67\x61\x6C\x66</code>,这一点细节上的差距就可能导致我们的脚本无法打通，所以我们需要面对合适的函数使用合适的方法，后续我们将会继续讨论<code>read()、scanf()、fgets()和gets()</code>这类函数在输入的时候具体有什么区别</p>
-<h3 id="接收信息"><a href="#接收信息" class="headerlink" title="接收信息:"></a>接收信息:</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">**************************************************</span><br><span class="line">p.recv(<span class="built_in">int</span>) 利用recv来接收返回的数据，并且可以控制接受到的字节数</span><br><span class="line">比如:p.recv(<span class="number">7</span>) =&gt; 系统输出<span class="string">&#x27;hello world&#x27;</span> =&gt; 我们会接受到<span class="string">&#x27;hello w&#x27;</span> </span><br><span class="line">**************************************************</span><br><span class="line">p.recvline(<span class="string">&#x27;string&#x27;</span>) 设置一个标识符，接收标识符所在的那一行</span><br><span class="line">比如:p.recvline(<span class="string">&#x27;O.o&#x27;</span>)</span><br><span class="line"><span class="comment">#系统输出:</span></span><br><span class="line">Hello World </span><br><span class="line">This <span class="keyword">is</span> a test. </span><br><span class="line">O.o This <span class="keyword">is</span> the target line. </span><br><span class="line">Goodbye.</span><br><span class="line"><span class="comment">#我们接收:</span></span><br><span class="line">O.o This <span class="keyword">is</span> the target line. </span><br><span class="line">**************************************************</span><br><span class="line">p.recvlines(N) 接收 N 行输出</span><br><span class="line">**************************************************</span><br><span class="line">p.recvuntil(<span class="string">&#x27;string&#x27;</span>) 可以指定接收到某一字符串的时候停止 ,还有第二个参数 drop，drop=<span class="literal">True</span>(默认为false) 表示丢弃设定的停止符号</span><br><span class="line">比如:p.recvuntil(<span class="string">&#x27;or&#x27;</span>) </span><br><span class="line"><span class="comment">#系统输出:</span></span><br><span class="line">hello world </span><br><span class="line"><span class="comment">#我们接收:</span></span><br><span class="line">hello wor  </span><br><span class="line">比如:a = io.recvuntil(<span class="string">&#x27;]&#x27;</span>, drop=<span class="literal">True</span>)</span><br><span class="line">就是一直获取到`]`符号出现就停止，并且不接收`]`符号</span><br><span class="line">**************************************************</span><br></pre></td></tr></table></figure>
-
-<h3 id="传递到终端"><a href="#传递到终端" class="headerlink" title="传递到终端:"></a>传递到终端:</h3><p>大概是每个脚本的最后一句话</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">p.interactive()</span><br><span class="line">接受信息并且在终端操作，程序拿到shell，然后就可以转接到linux终端上，让pwn手享受拿flag的乐趣</span><br></pre></td></tr></table></figure>
-
-<h3 id="构造发送地址类型"><a href="#构造发送地址类型" class="headerlink" title="构造发送地址类型:"></a>构造发送地址类型:</h3><p><code>p64/p32/u64/u32</code>这类函数的作用:</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">**************************************************</span><br><span class="line">p64(<span class="built_in">int</span>) </span><br><span class="line">p64(<span class="number">0xfaceb00c</span>) =&gt; <span class="string">&#x27;\x0c\xb0\xce\xfa\x00\x00\x00\x00\x00&#x27;</span></span><br><span class="line">**************************************************</span><br><span class="line">u64(<span class="built_in">str</span>) </span><br><span class="line">u64(<span class="string">&#x27;\x0c\xb0\xce\xfa\x00\x00\x00\x00&#x27;</span>) =&gt;<span class="number">0xfaceb00c</span></span><br><span class="line">**************************************************</span><br><span class="line">p32(<span class="built_in">int</span>)  </span><br><span class="line">p32(<span class="number">0xfaceb00c</span>) =&gt; <span class="string">&#x27;\x0c\xb0\xce\xfa&#x27;</span></span><br><span class="line">**************************************************</span><br><span class="line">u32(<span class="built_in">str</span>) </span><br><span class="line">u32(<span class="string">&#x27;\x0c\xb0\xce\xfa&#x27;</span>) =&gt; <span class="number">0xfaceb00c</span></span><br><span class="line">**************************************************</span><br></pre></td></tr></table></figure>
-
-<p><code>p64()</code>这种类型用于将消息变成对应的进制流（因为原本程序里面的数据都是已经编译过的，所以打入的数据也需要是编译过的,所以需要使用p64()这类工具）<br><code>u64()</code>这种类型<code>用于泄露地址</code>的时候将泄露的进制流变成对应的原本的样子，方便来辨认查找glibc版本</p>
-<p>因为一般计算机都是小端程序，所以这两个函数都自带有将数据变成小端需要的样子，如果遇到大端程序可能需要额外注意</p>
-<p>除了<code>p32()</code>这种转化方式还有，<code>flat()</code>，它可以将多个数据结构（如字符串、整数等）连接在一起，并将它们转换为二进制数据。通常用于构建复杂的ROP链的<code>shellcode</code>。flat 函数会将数据扁平化，将它们按照顺序连接在一起，不做任何其他处理。在提供的代码中，<code>flat</code> 被用于构建一个包含多个元素的列表，然后将它们连接起来形成一个二进制数据。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">payload = flat([<span class="number">0x12345678</span>, <span class="string">&#x27;AAAA&#x27;</span>, <span class="number">0xdeadbeef</span>], word_size=<span class="number">4</span>/<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="的汇编与反汇编"><a href="#的汇编与反汇编" class="headerlink" title="的汇编与反汇编:"></a>的汇编与反汇编:</h4><p>pwntools提供了两个工具:<br><code>asm</code>函数可以将汇编代码转为对应的二进制<br><code>disasm</code>函数则相反可以将二进制转化为汇编代码</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>asm(<span class="string">&#x27;mov eax, 0&#x27;</span>)   <span class="comment">#汇编</span></span><br><span class="line"><span class="string">&#x27;\xb8\x00\x00\x00\x00&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>disasm(<span class="string">&#x27;\xb8\x0b\x00\x00\x00&#x27;</span>)  <span class="comment">#反汇编</span></span><br><span class="line"><span class="string">&#x27;mov    eax,0xb&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="生成shllcode后门"><a href="#生成shllcode后门" class="headerlink" title="生成shllcode后门:"></a>生成shllcode后门:</h4><p><strong>pwnlib.shellcraft模块</strong>包含<strong>生成shell代码</strong>的函数。<br>在使用之前我们需要通过<strong>context设置架构</strong>，然后<strong>生成shellcode</strong>也就是生成后门</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">context(os=<span class="string">&#x27;linux&#x27;</span>, arch=<span class="string">&#x27;i386&#x27;</span>)</span><br><span class="line"><span class="comment"># 表示将当前执行上下文的体系结构设置为i386(这里的i386可以通过checksec来查看文件是什么架构的  </span></span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"><span class="comment"># asm()是把括号内的内容编译成机器码(只有机器码才可以执行)，一般用来打入后门。pwntools自带的后门函数，可以生成类似system(&#x27;/bin/sh/&#x27;)这样功能的汇编代码 </span></span><br><span class="line"><span class="comment"># 通常可以配合  .ljust() 来使用  </span></span><br><span class="line">shellcode.ljust(<span class="number">112</span>, <span class="string">b&#x27;A&#x27;</span>)  </span><br><span class="line"><span class="comment"># 这里的 .ljust() 是 Python 中字符串对象的方法，用于在字符串的右侧填充指定的字符，使字符串达到指定的长度。</span></span><br></pre></td></tr></table></figure>
-
-<p>纯净版shellcode</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;i386&#x27;</span>, os=<span class="string">&#x27;linux&#x27;</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">shellcode.ljust(<span class="number">112</span>, <span class="string">b&#x27;A&#x27;</span>)  </span><br></pre></td></tr></table></figure>
-
-<p>当然也有专门的网站收集shellcode<br>shellcode的网址：<br> <a href="https://www.exploit-db.com/shellcodes/43550">https://www.exploit-db.com/shellcodes/43550</a><br>下面也提供一些已经编译好的shellcode:<br>64位linux的24Byte的shellcode</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">shellcode_x64 =<span class="string">&quot;\x6a\x3b\x58\x99\x52\x48\xbb\x2f\x2f\x62\x69\x6e\x2f\x73\x68\x53\x54\x5f\x52\x57\x54\x5e\x0f\x05&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>64位Linux的23Byte的shellcode</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">shellcode_x64 =<span class="string">&quot;\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>更多的时候根据题目的要求，我们需要自己手动编写shellcode来绕过一些检测，所以编写<code>shellcode</code>是后续必须要掌握的一种技巧</p>
-<p>运行时调用gdb调试:<br>使用<code>gdb.attach</code>函数</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">gdb.attach(p, gdbscript=<span class="string">&quot;&quot;&quot; b main; commands; silent printf &quot;Breakpoint hit\n&quot;; continue; end &quot;&quot;&quot;</span>)</span><br><span class="line">在需要进行调试的位置插入gdb.attach(p)即可在执行到的时候打开gdb进行调试</span><br><span class="line">p是指定的需要调试的进程(必须要本地调试，否则会报错)</span><br><span class="line">gdbscript是打开gdb后需要进行的操作，使用 ; 进行隔离</span><br></pre></td></tr></table></figure>
-
-<p>一般<code>gdb.attach(p)</code>可以和<code>pause()</code>函数连用，可以确保在gdb完全打开之前脚本不运行<br><code>pause()</code>函数用于暂停脚本的运行，直到用户输入任意数据</p>
-<h4 id="ELF模块"><a href="#ELF模块" class="headerlink" title="ELF模块:"></a>ELF模块:</h4><p>我们可以通过这个模块来快速获取pwn文件的<code>got表地址</code>以及<code>plt表地址</code><br>用于获取<code>ELF文件的信息</code>，首先使用<code>ELF()</code>获取这个文件的句柄，然后使用这个句柄调用函数，和IO模块很相似。<br>下面演示了：获取基地址、获取函数地址（基于符号）、获取函数got地址、获取函数plt地址，和LibcSearcher库联动使用</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">elf = ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"></span><br><span class="line">elf.address <span class="comment"># 文件装载的基地址 =&gt; 0x400000</span></span><br><span class="line"></span><br><span class="line">main_addr = elf.symbols[<span class="string">&#x27;main&#x27;</span>] <span class="comment"># 获取函数地址 =&gt; 0x401680</span></span><br><span class="line"></span><br><span class="line">write_got = elf.got[<span class="string">&#x27;write&#x27;</span>] <span class="comment"># 获取对应函数在GOT表的地址 =&gt; 0x60b070</span></span><br><span class="line"></span><br><span class="line">write_plt = elf.plt[<span class="string">&#x27;write&#x27;</span>] <span class="comment"># 获取对应函数在PLT表的地址 =&gt; 0x401680</span></span><br></pre></td></tr></table></figure>]]></content>
+<p>这里的y和t是NumPy数组。函数内部在计算np.log时，加上了一个极小量，这可以避免当np.log(0)时导致的计算错误。</p>
+<h2 id="mini-batch学习"><a href="#mini-batch学习" class="headerlink" title="mini-batch学习"></a>mini-batch学习</h2><p>机器学习使用数据进行学习。使用数据进行学习的本质是通过训练数据来计算损失函数的值，通过选择参数来使这个值不断减小来获得最优参数。所以计算损失函数时必须计算所有的训练数据作为对象。</p>
+<p>但仅以MNIST数据集为例，内涵60000多个训练数据，假如以所有的数据作为训练对象，那花费的时间将是巨大的，况且有些训练数据的数量上百万甚至千万，将他们全部放入损失函数内进行计算是不现实的，因此，我们应当从全部数据中选出一部分作为训练数据，作为全体数据的近似。神经网络通常也是从所有数据中选出一批数据，分别对每个mini-batch进行学习。 </p>
+<h2 id="为何要设定损失函数"><a href="#为何要设定损失函数" class="headerlink" title="为何要设定损失函数"></a>为何要设定损失函数</h2><p>可能有人要问：“为什么要导入损失函数呢？”以数字识别任务为例，我们想获得的是能提高识别精度的参数，特意再导入一个损失函数不是有些重复劳动吗？也就是说，既然我们的目标是获得使识别精度尽可能高的神经网络，那不是应该把识别精度作为指标吗？<br>对于这一疑问，我们可以根据“导数”在神经网络学习中的作用来回答。下一节中会详细说到，在神经网络的学习中，寻找最优参数(权重和偏置）时，要寻找使损失函数的值尽可能小的参数。为了找到使损失函数的值尽可能小的地方，需要计算参数的导数（确切地讲是梯度)，然后以这个导数为指引，逐步更新参数的值。<br>假设有一个神经网络，现在我们来关注这个神经网络中的某一个权重参数。此时，对该权重参数的损失函数求导，表示的是“如果稍微改变这个权重参数的值，损失函数的值会如何变化”。如果导数的值为负，通过使该权重参数向正方向改变，可以减小损失函数的值；反过来，如果导数的值为正,则通过使该权重参数向负方向改变，可以减小损失函数的值。不过，当导数的值为0时，无论权重参数向哪个方向变化，损失函数的值都不会改变，此时该权重参数的更新会停在此处。<br>之所以不能用识别精度作为指标，是因为这样一来绝大多数地方的导数<br>都会变为0，导致参数无法更新。话说得有点多了，我们来总结一下上面的内容。</p>
+<pre><code>**在进行神经网络的学习时，不能将识别精度作为指标。因为如果以识别精度为指标，则参数的导数在绝大多数地方都会变为0。**
+</code></pre>
+<p>为什么用识别精度作为指标时，参数的导数在绝大多数地方都会变成0呢？为了回答这个问题，我们来思考另一个具体例子。假设某个神经网络正确识别出了100笔训练数据中的32笔，此时识别精度为32%。如果以识别精度为指标，即使稍微改变权重参数的值，识别精度也仍将保持在32%，不会出现变化。也就是说，仅仅微调参数，是无法改善识别精度的。即便识别精度有所改善，它的值也不会像32.0123….%这样连续变化，而是变为33%、34%这样的不连续的、离散的值。而如果把损失函数作为指标，则当前损失函数的值可以表示为0.92543…··这样的值。并且，如果稍微改变一下参数的值，对应的损失函数也会像0.93432···这样发生连续性的变化。<br>识别精度对微小的参数变化基本上没有什么反应，即便有反应，它的值也是不连续地、突然地变化。作为激活函数的阶跃函数也有同样的情况。出于相同的原因，如果使用阶跃函数作为激活函数，神经网络的学习将无法进行。阶跃函数的导数在绝大多数地方（除了0以外的地方）均为0。也就是说，如果使用了阶跃函数，那么即便将损失函数作为指标，参数的微小变化也会被阶跃函数抹杀，导致损失函数的值不会产生任何变化。<br>阶跃函数就像“竹筒敲石”一样，只在某个瞬间产生变化。而sigmoid函数，不仅函数的输出（竖轴的值）是连续变化的，曲线的斜率（导数）也是连续变化的。也就是说，sigmoid函数的导数在任何地方都不为0。这对神经网络的学习非常重要。得益于这个斜率不会为0的性质，神经网络的学习得以正确进行。</p>
+]]></content>
       <categories>
         <category>学习笔记</category>
       </categories>
       <tags>
-        <tag>网安</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -4576,119 +4503,6 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       </tags>
   </entry>
   <entry>
-    <title>How to learn _hello agent_</title>
-    <url>/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_How%20to%20learn%20_hello%20agent_/</url>
-    <content><![CDATA[<p>_<strong>agent</strong>_是什么？</p>
-<p>能自主收集信息思考后做出反应的智能体,要求运行的每步都有_thought_与_action_，</p>
-<p>利用在线模型和在线api供应商<br><strong>推理时代</strong></p>
-<p><strong>tavily</strong></p>
-<hr>
-<hr>
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>如何生成一个简单的旅游推荐agent？  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AGENT_SYSTEM_PROMPT = &quot;&quot;&quot;</span><br><span class="line">你是一个智能旅行助手。你的任务是分析用户的请求，并使用可用工具一步步地解决问题。</span><br><span class="line"></span><br><span class="line"># 可用工具:</span><br><span class="line">- `get_weather(city: str)`: 查询指定城市的实时天气。</span><br><span class="line">- `get_attraction(city: str, weather: str)`: 根据城市和天气搜索推荐的旅游景点。</span><br><span class="line"></span><br><span class="line"># 输出格式要求:</span><br><span class="line">你的每次回复必须严格遵循以下格式，包含一对Thought和Action：</span><br><span class="line"></span><br><span class="line">Thought: [你的思考过程和下一步计划]</span><br><span class="line">Action: [你要执行的具体行动]</span><br><span class="line"></span><br><span class="line">Action的格式必须是以下之一：</span><br><span class="line">1. 调用工具：function_name(arg_name=&quot;arg_value&quot;)</span><br><span class="line">2. 结束任务：Finish[最终答案]</span><br><span class="line"></span><br><span class="line"># 重要提示:</span><br><span class="line">- 每次只输出一对Thought-Action</span><br><span class="line">- Action必须在同一行，不要换行</span><br><span class="line">- 当收集到足够信息可以回答用户问题时，必须使用 Action: Finish[最终答案] 格式结束</span><br><span class="line"></span><br><span class="line">请开始吧！</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">from pathlib import Path</span><br><span class="line"></span><br><span class="line">def get_weather(city: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    通过调用 wttr.in API 查询真实的天气信息。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # API端点，我们请求JSON格式的数据</span><br><span class="line">    url = f&quot;https://wttr.in/&#123;city&#125;?format=j1&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 发起网络请求</span><br><span class="line">        response = requests.get(url)</span><br><span class="line">        # 检查响应状态码是否为200 (成功)</span><br><span class="line">        response.raise_for_status() </span><br><span class="line">        # 解析返回的JSON数据</span><br><span class="line">        data = response.json()</span><br><span class="line">        </span><br><span class="line">        # 提取当前天气状况</span><br><span class="line">        current_condition = data[&#x27;current_condition&#x27;][0]</span><br><span class="line">        weather_desc = current_condition[&#x27;weatherDesc&#x27;][0][&#x27;value&#x27;]</span><br><span class="line">        temp_c = current_condition[&#x27;temp_C&#x27;]</span><br><span class="line">        </span><br><span class="line">        # 格式化成自然语言返回</span><br><span class="line">        return f&quot;&#123;city&#125;当前天气:&#123;weather_desc&#125;，气温&#123;temp_c&#125;摄氏度&quot;</span><br><span class="line">        </span><br><span class="line">    except requests.exceptions.RequestException as e:</span><br><span class="line">        # 处理网络错误</span><br><span class="line">        return f&quot;错误:查询天气时遇到网络问题 - &#123;e&#125;&quot;</span><br><span class="line">    except (KeyError, IndexError) as e:</span><br><span class="line">        # 处理数据解析错误</span><br><span class="line">        return f&quot;错误:解析天气数据失败，可能是城市名称无效 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">from tavily import TavilyClient</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def load_root_env() -&gt; None:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    从项目根目录加载 .env 文件到环境变量。</span><br><span class="line">    ez_2.py 位于 chapter_1 下，所以根目录是上一级目录。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    env_path = Path(__file__).resolve().parents[1] / &quot;.env&quot;</span><br><span class="line">    if not env_path.exists():</span><br><span class="line">        print(f&quot;警告: 未找到环境变量文件 &#123;env_path&#125;&quot;)</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">    for raw_line in env_path.read_text(encoding=&quot;utf-8&quot;).splitlines():</span><br><span class="line">        line = raw_line.strip()</span><br><span class="line">        if not line or line.startswith(&quot;#&quot;) or &quot;=&quot; not in line:</span><br><span class="line">            continue</span><br><span class="line"></span><br><span class="line">        key, value = line.split(&quot;=&quot;, 1)</span><br><span class="line">        key = key.strip()</span><br><span class="line">        value = value.strip().strip(&#x27;&quot;&#x27;).strip(&quot;&#x27;&quot;)</span><br><span class="line">        os.environ.setdefault(key, value)</span><br><span class="line"></span><br><span class="line">def get_attraction(city: str, weather: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    根据城市和天气，使用Tavily Search API搜索并返回优化后的景点推荐。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # 1. 从环境变量中读取API密钥</span><br><span class="line">    api_key = os.environ.get(&quot;TAVILY_API_KEY&quot;)</span><br><span class="line">    if not api_key:</span><br><span class="line">        return &quot;错误:未配置TAVILY_API_KEY环境变量。&quot;</span><br><span class="line"></span><br><span class="line">    # 2. 初始化Tavily客户端</span><br><span class="line">    tavily = TavilyClient(api_key=api_key)</span><br><span class="line">    </span><br><span class="line">    # 3. 构造一个精确的查询</span><br><span class="line">    query = f&quot;&#x27;&#123;city&#125;&#x27; 在&#x27;&#123;weather&#125;&#x27;天气下最值得去的旅游景点推荐及理由&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 4. 调用API，include_answer=True会返回一个综合性的回答</span><br><span class="line">        response = tavily.search(query=query, search_depth=&quot;basic&quot;, include_answer=True)</span><br><span class="line">        </span><br><span class="line">        # 5. Tavily返回的结果已经非常干净，可以直接使用</span><br><span class="line">        # response[&#x27;answer&#x27;] 是一个基于所有搜索结果的总结性回答</span><br><span class="line">        if response.get(&quot;answer&quot;):</span><br><span class="line">            return response[&quot;answer&quot;]</span><br><span class="line">        </span><br><span class="line">        # 如果没有综合性回答，则格式化原始结果</span><br><span class="line">        formatted_results = []</span><br><span class="line">        for result in response.get(&quot;results&quot;, []):</span><br><span class="line">            formatted_results.append(f&quot;- &#123;result[&#x27;title&#x27;]&#125;: &#123;result[&#x27;content&#x27;]&#125;&quot;)</span><br><span class="line">        </span><br><span class="line">        if not formatted_results:</span><br><span class="line">             return &quot;抱歉，没有找到相关的旅游景点推荐。&quot;</span><br><span class="line"></span><br><span class="line">        return &quot;根据搜索，为您找到以下信息:\n&quot; + &quot;\n&quot;.join(formatted_results)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        return f&quot;错误:执行Tavily搜索时出现问题 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 将所有工具函数放入一个字典，方便后续调用</span><br><span class="line">available_tools = &#123;</span><br><span class="line">    &quot;get_weather&quot;: get_weather,</span><br><span class="line">    &quot;get_attraction&quot;: get_attraction,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">from openai import OpenAI</span><br><span class="line"></span><br><span class="line">class OpenAICompatibleClient:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    一个用于调用任何兼容OpenAI接口的LLM服务的客户端。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def __init__(self, model: str, api_key: str, base_url: str):</span><br><span class="line">        self.model = model</span><br><span class="line">        self.client = OpenAI(api_key=api_key, base_url=base_url)</span><br><span class="line"></span><br><span class="line">    def generate(self, prompt: str, system_prompt: str) -&gt; str:</span><br><span class="line">        &quot;&quot;&quot;调用LLM API来生成回应。&quot;&quot;&quot;</span><br><span class="line">        print(&quot;正在调用大语言模型...&quot;)</span><br><span class="line">        try:</span><br><span class="line">            messages = [</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;system&#x27;, &#x27;content&#x27;: system_prompt&#125;,</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;user&#x27;, &#x27;content&#x27;: prompt&#125;</span><br><span class="line">            ]</span><br><span class="line">            response = self.client.chat.completions.create(</span><br><span class="line">                model=self.model,</span><br><span class="line">                messages=messages,</span><br><span class="line">                stream=False</span><br><span class="line">            )</span><br><span class="line">            answer = response.choices[0].message.content</span><br><span class="line">            print(&quot;大语言模型响应成功。&quot;)</span><br><span class="line">            return answer</span><br><span class="line">        except Exception as e:</span><br><span class="line">            print(f&quot;调用LLM API时发生错误: &#123;e&#125;&quot;)</span><br><span class="line">            return &quot;错误:调用语言模型服务时出错。&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import re</span><br><span class="line"></span><br><span class="line"># --- 1. 配置LLM客户端 ---</span><br><span class="line"># 从根目录 .env 加载配置</span><br><span class="line">load_root_env()</span><br><span class="line"></span><br><span class="line">API_KEY = os.environ.get(&quot;OPENAI_API_KEY&quot;)</span><br><span class="line">BASE_URL = os.environ.get(&quot;OPENAI_BASE_URL&quot;)</span><br><span class="line">MODEL_ID = os.environ.get(&quot;MODEL_NAME&quot;)</span><br><span class="line"></span><br><span class="line">missing_keys = [</span><br><span class="line">    key for key, value in &#123;</span><br><span class="line">        &quot;OPENAI_API_KEY&quot;: API_KEY,</span><br><span class="line">        &quot;OPENAI_BASE_URL&quot;: BASE_URL,</span><br><span class="line">        &quot;MODEL_NAME&quot;: MODEL_ID,</span><br><span class="line">        &quot;TAVILY_API_KEY&quot;: os.environ.get(&quot;TAVILY_API_KEY&quot;),</span><br><span class="line">    &#125;.items() if not value</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">if missing_keys:</span><br><span class="line">    raise ValueError(f&quot;缺少环境变量: &#123;&#x27;, &#x27;.join(missing_keys)&#125;。请检查根目录 .env 文件。&quot;)</span><br><span class="line"></span><br><span class="line">llm = OpenAICompatibleClient(</span><br><span class="line">    model=MODEL_ID,</span><br><span class="line">    api_key=API_KEY,</span><br><span class="line">    base_url=BASE_URL</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># --- 2. 初始化 ---</span><br><span class="line">user_prompt = &quot;你好，请帮我查询一下今天北京的天气，然后根据天气推荐一个合适的旅游景点。&quot;</span><br><span class="line">prompt_history = [f&quot;用户请求: &#123;user_prompt&#125;&quot;]</span><br><span class="line"></span><br><span class="line">print(f&quot;用户输入: &#123;user_prompt&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line"></span><br><span class="line"># --- 3. 运行主循环 ---</span><br><span class="line">for i in range(5): # 设置最大循环次数</span><br><span class="line">    print(f&quot;--- 循环 &#123;i+1&#125; ---\n&quot;)</span><br><span class="line">    </span><br><span class="line">    # 3.1. 构建Prompt</span><br><span class="line">    full_prompt = &quot;\n&quot;.join(prompt_history)</span><br><span class="line">    </span><br><span class="line">    # 3.2. 调用LLM进行思考</span><br><span class="line">    llm_output = llm.generate(full_prompt, system_prompt=AGENT_SYSTEM_PROMPT)</span><br><span class="line">    # 模型可能会输出多余的Thought-Action，需要截断</span><br><span class="line">    match = re.search(r&#x27;(Thought:.*?Action:.*?)(?=\n\s*(?:Thought:|Action:|Observation:)|\Z)&#x27;, llm_output, re.DOTALL)</span><br><span class="line">    if match:</span><br><span class="line">        truncated = match.group(1).strip()</span><br><span class="line">        if truncated != llm_output.strip():</span><br><span class="line">            llm_output = truncated</span><br><span class="line">            print(&quot;已截断多余的 Thought-Action 对&quot;)</span><br><span class="line">    print(f&quot;模型输出:\n&#123;llm_output&#125;\n&quot;)</span><br><span class="line">    prompt_history.append(llm_output)</span><br><span class="line">    </span><br><span class="line">    # 3.3. 解析并执行行动</span><br><span class="line">    action_match = re.search(r&quot;Action: (.*)&quot;, llm_output, re.DOTALL)</span><br><span class="line">    if not action_match:</span><br><span class="line">        observation = &quot;错误: 未能解析到 Action 字段。请确保你的回复严格遵循 &#x27;Thought: ... Action: ...&#x27; 的格式。&quot;</span><br><span class="line">        observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">        print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">        prompt_history.append(observation_str)</span><br><span class="line">        continue</span><br><span class="line">    action_str = action_match.group(1).strip()</span><br><span class="line"></span><br><span class="line">    if action_str.startswith(&quot;Finish&quot;):</span><br><span class="line">        final_answer = re.match(r&quot;Finish\[(.*)\]&quot;, action_str).group(1)</span><br><span class="line">        print(f&quot;任务完成，最终答案: &#123;final_answer&#125;&quot;)</span><br><span class="line">        break</span><br><span class="line">    </span><br><span class="line">    tool_name = re.search(r&quot;(\w+)\(&quot;, action_str).group(1)</span><br><span class="line">    args_str = re.search(r&quot;\((.*)\)&quot;, action_str).group(1)</span><br><span class="line">    kwargs = dict(re.findall(r&#x27;(\w+)=&quot;([^&quot;]*)&quot;&#x27;, args_str))</span><br><span class="line"></span><br><span class="line">    if tool_name in available_tools:</span><br><span class="line">        observation = available_tools[tool_name](**kwargs)</span><br><span class="line">    else:</span><br><span class="line">        observation = f&quot;错误:未定义的工具 &#x27;&#123;tool_name&#125;&#x27;&quot;</span><br><span class="line"></span><br><span class="line">    # 3.4. 记录观察结果</span><br><span class="line">    observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">    print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">    prompt_history.append(observation_str)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>workflow和agent的区别是什么？</p>
-<h2 id="亲手实现一个transformer"><a href="#亲手实现一个transformer" class="headerlink" title="亲手实现一个transformer"></a>亲手实现一个transformer</h2><p>自注意力机制：</p>
-<ul>
-<li><strong><font style="color:rgb(44, 62, 80);">查询 (Query, Q)</font></strong><font style="color:rgb(52, 73, 94);">：代表当前词元，它正在主动地“查询”其他词元以获取信息。</font></li>
-<li><strong><font style="color:rgb(44, 62, 80);">键 (Key, K)</font></strong><font style="color:rgb(52, 73, 94);">：代表句子中可被查询的词元“标签”或“索引”。</font></li>
-<li><strong><font style="color:rgb(44, 62, 80);">值 (Value, V)</font></strong><font style="color:rgb(52, 73, 94);">：代表词元本身所携带的“内容”或“信息”。</font></li>
-</ul>
-<p><font style="color:rgb(52, 73, 94);">这三个向量都是由原始的词嵌入向量乘以三个不同的、可学习的权重矩阵 (W^Q,W^K,W^V</font><em><font style="color:rgb(52, 73, 94);">W^Q</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^K</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^V</font></em><font style="color:rgb(52, 73, 94);">) 得到的。整个计算过程可以分为以下几步，我们可以把它想象成一次高效的开卷考试：</font></p>
-<ul>
-<li><font style="color:rgb(52, 73, 94);">准备“考题”和“资料”：对于句子中的每个词，都通过权重矩阵生成其Q,K,V</font><em><font style="color:rgb(52, 73, 94);"></font></em><font style="color:rgb(52, 73, 94);">向量。</font></li>
-<li><font style="color:rgb(52, 73, 94);">计算相关性得分：要计算词A的新表示，就用词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的</font><em><font style="color:rgb(52, 73, 94);">Q</font></em><font style="color:rgb(52, 73, 94);">向量，去和句子中所有词（包括</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">自己）的</font><em><font style="color:rgb(52, 73, 94);">K</font></em><font style="color:rgb(52, 73, 94);">向量进行点积运算。这个得分反映了其他词对于理解词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的重要性。</font></li>
-<li><font style="color:rgb(52, 73, 94);">稳定化与归一化：将得到的所有分数除以一个缩放因子</font><font style="color:#DF2A3F;">\sqrt{d_k}</font><font style="color:rgb(52, 73, 94);">（是K向量的维度），以防止梯度过小，然后用Softmax函数将分数转换成总和为1的权重，也就是归一化的过程。</font></li>
-<li><font style="color:rgb(52, 73, 94);">加权求和：将上一步得到的权重分别乘以每个词对应的V向量，然后将所有结果相加。最终得到的向量，就是词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">融合了全局上下文信息后的新表示。</font></li>
-</ul>
-<p><font style="color:rgb(52, 73, 94);"></font></p>
-<ul>
-<li><font style="color:rgb(52, 73, 94);">自注意力机制（Self-Attention）的核心思想是什么？</font></li>
-<li><font style="color:rgb(52, 73, 94);">为什么Transformer能够并行处理序列，而RNN必须串行处理？位置编码（Positional Encoding）在其中起什么作用？</font></li>
-<li><font style="color:rgb(52, 73, 94);">Decoder-Only架构与完整的Encoder-Decoder架构有什么区别？为什么现在主流的大语言模型都采用Decoder-Only架构？</font></li>
-</ul>
-<p><font style="color:rgb(52, 73, 94);">答：</font></p>
-<ol>
-<li><font style="color:rgb(52, 73, 94);">Self-Attention 的核心思想</font></li>
-</ol>
-<p><font style="color:rgb(52, 73, 94);">核心就一句话：让序列中每个 token 都能“按需”查看其他 token，并动态决定关注谁、关注多少。</font></p>
-<p><font style="color:rgb(52, 73, 94);">更形式化一点：</font></p>
-<p><font style="color:rgb(52, 73, 94);">对每个 token，都会生成 Q（query）、K（key）、V（value）。<br></font><font style="color:rgb(52, 73, 94);">当前 token 用自己的 Q 去和所有 token 的 K 做相似度，得到一组权重（attention score）。<br></font><font style="color:rgb(52, 73, 94);">用这些权重对所有 token 的 V 做加权求和，得到当前 token 的新表示。<br></font><font style="color:rgb(52, 73, 94);">这带来的好处：</font></p>
-<p><font style="color:rgb(52, 73, 94);">能建模长距离依赖（句首和句尾可以直接交互）。<br></font><font style="color:rgb(52, 73, 94);">关注模式是数据驱动、上下文相关的，不是固定窗口。<br></font><font style="color:rgb(52, 73, 94);">多头注意力（Multi-Head）可以并行学习不同关系（语法、语义、指代等）。<br></font><font style="color:rgb(52, 73, 94);">2. 为什么 Transformer 能并行，RNN 必须串行？</font></p>
-<p><font style="color:rgb(52, 73, 94);">关键在计算依赖关系：</font></p>
-<p><font style="color:rgb(52, 73, 94);">RNN：<br></font><font style="color:rgb(52, 73, 94);">h_t &#x3D; f(x_t, h_{t-1})<br></font><font style="color:rgb(52, 73, 94);">第 t 步必须等 t-1 步算完，天然时间依赖，训练和推理都难并行（尤其训练时）。<br></font><font style="color:rgb(52, 73, 94);">Transformer（自注意力）：<br></font><font style="color:rgb(52, 73, 94);">一层内所有位置的 Q&#x2F;K&#x2F;V 可以同时算。<br></font><font style="color:rgb(52, 73, 94);">注意力矩阵本质是大规模矩阵乘法（GPU&#x2F;TPU 非常擅长），所以训练可高度并行。<br></font><font style="color:rgb(52, 73, 94);">即使是 Decoder 用了因果 mask，训练时仍可把整段序列一次性喂入，mask 保证“看不到未来”，所以仍能并行算整段 loss。<br></font><font style="color:rgb(52, 73, 94);">补一句：<br></font><font style="color:rgb(52, 73, 94);">Decoder 在生成阶段仍是逐 token 自回归（因为下一个 token 依赖已生成结果），但这和 RNN 的“每层每步都串行”不是一个层面的瓶颈，且可用 KV cache 大幅优化。</font></p>
-<ol start="3">
-<li><font style="color:rgb(52, 73, 94);">Positional Encoding 的作用</font></li>
-</ol>
-<p><font style="color:rgb(52, 73, 94);">因为纯自注意力本身对输入是“集合式”的，不知道顺序。<br></font><font style="color:rgb(52, 73, 94);">位置编码就是把“第几个词”信息注入模型，让模型区分：</font></p>
-<p><font style="color:rgb(52, 73, 94);">“猫追狗” vs “狗追猫”<br></font><font style="color:rgb(52, 73, 94);">邻近关系、远距关系、相对顺序等<br></font><font style="color:rgb(52, 73, 94);">常见做法：</font></p>
-<p><font style="color:rgb(52, 73, 94);">绝对位置编码（sin&#x2F;cos 或可学习向量）<br></font><font style="color:rgb(52, 73, 94);">相对位置编码（如 RoPE、ALiBi 一类思想）<br></font><font style="color:rgb(52, 73, 94);">它的本质作用：给注意力机制补上序列结构先验。</font></p>
-<ol start="4">
-<li><font style="color:rgb(52, 73, 94);">Decoder-Only vs Encoder-Decoder 的区别</font></li>
-</ol>
-<p><font style="color:rgb(52, 73, 94);">Encoder-Decoder（完整 Transformer）</font></p>
-<p><font style="color:rgb(52, 73, 94);">Encoder：双向看输入，得到源序列表征。<br></font><font style="color:rgb(52, 73, 94);">Decoder：带因果 mask，自回归生成输出，并通过 cross-attention 读取 encoder 输出。<br></font><font style="color:rgb(52, 73, 94);">典型任务：机器翻译、摘要、问答（输入-&gt;输出映射明确）。<br></font><font style="color:rgb(52, 73, 94);">Decoder-Only</font></p>
-<p><font style="color:rgb(52, 73, 94);">只有一个自回归 decoder 堆栈（causal self-attention）。<br></font><font style="color:rgb(52, 73, 94);">把“输入+输出”都当成同一串 token，训练目标是下一 token 预测。<br></font><font style="color:rgb(52, 73, 94);">典型代表：GPT 系列。<br></font><font style="color:rgb(52, 73, 94);">5. 为什么主流大语言模型多用 Decoder-Only？</font></p>
-<p><font style="color:rgb(52, 73, 94);">主要是工程与规模化优势叠加：</font></p>
-<p><font style="color:rgb(52, 73, 94);">统一目标简单且通用<br></font><font style="color:rgb(52, 73, 94);">直接做 next-token prediction，几乎所有文本都可用作训练数据，不需要复杂标注。</font></p>
-<p><font style="color:rgb(52, 73, 94);">训练管线更简单<br></font><font style="color:rgb(52, 73, 94);">一个网络、一个损失，适配海量互联网语料最自然，扩展到万亿 token 训练更直接。</font></p>
-<p><font style="color:rgb(52, 73, 94);">生成任务适配最好<br></font><font style="color:rgb(52, 73, 94);">聊天、写作、代码补全本质是连续生成，Decoder-Only 和使用场景高度一致。</font></p>
-<p><font style="color:rgb(52, 73, 94);">in-context learning 能力强<br></font><font style="color:rgb(52, 73, 94);">把指令、示例、上下文拼在 prompt 里即可完成多任务，减少任务特定头和复杂架构需求。</font></p>
-<p><font style="color:rgb(52, 73, 94);">推理系统成熟<br></font><font style="color:rgb(52, 73, 94);">KV cache、张量并行、流水并行、量化等优化在 Decoder-Only 上生态最成熟，部署成本更可控。</font></p>
-<p><font style="color:rgb(52, 73, 94);">不是说 Encoder-Decoder 过时：</font></p>
-<p><font style="color:rgb(52, 73, 94);">在一些“输入理解很重、输出相对短”的任务上（如高质量翻译）仍可能很强。<br></font><font style="color:rgb(52, 73, 94);">但在“统一大模型 + 通用生成”范式下，Decoder-Only 的性价比和扩展性目前最占优。</font></p>
-]]></content>
-      <categories>
-        <category>默认知识库</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>玩转语雀文档💡</title>
-    <url>/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/</url>
-    <content><![CDATA[<p>Hi，欢迎来到语雀～</p>
-<p>语雀文档是一个给个人和团队提供的写好文档的工具，我们希望每个人都可以快速、舒适的记录自己的所思所想，为此，语雀的文档编辑器提供了强大的能力。</p>
-<h3 id="文档：专注于编辑体验"><a href="#文档：专注于编辑体验" class="headerlink" title="文档：专注于编辑体验"></a>文档：专注于编辑体验</h3><ul>
-<li>我们提供了常用的字体设置能力，例如：调整字号大小、<strong>粗体</strong>、_斜体_、<u>下划线</u>、<del>删除线</del>、<code>代码</code>、**<font style="color:#FF4F3E;background-color:#FADB14;">颜色</font>**等，这些丰富的设置能力，可以让你的内容更清晰，更漂亮。</li>
-<li>如果你需要在文档中插入列表，语雀提供了“有序列表”和“无序列表”两种方式，我们这一段话使用的就是无序列表样式。</li>
-<li>你还可以用语雀文档记录待办事项，帮助你把要做的事记录下来，你只需点击✔️，就可以轻松记录这条待办的状态。以下就是待办样式。<ul>
-<li><input disabled="" type="checkbox"> 未完成项</li>
-<li><input checked="" disabled="" type="checkbox"> 已完成项</li>
-</ul>
-</li>
-<li>语雀文档还可以上传图片、表格、附件等等，让你在文档的世界游刃有余。认准绿色“+”号，他们都在这等你。</li>
-<li>以上提到所有功能，都可以在工具栏找到，里边还有更多神奇功能，待你挖掘。<ul>
-<li>移动端 app 的工具栏：</li>
-<li><img src="/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-0.png" class=""></li>
-<li>web 端的工具栏：</li>
-<li><img src="/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-1.png" class=""></li>
-</ul>
-</li>
-</ul>
-<h3 id="知识库：专注于文档整理"><a href="#知识库：专注于文档整理" class="headerlink" title="知识库：专注于文档整理"></a>知识库：专注于文档整理</h3><p>文档整理至关重要，做好文档整理，可以让你的知识真正积累起来，成为一生的财富，那如何利用语雀做好文档整理呢？</p>
-<p>语雀提供了“<strong>知识库</strong>”用来解决文档整理。知识库有点像电脑上的文件夹，用来存放你的文档。当一个知识库有多篇文档时，这个知识库会形成一个目录，这也是语雀的特色，可以让这个知识库变得井井有条。</p>
-<p>当你第一次使用语雀 app 时，可以点击最下边的“文档”，然后点击右上角的“+”新建知识库，再点击右上角“+”开始“新建文档”，开始你的书写✍🏻。为了方便你理解，请看下图。</p>
-<img src="/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-2.png" class="">
-
-<p>在 PC 端，新建知识库依然很方便，点击链接查看详情。<a href="https://www.yuque.com/yuque/thyzgp/gbdfpb">PC 端新建知识库</a></p>
-<h3 id="语雀还能做什么？"><a href="#语雀还能做什么？" class="headerlink" title="语雀还能做什么？"></a>语雀还能做什么？</h3><ul>
-<li>利用语雀，可以很好的做团队协同，做好团队的知识沉淀。<a href="https://www.yuque.com/about/organization">详情</a></li>
-<li>想要了解更多，查看👉<a href="https://www.yuque.com/about/help">语雀帮助中心</a></li>
-</ul>
-<h3 id="联系我们"><a href="#联系我们" class="headerlink" title="联系我们"></a>联系我们</h3><ul>
-<li>更多反馈和建议，请移步👉<a href="https://www.yuque.com/zze08m/topics">语雀移动端讨论区</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>默认知识库</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>类的优化学习</title>
     <url>/2024/05/07/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<hr>
@@ -5240,6 +5054,192 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       </categories>
       <tags>
         <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>&quot;[转载文章]菜鸟笔记之pwn工具篇--pwntools库的基本使用&quot;</title>
+    <url>/2025/01/13/OLD_%E8%BD%AC%E8%BD%BD%E7%9A%84pwntools%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[<hr>
+<p>date: 2025-01-13 20:28:45<br><font style="background-color:#f3bb2f;">原文章链接：</font><code>[菜鸟笔记之pwn工具篇--pwntools库的基本使用 - XiDP - 博客园](https://www.cnblogs.com/XiDP0/p/18445564)</code></p>
+<h2 id="啥是pwntools"><a href="#啥是pwntools" class="headerlink" title="啥是pwntools?"></a>啥是pwntools?</h2><p><strong>Pwntools</strong> 是一个用于漏洞利用和二进制分析的 <code>Python 库</code>，广泛应用于安全研究、渗透测试和竞争性编程（如 CTF，Capture The Flag）它为用户提供了一套强大的工具和功能，以<code>简化与二进制文件的交互</code>、<code>网络通信</code>以及各种<code>常见任务的执行</code>。</p>
+<p>简而言之，<code>pwntools</code>可以说是pwn手必备的工具，它帮助pwn手<code>连接远程服务器</code>，<code>发送信息</code>，<code>接收信息</code>，以及提供了很多工具来帮助pwn手快速攻克题目</p>
+<h2 id="如何安装pwntools"><a href="#如何安装pwntools" class="headerlink" title="如何安装pwntools?"></a>如何安装pwntools?</h2><p>按照以下流程在python3中安装pwntools</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; apt-get update</span><br><span class="line">&gt;&gt;&gt; apt-get install python3 python3-pip python3-dev git libssl-dev libffi-dev build-essential</span><br><span class="line">&gt;&gt;&gt; python3 -m pip install --upgrade pip</span><br><span class="line">&gt;&gt;&gt; python3 -m pip install --upgrade pwntools</span><br></pre></td></tr></table></figure>
+
+<h2 id="如何使用pwntools"><a href="#如何使用pwntools" class="headerlink" title="如何使用pwntools?"></a>如何使用pwntools?</h2><p>显然我们需要学会使用python,并在编写脚本的时候导入pwntools库</p>
+<h3 id="导入pwntools"><a href="#导入pwntools" class="headerlink" title="导入pwntools:"></a>导入pwntools:</h3><p>这大概会是每一个pwn手的编写脚本时的第一句话</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> * <span class="comment">#使用from来导入pwntools模块</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置基本信息"><a href="#设置基本信息" class="headerlink" title="设置基本信息:"></a>设置基本信息:</h3><p>在打靶机前需要按照靶机的类型设置好基本信息,因为<code>pwntools</code>中很多工具需要依靠<code>contest</code>来自动选择类型，比如<code>shellcraft(用于生成shellcode代码的工具)</code>等<br><code>os</code>是靶机的系统类型一般就是<code>linux系统</code><br><code>arch</code>是指题目的架构,我们可以使用<code>checksec</code>工具来查看具体的架构，一般是<code>AMD64</code>或<code>i386</code><br><code>log_level</code>是指日志输出等级，可以设置为<code>debug</code>或者直接不设置删掉也行，设置为debug在脚本运行的时候会输出我们具体发送了什么信息，靶机反馈了什么信息。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">context(os=<span class="string">&#x27;linux&#x27;</span>, arch=<span class="string">&#x27;AMD64&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="连接远程靶机"><a href="#连接远程靶机" class="headerlink" title="连接远程靶机:"></a>连接远程靶机:</h3><p>在pwn(1.0.0)中曾经介绍过，我们启动靶机后会得到一个靶机地址，把靶机地址的前缀和端口分别输入在<code>remote</code>里面，<code>ip</code>用<code>&#39;&#39;</code>包裹起来用逗号隔开<code>端口</code>，这样就实现了远程连接</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">用于连接远程服务器，并把连接到的进程命名为p，后续的函数都围绕这个p进程展开</span><br><span class="line">p = remote(<span class="string">&quot;ip&quot;</span>,port) </span><br><span class="line">比如:p = remote(<span class="string">&quot;node5.buuoj.cn&quot;</span>,<span class="number">5555</span>)</span><br></pre></td></tr></table></figure>
+
+<p>当然偶尔也有题目需要用ssh来连接靶机的</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">通过使用ssh来连接靶机</span><br><span class="line">p = ssh(host=<span class="string">&#x27;192.168.xx.xxx&#x27;</span>, user=<span class="string">&#x27;xidp&#x27;</span>, port=<span class="number">6666</span>, password=<span class="string">&#x27;88888888&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="本地调试"><a href="#本地调试" class="headerlink" title="本地调试:"></a>本地调试:</h3><p>在远程之前，我们可以在本地先进行一些测试,那么我们可以本地运行文件</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">本地调试程序,并且将进程命名为p</span><br><span class="line">p = process(<span class="string">&quot;文件名&quot;</span>)</span><br><span class="line">比如:p = process(<span class="string">&quot;./pwn&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="发送信息"><a href="#发送信息" class="headerlink" title="发送信息:"></a>发送信息:</h3><p>假设我们需要发送的是<code>payload</code>这个变量</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">**************************************************</span><br><span class="line">p.send(payload) <span class="comment"># 直接发送payload</span></span><br><span class="line">**************************************************</span><br><span class="line">p.sendline(payload) <span class="comment"># 发送payload，但是结尾会有一个\n</span></span><br><span class="line">**************************************************</span><br><span class="line">p.sendafter(<span class="string">&quot;string&quot;</span>, payload) <span class="comment"># 接收到 string (这里说的string可以替换成任何信息) 之后会发送payload，但是如果没有接收到string，那么就会导致脚本一直卡在这里不动</span></span><br><span class="line">**************************************************</span><br><span class="line">p.sendlineafer(<span class="string">&quot;string&quot;</span>, payload) <span class="comment"># 接收到 string 之后会发送payload 并且在payload最后添加\n</span></span><br></pre></td></tr></table></figure>
+
+<p>一般常用的发送就这几种，此时可能会有一个疑问，<code>p.send</code> 和 <code>p.sendline</code> 就差一个<code>\n</code>有什么区别?<br>有区别，比如<code>gets()</code>和<code>scanf()</code>这类函数它们会以<code>\n</code>作为结束符号，如果我们没有发送<code>\n</code>,它们就会一直卡着等待输入，所以遇到这类输入函数就必须要用<code>p.sendline</code>来添加<code>\n</code>(当然如果我们手动在payload里面添加<code>\n</code>也OK)。遇到<code>read()</code>这类函数则使用<code>p.sendline</code>和<code>p.send</code>都可以.</p>
+<p>那如果我们都使用<code>p.sendline</code>不就好了吗? NO，这并不好，比如我们遇到<code>read()</code>并且希望发送一些字符串比如<code>&quot;flag&quot;</code>,如果你用<code>p.send(&quot;flag&quot;)</code>那么没错你发送的是<code>flag</code>，计算机解析后是<code>\x67\x61\x6C\x66</code>，而如果你用的是<code>p.sendline(&quot;flag&quot;)</code>，则你发送的是<code>flag\n</code>,计算机解析后是<code>\x0a\x67\x61\x6C\x66</code>,这一点细节上的差距就可能导致我们的脚本无法打通，所以我们需要面对合适的函数使用合适的方法，后续我们将会继续讨论<code>read()、scanf()、fgets()和gets()</code>这类函数在输入的时候具体有什么区别</p>
+<h3 id="接收信息"><a href="#接收信息" class="headerlink" title="接收信息:"></a>接收信息:</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">**************************************************</span><br><span class="line">p.recv(<span class="built_in">int</span>) 利用recv来接收返回的数据，并且可以控制接受到的字节数</span><br><span class="line">比如:p.recv(<span class="number">7</span>) =&gt; 系统输出<span class="string">&#x27;hello world&#x27;</span> =&gt; 我们会接受到<span class="string">&#x27;hello w&#x27;</span> </span><br><span class="line">**************************************************</span><br><span class="line">p.recvline(<span class="string">&#x27;string&#x27;</span>) 设置一个标识符，接收标识符所在的那一行</span><br><span class="line">比如:p.recvline(<span class="string">&#x27;O.o&#x27;</span>)</span><br><span class="line"><span class="comment">#系统输出:</span></span><br><span class="line">Hello World </span><br><span class="line">This <span class="keyword">is</span> a test. </span><br><span class="line">O.o This <span class="keyword">is</span> the target line. </span><br><span class="line">Goodbye.</span><br><span class="line"><span class="comment">#我们接收:</span></span><br><span class="line">O.o This <span class="keyword">is</span> the target line. </span><br><span class="line">**************************************************</span><br><span class="line">p.recvlines(N) 接收 N 行输出</span><br><span class="line">**************************************************</span><br><span class="line">p.recvuntil(<span class="string">&#x27;string&#x27;</span>) 可以指定接收到某一字符串的时候停止 ,还有第二个参数 drop，drop=<span class="literal">True</span>(默认为false) 表示丢弃设定的停止符号</span><br><span class="line">比如:p.recvuntil(<span class="string">&#x27;or&#x27;</span>) </span><br><span class="line"><span class="comment">#系统输出:</span></span><br><span class="line">hello world </span><br><span class="line"><span class="comment">#我们接收:</span></span><br><span class="line">hello wor  </span><br><span class="line">比如:a = io.recvuntil(<span class="string">&#x27;]&#x27;</span>, drop=<span class="literal">True</span>)</span><br><span class="line">就是一直获取到`]`符号出现就停止，并且不接收`]`符号</span><br><span class="line">**************************************************</span><br></pre></td></tr></table></figure>
+
+<h3 id="传递到终端"><a href="#传递到终端" class="headerlink" title="传递到终端:"></a>传递到终端:</h3><p>大概是每个脚本的最后一句话</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">p.interactive()</span><br><span class="line">接受信息并且在终端操作，程序拿到shell，然后就可以转接到linux终端上，让pwn手享受拿flag的乐趣</span><br></pre></td></tr></table></figure>
+
+<h3 id="构造发送地址类型"><a href="#构造发送地址类型" class="headerlink" title="构造发送地址类型:"></a>构造发送地址类型:</h3><p><code>p64/p32/u64/u32</code>这类函数的作用:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">**************************************************</span><br><span class="line">p64(<span class="built_in">int</span>) </span><br><span class="line">p64(<span class="number">0xfaceb00c</span>) =&gt; <span class="string">&#x27;\x0c\xb0\xce\xfa\x00\x00\x00\x00\x00&#x27;</span></span><br><span class="line">**************************************************</span><br><span class="line">u64(<span class="built_in">str</span>) </span><br><span class="line">u64(<span class="string">&#x27;\x0c\xb0\xce\xfa\x00\x00\x00\x00&#x27;</span>) =&gt;<span class="number">0xfaceb00c</span></span><br><span class="line">**************************************************</span><br><span class="line">p32(<span class="built_in">int</span>)  </span><br><span class="line">p32(<span class="number">0xfaceb00c</span>) =&gt; <span class="string">&#x27;\x0c\xb0\xce\xfa&#x27;</span></span><br><span class="line">**************************************************</span><br><span class="line">u32(<span class="built_in">str</span>) </span><br><span class="line">u32(<span class="string">&#x27;\x0c\xb0\xce\xfa&#x27;</span>) =&gt; <span class="number">0xfaceb00c</span></span><br><span class="line">**************************************************</span><br></pre></td></tr></table></figure>
+
+<p><code>p64()</code>这种类型用于将消息变成对应的进制流（因为原本程序里面的数据都是已经编译过的，所以打入的数据也需要是编译过的,所以需要使用p64()这类工具）<br><code>u64()</code>这种类型<code>用于泄露地址</code>的时候将泄露的进制流变成对应的原本的样子，方便来辨认查找glibc版本</p>
+<p>因为一般计算机都是小端程序，所以这两个函数都自带有将数据变成小端需要的样子，如果遇到大端程序可能需要额外注意</p>
+<p>除了<code>p32()</code>这种转化方式还有，<code>flat()</code>，它可以将多个数据结构（如字符串、整数等）连接在一起，并将它们转换为二进制数据。通常用于构建复杂的ROP链的<code>shellcode</code>。flat 函数会将数据扁平化，将它们按照顺序连接在一起，不做任何其他处理。在提供的代码中，<code>flat</code> 被用于构建一个包含多个元素的列表，然后将它们连接起来形成一个二进制数据。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">payload = flat([<span class="number">0x12345678</span>, <span class="string">&#x27;AAAA&#x27;</span>, <span class="number">0xdeadbeef</span>], word_size=<span class="number">4</span>/<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="的汇编与反汇编"><a href="#的汇编与反汇编" class="headerlink" title="的汇编与反汇编:"></a>的汇编与反汇编:</h4><p>pwntools提供了两个工具:<br><code>asm</code>函数可以将汇编代码转为对应的二进制<br><code>disasm</code>函数则相反可以将二进制转化为汇编代码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>asm(<span class="string">&#x27;mov eax, 0&#x27;</span>)   <span class="comment">#汇编</span></span><br><span class="line"><span class="string">&#x27;\xb8\x00\x00\x00\x00&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>disasm(<span class="string">&#x27;\xb8\x0b\x00\x00\x00&#x27;</span>)  <span class="comment">#反汇编</span></span><br><span class="line"><span class="string">&#x27;mov    eax,0xb&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="生成shllcode后门"><a href="#生成shllcode后门" class="headerlink" title="生成shllcode后门:"></a>生成shllcode后门:</h4><p><strong>pwnlib.shellcraft模块</strong>包含<strong>生成shell代码</strong>的函数。<br>在使用之前我们需要通过<strong>context设置架构</strong>，然后<strong>生成shellcode</strong>也就是生成后门</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">context(os=<span class="string">&#x27;linux&#x27;</span>, arch=<span class="string">&#x27;i386&#x27;</span>)</span><br><span class="line"><span class="comment"># 表示将当前执行上下文的体系结构设置为i386(这里的i386可以通过checksec来查看文件是什么架构的  </span></span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"><span class="comment"># asm()是把括号内的内容编译成机器码(只有机器码才可以执行)，一般用来打入后门。pwntools自带的后门函数，可以生成类似system(&#x27;/bin/sh/&#x27;)这样功能的汇编代码 </span></span><br><span class="line"><span class="comment"># 通常可以配合  .ljust() 来使用  </span></span><br><span class="line">shellcode.ljust(<span class="number">112</span>, <span class="string">b&#x27;A&#x27;</span>)  </span><br><span class="line"><span class="comment"># 这里的 .ljust() 是 Python 中字符串对象的方法，用于在字符串的右侧填充指定的字符，使字符串达到指定的长度。</span></span><br></pre></td></tr></table></figure>
+
+<p>纯净版shellcode</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;i386&#x27;</span>, os=<span class="string">&#x27;linux&#x27;</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">shellcode.ljust(<span class="number">112</span>, <span class="string">b&#x27;A&#x27;</span>)  </span><br></pre></td></tr></table></figure>
+
+<p>当然也有专门的网站收集shellcode<br>shellcode的网址：<br> <a href="https://www.exploit-db.com/shellcodes/43550">https://www.exploit-db.com/shellcodes/43550</a><br>下面也提供一些已经编译好的shellcode:<br>64位linux的24Byte的shellcode</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">shellcode_x64 =<span class="string">&quot;\x6a\x3b\x58\x99\x52\x48\xbb\x2f\x2f\x62\x69\x6e\x2f\x73\x68\x53\x54\x5f\x52\x57\x54\x5e\x0f\x05&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>64位Linux的23Byte的shellcode</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">shellcode_x64 =<span class="string">&quot;\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>更多的时候根据题目的要求，我们需要自己手动编写shellcode来绕过一些检测，所以编写<code>shellcode</code>是后续必须要掌握的一种技巧</p>
+<p>运行时调用gdb调试:<br>使用<code>gdb.attach</code>函数</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">gdb.attach(p, gdbscript=<span class="string">&quot;&quot;&quot; b main; commands; silent printf &quot;Breakpoint hit\n&quot;; continue; end &quot;&quot;&quot;</span>)</span><br><span class="line">在需要进行调试的位置插入gdb.attach(p)即可在执行到的时候打开gdb进行调试</span><br><span class="line">p是指定的需要调试的进程(必须要本地调试，否则会报错)</span><br><span class="line">gdbscript是打开gdb后需要进行的操作，使用 ; 进行隔离</span><br></pre></td></tr></table></figure>
+
+<p>一般<code>gdb.attach(p)</code>可以和<code>pause()</code>函数连用，可以确保在gdb完全打开之前脚本不运行<br><code>pause()</code>函数用于暂停脚本的运行，直到用户输入任意数据</p>
+<h4 id="ELF模块"><a href="#ELF模块" class="headerlink" title="ELF模块:"></a>ELF模块:</h4><p>我们可以通过这个模块来快速获取pwn文件的<code>got表地址</code>以及<code>plt表地址</code><br>用于获取<code>ELF文件的信息</code>，首先使用<code>ELF()</code>获取这个文件的句柄，然后使用这个句柄调用函数，和IO模块很相似。<br>下面演示了：获取基地址、获取函数地址（基于符号）、获取函数got地址、获取函数plt地址，和LibcSearcher库联动使用</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">elf = ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"></span><br><span class="line">elf.address <span class="comment"># 文件装载的基地址 =&gt; 0x400000</span></span><br><span class="line"></span><br><span class="line">main_addr = elf.symbols[<span class="string">&#x27;main&#x27;</span>] <span class="comment"># 获取函数地址 =&gt; 0x401680</span></span><br><span class="line"></span><br><span class="line">write_got = elf.got[<span class="string">&#x27;write&#x27;</span>] <span class="comment"># 获取对应函数在GOT表的地址 =&gt; 0x60b070</span></span><br><span class="line"></span><br><span class="line">write_plt = elf.plt[<span class="string">&#x27;write&#x27;</span>] <span class="comment"># 获取对应函数在PLT表的地址 =&gt; 0x401680</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>How to learn _hello agent_</title>
+    <url>/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_How%20to%20learn%20_hello%20agent_/</url>
+    <content><![CDATA[<p>_<strong>agent</strong>_是什么？</p>
+<p>能自主收集信息思考后做出反应的智能体,要求运行的每步都有_thought_与_action_，</p>
+<p>利用在线模型和在线api供应商<br><strong>推理时代</strong></p>
+<p><strong>tavily</strong></p>
+<hr>
+<hr>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>如何生成一个简单的旅游推荐agent？  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AGENT_SYSTEM_PROMPT = &quot;&quot;&quot;</span><br><span class="line">你是一个智能旅行助手。你的任务是分析用户的请求，并使用可用工具一步步地解决问题。</span><br><span class="line"></span><br><span class="line"># 可用工具:</span><br><span class="line">- `get_weather(city: str)`: 查询指定城市的实时天气。</span><br><span class="line">- `get_attraction(city: str, weather: str)`: 根据城市和天气搜索推荐的旅游景点。</span><br><span class="line"></span><br><span class="line"># 输出格式要求:</span><br><span class="line">你的每次回复必须严格遵循以下格式，包含一对Thought和Action：</span><br><span class="line"></span><br><span class="line">Thought: [你的思考过程和下一步计划]</span><br><span class="line">Action: [你要执行的具体行动]</span><br><span class="line"></span><br><span class="line">Action的格式必须是以下之一：</span><br><span class="line">1. 调用工具：function_name(arg_name=&quot;arg_value&quot;)</span><br><span class="line">2. 结束任务：Finish[最终答案]</span><br><span class="line"></span><br><span class="line"># 重要提示:</span><br><span class="line">- 每次只输出一对Thought-Action</span><br><span class="line">- Action必须在同一行，不要换行</span><br><span class="line">- 当收集到足够信息可以回答用户问题时，必须使用 Action: Finish[最终答案] 格式结束</span><br><span class="line"></span><br><span class="line">请开始吧！</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">from pathlib import Path</span><br><span class="line"></span><br><span class="line">def get_weather(city: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    通过调用 wttr.in API 查询真实的天气信息。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # API端点，我们请求JSON格式的数据</span><br><span class="line">    url = f&quot;https://wttr.in/&#123;city&#125;?format=j1&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 发起网络请求</span><br><span class="line">        response = requests.get(url)</span><br><span class="line">        # 检查响应状态码是否为200 (成功)</span><br><span class="line">        response.raise_for_status() </span><br><span class="line">        # 解析返回的JSON数据</span><br><span class="line">        data = response.json()</span><br><span class="line">        </span><br><span class="line">        # 提取当前天气状况</span><br><span class="line">        current_condition = data[&#x27;current_condition&#x27;][0]</span><br><span class="line">        weather_desc = current_condition[&#x27;weatherDesc&#x27;][0][&#x27;value&#x27;]</span><br><span class="line">        temp_c = current_condition[&#x27;temp_C&#x27;]</span><br><span class="line">        </span><br><span class="line">        # 格式化成自然语言返回</span><br><span class="line">        return f&quot;&#123;city&#125;当前天气:&#123;weather_desc&#125;，气温&#123;temp_c&#125;摄氏度&quot;</span><br><span class="line">        </span><br><span class="line">    except requests.exceptions.RequestException as e:</span><br><span class="line">        # 处理网络错误</span><br><span class="line">        return f&quot;错误:查询天气时遇到网络问题 - &#123;e&#125;&quot;</span><br><span class="line">    except (KeyError, IndexError) as e:</span><br><span class="line">        # 处理数据解析错误</span><br><span class="line">        return f&quot;错误:解析天气数据失败，可能是城市名称无效 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">from tavily import TavilyClient</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def load_root_env() -&gt; None:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    从项目根目录加载 .env 文件到环境变量。</span><br><span class="line">    ez_2.py 位于 chapter_1 下，所以根目录是上一级目录。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    env_path = Path(__file__).resolve().parents[1] / &quot;.env&quot;</span><br><span class="line">    if not env_path.exists():</span><br><span class="line">        print(f&quot;警告: 未找到环境变量文件 &#123;env_path&#125;&quot;)</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">    for raw_line in env_path.read_text(encoding=&quot;utf-8&quot;).splitlines():</span><br><span class="line">        line = raw_line.strip()</span><br><span class="line">        if not line or line.startswith(&quot;#&quot;) or &quot;=&quot; not in line:</span><br><span class="line">            continue</span><br><span class="line"></span><br><span class="line">        key, value = line.split(&quot;=&quot;, 1)</span><br><span class="line">        key = key.strip()</span><br><span class="line">        value = value.strip().strip(&#x27;&quot;&#x27;).strip(&quot;&#x27;&quot;)</span><br><span class="line">        os.environ.setdefault(key, value)</span><br><span class="line"></span><br><span class="line">def get_attraction(city: str, weather: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    根据城市和天气，使用Tavily Search API搜索并返回优化后的景点推荐。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # 1. 从环境变量中读取API密钥</span><br><span class="line">    api_key = os.environ.get(&quot;TAVILY_API_KEY&quot;)</span><br><span class="line">    if not api_key:</span><br><span class="line">        return &quot;错误:未配置TAVILY_API_KEY环境变量。&quot;</span><br><span class="line"></span><br><span class="line">    # 2. 初始化Tavily客户端</span><br><span class="line">    tavily = TavilyClient(api_key=api_key)</span><br><span class="line">    </span><br><span class="line">    # 3. 构造一个精确的查询</span><br><span class="line">    query = f&quot;&#x27;&#123;city&#125;&#x27; 在&#x27;&#123;weather&#125;&#x27;天气下最值得去的旅游景点推荐及理由&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 4. 调用API，include_answer=True会返回一个综合性的回答</span><br><span class="line">        response = tavily.search(query=query, search_depth=&quot;basic&quot;, include_answer=True)</span><br><span class="line">        </span><br><span class="line">        # 5. Tavily返回的结果已经非常干净，可以直接使用</span><br><span class="line">        # response[&#x27;answer&#x27;] 是一个基于所有搜索结果的总结性回答</span><br><span class="line">        if response.get(&quot;answer&quot;):</span><br><span class="line">            return response[&quot;answer&quot;]</span><br><span class="line">        </span><br><span class="line">        # 如果没有综合性回答，则格式化原始结果</span><br><span class="line">        formatted_results = []</span><br><span class="line">        for result in response.get(&quot;results&quot;, []):</span><br><span class="line">            formatted_results.append(f&quot;- &#123;result[&#x27;title&#x27;]&#125;: &#123;result[&#x27;content&#x27;]&#125;&quot;)</span><br><span class="line">        </span><br><span class="line">        if not formatted_results:</span><br><span class="line">             return &quot;抱歉，没有找到相关的旅游景点推荐。&quot;</span><br><span class="line"></span><br><span class="line">        return &quot;根据搜索，为您找到以下信息:\n&quot; + &quot;\n&quot;.join(formatted_results)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        return f&quot;错误:执行Tavily搜索时出现问题 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 将所有工具函数放入一个字典，方便后续调用</span><br><span class="line">available_tools = &#123;</span><br><span class="line">    &quot;get_weather&quot;: get_weather,</span><br><span class="line">    &quot;get_attraction&quot;: get_attraction,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">from openai import OpenAI</span><br><span class="line"></span><br><span class="line">class OpenAICompatibleClient:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    一个用于调用任何兼容OpenAI接口的LLM服务的客户端。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def __init__(self, model: str, api_key: str, base_url: str):</span><br><span class="line">        self.model = model</span><br><span class="line">        self.client = OpenAI(api_key=api_key, base_url=base_url)</span><br><span class="line"></span><br><span class="line">    def generate(self, prompt: str, system_prompt: str) -&gt; str:</span><br><span class="line">        &quot;&quot;&quot;调用LLM API来生成回应。&quot;&quot;&quot;</span><br><span class="line">        print(&quot;正在调用大语言模型...&quot;)</span><br><span class="line">        try:</span><br><span class="line">            messages = [</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;system&#x27;, &#x27;content&#x27;: system_prompt&#125;,</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;user&#x27;, &#x27;content&#x27;: prompt&#125;</span><br><span class="line">            ]</span><br><span class="line">            response = self.client.chat.completions.create(</span><br><span class="line">                model=self.model,</span><br><span class="line">                messages=messages,</span><br><span class="line">                stream=False</span><br><span class="line">            )</span><br><span class="line">            answer = response.choices[0].message.content</span><br><span class="line">            print(&quot;大语言模型响应成功。&quot;)</span><br><span class="line">            return answer</span><br><span class="line">        except Exception as e:</span><br><span class="line">            print(f&quot;调用LLM API时发生错误: &#123;e&#125;&quot;)</span><br><span class="line">            return &quot;错误:调用语言模型服务时出错。&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import re</span><br><span class="line"></span><br><span class="line"># --- 1. 配置LLM客户端 ---</span><br><span class="line"># 从根目录 .env 加载配置</span><br><span class="line">load_root_env()</span><br><span class="line"></span><br><span class="line">API_KEY = os.environ.get(&quot;OPENAI_API_KEY&quot;)</span><br><span class="line">BASE_URL = os.environ.get(&quot;OPENAI_BASE_URL&quot;)</span><br><span class="line">MODEL_ID = os.environ.get(&quot;MODEL_NAME&quot;)</span><br><span class="line"></span><br><span class="line">missing_keys = [</span><br><span class="line">    key for key, value in &#123;</span><br><span class="line">        &quot;OPENAI_API_KEY&quot;: API_KEY,</span><br><span class="line">        &quot;OPENAI_BASE_URL&quot;: BASE_URL,</span><br><span class="line">        &quot;MODEL_NAME&quot;: MODEL_ID,</span><br><span class="line">        &quot;TAVILY_API_KEY&quot;: os.environ.get(&quot;TAVILY_API_KEY&quot;),</span><br><span class="line">    &#125;.items() if not value</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">if missing_keys:</span><br><span class="line">    raise ValueError(f&quot;缺少环境变量: &#123;&#x27;, &#x27;.join(missing_keys)&#125;。请检查根目录 .env 文件。&quot;)</span><br><span class="line"></span><br><span class="line">llm = OpenAICompatibleClient(</span><br><span class="line">    model=MODEL_ID,</span><br><span class="line">    api_key=API_KEY,</span><br><span class="line">    base_url=BASE_URL</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># --- 2. 初始化 ---</span><br><span class="line">user_prompt = &quot;你好，请帮我查询一下今天北京的天气，然后根据天气推荐一个合适的旅游景点。&quot;</span><br><span class="line">prompt_history = [f&quot;用户请求: &#123;user_prompt&#125;&quot;]</span><br><span class="line"></span><br><span class="line">print(f&quot;用户输入: &#123;user_prompt&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line"></span><br><span class="line"># --- 3. 运行主循环 ---</span><br><span class="line">for i in range(5): # 设置最大循环次数</span><br><span class="line">    print(f&quot;--- 循环 &#123;i+1&#125; ---\n&quot;)</span><br><span class="line">    </span><br><span class="line">    # 3.1. 构建Prompt</span><br><span class="line">    full_prompt = &quot;\n&quot;.join(prompt_history)</span><br><span class="line">    </span><br><span class="line">    # 3.2. 调用LLM进行思考</span><br><span class="line">    llm_output = llm.generate(full_prompt, system_prompt=AGENT_SYSTEM_PROMPT)</span><br><span class="line">    # 模型可能会输出多余的Thought-Action，需要截断</span><br><span class="line">    match = re.search(r&#x27;(Thought:.*?Action:.*?)(?=\n\s*(?:Thought:|Action:|Observation:)|\Z)&#x27;, llm_output, re.DOTALL)</span><br><span class="line">    if match:</span><br><span class="line">        truncated = match.group(1).strip()</span><br><span class="line">        if truncated != llm_output.strip():</span><br><span class="line">            llm_output = truncated</span><br><span class="line">            print(&quot;已截断多余的 Thought-Action 对&quot;)</span><br><span class="line">    print(f&quot;模型输出:\n&#123;llm_output&#125;\n&quot;)</span><br><span class="line">    prompt_history.append(llm_output)</span><br><span class="line">    </span><br><span class="line">    # 3.3. 解析并执行行动</span><br><span class="line">    action_match = re.search(r&quot;Action: (.*)&quot;, llm_output, re.DOTALL)</span><br><span class="line">    if not action_match:</span><br><span class="line">        observation = &quot;错误: 未能解析到 Action 字段。请确保你的回复严格遵循 &#x27;Thought: ... Action: ...&#x27; 的格式。&quot;</span><br><span class="line">        observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">        print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">        prompt_history.append(observation_str)</span><br><span class="line">        continue</span><br><span class="line">    action_str = action_match.group(1).strip()</span><br><span class="line"></span><br><span class="line">    if action_str.startswith(&quot;Finish&quot;):</span><br><span class="line">        final_answer = re.match(r&quot;Finish\[(.*)\]&quot;, action_str).group(1)</span><br><span class="line">        print(f&quot;任务完成，最终答案: &#123;final_answer&#125;&quot;)</span><br><span class="line">        break</span><br><span class="line">    </span><br><span class="line">    tool_name = re.search(r&quot;(\w+)\(&quot;, action_str).group(1)</span><br><span class="line">    args_str = re.search(r&quot;\((.*)\)&quot;, action_str).group(1)</span><br><span class="line">    kwargs = dict(re.findall(r&#x27;(\w+)=&quot;([^&quot;]*)&quot;&#x27;, args_str))</span><br><span class="line"></span><br><span class="line">    if tool_name in available_tools:</span><br><span class="line">        observation = available_tools[tool_name](**kwargs)</span><br><span class="line">    else:</span><br><span class="line">        observation = f&quot;错误:未定义的工具 &#x27;&#123;tool_name&#125;&#x27;&quot;</span><br><span class="line"></span><br><span class="line">    # 3.4. 记录观察结果</span><br><span class="line">    observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">    print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">    prompt_history.append(observation_str)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>workflow和agent的区别是什么？</p>
+<h2 id="亲手实现一个transformer"><a href="#亲手实现一个transformer" class="headerlink" title="亲手实现一个transformer"></a>亲手实现一个transformer</h2><p>自注意力机制：</p>
+<ul>
+<li><strong><font style="color:rgb(44, 62, 80);">查询 (Query, Q)</font></strong><font style="color:rgb(52, 73, 94);">：代表当前词元，它正在主动地“查询”其他词元以获取信息。</font></li>
+<li><strong><font style="color:rgb(44, 62, 80);">键 (Key, K)</font></strong><font style="color:rgb(52, 73, 94);">：代表句子中可被查询的词元“标签”或“索引”。</font></li>
+<li><strong><font style="color:rgb(44, 62, 80);">值 (Value, V)</font></strong><font style="color:rgb(52, 73, 94);">：代表词元本身所携带的“内容”或“信息”。</font></li>
+</ul>
+<p><font style="color:rgb(52, 73, 94);">这三个向量都是由原始的词嵌入向量乘以三个不同的、可学习的权重矩阵 (W^Q,W^K,W^V</font><em><font style="color:rgb(52, 73, 94);">W^Q</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^K</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^V</font></em><font style="color:rgb(52, 73, 94);">) 得到的。整个计算过程可以分为以下几步，我们可以把它想象成一次高效的开卷考试：</font></p>
+<ul>
+<li><font style="color:rgb(52, 73, 94);">准备“考题”和“资料”：对于句子中的每个词，都通过权重矩阵生成其Q,K,V</font><em><font style="color:rgb(52, 73, 94);"></font></em><font style="color:rgb(52, 73, 94);">向量。</font></li>
+<li><font style="color:rgb(52, 73, 94);">计算相关性得分：要计算词A的新表示，就用词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的</font><em><font style="color:rgb(52, 73, 94);">Q</font></em><font style="color:rgb(52, 73, 94);">向量，去和句子中所有词（包括</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">自己）的</font><em><font style="color:rgb(52, 73, 94);">K</font></em><font style="color:rgb(52, 73, 94);">向量进行点积运算。这个得分反映了其他词对于理解词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的重要性。</font></li>
+<li><font style="color:rgb(52, 73, 94);">稳定化与归一化：将得到的所有分数除以一个缩放因子</font><font style="color:#DF2A3F;">\sqrt{d_k}</font><font style="color:rgb(52, 73, 94);">（是K向量的维度），以防止梯度过小，然后用Softmax函数将分数转换成总和为1的权重，也就是归一化的过程。</font></li>
+<li><font style="color:rgb(52, 73, 94);">加权求和：将上一步得到的权重分别乘以每个词对应的V向量，然后将所有结果相加。最终得到的向量，就是词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">融合了全局上下文信息后的新表示。</font></li>
+</ul>
+<p><font style="color:rgb(52, 73, 94);"></font></p>
+<ul>
+<li><font style="color:rgb(52, 73, 94);">自注意力机制（Self-Attention）的核心思想是什么？</font></li>
+<li><font style="color:rgb(52, 73, 94);">为什么Transformer能够并行处理序列，而RNN必须串行处理？位置编码（Positional Encoding）在其中起什么作用？</font></li>
+<li><font style="color:rgb(52, 73, 94);">Decoder-Only架构与完整的Encoder-Decoder架构有什么区别？为什么现在主流的大语言模型都采用Decoder-Only架构？</font></li>
+</ul>
+<p><font style="color:rgb(52, 73, 94);">答：</font></p>
+<ol>
+<li><font style="color:rgb(52, 73, 94);">Self-Attention 的核心思想</font></li>
+</ol>
+<p><font style="color:rgb(52, 73, 94);">核心就一句话：让序列中每个 token 都能“按需”查看其他 token，并动态决定关注谁、关注多少。</font></p>
+<p><font style="color:rgb(52, 73, 94);">更形式化一点：</font></p>
+<p><font style="color:rgb(52, 73, 94);">对每个 token，都会生成 Q（query）、K（key）、V（value）。<br></font><font style="color:rgb(52, 73, 94);">当前 token 用自己的 Q 去和所有 token 的 K 做相似度，得到一组权重（attention score）。<br></font><font style="color:rgb(52, 73, 94);">用这些权重对所有 token 的 V 做加权求和，得到当前 token 的新表示。<br></font><font style="color:rgb(52, 73, 94);">这带来的好处：</font></p>
+<p><font style="color:rgb(52, 73, 94);">能建模长距离依赖（句首和句尾可以直接交互）。<br></font><font style="color:rgb(52, 73, 94);">关注模式是数据驱动、上下文相关的，不是固定窗口。<br></font><font style="color:rgb(52, 73, 94);">多头注意力（Multi-Head）可以并行学习不同关系（语法、语义、指代等）。<br></font><font style="color:rgb(52, 73, 94);">2. 为什么 Transformer 能并行，RNN 必须串行？</font></p>
+<p><font style="color:rgb(52, 73, 94);">关键在计算依赖关系：</font></p>
+<p><font style="color:rgb(52, 73, 94);">RNN：<br></font><font style="color:rgb(52, 73, 94);">h_t &#x3D; f(x_t, h_{t-1})<br></font><font style="color:rgb(52, 73, 94);">第 t 步必须等 t-1 步算完，天然时间依赖，训练和推理都难并行（尤其训练时）。<br></font><font style="color:rgb(52, 73, 94);">Transformer（自注意力）：<br></font><font style="color:rgb(52, 73, 94);">一层内所有位置的 Q&#x2F;K&#x2F;V 可以同时算。<br></font><font style="color:rgb(52, 73, 94);">注意力矩阵本质是大规模矩阵乘法（GPU&#x2F;TPU 非常擅长），所以训练可高度并行。<br></font><font style="color:rgb(52, 73, 94);">即使是 Decoder 用了因果 mask，训练时仍可把整段序列一次性喂入，mask 保证“看不到未来”，所以仍能并行算整段 loss。<br></font><font style="color:rgb(52, 73, 94);">补一句：<br></font><font style="color:rgb(52, 73, 94);">Decoder 在生成阶段仍是逐 token 自回归（因为下一个 token 依赖已生成结果），但这和 RNN 的“每层每步都串行”不是一个层面的瓶颈，且可用 KV cache 大幅优化。</font></p>
+<ol start="3">
+<li><font style="color:rgb(52, 73, 94);">Positional Encoding 的作用</font></li>
+</ol>
+<p><font style="color:rgb(52, 73, 94);">因为纯自注意力本身对输入是“集合式”的，不知道顺序。<br></font><font style="color:rgb(52, 73, 94);">位置编码就是把“第几个词”信息注入模型，让模型区分：</font></p>
+<p><font style="color:rgb(52, 73, 94);">“猫追狗” vs “狗追猫”<br></font><font style="color:rgb(52, 73, 94);">邻近关系、远距关系、相对顺序等<br></font><font style="color:rgb(52, 73, 94);">常见做法：</font></p>
+<p><font style="color:rgb(52, 73, 94);">绝对位置编码（sin&#x2F;cos 或可学习向量）<br></font><font style="color:rgb(52, 73, 94);">相对位置编码（如 RoPE、ALiBi 一类思想）<br></font><font style="color:rgb(52, 73, 94);">它的本质作用：给注意力机制补上序列结构先验。</font></p>
+<ol start="4">
+<li><font style="color:rgb(52, 73, 94);">Decoder-Only vs Encoder-Decoder 的区别</font></li>
+</ol>
+<p><font style="color:rgb(52, 73, 94);">Encoder-Decoder（完整 Transformer）</font></p>
+<p><font style="color:rgb(52, 73, 94);">Encoder：双向看输入，得到源序列表征。<br></font><font style="color:rgb(52, 73, 94);">Decoder：带因果 mask，自回归生成输出，并通过 cross-attention 读取 encoder 输出。<br></font><font style="color:rgb(52, 73, 94);">典型任务：机器翻译、摘要、问答（输入-&gt;输出映射明确）。<br></font><font style="color:rgb(52, 73, 94);">Decoder-Only</font></p>
+<p><font style="color:rgb(52, 73, 94);">只有一个自回归 decoder 堆栈（causal self-attention）。<br></font><font style="color:rgb(52, 73, 94);">把“输入+输出”都当成同一串 token，训练目标是下一 token 预测。<br></font><font style="color:rgb(52, 73, 94);">典型代表：GPT 系列。<br></font><font style="color:rgb(52, 73, 94);">5. 为什么主流大语言模型多用 Decoder-Only？</font></p>
+<p><font style="color:rgb(52, 73, 94);">主要是工程与规模化优势叠加：</font></p>
+<p><font style="color:rgb(52, 73, 94);">统一目标简单且通用<br></font><font style="color:rgb(52, 73, 94);">直接做 next-token prediction，几乎所有文本都可用作训练数据，不需要复杂标注。</font></p>
+<p><font style="color:rgb(52, 73, 94);">训练管线更简单<br></font><font style="color:rgb(52, 73, 94);">一个网络、一个损失，适配海量互联网语料最自然，扩展到万亿 token 训练更直接。</font></p>
+<p><font style="color:rgb(52, 73, 94);">生成任务适配最好<br></font><font style="color:rgb(52, 73, 94);">聊天、写作、代码补全本质是连续生成，Decoder-Only 和使用场景高度一致。</font></p>
+<p><font style="color:rgb(52, 73, 94);">in-context learning 能力强<br></font><font style="color:rgb(52, 73, 94);">把指令、示例、上下文拼在 prompt 里即可完成多任务，减少任务特定头和复杂架构需求。</font></p>
+<p><font style="color:rgb(52, 73, 94);">推理系统成熟<br></font><font style="color:rgb(52, 73, 94);">KV cache、张量并行、流水并行、量化等优化在 Decoder-Only 上生态最成熟，部署成本更可控。</font></p>
+<p><font style="color:rgb(52, 73, 94);">不是说 Encoder-Decoder 过时：</font></p>
+<p><font style="color:rgb(52, 73, 94);">在一些“输入理解很重、输出相对短”的任务上（如高质量翻译）仍可能很强。<br></font><font style="color:rgb(52, 73, 94);">但在“统一大模型 + 通用生成”范式下，Decoder-Only 的性价比和扩展性目前最占优。</font></p>
+]]></content>
+      <categories>
+        <category>默认知识库</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>玩转语雀文档💡</title>
+    <url>/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/</url>
+    <content><![CDATA[<p>Hi，欢迎来到语雀～</p>
+<p>语雀文档是一个给个人和团队提供的写好文档的工具，我们希望每个人都可以快速、舒适的记录自己的所思所想，为此，语雀的文档编辑器提供了强大的能力。</p>
+<h3 id="文档：专注于编辑体验"><a href="#文档：专注于编辑体验" class="headerlink" title="文档：专注于编辑体验"></a>文档：专注于编辑体验</h3><ul>
+<li>我们提供了常用的字体设置能力，例如：调整字号大小、<strong>粗体</strong>、_斜体_、<u>下划线</u>、<del>删除线</del>、<code>代码</code>、**<font style="color:#FF4F3E;background-color:#FADB14;">颜色</font>**等，这些丰富的设置能力，可以让你的内容更清晰，更漂亮。</li>
+<li>如果你需要在文档中插入列表，语雀提供了“有序列表”和“无序列表”两种方式，我们这一段话使用的就是无序列表样式。</li>
+<li>你还可以用语雀文档记录待办事项，帮助你把要做的事记录下来，你只需点击✔️，就可以轻松记录这条待办的状态。以下就是待办样式。<ul>
+<li><input disabled="" type="checkbox"> 未完成项</li>
+<li><input checked="" disabled="" type="checkbox"> 已完成项</li>
+</ul>
+</li>
+<li>语雀文档还可以上传图片、表格、附件等等，让你在文档的世界游刃有余。认准绿色“+”号，他们都在这等你。</li>
+<li>以上提到所有功能，都可以在工具栏找到，里边还有更多神奇功能，待你挖掘。<ul>
+<li>移动端 app 的工具栏：</li>
+<li><img src="/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-0.png" class=""></li>
+<li>web 端的工具栏：</li>
+<li><img src="/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-1.png" class=""></li>
+</ul>
+</li>
+</ul>
+<h3 id="知识库：专注于文档整理"><a href="#知识库：专注于文档整理" class="headerlink" title="知识库：专注于文档整理"></a>知识库：专注于文档整理</h3><p>文档整理至关重要，做好文档整理，可以让你的知识真正积累起来，成为一生的财富，那如何利用语雀做好文档整理呢？</p>
+<p>语雀提供了“<strong>知识库</strong>”用来解决文档整理。知识库有点像电脑上的文件夹，用来存放你的文档。当一个知识库有多篇文档时，这个知识库会形成一个目录，这也是语雀的特色，可以让这个知识库变得井井有条。</p>
+<p>当你第一次使用语雀 app 时，可以点击最下边的“文档”，然后点击右上角的“+”新建知识库，再点击右上角“+”开始“新建文档”，开始你的书写✍🏻。为了方便你理解，请看下图。</p>
+<img src="/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-2.png" class="">
+
+<p>在 PC 端，新建知识库依然很方便，点击链接查看详情。<a href="https://www.yuque.com/yuque/thyzgp/gbdfpb">PC 端新建知识库</a></p>
+<h3 id="语雀还能做什么？"><a href="#语雀还能做什么？" class="headerlink" title="语雀还能做什么？"></a>语雀还能做什么？</h3><ul>
+<li>利用语雀，可以很好的做团队协同，做好团队的知识沉淀。<a href="https://www.yuque.com/about/organization">详情</a></li>
+<li>想要了解更多，查看👉<a href="https://www.yuque.com/about/help">语雀帮助中心</a></li>
+</ul>
+<h3 id="联系我们"><a href="#联系我们" class="headerlink" title="联系我们"></a>联系我们</h3><ul>
+<li>更多反馈和建议，请移步👉<a href="https://www.yuque.com/zze08m/topics">语雀移动端讨论区</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>默认知识库</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
 </search>
