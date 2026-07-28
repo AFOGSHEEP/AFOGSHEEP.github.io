@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="overflow-x-hidden">
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#FEFBF7">
+<title>类的优化学习 | 杜鹃声</title>
+<meta name="description" content="AAAFORGE的技术博客">
+<meta name="author" content="AAAFORGE">
+<link rel="canonical" href="/2024/05/07/OLD_2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类的优化学习">
+<meta property="og:url" content="/2024/05/07/OLD_2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/">
+<meta property="og:site_name" content="杜鹃声">
+<meta property="og:description" content="AAAFORGE的技术博客">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="google-site-verification" content="0zu5rZRmLNHkpIdu_HFLcuqEZRcmimRHxZ5oTd29M3c">
+
+
+<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+<link rel="alternate" href="/atom.xml" title="杜鹃声" type="application/rss+xml">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+
+<!-- Tailwind CSS v3 CDN (battle-tested) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          accent: { 50: '#fdf8f0', 100: '#faf0dc', 200: '#f2dfb4', 300: '#ECD08C', 400: '#E2BE6E', 500: '#D4A853', 600: '#B8892F', 700: '#9A6F22' },
+          surface: { DEFAULT: '#FEFBF7', dark: '#1A1815' },
+        }
+      }
+    }
+  }
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Press+Start+2P&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+
+<!-- Custom CSS (theme variables + components) -->
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body class="bg-[#fefbf7] text-stone-900 dark:bg-[#1a1815] dark:text-stone-100 font-sans antialiased transition-colors duration-500 overflow-x-hidden">
+
+  
+
+
+
+<div id="bg-layer-a" class="bg-fullscreen" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&amp;q=80'); z-index:-1;"></div>
+<div id="bg-layer-b" class="bg-fullscreen" style="opacity:0; z-index:-1;"></div>
+
+<!-- Side navigation arrows -->
+<button id="bg-prev" class="bg-nav-btn left-4" aria-label="上一张"><</button>
+<button id="bg-next" class="bg-nav-btn right-4" aria-label="下一张">></button>
+
+<!-- Dot indicators -->
+<div id="bg-dots" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex gap-2"></div>
+
+<script data-no-instant>
+(function(){
+  var images = ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2560&q=100","https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=2560&q=100","https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=2560&q=100","https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=2560&q=100","https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=2560&q=100","https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=2560&q=100","https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=2560&q=100","https://images.unsplash.com/photo-1532274402911-5a369e4c4bb5?w=2560&q=100","https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=2560&q=100","https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=2560&q=100","https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2560&q=100","https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=2560&q=100","https://images.unsplash.com/photo-1518173946687-a1e4e3e6a4e6?w=2560&q=100","https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=2560&q=100","https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=2560&q=100","https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=2560&q=100"];
+  var layerA = document.getElementById('bg-layer-a');
+  var layerB = document.getElementById('bg-layer-b');
+  var cur = parseInt(localStorage.getItem('bgIdx')||'0') % images.length;
+  var active = layerA, hidden = layerB;
+  var timer;
+
+  function preload(url, cb) {
+    var img = new Image();
+    img.onload = cb; img.onerror = cb;
+    img.src = url;
+  }
+
+  function show(i) {
+    cur = ((i % images.length) + images.length) % images.length;
+    // Load into hidden layer
+    hidden.style.backgroundImage = 'url(' + images[cur] + ')';
+    preload(images[cur], function(){
+      // Fade: show hidden, hide active
+      hidden.style.opacity = '1';
+      active.style.opacity = '0';
+      // Swap roles
+      var tmp = active; active = hidden; hidden = tmp;
+    });
+    localStorage.setItem('bgIdx', cur);
+    updateDots();
+    // Preload next
+    var nextIdx = (cur + 1) % images.length;
+    preload(images[nextIdx], function(){});
+  }
+
+  function updateDots() {
+    var dots = document.getElementById('bg-dots');
+    dots.innerHTML = images.map(function(_,i){ return '<button style="'+(i===cur?'background:#fff;border-color:#fff;width:16px':'')+'" onclick="window._bgShow('+i+')"></button>'; }).join('');
+  }
+
+  function next() { show(cur+1); resetTimer(); }
+  function prev() { show(cur-1); resetTimer(); }
+  function resetTimer() { clearInterval(timer); timer = setInterval(next, 60000); }
+
+  window._bgShow = show;
+
+  document.getElementById('bg-next').onclick = next;
+  document.getElementById('bg-prev').onclick = prev;
+
+  // Init
+  layerA.style.transition = 'opacity 0.8s ease';
+  layerB.style.transition = 'opacity 0.8s ease';
+  updateDots();
+  resetTimer();
+  // Preload next
+  preload(images[(cur+1)%images.length], function(){});
+
+  if (images.length <= 1) {
+    document.getElementById('bg-prev').style.display = 'none';
+    document.getElementById('bg-next').style.display = 'none';
+    document.getElementById('bg-dots').style.display = 'none';
+  }
+})();
+</script>
+
+
+
+
+  <nav class="fixed top-0 left-0 right-0 z-50 h-[4.5rem] border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-xl transition-colors duration-300">
+  <div class="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6 lg:px-8">
+
+    <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 hover:text-accent-500 dark:hover:text-accent-400 transition-colors">
+      <img src="/images/avatar.webp" alt="avatar" class="w-16 h-16 rounded-full ring-2 ring-zinc-200 dark:ring-zinc-700">
+      杜鹃声
+    </a>
+
+    <div class="hidden md:flex items-center gap-1">
+      
+      <a href="/" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">首页</a>
+      
+      <a href="/archives/" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">归档</a>
+      
+      <a href="/categories/" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">分类</a>
+      
+      <a href="/tags/" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">标签</a>
+      
+      <a href="/about/" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">关于</a>
+      
+      
+      <button onclick="toggleSearch()" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="搜索"><i data-lucide="search" class="w-4 h-4"></i></button>
+      
+      
+      <button id="theme-toggle" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="切换主题"><i data-lucide="sun" class="w-4 h-4"></i></button>
+      
+      <button id="font-switcher" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="切换字体" title="切换字体"><i data-lucide="type" class="w-4 h-4"></i></button>
+    </div>
+
+    <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-zinc-500" aria-label="菜单"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+
+  <div id="mobile-menu" class="md:hidden hidden border-t border-zinc-200 dark:border-zinc-800 px-4 pb-4 pt-2">
+    
+    <a href="/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">首页</a>
+    
+    <a href="/archives/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">归档</a>
+    
+    <a href="/categories/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">分类</a>
+    
+    <a href="/tags/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">标签</a>
+    
+    <a href="/about/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">关于</a>
+    
+    <div class="flex gap-2 px-4 pt-2">
+      <button onclick="toggleSearch()" class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400">搜索</button>
+      <button id="theme-toggle-mobile" class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400">切换主题</button>
+    </div>
+  </div>
+</nav>
+
+
+  <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[4.5rem] pb-16 min-h-screen">
+    <div class="reading-progress"></div>
+
+<article class="max-w-3xl mx-auto pt-8">
+
+  <header class="text-center mb-10">
+    <h1 class="text-3xl sm:text-4xl font-bold mb-4" data-aos="fade-down">类的优化学习</h1>
+    <div class="flex justify-center items-center flex-wrap gap-4 text-sm text-zinc-400 dark:text-zinc-500" data-aos="fade-up" data-aos-delay="100">
+      <span class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2024-05-07</span>
+      <span class="inline-flex items-center gap-1"><i data-lucide="folder" class="w-3.5 h-3.5"></i><a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="text-accent-500 hover:text-accent-600">学习笔记</a></span>
+      <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 55 min</span><span class="inline-flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> 16339 字</span>
+    </div>
+    
+  </header>
+
+  
+
+  
+  <div class="toc-horizontal glass mb-8 px-5 py-3 rounded-xl bg-white/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 text-sm" data-aos="fade-up" data-aos-delay="250">
+    <span class="font-semibold text-zinc-500 dark:text-zinc-400 mr-3 text-xs uppercase tracking-wider">toc</span>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E6%A8%A1%E6%9D%BF"><span class="toc-text">类模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E6%A8%A1%E6%9D%BF%E7%B1%BB%E7%BC%96%E5%86%99-cpp%E4%B8%8E-h"><span class="toc-text">为模板类编写.cpp与.h</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#typename-%E7%9A%84%E4%B8%A4%E4%B8%AA%E5%90%AB%E4%B9%89"><span class="toc-text">typename 的两个含义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8const%E6%9D%A5%E7%90%86%E6%B8%85%E6%8E%A5%E5%8F%A3"><span class="toc-text">用const来理清接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#const%E5%8F%98%E9%87%8F%E4%B8%8E%E5%AF%B9%E8%B1%A1"><span class="toc-text">const变量与对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#const%E5%BC%95%E7%94%A8"><span class="toc-text">const引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#const%E4%B8%8E%E6%8C%87%E9%92%88"><span class="toc-text">const与指针</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#const%E4%B8%8E%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-text">const与迭代器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#const%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-text">const的局限性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mutable"><span class="toc-text">mutable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#const-%E6%AD%A3%E7%A1%AE%E6%80%A7%EF%BC%88const-correctness%EF%BC%89"><span class="toc-text">const-正确性（const-correctness）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%BA%E5%8C%96%E4%BB%A3%E7%A0%81%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8C%E5%8F%AF%E8%AF%BB%E6%80%A7%EF%BC%9A%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8-const-%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E5%92%8C%E5%8F%98%E9%87%8F"><span class="toc-text">强化代码安全性和可读性：正确使用 const 成员函数和变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%88%90%E5%91%98%E5%88%9D%E5%A7%8B%E5%8C%96%E5%88%97%E8%A1%A8%E4%BC%98%E5%8C%96%E7%B1%BB%E6%9E%84%E9%80%A0"><span class="toc-text">利用成员初始化列表优化类构造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E6%88%90%E5%91%98%E7%9A%84%E5%BA%94%E7%94%A8%E5%92%8C%E4%BC%98%E5%8C%96"><span class="toc-text">静态成员的应用和优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Const%E4%B8%8EStatic%E7%9A%84%E4%BA%A4%E4%BA%92%E4%BB%A5%E5%8F%8A%E7%B1%BB%E5%B8%B8%E9%87%8F%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-text">Const与Static的交互以及类常量的优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-explicit-%E5%85%B3%E9%94%AE%E5%AD%97%E9%81%BF%E5%85%8D%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-text">使用 explicit 关键字避免隐式类型转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E4%B8%8E%E7%BB%83%E4%B9%A0"><span class="toc-text">总结与练习</span></a></li></ol>
+  </div>
+  
+
+  <div class="article-body" data-aos="fade-up" data-aos-delay="300">
+      <hr>
+<p>date: 2024-05-07 23:25:21  </p>
+<h2 id="类模板"><a href="#类模板" class="headerlink" title="类模板"></a>类模板</h2><p>当你决定你正在编写的类最适合通过某种任意类型进行参数化时，你可以使用<code>template</code>关键字并指定模板应该参数化的类型来告诉C++，你正在定义一个模板类。让我们以定义自己版本的STL中使用的pair结构体为例来说明。如果我们想要将这个结构体命名为MyPair，并使其参数化两种类型，我们可以编写如下代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> FirstType, <span class="keyword">typename</span> SecondType&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MyPair</span> &#123;</span><br><span class="line">    FirstType first;</span><br><span class="line">    SecondType second;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里的语法<code>template &lt;typename FirstType, typename SecondType&gt;</code>告诉C++，接下来是一个类模板，它是根据两种类型参数化的，一个叫做<code>FirstType</code>，一个叫做<code>SecondType</code>。在许多方面，类模板的类型参数与C++函数的常规参数相似。例如，对于客户端而言，参数的实际名称并不重要，就像对函数的参数实际名称也不重要一样。上述定义在功能上等同于下面的定义：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> One, <span class="keyword">typename</span> Two&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MyPair</span> &#123;</span><br><span class="line">    One first;</span><br><span class="line">    Two second;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在类模板的主体内部，我们可以使用名称<code>One</code>和<code>Two</code>（或<code>FirstType</code>和<code>SecondType</code>）来引用客户端在实例化<code>MyPair</code>时指定的类型，就像函数内部的参数与调用者传递给函数的值相对应一样。</p>
+<p>在上述示例中，我们使用了<code>typename</code>关键字来引入类模板的类型参数。如果你在其他的C++代码库中工作，你可能会看到上面的类模板写成如下形式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">FirstType</span>, <span class="keyword">class</span> <span class="title class_">SecondType</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MyPair</span> &#123;</span><br><span class="line">    FirstType first;</span><br><span class="line">    SecondType second;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，<code>typename</code>和<code>class</code>是完全等价的。然而，我认为使用<code>class</code>是误导的，因为它错误地暗示参数必须是类类型。事实并非如此——你仍然可以用<code>class</code>实例化使用原始类型如<code>int</code>或<code>double</code>作为参数的模板。从现在开始，我们将使用<code>typename</code>而不是<code>class</code>。 </p>
+<p>要理解这种语法的作用和实现，让我们来看一个例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MyWrapper</span> &#123;</span><br><span class="line">    T data;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里我们定义了一个模板结构体<code>MyWrapper</code>，它包装了一个数据成员<code>data</code>，类型为模板参数<code>T</code>。这意味着我们可以将<code>MyWrapper</code>实例化为不同类型的包装器，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MyWrapper&lt;<span class="type">int</span>&gt; intWrapper;</span><br><span class="line">MyWrapper&lt;<span class="type">double</span>&gt; doubleWrapper;</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方式，我们可以在编写代码时灵活地定义通用的数据结构，以便处理不同类型的数据，而不需要为每种数据类型编写不同的代码。</p>
+<p>为了创建特定类型的<code>MyPair</code>实例，我们需要使用类模板的名称，并在尖括号中指定类型参数。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MyPair&lt;<span class="type">int</span>, string&gt; one; <span class="comment">// 一个int和一个string组成的pair</span></span><br><span class="line">one.first = <span class="number">137</span>;</span><br><span class="line">one.second = <span class="string">&quot;Templates are cool!&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这种语法应该是从STL中很熟悉的。</p>
+<p>接下来，我们想将<code>MyPair</code>结构体转换为一个具有完全封装性的类，即使用访问器方法和构造函数，而不是暴露数据成员。我们可以开始声明<code>MyPair</code>类，如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> FirstType, <span class="keyword">typename</span> SecondType&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyPair</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/* ... */</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    FirstType first;</span><br><span class="line">    SecondType second;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后，我们需要决定为<code>MyPair</code>类定义哪些函数。理想情况下，我们希望有一种方式可以访问存储在pair中的元素，因此我们将定义一对函数<code>getFirst</code>和<code>setFirst</code>，以及一个等效的<code>getSecond</code>和<code>setSecond</code>。这样写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> FirstType, <span class="keyword">typename</span> SecondType&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyPair</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">FirstType <span class="title">getFirst</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setFirst</span><span class="params">(FirstType newValue)</span></span>;</span><br><span class="line">    <span class="function">SecondType <span class="title">getSecond</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setSecond</span><span class="params">(SecondType newValue)</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    FirstType first;</span><br><span class="line">    SecondType second;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，我们在这里使用模板参数<code>FirstType</code>和<code>SecondType</code>来代表客户端参数化<code>MyPair</code>时的任何类型。我们不需要指示<code>FirstType</code>和<code>SecondType</code>与其他类型（如int或string）有任何不同，因为C++编译器已经从模板声明中知道了这一点。实际上，一旦你定义了一个模板参数，除了一些小的限制之外，你可以在任何可以使用实际类型的地方使用它，C++会理解你的意思。</p>
+<p>现在，我们已经声明了这些函数，接下来应该按照直觉的方式实现它们。如果<code>MyPair</code>不是一个模板类，我们可以写成这样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">FirstType <span class="title">MyPair::getFirst</span><span class="params">()</span> </span>&#123; <span class="comment">// 问题：不合法的语法</span></span><br><span class="line">    <span class="keyword">return</span> first;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但问题是<code>MyPair</code>是一个类模板，而不是一个实际的类。如果我们不告诉C++我们正在尝试为一个类模板实现成员函数，编译器就无法理解我们的意思。因此，正确的方式是这样实现这个成员函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> FirstType, <span class="keyword">typename</span> SecondType&gt;</span><br><span class="line">FirstType MyPair&lt;FirstType, SecondType&gt;::<span class="built_in">getFirst</span>() &#123;</span><br><span class="line">    <span class="keyword">return</span> first;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，我们明确地在<code>getFirst</code>的实现前加上了一个模板声明，并标记我们正在实现的成员函数是针对<code>MyPair&lt;FirstType, SecondType&gt;</code>的。模板声明对于C++来说是必要的，以便弄清楚这里的<code>FirstType</code>和<code>SecondType</code>是什么意思，因为如果没有这些信息，编译器会认为<code>FirstType</code>和<code>SecondType</code>是实际的类型，而不是类型的占位符。另外，我们提到这个函数是在<code>MyPair&lt;FirstType, SecondType&gt;</code>内部而不仅仅是<code>MyPair</code>内部是必要的，因为实际上并没有一个真正的<code>MyPair</code>类——毕竟，<code>MyPair</code>是一个类模板，而不是一个实际的类。</p>
+<p>其他成员函数可以类似地实现。例如，这里有一个<code>setSecond</code>的实现示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> FirstType, <span class="keyword">typename</span> SecondType&gt;</span><br><span class="line"><span class="type">void</span> MyPair&lt;FirstType, SecondType&gt;::<span class="built_in">setSecond</span>(SecondType newValue) &#123;</span><br><span class="line">    second = newValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当为模板类实现成员函数时，在模板类的主体内定义函数时，不需要重复模板定义。因此，以下代码是完全合法的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> FirstType, <span class="keyword">typename</span> SecondType&gt; </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyPair</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">FirstType <span class="title">getFirst</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> first;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setFirst</span><span class="params">(FirstType newValue)</span> </span>&#123;</span><br><span class="line">        first = newValue;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">SecondType <span class="title">getSecond</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> second;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setSecond</span><span class="params">(SecondType newValue)</span> </span>&#123;</span><br><span class="line">        second = newValue;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    FirstType first;</span><br><span class="line">    SecondType second;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在类模板的内部，编译器已经知道<code>FirstType</code>和<code>SecondType</code>是模板参数，因此不需要再次提醒。所以即使<code>MyPair</code>是一个参数化了两个参数的模板类，在模板类定义的主体内，我们可以使用名称<code>MyPair</code>，而不必提及它是<code>MyPair&lt;FirstType, SecondType&gt;</code>。这是合法的C++语法，并且在后面几章讨论复制行为时会更加常见。</p>
+<p>现在，假设我们想要定义一个名为<code>swap</code>的成员函数，它接受另一个<code>MyPair</code>类的引用作为输入，并将该<code>MyPair</code>中的元素与接收对象中的元素进行交换。那么我们可以像这样定义该函数的原型：</p>
+<p><strong><font style="background-color:#0000cc;">#这章绝大部分都是在GPT4辅助下学习的，有点过于烧脑筋（悲），希望自己掌握的足够扎实吧。</font></strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> FirstType, <span class="keyword">typename</span> SecondType&gt; </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyPair</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">FirstType <span class="title">getFirst</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> first;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setFirst</span><span class="params">(FirstType newValue)</span> </span>&#123;</span><br><span class="line">        first = newValue;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">SecondType <span class="title">getSecond</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> second;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setSecond</span><span class="params">(SecondType newValue)</span> </span>&#123;</span><br><span class="line">        second = newValue;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">swap</span><span class="params">(MyPair&amp; other)</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    FirstType first;</span><br><span class="line">    SecondType second;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>尽管<code>MyPair</code>是一个参数化了两个参数的模板类，但在模板类定义的主体内，我们可以使用名称<code>MyPair</code>，而不必提及它是<code>MyPair&lt;FirstType, SecondType&gt;</code>。</p>
+<p>最后让我们来实现<code>swap</code>函数。这个函数接受另一个<code>MyPair</code>对象的引用作为参数，并将其成员变量与当前对象的成员变量进行交换。下面是一个可能的实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> FirstType, <span class="keyword">typename</span> SecondType&gt;</span><br><span class="line"><span class="type">void</span> MyPair&lt;FirstType, SecondType&gt;::<span class="built_in">swap</span>(MyPair&amp; other) &#123;</span><br><span class="line">    <span class="comment">// 交换第一个成员变量</span></span><br><span class="line">    FirstType tempFirst = first;</span><br><span class="line">    first = other.first;</span><br><span class="line">    other.first = tempFirst;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 交换第二个成员变量</span></span><br><span class="line">    SecondType tempSecond = second;</span><br><span class="line">    second = other.second;</span><br><span class="line">    other.second = tempSecond;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个实现首先创建了临时变量，然后将当前对象和另一个对象的成员变量互换，从而实现了交换操作</p>
+<h2 id="为模板类编写-cpp与-h"><a href="#为模板类编写-cpp与-h" class="headerlink" title="为模板类编写.cpp与.h"></a>为模板类编写.cpp与.h</h2><p>在 C++ 编程中，通常我们会将类的声明放在 <code>.h</code> 文件中，而实现部分则放在 <code>.cpp</code> 文件中。这种方式使得 C++ 编译器可以单独编译 <code>.cpp</code> 文件中的代码，并在需要时将其链接到其他程序部分。但是，对于模板类来说，这种分离的做法会导致链接错误。下面将一步步解释为什么会出现这种情况，并展示如何正确处理模板类的定义和实现。</p>
+<h3 id="为什么模板类不能像普通类那样分离定义和实现？"><a href="#为什么模板类不能像普通类那样分离定义和实现？" class="headerlink" title="为什么模板类不能像普通类那样分离定义和实现？"></a>为什么模板类不能像普通类那样分离定义和实现？</h3><p>模板类在 C++ 中是一种代码生成工具。当你使用模板类时，实际上你是在创建一个框架，编译器会根据你提供的模板参数来生成具体的类定义。例如，如果你定义了一个模板类 <code>MyPair</code>，并用 <code>&lt;int, string&gt;</code> 实例化它，编译器将生成一个具体的类：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyPair</span>&lt;<span class="type">int</span>, string&gt; &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getFirst</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setFirst</span><span class="params">(<span class="type">int</span> newValue)</span></span>;</span><br><span class="line">    <span class="function">string <span class="title">getSecond</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setSecond</span><span class="params">(string newValue)</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> first;</span><br><span class="line">    string second;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>如果编译器在编译过程中没有看到这些成员函数的实现（即 <code>.cpp</code> 文件中的定义），它将无法为这些函数生成代码。这意味着当你尝试链接程序时，链接器找不到这些函数的定义，导致链接错误。</p>
+<h3 id="如何正确地定义和实现模板类？"><a href="#如何正确地定义和实现模板类？" class="headerlink" title="如何正确地定义和实现模板类？"></a>如何正确地定义和实现模板类？</h3><p>为了避免这种链接问题，模板类的定义和实现通常都放在一个 <code>.h</code> 文件中，不单独使用 <code>.cpp</code> 文件。这意味着你需要在头文件中包含模板类的全部定义和实现。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> MyPair_Included</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MyPair_Included</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> FirstType, <span class="keyword">typename</span> SecondType&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyPair</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">FirstType <span class="title">getFirst</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> first;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setFirst</span><span class="params">(FirstType newValue)</span> </span>&#123;</span><br><span class="line">        first = newValue;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">SecondType <span class="title">getSecond</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> second;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setSecond</span><span class="params">(SecondType newValue)</span> </span>&#123;</span><br><span class="line">        second = newValue;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    FirstType first;</span><br><span class="line">    SecondType second;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="为什么这种做法违背了接口与实现的分离原则？"><a href="#为什么这种做法违背了接口与实现的分离原则？" class="headerlink" title="为什么这种做法违背了接口与实现的分离原则？"></a>为什么这种做法违背了接口与实现的分离原则？</h3><p>将接口和实现放在同一个文件中似乎违背了接口与实现分离的原则，这个原则旨在通过将实现细节隐藏在不被客户端直接查看的 <code>.cpp</code> 文件中，从而提供更清晰的接口。然而，在处理模板时，由于模板的特殊性质（即编译时代码生成），通常需要在头文件中提供完整的实现。</p>
+<p>这种做法虽然有些违背传统的代码组织原则，但在模板编程中是必需的，以确保模板实例化时能够正确链接并生成有效的二进制代码。如果不这样做，将导致模板类无法正常使用，因为编译器在实例化模板时需要访问到完整的定义和实现。</p>
+<h2 id="typename-的两个含义"><a href="#typename-的两个含义" class="headerlink" title="typename 的两个含义"></a>typename 的两个含义</h2><p>在 C++ 编程中，关键字 <code>typename</code> 具有两种不同的含义，这是 C++ 语言中较为不幸的特性之一。首先，<code>typename</code> 用于声明模板类的类型参数。但除此之外，<code>typename</code> 还有另一种用途，如果不特别注意，很容易导致错误。下面我将逐步解释这种用法，并提供相应的代码示例来帮助理解。</p>
+<h3 id="模板类-Stack-的定义"><a href="#模板类-Stack-的定义" class="headerlink" title="模板类 Stack 的定义"></a>模板类 Stack 的定义</h3><p>考虑实现一个类似于 STL <code>stack</code> 的后入先出（LIFO）容器，我们通常会将其实现为模板类。这样可以使栈的实现不依赖于元素的具体类型。以下是一个可能的接口定义：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Stack</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(T value)</span></span>;</span><br><span class="line">    <span class="function">T <span class="title">pop</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">empty</span><span class="params">()</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    deque&lt;T&gt; elems;  <span class="comment">// 使用 deque 作为内部容器</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这个类中，<code>deque&lt;T&gt;</code> 被用来作为栈的内部容器。栈的所有操作（如添加或删除元素）都在容器的一端进行，因此使用 <code>deque</code> 是合适的选择。</p>
+<h3 id="成员函数的实现"><a href="#成员函数的实现" class="headerlink" title="成员函数的实现"></a>成员函数的实现</h3><p>栈的每个成员函数都可以如下实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="type">void</span> Stack&lt;T&gt;::<span class="built_in">push</span>(T value) &#123;</span><br><span class="line">    elems.<span class="built_in">push_front</span>(value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line">T Stack&lt;T&gt;::<span class="built_in">pop</span>() &#123;</span><br><span class="line">    T result = elems.<span class="built_in">front</span>();</span><br><span class="line">    elems.<span class="built_in">pop_front</span>();</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="type">size_t</span> Stack&lt;T&gt;::<span class="built_in">size</span>() &#123;</span><br><span class="line">    <span class="keyword">return</span> elems.<span class="built_in">size</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="type">bool</span> Stack&lt;T&gt;::<span class="built_in">empty</span>() &#123;</span><br><span class="line">    <span class="keyword">return</span> elems.<span class="built_in">empty</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="引入-typename-的必要性"><a href="#引入-typename-的必要性" class="headerlink" title="引入 typename 的必要性"></a>引入 typename 的必要性</h3><p>当我们尝试扩展 <code>Stack</code> 类的功能，例如允许类的使用者遍历栈元素时，我们可能会遇到 <code>typename</code> 关键字的另一种用途。考虑向 <code>Stack</code> 类添加 <code>begin()</code> 和 <code>end()</code> 函数，这些函数返回对底层 <code>deque</code> 的迭代器：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Stack</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(T value)</span></span>;</span><br><span class="line">    <span class="function">T <span class="title">pop</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">empty</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="keyword">typename</span> deque&lt;T&gt;::<span class="function">iterator <span class="title">begin</span><span class="params">()</span></span>;  <span class="comment">// 正确的语法</span></span><br><span class="line">    <span class="keyword">typename</span> deque&lt;T&gt;::<span class="function">iterator <span class="title">end</span><span class="params">()</span></span>;    <span class="comment">// 正确的语法</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    deque&lt;T&gt; elems;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在模板中，当你需要引用依赖于模板参数的类型时（如 <code>deque&lt;T&gt;::iterator</code>），必须在类型前使用 <code>typename</code> 关键字。这是因为 <code>deque&lt;T&gt;</code> 是一个依赖类型，它的具体形式取决于模板参数 <code>T</code>。在 C++ 中，当你试图在模板类内部访问一个依赖类型的嵌套类型时，必须使用 <code>typename</code> 来明确指出该名称代表一个类型。</p>
+<h3 id="为什么需要-typename-关键字"><a href="#为什么需要-typename-关键字" class="headerlink" title="为什么需要 typename 关键字"></a>为什么需要 typename 关键字</h3><p><code>typename</code> 的必要性源于 C++ 语言的类型解析规则。在模板编程中，编译器在解析模板代码时必须能够区分一个标识符是类型名还是其他类型的名称。由于模板的高度泛化性，直到模板实例化之前，编译器无法确定某个依赖名称是否为类型。因此，<code>typename</code> 关键字被用来显式声明一个依赖于模板参数的名称是一个类型。</p>
+<h3 id="实现-begin-和-end-方法"><a href="#实现-begin-和-end-方法" class="headerlink" title="实现 begin() 和 end() 方法"></a>实现 begin() 和 end() 方法</h3><p>给定 <code>Stack</code> 类，实现 <code>begin()</code> 和 <code>end()</code> 方法如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">typename</span> deque&lt;T&gt;::iterator Stack&lt;T&gt;::<span class="built_in">begin</span>() &#123;</span><br><span class="line">    <span class="keyword">return</span> elems.<span class="built_in">begin</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">typename</span> deque&lt;T&gt;::iterator Stack&lt;T&gt;::<span class="built_in">end</span>() &#123;</span><br><span class="line">    <span class="keyword">return</span> elems.<span class="built_in">end</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这些方法提供了访问栈内容的迭代器，允许按照后入先出的顺序遍历元素。例如，如果元素是按照 1, 2, 3, 4, 5 的顺序压入栈，那么使用这些迭代器遍历时的顺序将会是 5, 4, 3, 2, 1。这在调试时非常有用，可以用来检查栈的内容或在元素已经入栈后对它们进行操作。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>在 C++ 中，<code>typename</code> 关键字的使用有两个场景：一是声明模板参数的类型，二是在模板代码中明确依赖类型的名称是一个类型。虽然这种语法要求在初学者看来可能是冗余的，但它是确保模板代码正确解析和实例化的必要机制。理解并熟悉 <code>typename</code> 的使用是每个 C++ 程序员提升模板编程技能的重要步骤。</p>
+<h2 id="用const来理清接口"><a href="#用const来理清接口" class="headerlink" title="用const来理清接口"></a>用const来理清接口</h2><p>在 C++ 中，<code>const</code> 关键字是一种强大的工具，用于限制数据的修改，这对于控制程序状态和防止意外的副作用非常重要。让我们探讨一下 <code>const</code> 的基本用法以及它如何帮助清晰定义接口，并保护数据不被无意中修改。</p>
+<h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><p><code>const</code> 可以用于多种情况：</p>
+<ol>
+<li><strong>声明常量变量</strong>：当你不希望变量的值在程序中被修改时，可以使用 <code>const</code>。例如：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> max_size = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里 <code>max_size</code> 被声明为常量，其值不能被更改。</p>
+<ol start="2">
+<li><strong>修饰函数参数</strong>：在函数参数前加上 <code>const</code> 可以防止函数内部修改传入的参数，特别是对于引用和指针传递的情况。例如：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">printVector</span><span class="params">(<span class="type">const</span> vector&lt;<span class="type">int</span>&gt;&amp; vec)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i : vec) &#123;</span><br><span class="line">        cout &lt;&lt; i &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// vec.push_back(10); // 这会引发编译错误，因为 vec 是 const</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，尽管 <code>vec</code> 是通过引用传递的，但由于它被声明为 <code>const</code>，函数内部不能修改 <code>vec</code> 的内容。</p>
+<ol start="3">
+<li><strong>修饰成员函数</strong>：当你希望保证成员函数不会修改任何成员变量时，可以在成员函数的声明后加上 <code>const</code>。这表明该函数不会修改对象的状态：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getValue</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> value;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，<code>getValue</code> 函数被声明为 <code>const</code>，这意味着它不能修改任何成员变量，也不能调用任何非 <code>const</code> 的成员函数。</p>
+<h3 id="高级用法"><a href="#高级用法" class="headerlink" title="高级用法"></a>高级用法</h3><p><code>const</code> 还可以用在更复杂的场景中，例如：</p>
+<ul>
+<li><strong>常量指针和指针常量</strong>：你可以声明指向常量的指针或常量指针，这有助于更精确地控制数据的访问和修改。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span>* ptr1 = &amp;max_size;  <span class="comment">// 指向常量的指针，不能通过 ptr1 修改所指向的值</span></span><br><span class="line"><span class="type">int</span>* <span class="type">const</span> ptr2 = &amp;max_size;  <span class="comment">// 指针常量，ptr2 本身的值不能改变，但可以修改 ptr2 指向的值</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>常量成员</strong>：在类中声明成员变量为 <code>const</code>，这通常用于那些一旦被构造后就不应更改的属性。</li>
+</ul>
+<p><code>const</code> 不仅帮助你避免不必要的修改，也是一种声明作者的编程意图的方式，它让代码更加安全和可预测。</p>
+<h2 id="const变量与对象"><a href="#const变量与对象" class="headerlink" title="const变量与对象"></a>const变量与对象</h2><p>在 C++ 中，<code>const</code> 关键字是一种用于约束变量、对象或成员函数的不可修改性的机制。它的使用可以增加代码的安全性和可预测性，同时有助于设计更加稳定和清晰的接口。下面将详细解释两个示例——<code>const</code> 变量和 <code>const</code> 对象，以及如何在实际编程中应用这些概念。</p>
+<h3 id="const-变量"><a href="#const-变量" class="headerlink" title="const 变量"></a><code>const</code> 变量</h3><p>在前面的讨论中，你已经看到了 <code>const</code> 在全局常量中的应用。然而，<code>const</code> 不仅限于全局常量，它同样可以用于声明局部变量，以表明这些变量在其作用域内不应被修改。</p>
+<h4 id="优化循环效率的例子"><a href="#优化循环效率的例子" class="headerlink" title="优化循环效率的例子"></a>优化循环效率的例子</h4><p>考虑以下代码片段，它通过迭代来处理集合中的一系列元素：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set&lt;<span class="type">int</span>&gt;::iterator stop = mySet.<span class="built_in">upper_bound</span>(<span class="number">137</span>);</span><br><span class="line"><span class="keyword">for</span> (set&lt;<span class="type">int</span>&gt;::iterator itr = mySet.<span class="built_in">lower_bound</span>(<span class="number">42</span>); itr != stop; ++itr) &#123;</span><br><span class="line">    <span class="comment">/* ... manipulate *itr ... */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里，我们首先计算了 <code>stop</code>，这是对 <code>upper_bound</code> 的单次调用结果，然后在循环中使用这个预先计算好的迭代器。这样可以避免在每次循环迭代时重复计算 <code>upper_bound</code>，从而提高效率。</p>
+<p>为了确保 <code>stop</code> 在循环过程中不被修改（这是一个设计上的决定，因为 <code>stop</code> 应当是固定不变的），我们可以将其声明为 <code>const</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> set&lt;<span class="type">int</span>&gt;::iterator stop = mySet.<span class="built_in">upper_bound</span>(<span class="number">137</span>);</span><br><span class="line"><span class="keyword">for</span> (set&lt;<span class="type">int</span>&gt;::iterator itr = mySet.<span class="built_in">lower_bound</span>(<span class="number">42</span>); itr != stop; ++itr) &#123;</span><br><span class="line">    <span class="comment">/* ... manipulate *itr ... */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样做的好处是，如果你不小心尝试修改 <code>stop</code>，编译器将会报错，从而避免可能的逻辑错误。</p>
+<h3 id="const-对象"><a href="#const-对象" class="headerlink" title="const 对象"></a><code>const</code> 对象</h3><p>在处理类类型的变量时，<code>const</code> 的含义更为复杂。对于基本数据类型，<code>const</code> 直接意味着不可修改；但对于对象，我们需要更精细的控制。</p>
+<h4 id="const-成员函数"><a href="#const-成员函数" class="headerlink" title="const 成员函数"></a><code>const</code> 成员函数</h4><p>当你有一个 <code>const</code> 对象时，你只能调用那些被显式标记为 <code>const</code> 的成员函数。这是因为这些函数保证不会修改对象的状态。例如，考虑以下 <code>Point</code> 类：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Point</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Point</span>(<span class="type">double</span> x, <span class="type">double</span> y);</span><br><span class="line">    <span class="function"><span class="type">double</span> <span class="title">getX</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="function"><span class="type">double</span> <span class="title">getY</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setX</span><span class="params">(<span class="type">double</span> newX)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setY</span><span class="params">(<span class="type">double</span> newY)</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">double</span> x, y;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里，<code>getX()</code> 和 <code>getY()</code> 被声明为 <code>const</code>，这意味着它们不会修改对象。这样设计是为了让这些函数可以安全地被 <code>const</code> 对象调用，同时也表明这些函数不应该改变任何对象状态。</p>
+<h4 id="实现-const-成员函数"><a href="#实现-const-成员函数" class="headerlink" title="实现 const 成员函数"></a>实现 <code>const</code> 成员函数</h4><p>当实现一个 <code>const</code> 成员函数时，你需要在函数实现中也使用 <code>const</code> 关键字。例如，<code>Point</code> 类中的 <code>getX()</code> 可以这样实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">Point::getX</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>通过使用 <code>const</code>，可以设计出更稳健、更安全的程序。它不仅防止了数据被无意中修改，还强制程序员在编写代码前就考虑数据的可变性，从而帮助建立更清晰、更可维护的代码结构。</p>
+<h2 id="const引用"><a href="#const引用" class="headerlink" title="const引用"></a>const引用</h2><p>在 C++ 中，使用 <code>const</code> 引用（或引用到常量）是一种结合效率与安全性的优秀编程技巧。<code>const</code> 引用允许你以引用方式传递对象，以避免昂贵的复制操作，同时保证这些对象在函数调用中不会被修改。这有助于清晰地定义函数的行为，增加代码的可读性和可维护性。</p>
+<h3 id="const-引用的优势"><a href="#const-引用的优势" class="headerlink" title="const 引用的优势"></a><code>const</code> 引用的优势</h3><h4 id="避免副作用"><a href="#避免副作用" class="headerlink" title="避免副作用"></a>避免副作用</h4><p>当函数参数以非 <code>const</code> 引用传递时，函数内部可能会修改传入的参数。这会造成副作用，使得在不查看函数实现的情况下难以推断程序行为。例如，如果你有一个函数 <code>void DoSomething(vector&lt;int&gt;&amp; vec);</code>，你无法仅从声明中判断出 <code>DoSomething</code> 是否会修改 <code>vec</code>。</p>
+<h4 id="提高效率"><a href="#提高效率" class="headerlink" title="提高效率"></a>提高效率</h4><p>相比于传值，使用引用传递可以避免复制大型数据结构，如 <code>vector</code> 或 <code>map</code>，从而提高程序的运行效率。但这种方法的缺点是它可能会引起调用者对数据安全的担忧。</p>
+<h4 id="const-引用解决方案"><a href="#const-引用解决方案" class="headerlink" title="const 引用解决方案"></a><code>const</code> 引用解决方案</h4><p>使用 <code>const</code> 引用可以同时解决上述两个问题。它保证了函数不会修改传入的参数，从而使函数的行为更加明确，同时保留了引用传递的效率优势。</p>
+<h3 id="const-引用的工作方式"><a href="#const-引用的工作方式" class="headerlink" title="const 引用的工作方式"></a><code>const</code> 引用的工作方式</h3><p>让我们通过一个具体的例子来看看 <code>const</code> 引用在实际中是如何工作的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">PrintVector</span><span class="params">(<span class="type">const</span> vector&lt;<span class="type">int</span>&gt;&amp; vec)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> k = <span class="number">0</span>; k &lt; vec.<span class="built_in">size</span>(); ++k)</span><br><span class="line">        cout &lt;&lt; vec[k] &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数 <code>PrintVector</code> 接收一个常量引用到 <code>vector&lt;int&gt;</code>。这意味着 <code>vec</code> 在 <code>PrintVector</code> 函数内被视为常量，不能被修改。因此，即使原始 <code>vector</code> 不是常量，它在函数内部也会被当作常量对待。</p>
+<h3 id="const-引用的一般性原理"><a href="#const-引用的一般性原理" class="headerlink" title="const 引用的一般性原理"></a><code>const</code> 引用的一般性原理</h3><p>每个对象的公共接口可以分为两部分：一个常量接口（不改变对象状态的操作）和一个非常量接口（改变对象状态的操作）。当对象被声明为常量时，只能访问其常量接口。</p>
+<h3 id="使用-const-引用的建议"><a href="#使用-const-引用的建议" class="headerlink" title="使用 const 引用的建议"></a>使用 <code>const</code> 引用的建议</h3><p>当你需要编写一个函数，该函数需要查看数据但不修改数据时，应该考虑使用常量引用作为参数。这不仅提高了效率，还保证了数据的不可变性。</p>
+<h3 id="const-引用与非常量参数"><a href="#const-引用与非常量参数" class="headerlink" title="const 引用与非常量参数"></a><code>const</code> 引用与非常量参数</h3><p>尽管 <code>const</code> 引用主要用于保护数据不被修改，但它们也可以接受非常量对象作为参数。这种情况下，非常量对象在函数内部被当作常量处理，这为编程提供了灵活性，允许同一函数既能处理常量又能处理非常量数据。</p>
+<h2 id="const与指针"><a href="#const与指针" class="headerlink" title="const与指针"></a>const与指针</h2><p>在 C++ 中，混合使用 <code>const</code> 和指针时可能会产生一些混淆，因为 <code>const</code> 可以以多种方式与指针结合，影响指针和指向的数据的修改权限。这里我们将探讨两种主要的 <code>const</code> 指针类型：指向常量的指针（pointer-to-const）和常量指针（const pointer），以及如何将它们正确地应用在程序中。</p>
+<h3 id="指向常量的指针（Pointer-to-const）"><a href="#指向常量的指针（Pointer-to-const）" class="headerlink" title="指向常量的指针（Pointer-to-const）"></a>指向常量的指针（Pointer-to-const）</h3><p>指向常量的指针意味着指针指向的数据不能被修改，但你可以改变指针本身指向的地址。这对于保护数据不被函数意外修改非常有用，特别是当你想通过指针传递大型数据结构以提高效率，但又不想在函数中修改这些数据时。</p>
+<p><strong>声明指向常量的指针</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> Type* myPointer;</span><br><span class="line">Type <span class="type">const</span>* myPointer;</span><br></pre></td></tr></table></figure>
+
+<p>这两种声明方式都表示 <code>myPointer</code> 是一个指向 <code>Type</code> 类型常量的指针，你不能通过这个指针修改 <code>Type</code> 数据，但可以将 <code>myPointer</code> 指向另一个地址。</p>
+<h3 id="常量指针（Const-Pointer）"><a href="#常量指针（Const-Pointer）" class="headerlink" title="常量指针（Const Pointer）"></a>常量指针（Const Pointer）</h3><p>常量指针则是指针本身的值（即它指向的地址）不能被修改，但你可以修改它指向地址的数据内容。这适用于当你需要保持指针指向固定位置，但又需要修改该位置数据时的情况。</p>
+<p><strong>声明常量指针</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Type* <span class="type">const</span> myConstPointer;</span><br></pre></td></tr></table></figure>
+
+<p>这表示 <code>myConstPointer</code> 是一个常量指针，指向 <code>Type</code> 类型的数据。你可以修改 <code>myConstPointer</code> 指向的数据，但不能改变指针本身的值（即它指向的地址）。</p>
+<h3 id="常量指针到常量（Const-Pointer-to-Const）"><a href="#常量指针到常量（Const-Pointer-to-Const）" class="headerlink" title="常量指针到常量（Const Pointer-to-Const）"></a>常量指针到常量（Const Pointer-to-Const）</h3><p>如果你需要一个既不能修改指针指向的地址也不能通过指针修改数据的指针，你可以使用常量指针到常量。</p>
+<p><strong>声明常量指针到常量</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> Type* <span class="type">const</span> myPtr;</span><br><span class="line">Type <span class="type">const</span>* <span class="type">const</span> myPtr;</span><br></pre></td></tr></table></figure>
+
+<p>这里，<code>myPtr</code> 是一个常量指针到一个常量数据。这意味着你既不能改变指针 <code>myPtr</code> 指向的地址，也不能通过 <code>myPtr</code> 修改数据。</p>
+<h3 id="示例：声明全局-C-字符串常量"><a href="#示例：声明全局-C-字符串常量" class="headerlink" title="示例：声明全局 C 字符串常量"></a>示例：声明全局 C 字符串常量</h3><p>对于想要声明一个全局的 C 字符串常量的情况，正确的声明方式应该是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">char</span>* <span class="type">const</span> kGlobalString = <span class="string">&quot;This is a string!&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用了两个 <code>const</code>：第一个 <code>const</code> 表明你不能通过 <code>kGlobalString</code> 修改字符串内容；第二个 <code>const</code> 表明 <code>kGlobalString</code> 的值（即它所指向的地址）不能被改变。</p>
+<h3 id="表格总结"><a href="#表格总结" class="headerlink" title="表格总结"></a>表格总结</h3><p>下面的表格总结了各种 <code>const</code> 指针的声明方式及其属性：</p>
+<table>
+<thead>
+<tr>
+<th>声明语法</th>
+<th>名称</th>
+<th>可重新赋值?</th>
+<th>可修改指向的数据?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>const Type* myPtr</code></td>
+<td>指向常量的指针</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>Type const* myPtr</code></td>
+<td>指向常量的指针</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>Type* const myPtr</code></td>
+<td>常量指针</td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>const Type* const myPtr</code></td>
+<td>常量指针到常量</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>Type const* const myPtr</code></td>
+<td>常量指针到常量</td>
+<td>否</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<p>理解这些不同的 <code>const</code> 用法对于写出更安全、更清晰的 C++ 代码是非常重要的。随着经验的积累，正确地使用这些 <code>const</code> 修饰符将变得更自然，帮助你更好地管理数据的访问权限和修改行为。以下是进一步探讨这些概念的重点和实践指导。</p>
+<h3 id="实践中的-const-指针"><a href="#实践中的-const-指针" class="headerlink" title="实践中的 const 指针"></a>实践中的 <code>const</code> 指针</h3><p>理解 <code>const</code> 修饰符在指针中的应用对于保护函数外部的数据不被意外修改至关重要，尤其是在处理大型数据结构或系统资源时。例如，当你的函数需要接收大型数据但不需要修改它时，使用指向常量的指针可以确保数据的安全性，同时减少复制操作带来的性能开销。</p>
+<h3 id="选择正确的-const-指针类型"><a href="#选择正确的-const-指针类型" class="headerlink" title="选择正确的 const 指针类型"></a>选择正确的 <code>const</code> 指针类型</h3><p>选择使用指向常量的指针还是常量指针，应基于你希望如何管理数据的访问和修改：</p>
+<ul>
+<li>如果你想要防止数据被修改，同时允许改变指针的指向，那么使用指向常量的指针（<code>const Type*</code> 或 <code>Type const*</code>）。</li>
+<li>如果你需要固定指针的指向但允许修改数据，那么使用常量指针（<code>Type* const</code>）。</li>
+<li>如果需要严格限制指针不改变指向且指向的数据也不被修改，使用常量指针到常量（<code>const Type* const</code> 或 <code>Type const* const</code>）。</li>
+</ul>
+<h3 id="理解和记忆技巧"><a href="#理解和记忆技巧" class="headerlink" title="理解和记忆技巧"></a>理解和记忆技巧</h3><p>理解这些概念可能初看起来复杂，但可以通过从右到左阅读声明来帮助记忆和理解：</p>
+<ul>
+<li><code>const Type* ptr</code> 读作 “ptr is a pointer to a Type that is const” — 指针指向一个常量 <code>Type</code>。</li>
+<li><code>Type* const ptr</code> 读作 “ptr is a const pointer to a Type” — 指针本身是常量，指向一个可变的 <code>Type</code>。</li>
+</ul>
+<h3 id="const-指针的适用场景"><a href="#const-指针的适用场景" class="headerlink" title="const 指针的适用场景"></a><code>const</code> 指针的适用场景</h3><ul>
+<li><strong>API设计</strong>：当设计接口（API）时，使用 <code>const</code> 可以明确函数如何与传入的数据交互，提供更稳定的接口。</li>
+<li><strong>多线程安全</strong>：在多线程环境中，使用 <code>const</code> 可以防止数据在不同线程间被意外修改，增加代码的线程安全性。</li>
+<li><strong>优化性能</strong>：通过避免不必要的数据复制，使用 <code>const</code> 引用或指针可以帮助提升程序的运行效率。</li>
+</ul>
+<h2 id="const与迭代器"><a href="#const与迭代器" class="headerlink" title="const与迭代器"></a>const与迭代器</h2><p>在 C++ 中，处理 <code>const</code> 容器时，正确使用迭代器是非常关键的。如你所提供的示例中，当试图在一个 <code>const</code> 容器上使用普通迭代器时，编译器会报错。这是因为普通迭代器允许修改它遍历的元素，这与 <code>const</code> 容器的属性相冲突。为了解决这个问题，我们需要使用 <code>const_iterator</code>。下面将详细解释 <code>const_iterator</code> 的概念和使用。</p>
+<h3 id="const-iterator-的基本概念"><a href="#const-iterator-的基本概念" class="headerlink" title="const_iterator 的基本概念"></a><code>const_iterator</code> 的基本概念</h3><p>在 STL（Standard Template Library）中，每个容器类如 <code>vector</code>、<code>list</code>、<code>map</code> 等都提供了两种类型的迭代器：<code>iterator</code> 和 <code>const_iterator</code>。<code>const_iterator</code> 是一种特殊的迭代器，它不允许修改其指向的元素，即使这个迭代器用于非 <code>const</code> 容器。这使得 <code>const_iterator</code> 非常适合在需要保护容器内容不被修改的情况下遍历容器。</p>
+<h3 id="使用-const-iterator-的情景"><a href="#使用-const-iterator-的情景" class="headerlink" title="使用 const_iterator 的情景"></a>使用 <code>const_iterator</code> 的情景</h3><p>如果你有一个 <code>const</code> 容器或者你不想在遍历时修改容器中的元素，就应该使用 <code>const_iterator</code>。例如，在打印 <code>vector</code> 的内容而不修改它时，应该这样写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">PrintVector</span><span class="params">(<span class="type">const</span> vector&lt;string&gt;&amp; myVector)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (vector&lt;string&gt;::const_iterator itr = myVector.<span class="built_in">begin</span>(); itr != myVector.<span class="built_in">end</span>(); ++itr)</span><br><span class="line">        cout &lt;&lt; *itr &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个函数中，使用 <code>const_iterator</code> 确保了即使 <code>myVector</code> 被声明为 <code>const</code>，我们也能遍历它，且不会有修改其内容的风险。</p>
+<h3 id="const-iterator-和-iterator-的区别"><a href="#const-iterator-和-iterator-的区别" class="headerlink" title="const_iterator 和 iterator 的区别"></a><code>const_iterator</code> 和 <code>iterator</code> 的区别</h3><ul>
+<li><strong>修改权限</strong>：<code>iterator</code> 允许修改其指向的元素，而 <code>const_iterator</code> 不允许。</li>
+<li><strong>用于 <strong><code>const</code></strong> 容器</strong>：如果容器被声明为 <code>const</code>，那么只能使用 <code>const_iterator</code>。</li>
+</ul>
+<h3 id="如何获取-const-iterator"><a href="#如何获取-const-iterator" class="headerlink" title="如何获取 const_iterator"></a>如何获取 <code>const_iterator</code></h3><p><code>const</code> 容器和非 <code>const</code> 容器都提供 <code>begin()</code> 和 <code>end()</code> 方法返回 <code>const_iterator</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">vector</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">iterator <span class="title">begin</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">iterator <span class="title">end</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">const_iterator <span class="title">begin</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="function">const_iterator <span class="title">end</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="comment">// 其他成员函数</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这个简化的 <code>vector</code> 接口中，<code>begin()</code> 和 <code>end()</code> 根据容器的 <code>const</code> 属性重载。如果容器是 <code>const</code>，那么调用的将是返回 <code>const_iterator</code> 的版本。</p>
+<h3 id="const-重载技术"><a href="#const-重载技术" class="headerlink" title="const 重载技术"></a><code>const</code> 重载技术</h3><p><code>const</code> 重载是一种允许函数基于对象的 <code>const</code> 状态拥有不同行为的技术。这是通过为同一函数提供 <code>const</code> 和非 <code>const</code> 两个版本来实现的。当在 <code>const</code> 对象上调用这样的函数时，将调用 <code>const</code> 版本，反之亦然。</p>
+<h2 id="const的局限性"><a href="#const的局限性" class="headerlink" title="const的局限性"></a>const的局限性</h2><p>在 C++ 中，<code>const</code> 关键字有助于增加代码的可读性和稳定性，但其实现和理解上存在一些局限性，特别是在涉及指针和 <code>const</code> 成员函数时。理解<code>const</code>的局限性，尤其是区分<strong>位级常量性</strong>（bitwise constness）和<strong>语义常量性</strong>（semantic constness）非常重要。</p>
+<h3 id="位级常量性-vs-语义常量性"><a href="#位级常量性-vs-语义常量性" class="headerlink" title="位级常量性 vs. 语义常量性"></a>位级常量性 vs. 语义常量性</h3><p><strong>位级常量性</strong>指的是对象的成员在物理层面上不能被修改。如果成员函数被声明为 <code>const</code>，编译器将确保这个函数不会改变对象的任何成员数据。然而，这种保证仅限于直接的成员；如果对象包含指向其他数据的指针，这些数据本身可以被修改，这就是位级常量性的局限。</p>
+<p><strong>语义常量性</strong>更关注于类的行为。从语义上讲，一个 <code>const</code> 成员函数不应该允许任何操作改变对象的可观状态。然而，C++ 的 <code>const</code> 系统不强制执行语义常量性，这是由于编译器无法完全理解函数的语义意图。</p>
+<h3 id="const-成员函数和指针"><a href="#const-成员函数和指针" class="headerlink" title="const 成员函数和指针"></a><code>const</code> 成员函数和指针</h3><p>如你的例子所示，如果一个类包含指向数据的指针，仅将成员函数声明为 <code>const</code> 并不能防止这些数据被修改：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Vector</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">constFunction</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        elems[<span class="number">0</span>] = <span class="number">137</span>; <span class="comment">// 这是合法的，因为它不修改指针本身</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span>* elems;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里，尽管 <code>constFunction</code> 是一个 <code>const</code> 成员函数，它依然可以修改 <code>elems</code> 指向的数据。这表明了 <code>const</code> 关键字在指针和对象状态管理方面的局限性。</p>
+<h3 id="解决方案：返回指向常量的指针"><a href="#解决方案：返回指向常量的指针" class="headerlink" title="解决方案：返回指向常量的指针"></a>解决方案：返回指向常量的指针</h3><p>为了确保 <code>const</code> 成员函数不会被用来修改它所访问的数据，可以将返回的指针声明为指向常量的指针。这样可以保证通过这些指针不会修改数据：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Vector</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">const</span> <span class="type">int</span>* <span class="title">rawElems</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> elems; <span class="comment">// 现在返回的是指向常量的指针</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span>* elems;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这种改变确保了即使函数允许访问内部数据，数据本身也不能通过返回的指针被修改。这有助于维护对象的语义常量性，确保 <code>const</code> 成员函数的行为符合预期，不会导致对象状态的意外改变。</p>
+<h3 id="一般规则"><a href="#一般规则" class="headerlink" title="一般规则"></a>一般规则</h3><ul>
+<li>尽量保证 <code>const</code> 成员函数不仅满足位级常量性，也满足语义常量性。</li>
+<li>避免在 <code>const</code> 成员函数中返回非 <code>const</code> 指针。</li>
+<li>当需要提供对内部数据的访问时，考虑返回指向常量的指针或引用。</li>
+</ul>
+<h2 id="mutable"><a href="#mutable" class="headerlink" title="mutable"></a>mutable</h2><p>在 C++ 中，<code>mutable</code> 是一个关键字，它被用来特别标记类的成员变量。标记为 <code>mutable</code> 的成员变量可以在类的 <code>const</code> 成员函数中被修改。这允许程序员在维护对象的表面常量性（即对象的外部状态看起来不变）的同时，改变那些不影响对象逻辑状态的内部数据。</p>
+<h3 id="用途和意义"><a href="#用途和意义" class="headerlink" title="用途和意义"></a>用途和意义</h3><p><code>mutable</code> 关键字的引入主要是为了解决在对象方法应保持常量但需要修改某些内部状态的情况。这常见于那些需要缓存、延迟加载或其他内部状态优化的设计中。</p>
+<p><code>mutable</code> 关键字提供了一种解决语义常量性和位级常量性冲突的方式，尤其适用于那些虽然不应该改变对象逻辑状态但需要修改成员变量的情形。你提供的 <code>GroceryList</code> 类的例子就是这种情况的一个典型应用，我们来详细探讨这个问题及其解决方案。</p>
+<h3 id="问题描述与初始实现"><a href="#问题描述与初始实现" class="headerlink" title="问题描述与初始实现"></a>问题描述与初始实现</h3><p>原始的 <code>GroceryList</code> 类设计意图是封装一个不可变的购物列表，但实际实现中需要从文件动态读取数据，这可能导致对象的内部状态发生变化。初步实现中，所有数据一开始就被读入，这在数据量很大时效率极低。</p>
+<h3 id="改进的延迟加载实现"><a href="#改进的延迟加载实现" class="headerlink" title="改进的延迟加载实现"></a>改进的延迟加载实现</h3><p>为了提高效率，你提出了一种延迟加载的实现方法：仅在实际需要某个元素时才从文件中读取这个元素。这种方法被称为<strong>惰性求值</strong>（lazy evaluation），它是一种优化程序效率的常用技术。然而，这种实现改变了 <code>getItemAt</code> 函数的常量性，因为它可能会修改对象的成员变量 <code>data</code> 和 <code>sourceStream</code>。</p>
+<h3 id="解决常量性冲突：使用-mutable"><a href="#解决常量性冲突：使用-mutable" class="headerlink" title="解决常量性冲突：使用 mutable"></a>解决常量性冲突：使用 <code>mutable</code></h3><p>虽然从实现的角度看，<code>getItemAt</code> 函数修改了对象的数据成员，但从语义的角度看，这个函数应当是常量的，因为它不改变购物列表的逻辑内容（即购物清单的内容）。在这种情况下，C++ 的 <code>mutable</code> 关键字就显得非常有用。通过将 <code>data</code> 和 <code>sourceStream</code> 声明为 <code>mutable</code>，我们可以允许 <code>getItemAt</code> 函数在保持函数外观上的常量性的同时，进行必要的内部状态修改。</p>
+<h3 id="GroceryList-类的新实现"><a href="#GroceryList-类的新实现" class="headerlink" title="GroceryList 类的新实现"></a><code>GroceryList</code> 类的新实现</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>(<span class="type">const</span> string&amp; filename); <span class="comment">// 从文件加载</span></span><br><span class="line">    <span class="function">string <span class="title">getItemAt</span><span class="params">(<span class="type">int</span> index)</span> <span class="type">const</span></span>;   <span class="comment">// 现在标记为 const</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">mutable</span> vector&lt;string&gt; data;         <span class="comment">// 数据成员现在是 mutable</span></span><br><span class="line">    <span class="keyword">mutable</span> ifstream sourceStream;       <span class="comment">// 文件流也是 mutable</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这个新的类定义中，即使 <code>getItemAt</code> 函数被标记为 <code>const</code>，它也能修改 <code>data</code> 和 <code>sourceStream</code>。这允许 <code>getItemAt</code> 在不违反其对外的常量承诺的情况下，懒加载所需的数据。</p>
+<h3 id="mutable-使用的注意事项"><a href="#mutable-使用的注意事项" class="headerlink" title="mutable 使用的注意事项"></a><code>mutable</code> 使用的注意事项</h3><p>虽然 <code>mutable</code> 是解决特定问题的有力工具，但它的使用需要谨慎：</p>
+<ul>
+<li><strong>使用限制</strong>：<code>mutable</code> 应当仅用于那些确实需要在常量成员函数中被修改的成员。</li>
+<li><strong>慎重考虑</strong>：在使用 <code>mutable</code> 之前，确保这样做不会破坏你的类的设计原则或引入不必要的复杂性。</li>
+<li><strong>正确性检查</strong>：使用 <code>mutable</code> 可能会降低代码的直观性和可维护性，因此使用时应仔细检查相关代码，确保其逻辑正确。</li>
+</ul>
+<p>总之，<code>mutable</code> 关键字解决了一个特定的设计问题，使得可以在不违反语义常量性的前提下，优化实现细节。这种技术使得接口设计与实现细节之间可以更灵活地权衡，从而在保证接口清晰和直观的同时，提高程序的性能和响应性。</p>
+<h2 id="const-正确性（const-correctness）"><a href="#const-正确性（const-correctness）" class="headerlink" title="const-正确性（const-correctness）"></a>const-正确性（const-correctness）</h2><blockquote>
+<p><em>“哎，</em><code>const</code>_ 写起来真是麻烦，” 我听到有些人抱怨，“如果我在一个地方用了它，我就得到处都用。而且，其他人也有跳过不用的，他们的程序照样能运行。我用的一些库也没有做到 <em><code>const</code></em> 正确。_<code>const</code>_ 真的值得吗？”_</p>
+<p>我们可以想象一个类似的场景，这次在射击场：“哎，这把枪的安全装置老是得设置，真麻烦。反正也有其他人不用这个功能，他们有的人也没射中自己的脚……”</p>
+<p>安全操作不当的射手在这个世界上活不长。<code>const</code> 使用不当的程序员也是一样，不戴安全帽的木匠和不检查电线是否通电的电工也是。没有理由忽视随产品提供的安全机制，特别是没有任何借口可以让程序员因为懒惰而不编写 <code>const</code> 正确的代码。</p>
+<pre><code>                        —— Herb Sutter, 《Exceptional C++》作者，资深 C++ 专家。[Sut98]
+</code></pre>
+</blockquote>
+<p>在 C++ 中，<code>const</code>-正确性（const-correctness）是一个确保代码安全性、可读性和维护性的重要实践。它涉及几个关键方面：</p>
+<ol>
+<li><strong>通过引用或指针传递对象</strong>：<ul>
+<li>使用引用到常量（reference-to-const）或指向常量的指针（pointer-to-const）传递对象，避免了不必要的对象复制，并明确指出函数不应修改对象。</li>
+</ul>
+</li>
+<li><strong>常量成员函数</strong>：<ul>
+<li>不改变对象状态的成员函数应该被标记为 <code>const</code>。这表明调用这些函数不会改变对象的状态，有助于清晰地定义类的行为。</li>
+</ul>
+</li>
+<li><strong>常量变量</strong>：<ul>
+<li>被设置后不应更改的变量应声明为 <code>const</code>。这样做可以防止变量被意外修改，增强代码的可读性和稳定性。</li>
+</ul>
+</li>
+</ol>
+<p><code>const</code>-正确性的实践对于编写高质量的 C++ 代码至关重要，它不仅帮助开发者避免潜在的错误，还提高了代码的整体质量和可维护性。通过明确哪些函数和变量可以改变程序状态，开发者可以更好地控制和理解代码的行为。此外，这还有助于在多线程和并发编程中安全地管理数据访问，防止数据竞争和其他同步问题。</p>
+<p>总之，虽然实现 <code>const</code>-正确性可能在初期需要更多的努力和考虑，但它为长期维护和代码稳定性带来的好处是显而易见的。如同其他任何安全措施一样，<code>const</code>-正确性是保障软件质量和可靠性的基石。</p>
+<h2 id="强化代码安全性和可读性：正确使用-const-成员函数和变量"><a href="#强化代码安全性和可读性：正确使用-const-成员函数和变量" class="headerlink" title="强化代码安全性和可读性：正确使用 const 成员函数和变量"></a>强化代码安全性和可读性：正确使用 <code>const</code> 成员函数和变量</h2><p>在 C++ 编程中，正确使用 <code>const</code> 关键字是保证代码安全性、清晰性和维护性的重要策略。这涉及到两个主要方面：<code>const</code> 成员函数和 <code>const</code> 变量。</p>
+<h3 id="1-const-成员函数"><a href="#1-const-成员函数" class="headerlink" title="1. const 成员函数"></a>1. <code>const</code> 成员函数</h3><p>在设计类时，应当将不改变对象状态的成员函数显式标记为 <code>const</code>。这是因为对于 <code>const</code> 实例，C++ 只允许调用被显式标记为 <code>const</code> 的成员函数。如果没有正确标记，即便函数不修改对象状态，也无法在 <code>const</code> 对象上调用它。例如，如果你有一个类 <code>Vector</code>，并尝试将其作为 <code>const</code> 引用传递给一个函数，却发现 <code>Vector</code> 的成员函数都未被标记为 <code>const</code>，那么这个 <code>const Vector</code> 就无法执行任何操作，变得无用。</p>
+<p>正确标记非变异成员函数为 <code>const</code> 不仅符合逻辑，还提高了代码的可用性和功能性。此外，这种做法还意味着所有未标记为 <code>const</code> 的成员函数都保证会以某种方式修改对象的内部状态，从接口的角度看，这为理解代码提供了极大的便利。</p>
+<h3 id="2-const-变量"><a href="#2-const-变量" class="headerlink" title="2. const 变量"></a>2. <code>const</code> 变量</h3><p>将不会改变的变量标记为 <code>const</code> 可以显著提高代码的可读性和可维护性。<code>const</code> 关键字明确区分了常量和变量，这对于调试和维护代码非常有帮助。如果一个变量被声明为 <code>const</code>，你就不能不小心地通过引用或指针传递给可能会修改它的函数，也不会错误地使用赋值操作符 <code>=</code> 代替等于操作符 <code>==</code>。即使是在多年后，当其他程序员试图解读你的代码时，他们也会因为不需要关注这些变量是否会被修改而感到轻松。</p>
+<h2 id="利用成员初始化列表优化类构造"><a href="#利用成员初始化列表优化类构造" class="headerlink" title="利用成员初始化列表优化类构造"></a>利用成员初始化列表优化类构造</h2><p>在 C++ 编程中，成员初始化列表提供了一种更有效、更精确的方式来初始化类的数据成员。这种方法不仅提高了程序的运行效率，还有助于避免一些常见的编程错误。下面，我们将探讨成员初始化列表的重要性和使用方式。</p>
+<h3 id="为什么需要成员初始化列表"><a href="#为什么需要成员初始化列表" class="headerlink" title="为什么需要成员初始化列表"></a>为什么需要成员初始化列表</h3><p>在 C++ 中构造对象时，对象的每个数据成员都会被默认初始化。然而，如果在构造函数体中赋值，这可能导致数据成员被初始化两次——一次是默认构造，一次是在构造函数体中指定的值。这不仅效率低下，也可能引起其他问题，特别是当数据成员包括复杂对象时。</p>
+<p>成员初始化列表允许在构造函数体执行之前直接初始化数据成员，从而避免不必要的默认构造和后续赋值，提高了构造过程的效率和明确性。</p>
+<h3 id="如何使用成员初始化列表"><a href="#如何使用成员初始化列表" class="headerlink" title="如何使用成员初始化列表"></a>如何使用成员初始化列表</h3><p>成员初始化列表位于构造函数签名之后，构造函数体之前，以冒号 <code>:</code> 开始，后跟一系列初始化表达式。每个表达式指定一个数据成员和一个用于初始化该成员的值。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleClass</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">SimpleClass</span>() : <span class="built_in">myInt</span>(<span class="number">5</span>), <span class="built_in">myString</span>(<span class="string">&quot;C++!&quot;</span>), <span class="built_in">myVector</span>(<span class="number">10</span>) &#123;</span><br><span class="line">        <span class="comment">// 构造函数体现在为空</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> myInt;</span><br><span class="line">    string myString;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; myVector;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，<code>myInt</code>、<code>myString</code> 和 <code>myVector</code> 都在构造函数被调用前通过初始化列表直接初始化。这样，每个成员只被初始化一次，且直接初始化为期望的值。</p>
+<h3 id="初始化列表的优点"><a href="#初始化列表的优点" class="headerlink" title="初始化列表的优点"></a>初始化列表的优点</h3><ul>
+<li><strong>效率</strong>：避免了成员的多次初始化，特别是对于那些构造成本较高的对象，如字符串和向量，这一点尤为重要。</li>
+<li><strong>清晰性</strong>：初始化列表清晰地显示了每个成员变量的初始值，提高了代码的可读性和可维护性。</li>
+<li><strong>灵活性</strong>：即使是 <code>const</code> 或引用类型的成员变量，也可以被有效地初始化。</li>
+</ul>
+<p>总的来说，成员初始化列表是 C++ 类设计中的一个强大工具，它提供了一种清晰、高效的方式来初始化类的数据成员。在实际编程中，尽可能利用这一特性来优化你的类构造过程，将有助于你编写出更加健壮和高效的 C++ 程序。</p>
+<h3 id="初始化列表的实际应用与必要性"><a href="#初始化列表的实际应用与必要性" class="headerlink" title="初始化列表的实际应用与必要性"></a>初始化列表的实际应用与必要性</h3><p>在 C++ 中，成员初始化列表不仅提高了代码的效率，而且在某些情况下是唯一合法的初始化方式。以下讨论了初始化列表的几个关键用途，及其对于确保代码正确性的重要性。</p>
+<h4 id="使用表达式初始化数据成员"><a href="#使用表达式初始化数据成员" class="headerlink" title="使用表达式初始化数据成员"></a>使用表达式初始化数据成员</h4><p>虽然常用的成员初始化列表通常指定常量值，但也可以使用表达式来初始化数据成员。这增加了初始化过程的灵活性，允许根据构造函数的参数来设定初始值，如下例所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RationalNumber</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">RationalNumber</span>(<span class="type">int</span> numerator = <span class="number">0</span>, <span class="type">int</span> denominator = <span class="number">1</span>);</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> numerator, denominator;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">RationalNumber::<span class="built_in">RationalNumber</span>(<span class="type">int</span> numerator, <span class="type">int</span> denominator) :</span><br><span class="line">    <span class="built_in">numerator</span>(numerator), <span class="built_in">denominator</span>(denominator) &#123;</span><br><span class="line">    <span class="comment">// 空构造函数体</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个例子中，分子和分母通过构造函数的参数动态初始化，有效地避免了在构造函数体内进行赋值带来的额外开销。</p>
+<h4 id="初始化列表在特定情况下的必要性"><a href="#初始化列表在特定情况下的必要性" class="headerlink" title="初始化列表在特定情况下的必要性"></a>初始化列表在特定情况下的必要性</h4><p>有些情况下，使用成员初始化列表不仅是提高效率的方法，而且是必须的。例如，对于需要初始化 <code>const</code> 成员变量或者没有默认构造函数的对象成员，成员初始化列表是必需的。</p>
+<h5 id="初始化-const-成员变量"><a href="#初始化-const-成员变量" class="headerlink" title="初始化 const 成员变量"></a>初始化 <code>const</code> 成员变量</h5><p>例如，如果有一个类 <code>Counter</code> 需要限制计数器的最大值，而这个最大值在对象的整个生命周期中不应该改变：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Counter</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Counter</span>(<span class="type">int</span> maxValue);</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">increment</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">decrement</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getValue</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> value;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> maximum;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Counter::<span class="built_in">Counter</span>(<span class="type">int</span> maxValue) : <span class="built_in">value</span>(<span class="number">0</span>), <span class="built_in">maximum</span>(maxValue) &#123;</span><br><span class="line">    <span class="comment">// 空构造函数体</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，<code>maximum</code> 被声明为 <code>const</code>，必须在成员初始化列表中初始化。如果尝试在构造函数体中赋值，编译器会报错，因为 <code>const</code> 变量一旦初始化后就不能再被修改。</p>
+<h5 id="初始化没有默认构造函数的对象成员"><a href="#初始化没有默认构造函数的对象成员" class="headerlink" title="初始化没有默认构造函数的对象成员"></a>初始化没有默认构造函数的对象成员</h5><p>如果类中包含的对象成员没有默认构造函数或需要特定的构造参数，也必须使用初始化列表。例如，如果有一个自定义集合需要特定的比较函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SetWrapperClass</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">SetWrapperClass</span>();</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    Set&lt;customT&gt; mySet;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">SetWrapperClass::<span class="built_in">SetWrapperClass</span>() : <span class="built_in">mySet</span>(MyCallback) &#123;</span><br><span class="line">    <span class="comment">// 空构造函数体</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，<code>mySet</code> 必须在成员初始化列表中用适当的回调函数初始化，以确保对象被正确构造。</p>
+<h2 id="静态成员的应用和优化"><a href="#静态成员的应用和优化" class="headerlink" title="静态成员的应用和优化"></a>静态成员的应用和优化</h2><p>静态成员在类设计中扮演着独特而重要的角色，无论是数据成员还是成员函数。它们提供了一种方式来共享数据或行为，而不是将它们绑定到类的特定实例。这可以优化资源使用，简化代码逻辑，并提高程序的整体效率。</p>
+<h3 id="静态数据成员"><a href="#静态数据成员" class="headerlink" title="静态数据成员"></a>静态数据成员</h3><p>静态数据成员是与类本身相关联的，而不是与类的任何特定实例相关联。例如，如果我们有一个 <code>Window</code> 类，我们可能希望所有窗口共享同一个 <code>Palette</code> 对象，因为每个窗口都可能使用相同的调色板渲染自己。这可以通过声明 <code>Palette</code> 为静态数据成员来实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Window</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">drawWindow</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">static</span> Palette sharedPal;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在类的实现文件中，我们需要定义这个静态成员：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Palette Window::sharedPal;</span><br></pre></td></tr></table></figure>
+
+<h3 id="静态成员函数"><a href="#静态成员函数" class="headerlink" title="静态成员函数"></a>静态成员函数</h3><p>静态成员函数可以访问类的静态数据成员，但它们不处理类的特定实例。这使它们成为实现与对象实例无关的功能的理想选择。例如，如果我们想要统计 <code>Window</code> 类的实例数量，我们可以使用静态成员函数和静态数据成员来跟踪这个信息：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Window</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Window</span>() &#123; ++numInstances; &#125;</span><br><span class="line">    ~<span class="built_in">Window</span>() &#123; --numInstances; &#125;</span><br><span class="line">    <span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">getRemainingInstances</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">static</span> <span class="type">int</span> numInstances;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> Window::numInstances = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Window::getRemainingInstances</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> numInstances;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个模式允许我们在不需要具体窗口实例的情况下，查询活动窗口的数量。</p>
+<h3 id="静态成员的优势"><a href="#静态成员的优势" class="headerlink" title="静态成员的优势"></a>静态成员的优势</h3><ol>
+<li><strong>资源共享</strong>：静态成员允许类的所有实例共享数据或行为，这在许多情况下可以节约资源。</li>
+<li><strong>封装维护</strong>：通过将全局相关的数据或行为封装在类中，静态成员有助于维护代码的封装性，减少全局变量的使用。</li>
+<li><strong>简化接口</strong>：静态成员函数可以提供一个简单的接口来执行与类相关的操作，而不需要创建类的实例。</li>
+</ol>
+<h3 id="使用注意"><a href="#使用注意" class="headerlink" title="使用注意"></a>使用注意</h3><p>使用静态成员时需要注意确保它们的线程安全性，因为它们在多线程环境中共享同一份数据。此外，正确管理静态数据成员的生命周期和访问权限也是保持程序健売性的关键。</p>
+<h2 id="Const与Static的交互以及类常量的优化"><a href="#Const与Static的交互以及类常量的优化" class="headerlink" title="Const与Static的交互以及类常量的优化"></a>Const与Static的交互以及类常量的优化</h2><p>在 C++ 中，<code>const</code> 和 <code>static</code> 关键词在使用时需要注意其交互性，尤其是在设计类的成员函数和数据成员时。这些关键词虽然增加了代码的复杂性，但正确使用可以极大地提升代码的安全性和效率。</p>
+<h3 id="Const成员函数与Static数据成员"><a href="#Const成员函数与Static数据成员" class="headerlink" title="Const成员函数与Static数据成员"></a>Const成员函数与Static数据成员</h3><p><code>const</code> 成员函数表明该函数不会修改类的任何非静态成员变量。然而，<code>const</code> 成员函数是允许修改静态数据成员的，因为静态数据成员不属于类的任何特定实例，而是属于类本身。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ConstStaticClass</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">constFn</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">static</span> <span class="type">int</span> staticData;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> ConstStaticClass::staticData = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">ConstStaticClass::constFn</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">    ++staticData; <span class="comment">// 合法的操作，因为staticData是静态成员</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>尽管 <code>constFn</code> 被声明为 <code>const</code>，但它依然可以修改静态成员 <code>staticData</code>。这是因为静态成员的改变不会影响到类的任何具体实例的状态。</p>
+<h3 id="静态成员函数与Const"><a href="#静态成员函数与Const" class="headerlink" title="静态成员函数与Const"></a>静态成员函数与Const</h3><p>静态成员函数不与任何具体的类实例绑定，因此它们没有 <code>this</code> 指针，也就不能被声明为 <code>const</code>。静态成员函数主要用于操作静态数据成员或执行不依赖于类实例的操作。</p>
+<h3 id="类常量（Class-Constants）"><a href="#类常量（Class-Constants）" class="headerlink" title="类常量（Class Constants）"></a>类常量（Class Constants）</h3><p>类常量通常是用 <code>static const</code> 声明的，这意味着它们不仅是不可变的，而且是与类相关联而非类的实例。对于整数类型的类常量，C++ 提供了一种简写方式，可以在类内部直接初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ClassConstantExample</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/* Omitted. */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">static</span> <span class="type">const</span> <span class="type">int</span> MyConstant = <span class="number">137</span>; <span class="comment">// 在类定义内初始化</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这种方法简洁且在专业代码中常见，但应注意，这种简写只适用于整数类型的静态常量。</p>
+<h3 id="静态成员函数的实用场景"><a href="#静态成员函数的实用场景" class="headerlink" title="静态成员函数的实用场景"></a>静态成员函数的实用场景</h3><p>静态成员函数也可以用于管理和监控类的状态，例如，计算类的活动实例数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Window</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Window</span>() &#123; ++numInstances; &#125;</span><br><span class="line">    ~<span class="built_in">Window</span>() &#123; --numInstances; &#125;</span><br><span class="line">    <span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">getRemainingInstances</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">static</span> <span class="type">int</span> numInstances;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> Window::numInstances = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Window::getRemainingInstances</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> numInstances;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种方法可以无需具体实例即可查询类状态，非常适用于资源管理和状态监控。</p>
+<h2 id="使用-explicit-关键字避免隐式类型转换"><a href="#使用-explicit-关键字避免隐式类型转换" class="headerlink" title="使用 explicit 关键字避免隐式类型转换"></a>使用 <code>explicit</code> 关键字避免隐式类型转换</h2><p>在 C++ 中，<code>explicit</code> 关键字用于防止构造函数被隐式地用作类型转换。这对于提高代码的安全性和预见性非常重要，尤其是在处理单参数构造函数时。</p>
+<h3 id="隐式转换的问题"><a href="#隐式转换的问题" class="headerlink" title="隐式转换的问题"></a>隐式转换的问题</h3><p>在没有 <code>explicit</code> 关键字的情况下，任何接受单一参数的构造函数都可以被编译器用作隐式类型转换函数。这意味着，如以下示例所示，一个整数可以被隐式地转换为一个复杂的对象，有时这并不是我们所希望的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Vector</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Vector</span>(<span class="type">int</span> sizeHint = <span class="number">10</span>);</span><br><span class="line">    <span class="comment">/* ... */</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Vector myVector = <span class="number">10</span>; <span class="comment">// 隐式调用 Vector(int)</span></span><br></pre></td></tr></table></figure>
+
+<p>这种代码虽然有效，但可能导致逻辑上的错误和混淆，因为它隐藏了一个可能重要的类型转换过程。</p>
+<h3 id="explicit-关键字的作用"><a href="#explicit-关键字的作用" class="headerlink" title="explicit 关键字的作用"></a><code>explicit</code> 关键字的作用</h3><p>当构造函数被声明为 <code>explicit</code> 时，它不会被用于任何隐式类型转换。这意味着必须显式地调用构造函数，从而避免了不期望的类型转换：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> ElemType&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Vector</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">Vector</span><span class="params">(<span class="type">int</span> sizeHint = <span class="number">10</span>)</span></span>; <span class="comment">// 提示 Vector 的大小</span></span><br><span class="line">    <span class="comment">/* ... */</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Vector&lt;<span class="type">int</span>&gt; myVector = <span class="number">10</span>; <span class="comment">// 编译错误，阻止隐式转换</span></span><br><span class="line"><span class="function">Vector&lt;<span class="type">int</span>&gt; <span class="title">myVector</span><span class="params">(<span class="number">10</span>)</span></span>;  <span class="comment">// 正确，显式调用构造函数</span></span><br></pre></td></tr></table></figure>
+
+<p>通过使用 <code>explicit</code> 关键字，我们可以确保类型转换是显而易见的，从而减少了由于隐式转换引起的bug和混淆。</p>
+<h3 id="设计时的考虑"><a href="#设计时的考虑" class="headerlink" title="设计时的考虑"></a>设计时的考虑</h3><p>在设计类时，如果你的类有一个不打算用作类型转换的单参数构造函数，你应该将其标记为 <code>explicit</code>。这样做虽然会增加编码工作量，但能极大地提高代码的稳定性和安全性。这是一种预防措施，能够帮助维护类的内聚性，确保类的使用方式符合设计意图。</p>
+<h2 id="总结与练习"><a href="#总结与练习" class="headerlink" title="总结与练习"></a>总结与练习</h2><h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><ol>
+<li><strong>模板（Templates）</strong>：<ul>
+<li>模板可用于定义依赖于任意类型的抽象族，允许类或函数针对不同的数据类型进行操作。</li>
+</ul>
+</li>
+<li><code>typename</code>** 关键字**：<ul>
+<li>用于声明模板类中的类型参数。</li>
+<li>在依赖类型内部嵌套类型前使用，以明确指示类型。</li>
+</ul>
+</li>
+<li><strong>模板类的接口和实现</strong>：<ul>
+<li>应将模板类的接口与实现都放置在 <code>.h</code> 文件中，避免为模板类创建 <code>.cpp</code> 文件，确保模板的正确实例化。</li>
+</ul>
+</li>
+<li><code>const</code>** 关键字的使用**：<ul>
+<li>标记变量为 <code>const</code> 可以防止变量在初始化后被修改。</li>
+<li><code>const</code> 成员函数保证不修改类的任何数据成员。</li>
+<li><code>const</code> 成员函数通过明确指出哪些函数是读取值，哪些是写入值，从而澄清接口。</li>
+</ul>
+</li>
+<li><code>const</code>** 在指针中的应用**：<ul>
+<li><code>const</code> 位置不同，意义亦不同，例如 <code>const int*</code>（指向常量的指针）与 <code>int* const</code>（常量指针）。</li>
+</ul>
+</li>
+<li><strong>位常量性与语义常量性</strong>：<ul>
+<li>C++ 强制执行位常量性（bitwise constness），开发者需要确保类在语义上也是常量（semantically const）。</li>
+</ul>
+</li>
+<li><code>mutable</code>** 关键字**：<ul>
+<li>允许在语义上为常量的函数中修改某些被 <code>mutable</code> 修饰的非位常量成员。</li>
+</ul>
+</li>
+<li><strong>成员初始化列表</strong>：<ul>
+<li>在构造函数执行前，用于初始化数据成员到特定值，提高效率并避免不必要的构造与赋值。</li>
+</ul>
+</li>
+<li><code>static</code>** 关键字**：<ul>
+<li>表明某数据成员或成员函数是属于类本身，而非类的实例。</li>
+<li>静态数据成员在 <code>.h</code> 文件中声明，在 <code>.cpp</code> 文件中定义。</li>
+<li>静态成员函数可以通过 <code>ClassName::functionName()</code> 形式调用。</li>
+</ul>
+</li>
+<li><strong>类内部的整数常量</strong>：<ul>
+<li>对于整数类型的静态常量，可以在类定义内直接初始化，无需单独定义。</li>
+</ul>
+</li>
+<li><strong>转换构造函数</strong>：<ul>
+<li>允许类通过一个不同类型的值进行初始化，实现类型之间的隐式转换。</li>
+</ul>
+</li>
+<li><code>explicit</code>** 关键字**：<ul>
+<li>用于防止构造函数被隐式地用作类型转换，避免可能导致的编程错误。</li>
+</ul>
+</li>
+</ol>
+<h3 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h3><ol>
+<li>如何声明一个类模板？</li>
+</ol>
+<p>要声明一个类模板，你需要使用 <code>template</code> 关键字，后跟一对尖括号，其中包含类型参数，这些参数可以用 <code>typename</code> 或 <code>class</code> 关键字声明。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    T data;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">method</span><span class="params">(T value)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>如何为类模板实现成员函数？</li>
+</ol>
+<p>类模板的成员函数可以在类模板内部直接定义，或者在类外部定义。在类外部定义时，需要在函数定义前加上模板声明，并使用模板类的名字指定该函数属于哪个模板实例。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="type">void</span> MyClass&lt;T&gt;::<span class="built_in">method</span>(T value) &#123;</span><br><span class="line">    <span class="comment">// 函数实现</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>在声明模板参数时，<code>typename</code> 和 <code>class</code> 关键字有何区别？</li>
+</ol>
+<p>在声明模板参数时，<code>typename</code> 和 <code>class</code> 关键字没有实际区别，它们都可以用来定义类型参数。<code>typename</code> 是较新的用法，更能明确表示参数是一个类型。</p>
+<ol start="4">
+<li>在类模板中何时需要在类型前加 <code>typename</code> 关键字？</li>
+</ol>
+<p>在模板类中，当你需要指定依赖于模板参数的类型时，应该在类型前加 <code>typename</code> 关键字。这通常出现在模板参数是一个类，且你需要使用该类内定义的类型时。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line">    <span class="keyword">typename</span> T::SubType *ptr; <span class="comment">// 使用 typename 指定 SubType 是一个类型</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>下面的代码行声明了一个类中的成员函数：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">const</span> <span class="type">char</span> * <span class="type">const</span> <span class="title">MyFunction</span><span class="params">(<span class="type">const</span> string&amp; input)</span> <span class="type">const</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>解释此语句中每个 <code>const</code> 的含义：</p>
+<ul>
+<li>第一个 <code>const</code>：返回类型为 <code>const char *</code>，指的是这个函数返回一个指向常量字符的指针，不能通过这个指针修改字符。</li>
+<li>第二个 <code>const</code>：<code>const</code> 修饰返回的指针，意味着指针本身也是常量，不能指向别的地方。</li>
+<li>最后一个 <code>const</code>：修饰整个成员函数，表示这个成员函数不会修改任何成员变量的状态，可以安全地在常量对象上调用。</li>
+</ul>
+<ol start="6">
+<li>什么是 const-overloading？</li>
+</ol>
+<p><code>const</code>-overloading 是指在同一个类中定义两个逻辑上相同但常量性不同的成员函数版本。通常一个版本为常量成员函数，用于只读访问，另一个为非常量版本，用于修改对象。这使得相同的函数可以在常量和非常量对象上使用，但行为会根据对象的常量性有所不同。</p>
+<ol start="7">
+<li>语义常量性和位常量性有何区别？</li>
+</ol>
+<ul>
+<li><strong>位常量性（Bitwise constness）</strong>：指对象的成员在内存中的值不被修改，即从内存层面上看，对象在函数调用前后保持不变。</li>
+<li><strong>语义常量性（Semantic constness）</strong>：指对象从逻辑上看不发生变化，即即使成员的位值可能改变，对象表现出的行为和状态不变。</li>
+</ul>
+<ol start="8">
+<li>常量指针和指向常量的指针有何不同？</li>
+</ol>
+<ul>
+<li><strong>常量指针 (</strong><code>T* const ptr</code>**)**：指针本身是常量，不能指向其他地址，但可以修改指针指向的数据。</li>
+<li><strong>指向常量的指针 (</strong><code>const T* ptr</code>**)**：不能通过指针修改所指向的数据，但指针本身可以改变，指向其他地址。</li>
+</ul>
+<ol start="9">
+<li>常量引用和普通引用有何不同？</li>
+</ol>
+<p>常量引用（<code>const T&amp;</code>）不允许通过引用修改其绑定的对象，适用于需要保证输入数据不被修改的情况。普通引用（<code>T&amp;</code>）可以通过引用修改其绑定的对象，提供了一种修改原始数据的方法。使用常量引用还可以避免复制对象，从而提高效率，尤其是在传递大型对象时。</p>
+<ol start="10">
+<li><code>mutable</code> 关键字有什么作用？</li>
+</ol>
+<p><code>mutable</code> 关键字用于声明即使在一个常量对象中也可以被修改的成员变量。这允许在 <code>const</code> 成员函数中修改这些被 <code>mutable</code> 修饰的成员变量。这通常用于那些不影响对象外部状态的成员，如缓存、计数器等。</p>
+<ol start="11">
+<li>类构造涉及哪些步骤？它们的执行顺序是怎样的？</li>
+</ol>
+<p>类的构造过程涉及以下步骤，按顺序执行：</p>
+<ul>
+<li>分配内存：为对象分配内存空间。</li>
+<li>初始化成员：通过构造函数初始化列表初始化成员变量。</li>
+<li>执行构造函数体：执行构造函数中的代码。</li>
+</ul>
+<p>这个过程确保了在构造函数体执行前，所有成员变量都已经被正确初始化。</p>
+<ol start="12">
+<li>如何声明初始化列表？</li>
+</ol>
+<p>初始化列表用于在构造函数中初始化成员变量，位于构造函数参数列表后，函数体前，由一个冒号开始，后跟一个或多个初始化表达式，每个表达式包含成员变量名和用圆括号或花括号包围的初始值。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">MyClass</span>(<span class="type">int</span> x, <span class="type">double</span> y) : <span class="built_in">a</span>(x), <span class="built_in">b</span>(y) &#123;&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> a;</span><br><span class="line">    <span class="type">double</span> b;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol start="13">
+<li>静态数据是什么，它与普通成员数据有何不同？</li>
+</ol>
+<p>静态数据是与类关联的数据，而不是与类的特定实例关联。这意味着类的所有实例共享相同的静态数据成员。静态成员在类的所有对象之间不是独立的，而普通成员数据在每个对象实例中都有自己的一份拷贝。</p>
+<ol start="14">
+<li>在类中添加静态数据需要哪两个步骤？</li>
+</ol>
+<p>添加静态数据成员到类中需要两个步骤：</p>
+<ul>
+<li>在类定义中声明静态成员，并使用 <code>static</code> 关键字。</li>
+<li>在类定义外部定义并初始化静态成员，指定它属于哪个类（使用类名和作用域解析运算符 <code>::</code>）。</li>
+</ul>
+<ol start="15">
+<li>什么是静态成员函数？如何调用静态成员函数？</li>
+</ol>
+<p>静态成员函数是与类本身相关联而不是与类的特定实例相关联的函数。静态成员函数可以在没有类的实例的情况下调用。调用静态成员函数通常使用类名和作用域解析运算符，例如 <code>ClassName::staticFunction();</code>。</p>
+<ol start="16">
+<li>什么是转换构造函数？</li>
+</ol>
+<p>转换构造函数是一个接受单一参数的构造函数，允许从一种类型隐式转换为类类型。例如，如果一个类接受一个 <code>int</code> 类型的参数，那么这个构造函数允许直接从 <code>int</code> 转换为该类对象。</p>
+<ol start="17">
+<li><code>explicit</code> 关键字有什么作用？</li>
+</ol>
+<p><code>explicit</code> 关键字用于防止构造函数定义的隐式类型转换。当构造函数被声明为 <code>explicit</code> 时，它不会被用作隐式类型转换，这有助于防止因意外的类型转换而引发的错误。只能通过直接调用或类型转换来使用这样的构造函数，增加了代码的可读性和安全性。</p>
+<ol start="18">
+<li>解释对象构造过程中涉及的每个步骤。为什么它们按照这个顺序发生？每个步骤为什么是必要的？</li>
+</ol>
+<p>对象的构造过程主要包括以下步骤：</p>
+<ol>
+<li><strong>内存分配</strong>：首先为对象分配内存空间。这是必要的因为在创建任何对象之前，必须有足够的内存来存储其成员变量。</li>
+<li><strong>成员初始化列表</strong>：在构造函数体执行之前，通过成员初始化列表对成员变量进行初始化。这个步骤是必要的，特别是对于const成员和引用成员，因为这些成员必须在构造函数体执行前初始化。</li>
+<li><strong>构造函数体执行</strong>：执行构造函数中的代码，这可能包括更复杂的初始化逻辑或其他设置。构造函数体提供了在成员初始化之后进一步定制对象状态的机会。</li>
+</ol>
+<p>这些步骤按照此顺序进行是为了保证在构造函数体内访问任何成员变量时，这些变量已经被适当初始化。这对于保持程序的稳定性和预防错误至关重要。</p>
+<ol start="19">
+<li>为什么带有默认值的单参数函数必须为其后的每个参数指定默认值？</li>
+</ol>
+<p>这是因为C++中参数的默认值需要从右向左连续。如果一个函数的中间某个参数有默认值，而后面的参数没有，则在调用时会出现歧义，编译器无法确定哪些参数使用了默认值。这样的规则简化了函数调用的解析，确保了在没有提供足够实参时，所有使用默认值的参数都能正确、清晰地被识别。</p>
+<ol start="20">
+<li>鉴于软件正确性和安全性至关重要，描述如何在 <code>AltairModule</code> 类中适当使用 <code>const</code>，以确保 <code>parentModule</code> 成员变量正确表示其所有权关系。</li>
+</ol>
+<p>根据需求，<code>AltairModule</code> 类应该能修改其所指向的 <code>OrionModule</code>，但不能更改指向哪个 <code>OrionModule</code>。因此，我们应该将 <code>parentModule</code> 成员变量声明为指向可变 <code>OrionModule</code> 的常量指针（<code>OrionModule* const</code>）。这样，<code>parentModule</code> 就不能被重新指向其他对象，但可以通过这个指针修改 <code>OrionModule</code> 对象。构造函数应如下实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AltairModule::<span class="built_in">AltairModule</span>(OrionModule* owner) : <span class="built_in">parentModule</span>(owner) &#123;</span><br><span class="line">    <span class="comment">// 构造函数体，可能包含其他初始化逻辑</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样的实现确保了 <code>parentModule</code> 在对象生命周期内始终指向构造时传入的 <code>OrionModule</code> 实例，同时允许通过该指针修改 <code>OrionModule</code>。</p>
+<ol start="21">
+<li>解释为什么静态成员函数不能被标记为 <code>const</code>。</li>
+</ol>
+<p>静态成员函数不与类的任何特定实例绑定，因此没有 <code>this</code> 指针。由于 <code>const</code> 成员函数的含义是不修改通过 <code>this</code> 指针访问的成员数据，而静态成员函数没有 <code>this</code> 指针，所以不可能声明一个静态成员函数为 <code>const</code>。静态成员函数的行为与常量性无关，因为它们不操作类的实例状态。</p>
+
+      
+      <div class="flex flex-wrap items-center gap-2 mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+        <i data-lucide="tag" class="w-4 h-4 text-zinc-400 dark:text-zinc-500"></i>
+        <a href="/tags/C/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#C++</a>
+      </div>
+      
+      
+      <div class="mt-8 p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-500 dark:text-zinc-400">
+        <p class="font-semibold text-zinc-700 dark:text-zinc-300 mb-1">copyright</p>
+        <p>copyright_text</p>
+        <p class="mt-1">本文链接：<a target="_blank" rel="noopener" href="https://afogsheep.github.io2024/05/07/OLD_2024-05-07-类的优化学习/" class="text-accent-500">https://afogsheep.github.io2024/05/07/OLD_2024-05-07-类的优化学习/</a></p>
+      </div>
+      
+  </div>
+
+  
+  <nav class="grid grid-cols-2 gap-4 mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800" data-aos="fade-up">
+    <a href="/2024/07/01/OLD_%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/" class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent-300 dark:hover:border-accent-600 transition-all"><span class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-500"><i data-lucide="arrow-left" class="w-3 h-3 inline"></i> prev</span><span class="text-sm font-semibold">简单学习算法的实现</span></a>
+    <a href="/2024/05/07/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent-300 dark:hover:border-accent-600 transition-all text-right"><span class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-500">next <i data-lucide="arrow-right" class="w-3 h-3 inline"></i></span><span class="text-sm font-semibold">类的优化学习</span></a>
+  </nav>
+  
+
+  
+
+</article>
+
+  </main>
+
+  <footer class="relative z-10 border-t border-zinc-200 dark:border-zinc-800">
+  <div class="max-w-7xl mx-auto px-4 py-4 text-center">
+    
+    <div class="flex justify-center gap-6 mb-3">
+      
+      <a href="https://github.com/AFOGSHEEP" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-full text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/10 transition-all" aria-label="github"><i data-lucide="github" class="w-5 h-5"></i></a>
+      
+    </div>
+    
+    <div class="text-sm text-zinc-400 dark:text-zinc-500">
+      <p>&copy; 2024 - 2026 AAAFORGE. Powered by <a href="https://hexo.io" target="_blank" class="hover:text-accent-500">Hexo</a> &amp; Fancy Avalanche.</p>
+      
+      
+    </div>
+  </div>
+</footer>
+
+  
+<div id="search-overlay" class="search-overlay" onclick="if(event.target===this)toggleSearch()">
+  <div class="search-panel" onclick="event.stopPropagation()">
+    <div class="search-input-wrap">
+      <i data-lucide="search" class="w-5 h-5 text-[var(--c-text3)]"></i>
+      <input type="text" id="search-input" placeholder="search_placeholder" autocomplete="off" oninput="performSearch(this.value)">
+      <span class="text-xs text-[var(--c-text3)] px-1.5 py-0.5 rounded border border-[var(--c-border)] bg-[var(--c-bg2)]">ESC</span>
+    </div>
+    <div id="search-results" class="search-results"><div class="text-center py-8 text-[var(--c-text3)]">search_empty</div></div>
+  </div>
+</div>
+<script data-no-instant>
+  
+  var __SD = [{"t":"一周刷题","u":"/2025/03/01/Leetcode_%E4%B8%80%E5%91%A8%E5%88%B7%E9%A2%98/","e":"","c":"1 周刷题计划（侧重哈希→双指针→栈队列→图搜索→贪心）\nDay 1 哈希表\n知识：哈希表 O(1) 查找、冲突概念；unordered_map&#x2F;unordered_set 用法。题单：Two Sum、Two Sum II（有序用双指针对比）、Valid Anagram、Isomorphic Strings。练习：一遍哈希 vs 两遍哈希，写出复杂度；手推哈希表状态。Day 2 双指针 &#x2F; 滑窗\n知识：左右夹逼、快慢指针、固定左扩右缩的滑窗。题单：3Sum、3Sum Closest、Container With Most Water、Longest Substring Without Repeating Characters（滑窗 + 哈希）。练习：画指针移动轨迹，解释窗口维护不变量。Day 3 栈 &#x2F; 单调栈\n知识：栈的典型用途、单调递增&#x2F;递减栈找“下一个更大&#x2F;更小”。题单：Valid Parentheses、Min Stack、Daily Temperatures、Next Greater Element I&#x2F;II。练习：","d":"2025-03-01"},{"t":"三数之和","u":"/2025/03/01/Leetcode_%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C/","e":"","c":"\n\n\n\n\n\n固定左边界，两个指针在右半区间夹逼\n1234567891011121314151617181920212223242526272829303132333435363738394041#include&lt;vector&gt;#include&lt;algorithm&gt;using namespace std;class Solution&#123;    public:    vector&lt;vector&lt;int&gt;&gt; threeSum(vector&lt;int&gt;&amp; nums)&#123;        vector&lt;vector&lt;int&gt;&gt; ans;        sort(nums.begin(), nums.end());        if(nums.size() &lt; 3) return ans;        for(int i =0; i &lt; nums.size() - 2; i++)&#123;                        if(i&gt;0&amp;&amp;nu","d":"2025-03-01"},{"t":"两数之和","u":"/2025/03/01/Leetcode_%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C/","e":"","c":"完成代码\t\n123456789101112131415class Solution &#123;public:  vector&lt;int&gt; twoSum(vector&lt;int&gt; &amp;nums, int target) &#123;    unordered_map&lt;int, int&gt; idx; // value -&gt; index    for (int i = 0; i &lt; static_cast&lt;int&gt;(nums.size()); ++i) &#123;      int need = target - nums[i];      if (idx.count(need)) &#123;        return &#123;idx[need], i&#125;;      &#125;      idx[nums[i]] = i;    &#125;    return &#123;&#125;; // 理论上不会走到这里  &#125;&#125;;","d":"2025-03-01"},{"t":"判断整数回文","u":"/2025/03/01/Leetcode_%E5%88%A4%E6%96%AD%E6%95%B4%E6%95%B0%E5%9B%9E%E6%96%87/","e":"","c":"12345678910111213141516171819202122#include&lt;iostream&gt;#include&lt;string&gt;using namespace std;class Solution&#123;    public:    bool isPalindrome(int x)&#123;        string str = to_string(x);        int left =0, right = str.size() - 1;        while(left &lt; right)&#123;            if(str[left] != str[right])&#123;                return false;            &#125;            left++;            right--;        &#125;        return true;    &#125;&#125;;\n\n算是最简单的一道题了\n评论区看到了不转换成字符串的做法\n12345678","d":"2025-03-01"},{"t":"两数相加","u":"/2025/03/01/Leetcode_%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0/","e":"","c":":::info给你两个 非空 的链表，表示两个非负的整数。它们每位数字都是按照 逆序 的方式存储的，并且每个节点只能存储 一位 数字。\n请你将两个数相加，并以相同形式返回一个表示和的链表。\n你可以假设除了数字 0 之外，这两个数都不会以 0 开头。\n:::\n\n\n\n\n思路：首先判断12两个表谁长谁端，最长的链表长求出来并设定为max，然后设出最后的答案表3，目前是全空状态。分别遍历12两个表，分三种情况，12都不是空，1空2有，或者1有2空，12都是空（这时候退出遍历），都不是空时直接相加，小于10直接放入c，大于等于10时对和取10的余，这里可能要有一个函数来获得取余结果和余数，余数放入3，取余结果放入3的下一位（开始时3里面全是0），第二种情况时直接把非空的那个链表里的放入3，第三种情况结束并返回链表3。\n为什么生成链表要用dummy节点？\n作用：虚拟头节点（dummy）是个占位的首节点，不存放有效数据。它让你在往结果链表里追加首个节点时，不用写“如果是第一个节点就单独处理”的分支。\n好处：\n统一逻辑：所有新节点都用“尾插”一套流程，无需区分首节点和后续节点。\n代码更短更少 bug：","d":"2025-03-01"},{"t":"合并两个有序链表","u":"/2025/03/01/Leetcode_%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/","e":"","c":"\n\n\n\n一开始有好几处大错误\n你这版代码的问题不是一个点，而是有几处核心逻辑都错了，所以基本过不了。\n最致命的有 4 个：\n\n你的 while 条件写错了你写的是：\n\n1while(l1-&gt;next != nullptr &amp;&amp; l2-&gt;next != nullptr)\n\n这会直接漏掉最后一个节点，而且如果某个链表一开始就是空的，还会空指针访问。正确判断应该是看当前节点本身是不是空：\n1while (l1 != nullptr &amp;&amp; l2 != nullptr)\n\n\n你没有用“当前尾指针”来接链表你一直在写：\n\n1dummy.next = l1;\n\n这意味着每次都把 dummy.next 覆盖掉了，前面已经接好的节点全丢了。正确做法应该是准备一个 cur，让它一直指向结果链表的尾巴：\n12cur-&gt;next = l1;cur = cur-&gt;next;\n\n\n你把“相等”的情况单独拿出来了，但写法不对这一段：\n\n1234dummy.next = l1;dummy.next-&gt;next = l2;l1 = l1-&gt;next;l","d":"2025-03-01"},{"t":"括号生成","u":"/2025/03/01/Leetcode_%E6%8B%AC%E5%8F%B7%E7%94%9F%E6%88%90/","e":"","c":"感觉是最近最难的一道题\n\n\n\n\n首先想到的思路是深度优先，遍历括号的左中右三个位置递归生成，为了防止重复所以用无重复集合unordered_set来保存每一轮的结果。为了防止多轮\n12345678910111213141516171819202122232425262728293031323334353637#include&lt;unordered_set&gt;#include&lt;string&gt;#include&lt;vector&gt;using namespace std;class Solution &#123;public:    vector&lt;string&gt; generateParenthesis(int n) &#123;        if(n==0) return &#123;&#125;;        unordered_set&lt;string&gt; res;        res.insert(&quot;()&quot;);        for(int step =2 ; step &lt;= n ; step++)&#123;","d":"2025-03-01"},{"t":"寻找两个正序数组的中位数","u":"/2025/03/01/Leetcode_%E5%AF%BB%E6%89%BE%E4%B8%A4%E4%B8%AA%E6%AD%A3%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0/","e":"","c":"给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的 中位数 。\n算法的时间复杂度应该为 O(log (m+n)) 。\n示例 1：\n123输入：nums1 = [1,3], nums2 = [2]输出：2.00000解释：合并数组 = [1,2,3] ，中位数 2\n\n示例 2：\n123输入：nums1 = [1,2], nums2 = [3,4]输出：2.50000解释：合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5\n\n\n\n思路：创建新数组合并这两个原始数组，对新数组使用快速排序，之后根据新数组长度是奇数或偶数来计算中位数。\n不需要快速排序，因为原本的两个数组就是有序的，只需要归并排序放入新数组即可。也就是先后判断两者大小，再递归的排序\n123456789101112131415161718192021222324252627282930313233343536373839double findMedianSortedArrays(vector&lt;int&gt; &amp;nums1, v","d":"2025-03-01"},{"t":"无重复字符的最长子串","u":"/2025/03/01/Leetcode_%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/","e":"","c":"给定一个字符串 s ，请你找出其中不含有重复字符的 最长 子串 的长度。\n示例 1:\n123输入: s = &quot;abcabcbb&quot;输出: 3 解释: 因为无重复字符的最长子串是 &quot;abc&quot;，所以其长度为 3。注意 &quot;bca&quot; 和 &quot;cab&quot; 也是正确答案。\n\n示例 2:\n123输入: s = &quot;bbbbb&quot;输出: 1解释: 因为无重复字符的最长子串是 &quot;b&quot;，所以其长度为 1。\n\n示例 3:\n1234输入: s = &quot;pwwkew&quot;输出: 3解释: 因为无重复字符的最长子串是 &quot;wke&quot;，所以其长度为 3。     请注意，你的答案必须是 子串 的长度，&quot;pwke&quot; 是一个子序列，不是子串。\n\n\n\n\n\n思路：创建哈希表B，int的计数器count，容器c,遍历s，同步放入s每位的值和其对应在s中的位置，当遍历到重复的，存count的值进c，重置count的值为一，清空哈希表，再开始遍历的位置移动到当前重复的字符","d":"2025-03-01"},{"t":"最长公共前缀","u":"/2025/03/01/Leetcode_%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%89%8D%E7%BC%80/","e":"","c":"\n\n\n\n最短板原则\n123456789101112131415161718192021222324252627282930313233343536373839#include&lt;string&gt;#include&lt;vector&gt;using namespace std;    class Solution&#123;    public:    string longestCommonPrefix(vector&lt;string&gt;&amp; strs) &#123;        if(strs.empty()) return &quot;&quot;;        if(strs.size() == 1) return strs[0];        int minStrIndex = 0;    //寻找最短的字符串        for(int i = 0 ;i&lt; strs.size();++i)&#123;            if(strs[i].size() &lt; strs[minStrIndex].size())&#123;     ","d":"2025-03-01"},{"t":"## 题目要点","u":"/2025/03/01/Leetcode_%E5%9B%9B%E6%95%B0%E4%B9%8B%E5%92%8C/","e":"","c":"题目要点\n给定一个整数数组 nums 和目标值 target，找出所有不重复的四元组 [a, b, c, d]，使得 a + b + c + d == target。\n结果中不能有重复四元组。\n\n核心思路\n先对数组排序。\n固定前两个数 nums[i]、nums[j]。\n剩下两个数用双指针 left、right 在有序数组中夹逼查找。\n遇到命中结果时，把四元组加入答案，并跳过重复值。\n\n为什么这样做\n排序后可以用双指针把四数之和降成三层结构：i、j 枚举，left/right 收缩。\n相比暴力四重循环，复杂度从 O(n^4) 降到 O(n^3)。\n\n关键实现细节\n使用 long long 计算和，避免四个 int 相加溢出。\n数组长度小于 4 时直接返回空结果。\n去重规则：\ni &gt; 0 &amp;&amp; nums[i] == nums[i - 1] 时跳过。\nj &gt; i + 1 &amp;&amp; nums[j] == nums[j - 1] 时跳过。\n找到答案后，left 和 right 都要跳过重复值。\n\n\n\n常见坑\n返回类型必须是 vector&lt;vector","d":"2025-03-01"},{"t":"正则表达式匹配","u":"/2025/03/01/Leetcode_%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/","e":"","c":"给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 ‘.’ 和 ‘*’ 的正则表达式匹配。\n‘.’ 匹配任意单个字符‘*’ 匹配零个或多个前面的那一个元素返回一个布尔值，表示匹配是否覆盖整个输入字符串（而非部分）。\n这是我现在在思考的题目，但是我没有思考出结果，我给你讲一下我现在的思路。按位来判断p能不能对上s。s用i计位，p按j。分情况讨论。首先是p既不是.也不是_时。从第一位开始看他们对应的位是不是一样的，如果不一样，返回false。一样的话i++,j++。如果j位变成了.那么就直接i++,j++。当然整个代码都要在先j再i的一个嵌套循环里。首先看j是不是.或者_，再看能不能和i位的对上。最困难的就是遇见j位是_的时候了，我的想法是，如果此时j+1已经到了终点，那么说明范式p的_是在最后一位，前面没出岔子的话那么这怎么都是对的。如果j+1不是到重点，后面还有，那么就要先找到p的j+1这个位，然后开一个新的循环，从目前的i位开始，看s从现在的i到结束有没有任何一位和这个相同，如果没有，那就返回false,如果有，那么我就得把现在的i变成让他相同的那个i继续前面的，直到两边都到","d":"2025-03-01"},{"t":"有效的括号","u":"/2025/03/01/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/","e":"","c":"\n\n\n\n初解没有考虑分开的单类符号的情况,显然光暴力枚举没有未来。还是需要用到栈这个工具。\n123456789101112131415161718192021222324#include&lt;string&gt;using namespace std;class Solution&#123;public:bool isValid(string s)&#123;    int length = s.size();    if(length % 2 == 1)&#123;        return false;    &#125;    if((s == &quot;()[]&#123;&#125;&quot;) || (s == &quot;()&#123;&#125;[]&quot;) || (s == &quot;&#123;&#125;()[]&quot;) || (s == &quot;&#123;&#125;[]()&quot;) || (s == &quot;[]()&#123;&#125;&quot;) || (s == &quot;[]&#123;&#125;()&q","d":"2025-03-01"},{"t":"最长回文子串","u":"/2025/03/01/Leetcode_%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/","e":"","c":"给你一个字符串 s，找到 s 中最长的 回文 子串。\n示例 1：\n123输入：s = &quot;babad&quot;输出：&quot;bab&quot;解释：&quot;aba&quot; 同样是符合题意的答案。\n\n示例 2：\n12输入：s = &quot;cbbd&quot;输出：&quot;bb&quot;\n\n思路：\n先写一个判断字符串是不是回文的函数，比如\n1234int isPalindrome(string input)&#123;    return equal(input.begin(),input.begin()+ input.length()/2,input.rbegin());     // rbegin()从end开始向前遍历&#125;\n\n\n\n然后开始遍历字符串，如果是就提取出回文字符串，之后如果再有就判断长度谁打谁小，遍历完后输出答案。\n说起来容易写起来1还行，相对来说\n12345678910111213141516171819202122232425262728293031323334353637383940class Solution &#123;pu","d":"2025-03-01"},{"t":"盛最多水的容器","u":"/2025/03/01/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/","e":"","c":"\n\n\n\n\n\n一开始的暴力解\n123456789101112131415161718#include &lt;vector&gt;#include &lt;algorithm&gt;using namespace std;class Solution &#123;public:    int maxArea(vector&lt;int&gt;&amp; height) &#123;        int n = height.size();        int max_Area = 0;        for (int left = 0; left &lt; n; ++left) &#123;            for (int right = left + 1; right &lt; n; ++right) &#123;                int area = min(height[left], height[right]) * (right - left);                max_Area = max(max_Area, area);        ","d":"2025-03-01"},{"t":"初识数据库","u":"/2024/09/16/OLD_1.%20%E6%95%B0%E6%8D%AE%E5%BA%93/","e":"","c":"\ndate: 2024-9-16 14:45:29  \n数据库数据库是一个有组织的、相互关联的数据集合，用来模拟现实世界中的某些方面（例如，模拟班级中的学生或数字音乐商店）。人们常常将“数据库”和“数据库管理系统”（例如 MySQL、Oracle、MongoDB）混为一谈。数据库管理系统（DBMS）是用于管理数据库的软件。\n考虑一个模拟数字音乐商店（例如 Spotify）的数据库。假设这个数据库存储了关于艺术家及其发行的专辑的信息。\n平面文件模型数据库可以存储为逗号分隔值（CSV）文件，并由数据库管理系统管理。每个实体会存储在独立的文件中。当应用程序需要读取或更新记录时，必须每次都解析这些文件。每个实体有自己的一组属性，因此在每个文件中，不同的记录通过换行符分隔，而每个记录的属性则通过逗号分隔。\n继续以数字音乐商店为例，可能有两个文件：一个存储艺术家信息，另一个存储专辑信息。艺术家可能有姓名、出生年份和国家等属性，而专辑则有名称、艺术家和年份等属性。\n平面文件的问题\n\n数据完整性：\n如何确保每张专辑的艺术家信息一致？\n如果有人将专辑年份覆盖为无效的字符串怎么办？\n如何存储一张专辑中有多","d":"2024-09-16"},{"t":"抽象记忆点","u":"/2024/05/07/OLD_2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/","e":"","c":"小结\n软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。\n这表明现代软件的规模和复杂性，需要采取有效的管理和设计方法。\n\n\n软件系统中的单个错误值可能导致整个系统失败。\n这凸显了在编写软件时准确性和健壮性的重要性。\n\n\n软件系统中可能的交互数量随着系统组件数量的增加呈指数增长。\n这提醒我们，随着系统复杂性的增加，需要考虑和管理其交互。\n\n\n抽象提供了一种以更简单的术语呈现复杂对象的方法。\n通过抽象，我们可以隐藏细节，使用户能够更轻松地理解和操作对象。\n\n\n抽象将用户分为客户端和实现者，每个都有不同的任务。这种分离有时被称为抽象屏障。\n这种分离使系统的设计更模块化和可维护，同时提供了清晰的界面和实现。\n\n\n抽象描述了许多可能的实现方式，而封装防止客户端窥视这些实现。\n封装确保了实现细节的安全性和私密性，使得对象的内部状态可以受到保护。\n\n\n客户端与对象交互的方式称为该对象的接口。\n接口定义了对象可用的方法和操作，隐藏了实现的细节。\n\n\n抽象减少了软件系统中的组件数量，降低了系统的最大复杂性。\n通过抽象，我们可以简化系统的设计和实现，减少潜在的错误和复杂度","d":"2024-05-07"},{"t":"Compute 101","u":"/2024/11/11/OLD_Compute%20101%20record/","e":"","c":"\ndate: 2024-11-11 00:00:01记录在pwncollege里的一些学习笔记\nTracing SyscallsAs you write larger and larger programs, you (yes, even you!) might make mistakes when implementing certain functionality, introducing bugs into your programs. Throughout this module, we’ll go over a few tools and techniques for debugging your program. The first one is pretty simple: the syscall tracer, strace.\nGiven a program to run, strace will use functionality of the Linux operating system to introspect and record every system c","d":"2024-11-11"},{"t":"鹏城杯三道","u":"/2024/11/20/OLD_PCB/","e":"","c":"\ndate: 2024-11-19 24:00:56日常做不出题。。。要是功力有这师傅一半深就好了…orz…\nRafflesia去花指令后即可得到\n12345en = &#x27;H@^jHwpsH)[jH&#123;M/\\\\tBBK_|-O&#123;W.iJZ7\\\\)|~zaB^H+Lwv&#123;SS|-j@\\\\_[Y&#x27;de = &#x27;&#x27;for i in range(len(en)):    de += chr(ord(en[i])^0x18)print(de)\n\nPXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA\n接着是tls改了表\nHElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0\n赛博厨子解密得到\nflag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}\njoyVBS用vbsedit打开，运行即可得到源码，找到\n\n\n\n\nflag{VB3_1s_S0_e1sY_4","d":"2024-11-20"},{"t":"STL算法涉猎","u":"/2024/04/23/OLD_STL%E7%AE%97%E6%B3%95%E6%B6%89%E7%8C%8E/","e":"","c":"\ndate: 2024-04-23 23:28:45  \n引子考虑以下问题：假设我们想要编写一个程序，该程序从文件中读取整数列表（可能表示作业中的成绩），然后打印出这些值的平均值。为简单起见，我们假设此数据存储在名为 data.txt 的文件中，每行一个整数。例如：\n1234567891011121314151617100959298878810087898789838797998988\n\n以下是一个可能的例子： \n12345678910111213141516171819202122232425#include&lt;iostream&gt;#include&lt;set&gt;#include&lt;fstream&gt;using namespace std;int main()&#123;    ifstream input(&quot;G:\\\\Cpp_Learn\\\\full_course_reader\\\\week5\\\\data.txt&quot;);    set&lt;int&gt; values;        int currVaule;    while(input ","d":"2024-04-23"},{"t":"'embryogdb-襁褓中的调试'","u":"/2025/01/17/OLD_embryogdb%20record/","e":"","c":"level6主要提下level6和level8，前者是靠call (void)win()水过的，后者是花了比较多的精力才理解\nYou can modify the state of your target program with the set command. For example, you can use set $rdi = 0 to zeroout rsp) &#x3D; 0x1234to set the first value on the stack to 0x1234. You can use  set *((uint16_t *) 0x31337000) &#x3D; 0x1337&#96; to set 2 bytes at 0x31337000 to 0x1337.\nSuppose your target is some networked application which reads from some socket on fd 42. Maybe it would be easier forthe purposes of your analysis if ","d":"2025-01-17"},{"t":"XYCTF_WP","u":"/2024/04/25/OLD_XYCTF%20WP/","e":"","c":"\ndate: 2024-04-25 22:23:02咸鱼头一次做出比较多的比赛，学到了很多东西（虽然感觉应该早该会的），后面会逐步把没做出的re复现\n聪明的信使12345678910111213141516171819202122232425int __cdecl encrypt(char *a1, int a2)&#123;  int result; // eax  char v3; // [esp+Bh] [ebp-5h]  int i; // [esp+Ch] [ebp-4h]  for ( i = 0; ; ++i )  &#123;    result = (unsigned __int8)a1[i];    if ( !(_BYTE)result )      break;    v3 = a1[i];    if ( v3 &lt;= 96 || v3 &gt; 122 )    &#123;      if ( v3 &gt; 64 &amp;&amp; v3 &lt;= 90 )        v3 = (v3 + a2 - 65) % 26 + 65;    &#1","d":"2024-04-25"},{"t":"类的优化学习","u":"/2024/05/07/OLD_2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/","e":"","c":"\ndate: 2024-05-07 23:25:21  \n类模板当你决定你正在编写的类最适合通过某种任意类型进行参数化时，你可以使用template关键字并指定模板应该参数化的类型来告诉C++，你正在定义一个模板类。让我们以定义自己版本的STL中使用的pair结构体为例来说明。如果我们想要将这个结构体命名为MyPair，并使其参数化两种类型，我们可以编写如下代码：\n12345template &lt;typename FirstType, typename SecondType&gt;struct MyPair &#123;    FirstType first;    SecondType second;&#125;;\n\n这里的语法template &lt;typename FirstType, typename SecondType&gt;告诉C++，接下来是一个类模板，它是根据两种类型参数化的，一个叫做FirstType，一个叫做SecondType。在许多方面，类模板的类型参数与C++函数的常规参数相似。例如，对于客户端而言，参数的实际名称并不重要，就像对函数的参数实际名称也不","d":"2024-05-07"},{"t":"bashshell基础命令","u":"/2024/04/17/OLD_bashshell%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/","e":"","c":"\ndate: 2024-04-17 23:10:12  \n启动终端启动终端后会看见 shell CLI 提示符，在此输入shell命令。默认的提示符符号是 $ \n123┌──(kali㉿kali)-[/etc]└─$ \n\n与bash手册交互大多数Linux发行版自带在线手册。使用man命令可以访问Linux系统的手册页。输入 man 想要查看的命令\n12345678910111213141516171819202122232425NAME       cat - concatenate files and print on the standard outputSYNOPSIS       cat [OPTION]... [FILE]...DESCRIPTION       Concatenate FILE(s) to standard output.       With no FILE, or when FILE is -, read standard input.       -A, --show-all              equivalent to -vET      ","d":"2024-04-17"},{"t":"与学习相关的技巧","u":"/2024/07/24/OLD_%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8A%80%E5%B7%A7/","e":"","c":"\ndate: 2024-7-24 00:00:01本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。\n参数的更新神经网络的学习的目的是找到使损失函数的值尽可能小的参数，这个过程被称作“最优化”。参数空间非常复杂，且深度神经网络中，参数的数目十分庞大，导致了最优化问题非常复杂。\n我们之前使用了随机梯度下降法（stochastic gradient descent）来更新参数。SGD虽然是简单的方法，但是比起无目的的在参数空间中乱逛，无疑是有效的。接下来我们复习SGD。\n用数学式可以把SGD写成如下的式子：\n\n需要更新的权重为w，η代表学习率，通常会实现设定好为0.1或者0.01等。箭头代表更新左边的值。\n我们将SGD实现为一个名为SGD的类：\n1234567class SGD:    def __init__(self,lr = 0.01):        self.lr = lr    ","d":"2024-07-24"},{"t":"简单学习算法的实现","u":"/2024/07/01/OLD_%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/","e":"","c":"normalize : 将图像的像素值正规化为0.0~1.0    one_hot_label :        one_hot_label为True的情况下，标签作为one-hot数组返回        one-hot数组是指[0,0,1,0,0,0,0,0,0,0]这样的数组    flatten : 是否将图像展开为一维数组\nReturns\n-------\n(训练图像, 训练标签), (测试图像, 测试标签)\n&quot;&quot;&quot;\nmnist_path = &quot;E:\\\\deap_learning\\\\resource&quot;\n\ndataset = &#123;\n    &#39;train_img&#39;: load_images(os.path.join(mnist_path, &#39;train-images-idx3-ubyte.gz&#39;)),\n    &#39;train_label&#39;: load_labels(os.path.join(mnist_path, &#39;train-labels-idx1-ubyte.gz&#3","d":"2024-07-01"},{"t":"building_web_server_record","u":"/2025/03/01/OLD_building_web_server_record/","e":"","c":"level1跟着题目做即可\nlevel2晃眼看好像和第一题一样，运行server又不正确，看了几遍题目，问了DS明白了这是要我用上socket套接字。当前的汇编代码只是调用了 exit(0)，需要修改它，使其调用 socket() 系统调用来创建一个套接字。\n1234567891011121314151617.intel_syntax noprefix.globl _start.section .text_start:    mov rdi, 2    mov rsi, 1    mov rdx, 0    mov rax, 41    syscall    mov rdi, 0    mov rax, 60    syscall.section .data\n\n\nmov rdi, 2:\n将 2 赋值给 rdi 寄存器。rdi 是系统调用的第一个参数寄存器，2 表示 AF_INET（IPv4 协议族）。\n\n\nmov rsi, 1:\n将 1 赋值给 rsi 寄存器。rsi 是系统调用的第二个参数寄存器，1 表示 SOCK_STREAM（TCP 套接字类型）。\n\n\nmov rdx, 0:\n将","d":"2025-03-01"},{"t":"Assembly Crash Course record","u":"/2025/01/09/OLD_Assembly%20Crash%20Course%20record/","e":"","c":"set-register题目要求：\nIn this level, you will be working with registers. You will be asked to modify or read from registers.\nIn this level, you will work with registers! Please set the following: \n1rdi = 0x1337\n\n似乎很简单，要求我们将 rdi 的值设置成 0x1337，但是会得到\n“WARNING: It looks like your input might not be assembled binary code, but assembly source code. This challenge needs the raw binary assembled code as input.”\n程序并不能理解我们输入的汇编代码，所以我们要使用 pwntools 的工具来构造机器码。\n123456from pwn import *context.arch=&#x27;amd64&#x27;","d":"2025-01-09"},{"t":"STL运用示例：回文判断","u":"/2024/05/01/OLD_%E5%9B%9E%E6%96%87%E5%88%A4%E6%96%AD/","e":"","c":"\ntop: truedate: 2024-5-1 17:24:34是时候用一个简短的例子来结束短暂的STL学习了。\n回文回文是向前或向后阅读时相同的单词或短语，例如“racecar”或“Malayalam”。阅读回文时，习惯上会忽略空格、标点符号和大写字母，因此“Mr. Owl ate my metal worm”和“Go hang a salami! I’m a lasagna hog。”这两句话将被视为回文。 \n判断实现123456bool IsPalindrome(string input) &#123;        for(int k = 0; k &lt; input.size() / 2; ++k)            if(input[k] != input[input.length() - 1 – k])                return false;        return true;    &#125;\n\n这种方法只需遍历字符串的前半部分，检查每个字符是否等于字符串另一半上的相应字符。作为一种可能是头一个出现在脑海里的方法，他并没有错，但是太不优雅","d":"2024-05-01"},{"t":"'Building a Web Server study'","u":"/2025/01/25/OLD_%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%84%E7%AD%91/","e":"","c":"\ndate: 2025-01-25 22:23:02  \nBuilding a Web Server我学到的内容\nopen()** 系统调用**:\nopen() 系统调用会返回一个文件描述符（file descriptor）。文件描述符是一个小的非负整数，用于访问文件。\n\n\n网络通信中的 socket() 系统调用:\n在网络通信中，我们需要使用 socket() 系统调用来创建一个套接字（socket）。套接字是一个连接两个进程的文件，用于发送和接收数据。\nsocket() 有三个参数：\ndomain: 协议族。例如，AF_INET 用于 IPv4，AF_INET6 用于 IPv6，AF_UNIX 用于 Unix 域套接字等。\ntype: 套接字类型。例如，SOCK_STREAM 用于 TCP，SOCK_DGRAM 用于 UDP 等。\nprotocol: 使用的协议。例如，IPPROTO_TCP 用于 TCP，IPPROTO_UDP 用于 UDP 等。\n\n\n\n\nbind()** 系统调用**:\n接下来，我们需要调用 bind() 系统调用来将套接字绑定到一个地址。\nbind() 有三个","d":"2025-01-25"},{"t":"wsl图形化界面安装踩坑","u":"/2025/01/06/OLD_%E9%85%8D%E7%BD%AEwsl%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/","e":"","c":"\ndate: 2025-1-06 00:53:29安装wsl后只有终端界面太单调了，遂网上寻找给Ubuntu添加图形界面的方法。中间遇见了一些坑，记下来以备查阅。\n\n主要参考：WSL2中使用VcXsrv实现xfce4图形界面+声音传输 - 知乎\n\nVcXsrv安装与配置从SourceForge上下载最新的即可，\n\nVcXsrv Windows X Server download | SourceForge.net \n\n网站内会保持更新。\n我下载的是vcxsrv-64.1.20.14.0.installer.exe,直接安装即可。\n安装完成之后在开始菜单搜索或者在其文件夹里找到 xlaunch.exe并启动\n\n配置启动设置时，窗口模式使用 One large window，并在 Extra settings里勾选 Disable access control其他配置选择默认。\n启动的窗口此时保持全黑。\n\n并且一定要给VcXsrv设置通过防火墙。\n启动一次xlaunch后在开始菜单里搜索 允许应用通过windows防火墙,其中VcXsrv windows xserver一定要把专用和公用都","d":"2025-01-06"},{"t":"神经网络的学习","u":"/2024/07/15/OLD_%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AD%A6%E4%B9%A0/","e":"","c":"\ndate: 2024-7-15 16:55:29  \n从数据中学习神经网络的学习指的是从数据参数中自动获取最优权重参数的值。在实际的神经网络之中，权重的数量成千上万，随着层数的递进，这个数量还在继续增加。想要人工决定这些数值的大小是不可能的。我们需要让神经网络来根据数值自动决定参数值。通过引入损失函数能够有效的获取最有的权重参数。\n比如如何用算法实现数字“5”图像的识别？。人可以简单的识别出5，但也没法明确说出是基于何种规律——同时每个人书写5的方式还可能不同，想要找出规律是非常难的。预期从零开始想出识别5的算法，不如通过已有的数据来解决，一种方案是，先从图像中提取特征量，在用机器学习的技术学习特征量的模式（如计算机视觉领域的SIFT.SURF,HOG等）。在机器学习的方法中，由机械搜集到的数据中找出规律性能更高效的解决问题。但将图像转换为特征量的算法仍然是人设计的，对于不同的问题，需要设计不同的特征量，才能有效解决。而神经网络（深度学习）则会直接学习图像本身，深度学习中连特征量都是由机器来学习的。\n神经网络的优点在于对于所有的问题都可以用同一个流程来解决，不管是识别数字5还是识别红","d":"2024-07-15"},{"t":"误差反向传播法","u":"/2024/07/18/OLD_%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/","e":"","c":"\ndate: 2024-7-18 00:02:48误差反向传播法是一种能高效计算权重参数梯度的方法。要理解它一般有两种方法，一种是基于数学式，另一种是基于计算图（computational graph）。接下来会补充讲解计算图的理解方法。\n计算图计算图会将计算过程用图表现出来。这里的图形是数据结构图，通过多个节点和边来表示。\n计算图通过节点和箭头表示计算过程，节点用 ⚪ 表示，⚪ 中是计算的内容。将计算的结果写在箭头的上方，表示各个节点的计算结果从左到右传递。计算时就像电流从左到右流动，计算结果从左向右传递。到达最右边的计算结果后，计算过程就结束了。\n使用计算图计算的流程一般是\n\n构建计算图\n在计算图上从左到右计算\n\n这里的“从左到右”传播被称为正向传播（forward propagation），后面我们还会遇见反向传播（backward propagation）\n计算图的特征之一是通过“局部计算”来获得最终结果，无论全局发生了什么，都只能根据和自己相关的信息来输出结果。在计算图的全局来看，这就像是工厂的流水线，每个工人所承担的都是简化过的工作，将每项工人的成果传递给下一个工人就可完成","d":"2024-07-18"},{"t":"\"[转载文章]菜鸟笔记之pwn工具篇--pwntools库的基本使用\"","u":"/2025/01/13/OLD_%E8%BD%AC%E8%BD%BD%E7%9A%84pwntools%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/","e":"","c":"\ndate: 2025-01-13 20:28:45原文章链接：[菜鸟笔记之pwn工具篇--pwntools库的基本使用 - XiDP - 博客园](https://www.cnblogs.com/XiDP0/p/18445564)\n啥是pwntools?Pwntools 是一个用于漏洞利用和二进制分析的 Python 库，广泛应用于安全研究、渗透测试和竞争性编程（如 CTF，Capture The Flag）它为用户提供了一套强大的工具和功能，以简化与二进制文件的交互、网络通信以及各种常见任务的执行。\n简而言之，pwntools可以说是pwn手必备的工具，它帮助pwn手连接远程服务器，发送信息，接收信息，以及提供了很多工具来帮助pwn手快速攻克题目\n如何安装pwntools?按照以下流程在python3中安装pwntools\n1234&gt;&gt;&gt; apt-get update&gt;&gt;&gt; apt-get install python3 python3-pip python3-dev git libssl-dev libffi-dev build-essenti","d":"2025-01-13"},{"t":"level1","u":"/2025/03/01/PwnCollege_level1/","e":"","c":"12vim runme\n\n\n\n\n\nlevel2\n","d":"2025-03-01"},{"t":"building_a_web_server","u":"/2025/03/01/PwnCollege_building_a_web_server/","e":"","c":"1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374.intel_syntax noprefix.globl _start.section .text_start:    # Socket syscall    mov rdi, 2    mov rsi, 1    mov rdx, 0    mov rax, 0x29    syscall    # Bind syscall    mov rdi, 3    lea rsi, [rip+sockaddr]    mov rdx, 16    mov rax, 0x31    syscall    # Listen syscall    mov rdi, 3    mov rsi, 0    mov rax, 0x32    syscall    # Accept syscall    mov rdi, 3   ","d":"2025-03-01"},{"t":"细节说明（步骤与查找优先级）","u":"/2025/03/01/PwnCollege_sniffing%20input/","e":"","c":"Bash 在查找命令时会优先使用 shell 函数（如果存在），而不是去执行 PATH 中的外部可执行文件。所以当你在 zardus 的启动文件里 定义（但不执行）一个名为 flag_checker 的函数，后来在交互里用户输入 flag_checker 时，shell 调用的就是你定义的函数，从而完全拦截了对 /challenge/bin/flag_checker 的调用。\n细节说明（步骤与查找优先级）\n真实的外部程序（你贴的那个）行为是：打印提示、read -r candidate，把输入和 /flag 内容比较，输出 Correct&#x2F;Incorrect。\nBash 的命令解析顺序（简化版）：shell 函数 → shell builtin → hashed&#x2F;PATH 可执行文件 → 外部命令的绝对路径。因此，只要存在名为 flag_checker 的函数，shell 就不会去 PATH 找那个 /challenge/bin/flag_checker，而是直接执行函数体。\n这就是你用函数成功的根本原因：你把劫持代码放在了函数里（且精确打印了挑战检测的提示文本），","d":"2025-03-01"},{"t":"两两交换链表中的节点","u":"/2026/07/26/%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9/","e":"","c":"Problem statement两两交换链表相邻节点，不能修改节点的值\nMy Solution思路先创建一个哑节点，连接链表的起始位置，创建一个指针指向哑节点。先检查是不是空链表，是的话直接返还没有连接哑巴节点的原始链表。随后进入一个while循环，条件是指针节点的下一个节点不是空节点且下一个节点的下一个节点也不是空节点。进入循环后，让指针节点指向下一位的下一位，指针节点的下一位指向指针节点的下一位的下一位的下一位，然后才把指针节点的下一位的下一位指向指针节点的下一位。然后指针向后移动两位。退出循环后，进入一个if判断，如果下一位是空节点，退出循环返还除掉哑节点的链表。如果下一位不是空但是下下一位是空，也返还除掉哑节点的链表\n代码1234567891011121314151617181920ListNode* swapPairs(ListNode* head) &#123;                                             ListNode dummy(0);                                            ","d":"2026-07-26"},{"t":"递归小谈","u":"/2024/09/28/OLD_%E9%80%92%E5%BD%92%E5%B0%8F%E8%B0%88/","e":"","c":"\ndate: 2024-09-28 21:46:02  \n递归小谈考虑以下的递归公式：\n                $![image](https://cdn.nlark.com/yuque/__latex/bddea37d8316c7948ea358e70d01ecee.svg)$\n\n用C语言表示如下：\n1234567891011int factorial(int n) &#123; if (n == 0) &#123;     return 1; &#125; else      &#123;     return n * factorial(n - 1);         &#125; &#125; \n\n递归思维用递归解决问题需要两个步骤： 首先，确定如何解决简单情况的问题。\n ● 这称为基本情况（base case）。 其次，确定如何将较大情况分解为较小的实例。 \n ● 这称为递归步骤（recursive step）。\n123456789if (问题非常简单) &#123;    # 直接解决问题    return 解决方案;&#125; else &#123;    #","d":"2024-09-28"},{"t":"内存池","u":"/2025/03/01/%E6%98%A5%E6%8B%9B_%E5%86%85%E5%AD%98%E6%B1%A0/","e":"","c":"面试问答：\n\n为什么需要设计内存池？和系统自带的内存分配器相比有什么区别和优势？\n内存对齐的意义是什么？一般如何实现内存对齐？\n如何避免内容池内的内容碎片化\n如何实现线程安全的内存池？在项目中使用了什么同步机制？\n无锁队列的实现原理是什么？项目中的无锁结构如何工作？\n项目中的自旋锁和std::this_thread::yield的作用和使用场景是什么？\n伪共享问题是什么？如何避免伪共享？\n为什么选择三重架构(threadcache,centralcache,pagecache)？每一层的职责是什么？\n动态批量分配策略是如何设计的？他又是如何根据使用模式调整的？\n智能预取机制的实现原理是什么？如何优化内存分配延迟？\n如何测试内存池的性能？测试中发现了哪些瓶颈？又是如何解决的？\n高并发场景下，如何保证内存池的性能优于系统内存分配器？\n项目中用到了哪些c++特性？\n原子操作和互斥锁的区别是什么？二者分别在什么时候使用？\n高并发场景下，compare_exchange_weak 和compare_exchange_strong 的区别是什么？为什么要选择前者？\n内存池如何支持不同大小的对象的内","d":"2025-03-01"},{"t":"类的优化学习","u":"/2024/05/07/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_2024-05-07-%E7%B1%BB%E7%9A%84%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/","e":"","c":"\ndate: 2024-05-07 23:25:21  \n类模板当你决定你正在编写的类最适合通过某种任意类型进行参数化时，你可以使用template关键字并指定模板应该参数化的类型来告诉C++，你正在定义一个模板类。让我们以定义自己版本的STL中使用的pair结构体为例来说明。如果我们想要将这个结构体命名为MyPair，并使其参数化两种类型，我们可以编写如下代码：\n12345template &lt;typename FirstType, typename SecondType&gt;struct MyPair &#123;    FirstType first;    SecondType second;&#125;;\n\n这里的语法template &lt;typename FirstType, typename SecondType&gt;告诉C++，接下来是一个类模板，它是根据两种类型参数化的，一个叫做FirstType，一个叫做SecondType。在许多方面，类模板的类型参数与C++函数的常规参数相似。例如，对于客户端而言，参数的实际名称并不重要，就像对函数的参数实际名称也不","d":"2024-05-07"},{"t":"webServer_learning","u":"/2025/03/01/%E6%98%A5%E6%8B%9B_webServer_learning/","e":"","c":"项目框架\n12345678910111213141516kama -webserver/|-- img|-- include|-- lib||--log/ #日志管理模块    |--log.cc #日志实现|--memory/ #内存管理模块    |--memory.cc #内存管理实现|--src/ #源代码目录    |--main.cpp #主程序入口    |--... # 其他源文件|-- CMakeLists.txt #CMake构建文件|-- LISCENSE #许可证文件|-- README.md #项目说明文件    \n\nGPT的要求你这个目标非常清晰：用四五天把项目脉络理顺并能讲明白。我先快速做一次“定向读码”，提取入口函数、核心调用链和优先学习模块，然后给你一份按天可执行的学习路径。\n搜索完成: 定位入口与主链路\n搜索与 project · my_server/kama-webserver/** 匹配的文件，66 匹配项\n搜索与 project · my_server/kama-webserver/**/*.&#123;cpp,h,cc,hpp,c,md,tx","d":"2025-03-01"},{"t":"How to learn _hello agent_","u":"/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_How%20to%20learn%20_hello%20agent_/","e":"","c":"_agent_是什么？\n能自主收集信息思考后做出反应的智能体,要求运行的每步都有_thought_与_action_，\n利用在线模型和在线api供应商推理时代\ntavily\n\n\n如何生成一个简单的旅游推荐agent？  \n12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910010110210310410510610710810911011111211311411511611711811912012112212312412512612712812913013113213313413513613713813914014114214314414514614714814915015115215315415515615715815916016116216316416516","d":"2025-03-01"},{"t":"玩转语雀文档💡","u":"/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/","e":"","c":"Hi，欢迎来到语雀～\n语雀文档是一个给个人和团队提供的写好文档的工具，我们希望每个人都可以快速、舒适的记录自己的所思所想，为此，语雀的文档编辑器提供了强大的能力。\n文档：专注于编辑体验\n我们提供了常用的字体设置能力，例如：调整字号大小、粗体、_斜体_、下划线、删除线、代码、**颜色**等，这些丰富的设置能力，可以让你的内容更清晰，更漂亮。\n如果你需要在文档中插入列表，语雀提供了“有序列表”和“无序列表”两种方式，我们这一段话使用的就是无序列表样式。\n你还可以用语雀文档记录待办事项，帮助你把要做的事记录下来，你只需点击✔️，就可以轻松记录这条待办的状态。以下就是待办样式。\n 未完成项\n 已完成项\n\n\n语雀文档还可以上传图片、表格、附件等等，让你在文档的世界游刃有余。认准绿色“+”号，他们都在这等你。\n以上提到所有功能，都可以在工具栏找到，里边还有更多神奇功能，待你挖掘。\n移动端 app 的工具栏：\n\nweb 端的工具栏：\n\n\n\n\n知识库：专注于文档整理文档整理至关重要，做好文档整理，可以让你的知识真正积累起来，成为一生的财富，那如何利用语雀做好文档整理呢？\n语雀提供了“知识库”用来解决文","d":"2025-03-01"},{"t":"小说《了不起的盖茨比》到底好在哪里？","u":"/2026/07/28/%E8%BD%AC%E8%BD%BD_%E4%BA%86%E4%B8%8D%E8%B5%B7%E7%9A%84%E7%9B%96%E8%8C%A8%E6%AF%94%E5%88%B0%E5%BA%95%E5%A5%BD%E5%9C%A8%E5%93%AA%E9%87%8C/","e":"","c":"\n\n\n转载声明：本文转载自知乎，原作者 杪秋，已获授权禁止转载。此处仅为个人收藏存档，侵权即删。\n\n\n这本书从头到尾没讲爱情，没讲逆袭，讲的是一个人怎么被自己骗了一辈子。\n我从头开始说起。\n但我不按时间顺序说，我按照一个人崩溃的顺序说。\n第一个问题：盖茨比到底是谁？这是个根本问题。\n盖茨比这个名字是自己起的。\n他原名叫詹姆斯·盖兹，一个北达科他州农民的儿子。\n他十六七岁的时候，在苏必利尔湖边救了一个喝醉的富翁，叫丹·科迪。\n科迪是个靠挖矿发了财的老头，有钱，但孤独，在船上漂着过日子。\n他收盖茨比当跟班，带了他五年。\n这五年里，盖茨比学会了穿西装，学会了喝红酒，学会了在饭桌上用哪种叉子。\n他还学会了一件最重要的事：有钱人的世界是可以装出来的。\n只要衣服穿对了，话讲对了，没人知道你爸是种地的。\n这个发现对他来说太重要了，因为他从小就觉得自己不该是农民。\n他爸是个老实巴交的庄稼人，但盖茨比看不上。\n他觉得他爸浑身上下写着一个字：穷。\n他不认这个命。\n然后丹·科迪死了。\n本来留给盖茨比一笔遗产，两万五千美元，不少。\n结果被科迪的亲戚请了律师，全抢走了，一分没剩。\n盖茨比又变回穷光蛋，这五年等于","d":"2026-07-28"}];
+  function performSearch(q) {
+    var r = document.getElementById('search-results');
+    if (!q || q.trim().length < 1) { r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]">search_empty</div>'; return; }
+    var kw = q.toLowerCase(), hits = __SD.filter(function(i){ return i.t.toLowerCase().includes(kw)||i.e.toLowerCase().includes(kw)||i.c.toLowerCase().includes(kw); }).slice(0,15);
+    if (!hits.length) { r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]">没有找到相关文章</div>'; return; }
+    r.innerHTML = hits.map(function(i){ var re = new RegExp('('+kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'); return '<a href="'+i.u+'" class="search-result"><div class="result-title">'+i.t.replace(re,'<mark style="background:var(--c-accent-bg);color:var(--c-accent)">$1</mark>')+'</div><div class="text-xs text-[var(--c-text3)] mt-1">'+i.d+'</div></a>'; }).join('');
+  }
+</script>
+
+
+
+  
+  <button id="back-to-top" class="fixed bottom-8 right-8 z-50 w-10 h-10 rounded-full flex items-center justify-center glass opacity-0 invisible" aria-label="回到顶部">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" data-no-instant></script>
+  <script data-no-instant>lucide.createIcons();</script>
+
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" data-no-instant></script>
+  <script data-no-instant>AOS.init({ duration: 600, once: true, offset: 80 });</script>
+  
+
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/dracula.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" data-no-instant></script>
+  <script data-no-instant>hljs.configure({ tabReplace: '  ' }); hljs.highlightAll();</script>
+  
+
+  
+  <script data-no-instant>
+    (function(){var h=document.documentElement;function icon(m){var t=document.getElementById('theme-toggle'),b=document.getElementById('theme-toggle-mobile');[t,b].forEach(function(e){if(!e)return;var i=e.querySelector('[data-lucide]');if(i)i.setAttribute('data-lucide',m?'sun':'moon')});lucide.createIcons()}var saved=localStorage.getItem('theme');if(saved==='light'){h.classList.remove('dark');icon(false)}else{h.classList.add('dark');icon(true)}var bt=document.getElementById('theme-toggle');if(bt)bt.addEventListener('click',function(){var isDark=h.classList.toggle('dark');localStorage.setItem('theme',isDark?'dark':'light');icon(isDark)});var bm=document.getElementById('theme-toggle-mobile');if(bm)bm.addEventListener('click',function(){if(bt)bt.click()})})();
+  </script>
+  
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/instantclick@3.1.1/instantclick.min.js" data-no-instant></script>
+  <script data-no-instant>InstantClick.init('mousedown');InstantClick.on('change',function(){lucide.createIcons();if(typeof AOS!=='undefined')AOS.refresh();if(typeof hljs!=='undefined')hljs.highlightAll()});</script>
+  
+
+  <script src="/js/main.js" data-no-instant></script>
+
+  <!-- Font Switcher -->
+  <script data-no-instant>
+    (function(){
+      var FONTS = ['plus-jakarta', 'inter', 'source-serif'];
+      var saved = localStorage.getItem('font-preference') || 'plus-jakarta';
+      var cur = FONTS.indexOf(saved);
+      if (cur < 0) cur = 0;
+      applyFont(FONTS[cur]);
+
+      function applyFont(name) {
+        var h = document.documentElement;
+        FONTS.forEach(function(f) { h.removeAttribute('data-font'); });
+        if (name !== 'plus-jakarta') h.setAttribute('data-font', name);
+      }
+
+      var btn = document.getElementById('font-switcher');
+      if (btn) btn.addEventListener('click', function() {
+        cur = (cur + 1) % FONTS.length;
+        var name = FONTS[cur];
+        applyFont(name);
+        localStorage.setItem('font-preference', name);
+      });
+    })();
+  </script>
+
+  
+</body>
+</html>
