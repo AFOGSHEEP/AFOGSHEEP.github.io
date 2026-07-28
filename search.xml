@@ -1444,71 +1444,6 @@
       </tags>
   </entry>
   <entry>
-    <title>鹏城杯三道</title>
-    <url>/2024/11/20/OLD_PCB/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
-<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
-
-<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
-<p>接着是tls改了表</p>
-<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
-<p>赛博厨子解密得到</p>
-<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
-<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
-<img src="/2024/11/20/OLD_PCB/image-0.png" class="">
-
-<img src="/2024/11/20/OLD_PCB/image-1.png" class="">
-
-<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
-<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/20/OLD_PCB/image-2.png" class="">
-
-
-
-<p>主要加密函数</p>
-<img src="/2024/11/20/OLD_PCB/image-3.png" class="">
-
-<p>发现是魔改的tea。</p>
-<p>我们尝试进行解密，钥匙为1 2 3 4</p>
-<p>但是不对，猜测有tls，继续找</p>
-<img src="/2024/11/20/OLD_PCB/image-4.png" class="">
-
-<p>函数挺少的，我们直接在函数窗口一个一个找</p>
-<p>然后发现这个</p>
-<img src="/2024/11/20/OLD_PCB/image-5.png" class="">
-
-<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
-<img src="/2024/11/20/OLD_PCB/image-6.png" class="">
-
-<p>第二次定位</p>
-<img src="/2024/11/20/OLD_PCB/image-7.png" class="">
-
-<p>我们动调发现了</p>
-<p>我们打印一下rand值：</p>
-<img src="/2024/11/20/OLD_PCB/image-8.png" class="">
-
-<img src="/2024/11/20/OLD_PCB/image-9.png" class="">
-
-<p>就是delta加上rand</p>
-<p>直接写个tea解密脚本就好</p>
-<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
-<img src="/2024/11/20/OLD_PCB/image-10.png" class="">
-
-<p>是通过异常来控制的</p>
-<p>这下对了</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>d555ce75ec293c8ed232d83dffb0ff82</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Compute 101</title>
     <url>/2024/11/11/OLD_Compute%20101%20record/</url>
     <content><![CDATA[<hr>
@@ -2565,6 +2500,71 @@
       </categories>
       <tags>
         <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>鹏城杯三道</title>
+    <url>/2024/11/20/OLD_PCB/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
+<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
+
+<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
+<p>接着是tls改了表</p>
+<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
+<p>赛博厨子解密得到</p>
+<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
+<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
+<img src="/2024/11/20/OLD_PCB/image-0.png" class="">
+
+<img src="/2024/11/20/OLD_PCB/image-1.png" class="">
+
+<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
+<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/20/OLD_PCB/image-2.png" class="">
+
+
+
+<p>主要加密函数</p>
+<img src="/2024/11/20/OLD_PCB/image-3.png" class="">
+
+<p>发现是魔改的tea。</p>
+<p>我们尝试进行解密，钥匙为1 2 3 4</p>
+<p>但是不对，猜测有tls，继续找</p>
+<img src="/2024/11/20/OLD_PCB/image-4.png" class="">
+
+<p>函数挺少的，我们直接在函数窗口一个一个找</p>
+<p>然后发现这个</p>
+<img src="/2024/11/20/OLD_PCB/image-5.png" class="">
+
+<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
+<img src="/2024/11/20/OLD_PCB/image-6.png" class="">
+
+<p>第二次定位</p>
+<img src="/2024/11/20/OLD_PCB/image-7.png" class="">
+
+<p>我们动调发现了</p>
+<p>我们打印一下rand值：</p>
+<img src="/2024/11/20/OLD_PCB/image-8.png" class="">
+
+<img src="/2024/11/20/OLD_PCB/image-9.png" class="">
+
+<p>就是delta加上rand</p>
+<p>直接写个tea解密脚本就好</p>
+<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
+<img src="/2024/11/20/OLD_PCB/image-10.png" class="">
+
+<p>是通过异常来控制的</p>
+<p>这下对了</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>d555ce75ec293c8ed232d83dffb0ff82</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -3892,6 +3892,25 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
+    <title>level1</title>
+    <url>/2025/03/01/PwnCollege_level1/</url>
+    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>level2</p>
+]]></content>
+      <categories>
+        <category>PwnCollege</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>PwnCollege</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>细节说明（步骤与查找优先级）</title>
     <url>/2025/03/01/PwnCollege_sniffing%20input/</url>
     <content><![CDATA[<p><strong>Bash 在查找命令时会优先使用 shell 函数（如果存在）</strong>，而不是去执行 PATH 中的外部可执行文件。所以当你在 zardus 的启动文件里 <strong>定义</strong>（但不执行）一个名为 <code>flag_checker</code> 的函数，后来在交互里用户输入 <code>flag_checker</code> 时，shell 调用的就是你定义的函数，从而完全拦截了对 <code>/challenge/bin/flag_checker</code> 的调用。</p>
@@ -3964,25 +3983,6 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
 <li>若需清理痕迹，建议从受害者的启动文件中移除所添加的函数定义或 PATH 修改，并删除任何持久化的盗取文件（例如 <code>~/stolen_flag</code>）。示例清理命令（谨慎执行）：</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 备份并编辑 .bashrc（示例：用 sed 删除加入的特定注释块）</span><br><span class="line">cp /home/zardus/.bashrc /home/zardus/.bashrc.bak</span><br><span class="line"># 假设有标记行 &quot;## ensure ~/bin is first in PATH (added by hacker)&quot;，可用 awk/sed 删除块</span><br><span class="line"># 手动审阅并删除更安全</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>PwnCollege</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>PwnCollege</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>level1</title>
-    <url>/2025/03/01/PwnCollege_level1/</url>
-    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>level2</p>
-]]></content>
       <categories>
         <category>PwnCollege</category>
       </categories>
