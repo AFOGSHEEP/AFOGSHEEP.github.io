@@ -17,16 +17,16 @@ h1, h2, h3, h4 {
   font-weight: 600;
   letter-spacing: -0.025em;
 }
-h1 { font-size: 2rem; margin: 2.25rem 0 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e8dfcb; }
+h1 { font-size: 2rem !important; margin: 2.25rem 0 1rem !important; padding-bottom: 0.75rem; border-bottom: 1px solid #e8dfcb; }
 .dark h1 { color: #efe8d8; border-color: #3d3830; }
-h2 { font-size: 1.85rem; font-weight: 700; margin: 3rem 0 1rem; padding-left: 1rem; border-left: 4px solid #d4a853; color: #2d261b; }
+h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin: 3rem 0 1rem !important; padding-left: 1rem; border-left: 4px solid #d4a853; color: #2d261b; }
 .dark h2 { color: #ddd4c0; }
-h3 { font-size: 1.4rem; font-weight: 650; margin: 2rem 0 0.75rem; color: #b8892f; }
+h3 { font-size: 1.4rem !important; font-weight: 650 !important; margin: 2rem 0 0.75rem !important; color: #b8892f; }
 .dark h3 { color: #e2be6e; }
-h4 { font-size: 1.05rem; margin: 1.5rem 0 0.5rem; font-weight: 600; letter-spacing: 0.03em; color: #8c826a; text-transform: uppercase; }
+h4 { font-size: 1.05rem !important; font-weight: 600 !important; margin: 1.5rem 0 0.5rem !important; letter-spacing: 0.03em; color: #8c826a; text-transform: uppercase; }
 .dark h4 { color: #8a8070; }
 
-p { margin-bottom: 1.45em; }
+p { margin-bottom: 1.45em !important; }
 
 /* Inline code */
 :not(pre) > code {
