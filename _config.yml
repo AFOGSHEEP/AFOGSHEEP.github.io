@@ -11,7 +11,7 @@ language: zh-CN
 timezone: 'Asia/Shanghai'
 
 # URL
-url: https://afogsheep.github.io
+url: https://afogsheep-github-io.pages.dev
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
