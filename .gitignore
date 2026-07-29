@@ -3,3 +3,4 @@ public/
 db.json
 .DS_Store
 *.log
+.deploy_git/

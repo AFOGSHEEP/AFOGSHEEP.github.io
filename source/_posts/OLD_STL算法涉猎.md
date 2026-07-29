@@ -205,7 +205,7 @@ int main() {
 
 通过掌握这些迭代器的分类和功能，可以更加灵活和高效地使用 STL，从而编写出更优雅和高效的 C++ 代码。
 
-![](G:\Cpp_Learn\full_course_reader\notes\assets\image-20240423225530689.png)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 ## 探索 STL 重排序算法
 在 C++ 的标准模板库（STL）中，有一系列用于重排序容器中元素的算法。这些算法能够在不改变元素内容的前提下，改变元素的排列顺序。以下是三种主要的重排序算法：`sort`、`random_shuffle` 和 `rotate`，它们各自的用途和功能都非常实用。

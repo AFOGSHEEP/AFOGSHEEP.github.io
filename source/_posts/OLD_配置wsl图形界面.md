@@ -27,19 +27,19 @@ date: 2025-1-06 00:53:29
 
 安装完成之后在开始菜单搜索或者在其文件夹里找到 `xlaunch.exe`并启动
 
-![](\images\image-20250104213215978-1735997822590-5.png)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 配置启动设置时，窗口模式使用 `One large window`，并在 `Extra settings`里勾选 `Disable access control`其他配置选择默认。
 
 启动的窗口此时保持全黑。
 
-![](/images/image-20250104213556580-1735997782254-3.png)
-
 并且一定要给VcXsrv设置通过防火墙。
+
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 启动一次xlaunch后在开始菜单里搜索 `允许应用通过windows防火墙`,其中`VcXsrv windows xserver`一定要把专用和公用都设置上，不然后续会出现无法连接的情况。
 
-![](/images/image-20250104214035451-1735998074299-8.png)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 ## 配置与启动xfce4
 安装`xfce4`
@@ -98,15 +98,15 @@ export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
 ## 图形界面显示问题
 折腾好后`xlaunch`的界面仍然是一片黑
 
-![](/images/image-20250105215526302.png)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 但是任务栏里却有Ubuntu的面板
 
-![](/images/image-20250105215618102.png)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 除了浏览器，其余应用，终端，文件管理器等都能正常使用。屏幕最上面还有横栏
 
-![](/images/image-20250106002134830.png)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 启动时的报错信息如下，每次点击应用都会增加报错，估计是因为没有在正确的屏幕上显示。
 

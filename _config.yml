@@ -96,5 +96,5 @@ theme: fancy-avalanche
 # Deployment
 deploy:
   type: git
-  repo: https://github.com/AFOGSHEEP/AFOGSHEEP.github.io.git
-  branch: main
+  repo: git@github.com:AFOGSHEEP/AFOGSHEEP.github.io.git
+  branch: gh-pages

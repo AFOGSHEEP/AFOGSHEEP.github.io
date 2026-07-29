@@ -35,7 +35,7 @@ date: 2024-7-18 00:02:48
 
 
 
-![](/images/IMG_20240717_215331.jpg)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 在反向传播里，加法的是将上游的值赋予下游的值；乘法的则为 $ \frac{\partial z}{\partial x} \,+ \,y $ 或者$ \frac{\partial z}{\partial y} \,+ \,x $ 
 
@@ -157,20 +157,16 @@ class Sigmoid:
 
 附上ReLu和Sigmoid的计算图
 
-![](/images/IMG_20240717_232529.jpg)
-
-![](assets\IMG_20240717_232516.jpg)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 ## Affine/Softmax层的实现
 神经网络的正向传播中，为了计算加权信号的总和，使用了乘积运算。
-
-![](/images/IMG_20240717_233625.jpg)
 
 当输入X为单个变量的计算图。
 
 当N个数据一起输入时计算图变为：
 
-![](assets\IMG_20240717_233909.jpg)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 ```python
 class Affine:
@@ -198,7 +194,7 @@ class Affine:
 ## Softmax-with-Loss层
 softmax函数会将输入全部正规化后输出。由于这里也包含作为损失函数的交叉熵误差（cross entropy error），所以称为"Softmax-with-Loss"层。softmax层的计算图有些复杂，这里给出一个简化版的：
 
-![](/images/IMG_20240717_234920.jpg)
+<p class="fig-placeholder">图：这里曾有图片</p>
 
 图中要注意的是反向传播的结果。Softmax层的反向传播得到了(y_1-t_1,y_2-t_2,y_3-t_3)这样“漂亮”的结果。由于（y_1，y_2，y_3）是Softmax层的出、（t_1，t2,t_3)是监督数据，所以（y_1-t_1，y_2-t_2，y_3-t_3）是Softmax层的输出和监督标签的差分。神经网络的反向传播会把这个差分表示的误差传递给前面的层，这是神经网络学习中的重要性质。  
 神经网络学习的目的就是通过调整权重参数，使神经网络的输出（Softmax的输出）接近监督标签。因此，必须将神经网络的输出与监督标签的误差高效地传递给前面的层。刚刚的(y_1-t_1,y_2-t_2,y_3-t_3)正是Softmax层的输出与监督标签的差，直截了当地表示了当前神经网络的输出与监督标签的误差。  

@@ -68,10 +68,13 @@ hexo.extend.helper.register('get_background_config', function (page) {
 // Get post cover image
 hexo.extend.helper.register('post_cover', function (post) {
   if (!post) return '';
-  // Check frontmatter cover
-  if (post.cover) return post.cover;
-  if (post.thumbnail) return post.thumbnail;
-  if (post.photos && post.photos.length > 0) return post.photos[0];
+  var cover = post.cover || post.thumbnail || (post.photos && post.photos.length > 0 ? post.photos[0] : null);
+  // Resolve relative paths against post URL
+  if (cover && !/^(https?:|\/)/i.test(cover)) {
+    var postDir = (post.path || '').replace(/index\.html?$/, '').replace(/\/$/, '');
+    if (postDir) cover = '/' + postDir + '/' + cover;
+  }
+  if (cover) return cover;
   // Check for first image in content
   if (post.content) {
     const imgMatch = post.content.match(/<img[^>]+src=["']([^"']+)["']/i);
