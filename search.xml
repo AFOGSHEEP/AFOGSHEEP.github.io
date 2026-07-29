@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>K 个一组翻转链表 (Reverse Nodes in k-Group)</title>
-    <url>/2026/07/28/Leetcode_K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/</url>
+    <url>/2026/07/27/Leetcode_K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/</url>
     <content><![CDATA[<h2 id="Problem-statement"><a href="#Problem-statement" class="headerlink" title="Problem statement"></a>Problem statement</h2><p>给你一个链表，每 k 个节点一组进行翻转，返回修改后的链表。k 是一个正整数，小于等于链表长度。如果节点总数不是 k 的整数倍，最后剩余的节点保持原样。不能修改节点的值，只能改节点指向。要求 O(1) 额外空间。</p>
 <p>Example: <code>head = [1,2,3,4,5], k=2 → [2,1,4,3,5]</code> &#x2F; <code>k=3 → [3,2,1,4,5]</code></p>
 <h2 id="My-Solution"><a href="#My-Solution" class="headerlink" title="My Solution"></a>My Solution</h2><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>先处理特殊情况：空链表或 k&#x3D;1 直接返回。建哑节点接在 head 前。每次翻转前从当前节点往后数 k 个，不够 k 就说明到了最后一组不足量的尾巴，退出循环。</p>
@@ -22,7 +22,7 @@
   </entry>
   <entry>
     <title>一周刷题</title>
-    <url>/2025/03/01/Leetcode_%E4%B8%80%E5%91%A8%E5%88%B7%E9%A2%98/</url>
+    <url>/2025/02/28/Leetcode_%E4%B8%80%E5%91%A8%E5%88%B7%E9%A2%98/</url>
     <content><![CDATA[<p>1 周刷题计划（侧重哈希→双指针→栈队列→图搜索→贪心）</p>
 <p>Day 1 哈希表</p>
 <p>知识：哈希表 O(1) 查找、冲突概念；unordered_map&#x2F;unordered_set 用法。<br>题单：Two Sum、Two Sum II（有序用双指针对比）、Valid Anagram、Isomorphic Strings。<br>练习：一遍哈希 vs 两遍哈希，写出复杂度；手推哈希表状态。<br>Day 2 双指针 &#x2F; 滑窗</p>
@@ -44,8 +44,8 @@
   </entry>
   <entry>
     <title>三数之和</title>
-    <url>/2025/03/01/Leetcode_%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C/</url>
-    <content><![CDATA[<img src="/2025/03/01/Leetcode_%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C/image-0.png" class="">
+    <url>/2025/02/28/Leetcode_%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C/</url>
+    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C/image-0.png" class="">
 
 
 
@@ -63,7 +63,7 @@
   </entry>
   <entry>
     <title>两数之和</title>
-    <url>/2025/03/01/Leetcode_%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C/</url>
+    <url>/2025/02/28/Leetcode_%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C/</url>
     <content><![CDATA[<p>完成代码	</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">twoSum</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;nums, <span class="type">int</span> target)</span> </span>&#123;</span><br><span class="line">    unordered_map&lt;<span class="type">int</span>, <span class="type">int</span>&gt; idx; <span class="comment">// value -&gt; index</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(nums.<span class="built_in">size</span>()); ++i) &#123;</span><br><span class="line">      <span class="type">int</span> need = target - nums[i];</span><br><span class="line">      <span class="keyword">if</span> (idx.<span class="built_in">count</span>(need)) &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;idx[need], i&#125;;</span><br><span class="line">      &#125;</span><br><span class="line">      idx[nums[i]] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> &#123;&#125;; <span class="comment">// 理论上不会走到这里</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
@@ -76,12 +76,12 @@
   </entry>
   <entry>
     <title>两数相加</title>
-    <url>/2025/03/01/Leetcode_%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0/</url>
+    <url>/2025/02/28/Leetcode_%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0/</url>
     <content><![CDATA[<p>:::info<br>给你两个 非空 的链表，表示两个非负的整数。它们每位数字都是按照 逆序 的方式存储的，并且每个节点只能存储 一位 数字。</p>
 <p>请你将两个数相加，并以相同形式返回一个表示和的链表。</p>
 <p>你可以假设除了数字 0 之外，这两个数都不会以 0 开头。</p>
 <p>:::</p>
-<img src="/2025/03/01/Leetcode_%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0/image-0.png" class="">
+<img src="/2025/02/28/Leetcode_%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0/image-0.png" class="">
 
 
 
@@ -122,7 +122,7 @@
   </entry>
   <entry>
     <title>判断整数回文</title>
-    <url>/2025/03/01/Leetcode_%E5%88%A4%E6%96%AD%E6%95%B4%E6%95%B0%E5%9B%9E%E6%96%87/</url>
+    <url>/2025/02/28/Leetcode_%E5%88%A4%E6%96%AD%E6%95%B4%E6%95%B0%E5%9B%9E%E6%96%87/</url>
     <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isPalindrome</span><span class="params">(<span class="type">int</span> x)</span></span>&#123;</span><br><span class="line">        string str = <span class="built_in">to_string</span>(x);</span><br><span class="line">        <span class="type">int</span> left =<span class="number">0</span>, right = str.<span class="built_in">size</span>() - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(left &lt; right)&#123;</span><br><span class="line">            <span class="keyword">if</span>(str[left] != str[right])&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            left++;</span><br><span class="line">            right--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>算是最简单的一道题了</p>
@@ -138,8 +138,8 @@
   </entry>
   <entry>
     <title>合并两个有序链表</title>
-    <url>/2025/03/01/Leetcode_%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/</url>
-    <content><![CDATA[<img src="/2025/03/01/Leetcode_%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/image-0.png" class="">
+    <url>/2025/02/28/Leetcode_%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/image-0.png" class="">
 
 
 
@@ -186,36 +186,8 @@
       </tags>
   </entry>
   <entry>
-    <title>寻找两个正序数组的中位数</title>
-    <url>/2025/03/01/Leetcode_%E5%AF%BB%E6%89%BE%E4%B8%A4%E4%B8%AA%E6%AD%A3%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0/</url>
-    <content><![CDATA[<p>给定两个大小分别为 <code>m</code> 和 <code>n</code> 的正序（从小到大）数组 <code>nums1</code> 和 <code>nums2</code>。请你找出并返回这两个正序数组的 中位数 。</p>
-<p>算法的时间复杂度应该为 <code>O(log (m+n))</code> 。</p>
-<p>示例 1：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：nums1 = [1,3], nums2 = [2]</span><br><span class="line">输出：2.00000</span><br><span class="line">解释：合并数组 = [1,2,3] ，中位数 2</span><br></pre></td></tr></table></figure>
-
-<p>示例 2：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：nums1 = [1,2], nums2 = [3,4]</span><br><span class="line">输出：2.50000</span><br><span class="line">解释：合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5</span><br></pre></td></tr></table></figure>
-
-
-
-<p>思路：创建新数组合并这两个原始数组，对新数组使用快速排序，之后根据新数组长度是奇数或偶数来计算中位数。</p>
-<p>不需要快速排序，因为原本的两个数组就是有序的，只需要归并排序放入新数组即可。也就是先后判断两者大小，再递归的排序</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">findMedianSortedArrays</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;nums1, vector&lt;<span class="type">int</span>&gt; &amp;nums2)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 1. 合并两个数组</span></span><br><span class="line">  vector&lt;<span class="type">int</span>&gt; merged;</span><br><span class="line">  <span class="type">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line">  <span class="type">int</span> m = nums<span class="number">1.</span><span class="built_in">size</span>(), n = nums<span class="number">2.</span><span class="built_in">size</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 归并两个有序数组</span></span><br><span class="line">  <span class="keyword">while</span> (i &lt; m &amp;&amp; j &lt; n) &#123;</span><br><span class="line">    <span class="keyword">if</span> (nums1[i] &lt;= nums2[j]) &#123;</span><br><span class="line">      merged.<span class="built_in">push_back</span>(nums1[i]);</span><br><span class="line">      i++;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      merged.<span class="built_in">push_back</span>(nums2[j]);</span><br><span class="line">      j++;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 将剩余元素加入，某个数组已经取光而另外的还有剩</span></span><br><span class="line">  <span class="keyword">while</span> (i &lt; m) &#123;</span><br><span class="line">    merged.<span class="built_in">push_back</span>(nums1[i]);</span><br><span class="line">    i++;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> (j &lt; n) &#123;</span><br><span class="line">    merged.<span class="built_in">push_back</span>(nums2[j]);</span><br><span class="line">    j++;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 2. 计算中位数</span></span><br><span class="line">  <span class="type">int</span> total = merged.<span class="built_in">size</span>();</span><br><span class="line">  <span class="keyword">if</span> (total % <span class="number">2</span> == <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// 奇数个元素，返回中间那个</span></span><br><span class="line">    <span class="keyword">return</span> merged[total / <span class="number">2</span>];</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 偶数个元素，返回中间两个的平均值</span></span><br><span class="line">    <span class="type">int</span> mid1 = merged[total / <span class="number">2</span> - <span class="number">1</span>];</span><br><span class="line">    <span class="type">int</span> mid2 = merged[total / <span class="number">2</span>];</span><br><span class="line">    <span class="keyword">return</span> (mid1 + mid2) / <span class="number">2.0</span>; <span class="comment">// 注意：要用2.0，否则是整数除法</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>没管时间复杂度能秒</p>
-<p><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">当看到 </font><strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">“log”</font></strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);"> 的时间复杂度要求时，首先考虑</font><strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">二分查找</font></strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">或</font><strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">分治算法</font></strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">。</font></p>
-]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>## 题目要点</title>
-    <url>/2025/03/01/Leetcode_%E5%9B%9B%E6%95%B0%E4%B9%8B%E5%92%8C/</url>
+    <url>/2025/02/28/Leetcode_%E5%9B%9B%E6%95%B0%E4%B9%8B%E5%92%8C/</url>
     <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="题目要点"><a href="#题目要点" class="headerlink" title="题目要点"></a>题目要点</h2><ul>
 <li>给定一个整数数组 <code>nums</code> 和目标值 <code>target</code>，找出所有不重复的四元组 <code>[a, b, c, d]</code>，使得 <code>a + b + c + d == target</code>。</li>
 <li>结果中不能有重复四元组。</li>
@@ -260,10 +232,38 @@
       </tags>
   </entry>
   <entry>
+    <title>寻找两个正序数组的中位数</title>
+    <url>/2025/02/28/Leetcode_%E5%AF%BB%E6%89%BE%E4%B8%A4%E4%B8%AA%E6%AD%A3%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0/</url>
+    <content><![CDATA[<p>给定两个大小分别为 <code>m</code> 和 <code>n</code> 的正序（从小到大）数组 <code>nums1</code> 和 <code>nums2</code>。请你找出并返回这两个正序数组的 中位数 。</p>
+<p>算法的时间复杂度应该为 <code>O(log (m+n))</code> 。</p>
+<p>示例 1：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：nums1 = [1,3], nums2 = [2]</span><br><span class="line">输出：2.00000</span><br><span class="line">解释：合并数组 = [1,2,3] ，中位数 2</span><br></pre></td></tr></table></figure>
+
+<p>示例 2：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：nums1 = [1,2], nums2 = [3,4]</span><br><span class="line">输出：2.50000</span><br><span class="line">解释：合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5</span><br></pre></td></tr></table></figure>
+
+
+
+<p>思路：创建新数组合并这两个原始数组，对新数组使用快速排序，之后根据新数组长度是奇数或偶数来计算中位数。</p>
+<p>不需要快速排序，因为原本的两个数组就是有序的，只需要归并排序放入新数组即可。也就是先后判断两者大小，再递归的排序</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">findMedianSortedArrays</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;nums1, vector&lt;<span class="type">int</span>&gt; &amp;nums2)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 1. 合并两个数组</span></span><br><span class="line">  vector&lt;<span class="type">int</span>&gt; merged;</span><br><span class="line">  <span class="type">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line">  <span class="type">int</span> m = nums<span class="number">1.</span><span class="built_in">size</span>(), n = nums<span class="number">2.</span><span class="built_in">size</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 归并两个有序数组</span></span><br><span class="line">  <span class="keyword">while</span> (i &lt; m &amp;&amp; j &lt; n) &#123;</span><br><span class="line">    <span class="keyword">if</span> (nums1[i] &lt;= nums2[j]) &#123;</span><br><span class="line">      merged.<span class="built_in">push_back</span>(nums1[i]);</span><br><span class="line">      i++;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      merged.<span class="built_in">push_back</span>(nums2[j]);</span><br><span class="line">      j++;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 将剩余元素加入，某个数组已经取光而另外的还有剩</span></span><br><span class="line">  <span class="keyword">while</span> (i &lt; m) &#123;</span><br><span class="line">    merged.<span class="built_in">push_back</span>(nums1[i]);</span><br><span class="line">    i++;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> (j &lt; n) &#123;</span><br><span class="line">    merged.<span class="built_in">push_back</span>(nums2[j]);</span><br><span class="line">    j++;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 2. 计算中位数</span></span><br><span class="line">  <span class="type">int</span> total = merged.<span class="built_in">size</span>();</span><br><span class="line">  <span class="keyword">if</span> (total % <span class="number">2</span> == <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// 奇数个元素，返回中间那个</span></span><br><span class="line">    <span class="keyword">return</span> merged[total / <span class="number">2</span>];</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 偶数个元素，返回中间两个的平均值</span></span><br><span class="line">    <span class="type">int</span> mid1 = merged[total / <span class="number">2</span> - <span class="number">1</span>];</span><br><span class="line">    <span class="type">int</span> mid2 = merged[total / <span class="number">2</span>];</span><br><span class="line">    <span class="keyword">return</span> (mid1 + mid2) / <span class="number">2.0</span>; <span class="comment">// 注意：要用2.0，否则是整数除法</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>没管时间复杂度能秒</p>
+<p><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">当看到 </font><strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">“log”</font></strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);"> 的时间复杂度要求时，首先考虑</font><strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">二分查找</font></strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">或</font><strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">分治算法</font></strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">。</font></p>
+]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>括号生成</title>
-    <url>/2025/03/01/Leetcode_%E6%8B%AC%E5%8F%B7%E7%94%9F%E6%88%90/</url>
+    <url>/2025/02/28/Leetcode_%E6%8B%AC%E5%8F%B7%E7%94%9F%E6%88%90/</url>
     <content><![CDATA[<p>感觉是最近最难的一道题</p>
-<img src="/2025/03/01/Leetcode_%E6%8B%AC%E5%8F%B7%E7%94%9F%E6%88%90/image-0.png" class="">
+<img src="/2025/02/28/Leetcode_%E6%8B%AC%E5%8F%B7%E7%94%9F%E6%88%90/image-0.png" class="">
 
 
 
@@ -299,8 +299,25 @@
       </tags>
   </entry>
   <entry>
+    <title>最长公共前缀</title>
+    <url>/2025/02/28/Leetcode_%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%89%8D%E7%BC%80/</url>
+    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%89%8D%E7%BC%80/image-0.png" class="">
+
+
+
+<p>最短板原则</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">longestCommonPrefix</span><span class="params">(vector&lt;string&gt;&amp; strs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(strs.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">if</span>(strs.<span class="built_in">size</span>() == <span class="number">1</span>) <span class="keyword">return</span> strs[<span class="number">0</span>];</span><br><span class="line">        <span class="type">int</span> minStrIndex = <span class="number">0</span>;    <span class="comment">//寻找最短的字符串</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span> ;i&lt; strs.<span class="built_in">size</span>();++i)&#123;</span><br><span class="line">            <span class="keyword">if</span>(strs[i].<span class="built_in">size</span>() &lt; strs[minStrIndex].<span class="built_in">size</span>())&#123;</span><br><span class="line">                minStrIndex = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">const</span> string&amp; base =  strs[minStrIndex];</span><br><span class="line">        <span class="type">int</span> index = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(; index &lt; strs[minStrIndex].<span class="built_in">size</span>(); index++)&#123;</span><br><span class="line">            <span class="type">char</span> c = base[index];</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; strs.<span class="built_in">size</span>(); i++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(strs[i][index] != c)&#123;</span><br><span class="line">                    <span class="keyword">return</span> base.<span class="built_in">substr</span>(<span class="number">0</span>,index);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> base;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>无重复字符的最长子串</title>
-    <url>/2025/03/01/Leetcode_%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/</url>
+    <url>/2025/02/28/Leetcode_%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/</url>
     <content><![CDATA[<p>给定一个字符串 <code>s</code> ，请你找出其中不含有重复字符的 最长 子串 的长度。</p>
 <p>示例 1:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: s = &quot;abcabcbb&quot;</span><br><span class="line">输出: 3 </span><br><span class="line">解释: 因为无重复字符的最长子串是 &quot;abc&quot;，所以其长度为 3。注意 &quot;bca&quot; 和 &quot;cab&quot; 也是正确答案。</span><br></pre></td></tr></table></figure>
@@ -320,7 +337,7 @@
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">lengthOfLongestSubstring_bruteforce</span><span class="params">(<span class="type">const</span> string &amp;s)</span> </span>&#123;</span><br><span class="line">    unordered_map&lt;<span class="type">char</span>,<span class="type">int</span>&gt; pos ;</span><br><span class="line">    <span class="type">int</span> n = <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(s.<span class="built_in">size</span>());</span><br><span class="line">    <span class="type">int</span> best = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(i &lt; n)&#123;</span><br><span class="line">        pos.<span class="built_in">clear</span>();</span><br><span class="line">        <span class="type">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> j = i;</span><br><span class="line">        <span class="keyword">for</span>(;j&lt;n;++j)&#123;</span><br><span class="line">            <span class="keyword">if</span>(pos.<span class="built_in">count</span>(s[j])&#123;</span><br><span class="line">                <span class="comment">//此时发生了重复，记录当前长度并返回到重复字符的下一位</span></span><br><span class="line">                best = <span class="built_in">max</span>(best,count);</span><br><span class="line">                i = pos[s[j]] + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                pos[s[j]] = j;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(j == n)&#123;</span><br><span class="line">            best = <span class="built_in">max</span>(best,count);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> best;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>运行结果：</p>
-<img src="/2025/03/01/Leetcode_%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/image-0.png" class="">
+<img src="/2025/02/28/Leetcode_%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/image-0.png" class="">
 
 
 
@@ -340,8 +357,32 @@
       </tags>
   </entry>
   <entry>
+    <title>有效的括号</title>
+    <url>/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/</url>
+    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/image-0.png" class="">
+
+
+
+<p>初解没有考虑分开的单类符号的情况,显然光暴力枚举没有未来。还是需要用到栈这个工具。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> length = s.<span class="built_in">size</span>();</span><br><span class="line">    <span class="keyword">if</span>(length % <span class="number">2</span> == <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>((s == <span class="string">&quot;()[]&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;()&#123;&#125;[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;()[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;[]()&quot;</span>) || (s == <span class="string">&quot;[]()&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;[]&#123;&#125;()&quot;</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; length /<span class="number">2</span>; ++i)&#123;</span><br><span class="line">        <span class="type">char</span> c1 = s[i];</span><br><span class="line">        <span class="type">char</span> c2 = s[length <span class="number">-1</span> - i];</span><br><span class="line">        <span class="keyword">if</span>((c1 == <span class="string">&#x27;(&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;)&#x27;</span> ) || (c1 == <span class="string">&#x27;&#123;&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;&#125;&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>标准解法</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.<span class="built_in">size</span>() % <span class="number">2</span> == <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">char</span>&gt; st;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="string">&#x27;(&#x27;</span> || c == <span class="string">&#x27;[&#x27;</span> || c == <span class="string">&#x27;&#123;&#x27;</span>) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(c);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (st.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                <span class="type">char</span> t = st.<span class="built_in">top</span>();</span><br><span class="line">                st.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span> ((c == <span class="string">&#x27;)&#x27;</span> &amp;&amp; t != <span class="string">&#x27;(&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;]&#x27;</span> &amp;&amp; t != <span class="string">&#x27;[&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;&#125;&#x27;</span> &amp;&amp; t != <span class="string">&#x27;&#123;&#x27;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> st.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>最长回文子串</title>
-    <url>/2025/03/01/Leetcode_%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/</url>
+    <url>/2025/02/28/Leetcode_%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/</url>
     <content><![CDATA[<p>给你一个字符串 <code>s</code>，找到 <code>s</code> 中最长的 回文 子串。</p>
 <p>示例 1：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：s = &quot;babad&quot;</span><br><span class="line">输出：&quot;bab&quot;</span><br><span class="line">解释：&quot;aba&quot; 同样是符合题意的答案。</span><br></pre></td></tr></table></figure>
@@ -359,14 +400,14 @@
 <p>说起来容易写起来1还行，相对来说</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">longestPalindrome</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(s.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//记录回文的起始与最大长度</span></span><br><span class="line">        <span class="type">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> maxlen = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//寻找中心点</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span> ; i&lt; s.<span class="built_in">size</span>(); ++i )&#123;</span><br><span class="line">            <span class="comment">//奇偶分别讨论</span></span><br><span class="line">            <span class="type">int</span> len1 = <span class="built_in">expandAroundCenter</span>(s, i, i);</span><br><span class="line">            <span class="type">int</span> len2 = <span class="built_in">expandAroundCenter</span>(s, i, i<span class="number">+1</span>);</span><br><span class="line">            <span class="type">int</span> len3 = <span class="built_in">max</span>(len1,len2);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(len3 &gt; maxlen)&#123;</span><br><span class="line">                start = i -(len3 - <span class="number">1</span>)/<span class="number">2</span>;</span><br><span class="line">            maxlen = <span class="built_in">max</span>(maxlen,len3);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s.<span class="built_in">substr</span>(start,maxlen);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">expandAroundCenter</span><span class="params">(string s, <span class="type">int</span> left, <span class="type">int</span> right)</span></span>&#123;</span><br><span class="line">        <span class="type">int</span> length = <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(s.<span class="built_in">size</span>());</span><br><span class="line">        <span class="keyword">while</span>(right &lt; length &amp;&amp; left &gt;= <span class="number">0</span> &amp;&amp; s[left] == s[right])&#123;</span><br><span class="line">                --left;</span><br><span class="line">                ++right;</span><br><span class="line">            <span class="comment">//结束时已经超出回文范围</span></span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> right - left <span class="number">-1</span>;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<img src="/2025/03/01/Leetcode_%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/image-0.png" class="">
+<img src="/2025/02/28/Leetcode_%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/image-0.png" class="">
 
 
 
 <p>附带一个deepseek的版本：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">longestPalindrome</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span> start = <span class="number">0</span>;  <span class="comment">// 最长回文子串的起始位置</span></span><br><span class="line">        <span class="type">int</span> maxLen = <span class="number">1</span>; <span class="comment">// 最长回文子串的长度</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 遍历每个可能的中心</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">length</span>(); i++) &#123;</span><br><span class="line">            <span class="comment">// 以 s[i] 为中心，奇数长度回文</span></span><br><span class="line">            <span class="type">int</span> len1 = <span class="built_in">expandAroundCenter</span>(s, i, i);</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 以 s[i] 和 s[i+1] 为中心，偶数长度回文</span></span><br><span class="line">            <span class="type">int</span> len2 = <span class="built_in">expandAroundCenter</span>(s, i, i + <span class="number">1</span>);</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 取两种情况中的较长者</span></span><br><span class="line">            <span class="type">int</span> len = <span class="built_in">max</span>(len1, len2);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (len &gt; maxLen) &#123;</span><br><span class="line">                maxLen = len;</span><br><span class="line">                <span class="comment">// 计算起始位置</span></span><br><span class="line">                start = i - (len - <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> s.<span class="built_in">substr</span>(start, maxLen);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 从中心向两边扩展，返回回文长度</span></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">expandAroundCenter</span><span class="params">(<span class="type">const</span> string&amp; s, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (left &gt;= <span class="number">0</span> &amp;&amp; right &lt; s.<span class="built_in">length</span>() &amp;&amp; s[left] == s[right]) &#123;</span><br><span class="line">            left--;</span><br><span class="line">            right++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 循环结束时，left和right已经超出了回文范围</span></span><br><span class="line">        <span class="comment">// 回文实际范围是 [left+1, right-1]</span></span><br><span class="line">        <span class="comment">// 长度 = (right-1) - (left+1) + 1 = right - left - 1</span></span><br><span class="line">        <span class="keyword">return</span> right - left - <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<h3 id=""><a href="#" class="headerlink" title=""></a><img src="/2025/03/01/Leetcode_%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/image-1.png" class=""></h3><p>他的建议：<br>经过仔细对比，我发现有两个主要区别：</p>
+<h3 id=""><a href="#" class="headerlink" title=""></a><img src="/2025/02/28/Leetcode_%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/image-1.png" class=""></h3><p>他的建议：<br>经过仔细对比，我发现有两个主要区别：</p>
 <ol>
 <li>你的版本中，<code>expandAroundCenter</code>函数的参数是<code>string s</code>，即按值传递字符串，这会拷贝整个字符串，导致性能下降。<br>而我的版本使用的是<code>const string&amp; s</code>，即按引用传递，避免了拷贝。</li>
 <li>另外，你的版本中在计算<code>maxlen</code>时，虽然已经用<code>len3</code>和<code>maxlen</code>比较，但在更新时又调用了一次<code>max(maxlen, len3)</code>，这是多余的，因为已经确定<code>len3 &gt; maxlen</code>。</li>
@@ -391,49 +432,8 @@
       </tags>
   </entry>
   <entry>
-    <title>有效的括号</title>
-    <url>/2025/03/01/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/</url>
-    <content><![CDATA[<img src="/2025/03/01/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/image-0.png" class="">
-
-
-
-<p>初解没有考虑分开的单类符号的情况,显然光暴力枚举没有未来。还是需要用到栈这个工具。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> length = s.<span class="built_in">size</span>();</span><br><span class="line">    <span class="keyword">if</span>(length % <span class="number">2</span> == <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>((s == <span class="string">&quot;()[]&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;()&#123;&#125;[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;()[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;[]()&quot;</span>) || (s == <span class="string">&quot;[]()&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;[]&#123;&#125;()&quot;</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; length /<span class="number">2</span>; ++i)&#123;</span><br><span class="line">        <span class="type">char</span> c1 = s[i];</span><br><span class="line">        <span class="type">char</span> c2 = s[length <span class="number">-1</span> - i];</span><br><span class="line">        <span class="keyword">if</span>((c1 == <span class="string">&#x27;(&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;)&#x27;</span> ) || (c1 == <span class="string">&#x27;&#123;&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;&#125;&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>标准解法</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.<span class="built_in">size</span>() % <span class="number">2</span> == <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">char</span>&gt; st;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="string">&#x27;(&#x27;</span> || c == <span class="string">&#x27;[&#x27;</span> || c == <span class="string">&#x27;&#123;&#x27;</span>) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(c);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (st.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                <span class="type">char</span> t = st.<span class="built_in">top</span>();</span><br><span class="line">                st.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span> ((c == <span class="string">&#x27;)&#x27;</span> &amp;&amp; t != <span class="string">&#x27;(&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;]&#x27;</span> &amp;&amp; t != <span class="string">&#x27;[&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;&#125;&#x27;</span> &amp;&amp; t != <span class="string">&#x27;&#123;&#x27;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> st.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>最长公共前缀</title>
-    <url>/2025/03/01/Leetcode_%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%89%8D%E7%BC%80/</url>
-    <content><![CDATA[<img src="/2025/03/01/Leetcode_%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%89%8D%E7%BC%80/image-0.png" class="">
-
-
-
-<p>最短板原则</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">longestCommonPrefix</span><span class="params">(vector&lt;string&gt;&amp; strs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(strs.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">if</span>(strs.<span class="built_in">size</span>() == <span class="number">1</span>) <span class="keyword">return</span> strs[<span class="number">0</span>];</span><br><span class="line">        <span class="type">int</span> minStrIndex = <span class="number">0</span>;    <span class="comment">//寻找最短的字符串</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span> ;i&lt; strs.<span class="built_in">size</span>();++i)&#123;</span><br><span class="line">            <span class="keyword">if</span>(strs[i].<span class="built_in">size</span>() &lt; strs[minStrIndex].<span class="built_in">size</span>())&#123;</span><br><span class="line">                minStrIndex = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">const</span> string&amp; base =  strs[minStrIndex];</span><br><span class="line">        <span class="type">int</span> index = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(; index &lt; strs[minStrIndex].<span class="built_in">size</span>(); index++)&#123;</span><br><span class="line">            <span class="type">char</span> c = base[index];</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; strs.<span class="built_in">size</span>(); i++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(strs[i][index] != c)&#123;</span><br><span class="line">                    <span class="keyword">return</span> base.<span class="built_in">substr</span>(<span class="number">0</span>,index);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> base;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>正则表达式匹配</title>
-    <url>/2025/03/01/Leetcode_%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/</url>
+    <url>/2025/02/28/Leetcode_%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/</url>
     <content><![CDATA[<p>给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 ‘.’ 和 ‘*’ 的正则表达式匹配。</p>
 <p>‘.’ 匹配任意单个字符<br>‘*’ 匹配零个或多个前面的那一个元素<br>返回一个布尔值，表示匹配是否覆盖整个输入字符串（而非部分）。</p>
 <p>这是我现在在思考的题目，但是我没有思考出结果，我给你讲一下我现在的思路。按位来判断p能不能对上s。s用i计位，p按j。分情况讨论。首先是p既不是.也不是_时。从第一位开始看他们对应的位是不是一样的，如果不一样，返回false。一样的话i++,j++。如果j位变成了.那么就直接i++,j++。当然整个代码都要在先j再i的一个嵌套循环里。首先看j是不是.或者_，再看能不能和i位的对上。最困难的就是遇见j位是_的时候了，我的想法是，如果此时j+1已经到了终点，那么说明范式p的_是在最后一位，前面没出岔子的话那么这怎么都是对的。如果j+1不是到重点，后面还有，那么就要先找到p的j+1这个位，然后开一个新的循环，从目前的i位开始，看s从现在的i到结束有没有任何一位和这个相同，如果没有，那就返回false,如果有，那么我就得把现在的i变成让他相同的那个i继续前面的，直到两边都到最后一位都相同，或者i到最后一位时j的是.那就说明范式能匹配上，返回true我的想法是这样，但是我写不出这个循环的代码。请你评判一下，教教我怎么做</p>
@@ -581,8 +581,8 @@
   </entry>
   <entry>
     <title>盛最多水的容器</title>
-    <url>/2025/03/01/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/</url>
-    <content><![CDATA[<img src="/2025/03/01/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/image-0.png" class="">
+    <url>/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/</url>
+    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/image-0.png" class="">
 
 
 
@@ -767,234 +767,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Compute 101</title>
-    <url>/2024/11/11/OLD_Compute%20101%20record/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-11-11 00:00:01<br>记录在pwncollege里的一些学习笔记</p>
-<h2 id="Tracing-Syscalls"><a href="#Tracing-Syscalls" class="headerlink" title="Tracing Syscalls"></a>Tracing Syscalls</h2><p>As you write larger and larger programs, you (yes, even you!) might make mistakes when implementing certain functionality, introducing <em>bugs</em> into your programs. Throughout this module, we’ll go over a few tools and techniques for <em>debugging</em> your program. The first one is pretty simple: the <strong>s</strong>yscall <strong>trace</strong>r, <code>strace</code>.</p>
-<p>Given a program to run, <code>strace</code> will use functionality of the Linux operating system to introspect and record every system call that the program invokes, and its result. For example, let’s look at our program from the previous challenge:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hacker@dojo:~$ strace /tmp/your-program</span><br><span class="line">execve(&quot;/tmp/your-program&quot;, [&quot;/tmp/your-program&quot;], 0x7ffd48ae28b0 /* 53 vars */) = 0</span><br><span class="line">exit(42)                                 = ?</span><br><span class="line">+++ exited with 42 +++</span><br><span class="line">hacker@dojo:~$</span><br></pre></td></tr></table></figure>
-
-<p>As you can see, <code>strace</code> reports what system calls are triggered, what parameters were passed to them, and what data they returned. The syntax used here for output is <code>system_call(parameter, parameter, parameter, ...)</code>. This syntax is borrowed from a programming language called C, but we don’t have to worry about that yet. Just keep in mind how to read this specific syntax.</p>
-<p>In this example, <code>strace</code> reports two system calls: the second is the <code>exit</code> system call that your program uses to request its own termination, and you can see the parameter you passed to it (42). The first is an <code>execve</code> system call. We’ll learn about this system call later, but it’s somewhat of a yin to <code>exit</code>‘s yang: it starts a new program (in this case, <code>your-program</code>). It’s not actually invoked by <code>your-program</code> in this case: its detection by <code>strace</code> is a weird artifact of how <code>strace</code> works, that we’ll investigate later.</p>
-<p>In the final line, you can see the result of <code>exit(42)</code>, which is that the program exits with an exit code of <code>42</code>!</p>
-<p>Now, the <code>exit</code> syscall is easy to introspect without using <code>strace</code> — after all, part of the point of <code>exit</code> is to give you an exit code that you can access. But other system calls are less visible. For example, the <code>alarm</code> system call (syscall number 37!) will set a timer in the operating system, and when that many seconds pass, Linux will terminate the program. The point of <code>alarm</code> is to, e.g., kill the program when it’s frozen, but in this case, we’ll use <code>alarm</code> to practice our <code>strace</code> snooping!</p>
-<p>In this challenge, you must <code>strace</code> the <code>/challenge/trace-me</code> program to figure out what value it passes as a parameter to the <code>alarm</code> system call, then call <code>/challenge/submit-number</code> with the number you’ve retrieved as the argument. Good luck!</p>
-<p>总结：</p>
-<ol>
-<li>使用strace跟踪&#x2F;challenge&#x2F;trace-me程序。</li>
-<li>观察并记录alarm系统调用的参数值。</li>
-<li>调用&#x2F;challenge&#x2F;submit-number，将上一步中找到的数字作为参数传递。</li>
-</ol>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hacker@your<span class="literal">-first-program</span>~tracing<span class="literal">-syscalls</span>:/challenge<span class="variable">$</span> strace  ./<span class="built_in">trace-me</span> </span><br><span class="line">execve(<span class="string">&quot;./trace-me&quot;</span>, [<span class="string">&quot;./trace-me&quot;</span>], <span class="number">0</span>x7ffd869ca7f0 /* <span class="number">28</span> vars */) = <span class="number">0</span></span><br><span class="line">alarm(<span class="number">18759</span>)                            = <span class="number">0</span></span><br><span class="line"><span class="keyword">exit</span>(<span class="number">0</span>)                                 = ?</span><br><span class="line">+++ exited with <span class="number">0</span> +++</span><br><span class="line"><span class="comment"># 提交数字即可</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="moving-betweening-registers"><a href="#moving-betweening-registers" class="headerlink" title="moving betweening registers"></a>moving betweening registers</h2><p>Okay, let’s learn about one more register: <code>rsi</code>! Like <code>rdi</code>, <code>rsi</code> is a place you can park some data. For example:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br></pre></td></tr></table></figure>
-
-<p>Of course, you can also move data around between registers! Watch:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br><span class="line">mov rdi, rsi</span><br></pre></td></tr></table></figure>
-
-<p>Just like the first line there moves <code>42</code> into <code>rsi</code>, the second like moves the value in <code>rsi</code> to <code>rdi</code>. Here, we have to mention one complication: by <em>move</em>, we really mean <em>set</em>. After the snippet above, <code>rsi</code> <em>and</em> <code>rdi</code> will be <code>42</code>. It’s a mystery as to why the <code>mov</code> was chosen rather than something reasonable like <code>set</code> (even very knowledgeable people resort to <a href="https://retrocomputing.stackexchange.com/questions/12968/why-is-the-processor-instruction-called-move-not-copy">diverse speculation</a> when asked), but it was, and here we are.</p>
-<p>Anyways, on to the challenge! In this challenge, we will store a secret value in the <code>rsi</code> register, and your program must exit with that value as the return code. Since <code>exit</code> uses the value stored in <code>rdi</code> as the return code, you’ll need to move the secret value in <code>rsi</code> into <code>rdi</code>. Good luck!</p>
-<p>总结：</p>
-<ol>
-<li>在rsi寄存器中存储一个秘密值。</li>
-<li>编写一个程序，该程序需要将rsi寄存器中的秘密值移动到rdi寄存器中。</li>
-<li>程序必须使用exit函数退出，并且退出时的返回码应为rsi寄存器中存储的秘密值（此时已移动到rdi中，因为exit函数使用rdi的值作为返回码）。</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, rsi</span><br><span class="line">mov rax,60 ;设置syscall号为exit（60）</span><br><span class="line">syscall </span><br><span class="line">;调用check即可</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="loading-from-memory"><a href="#loading-from-memory" class="headerlink" title="loading from memory"></a>loading from memory</h2><p>As seen by your program, computer memory is a huge place where data is housed. Like houses on a street, every part of memory has a numeric <em>address</em>, and like houses on a street, these numbers are (mostly) sequential. Modern computers have enormous amounts of memory, and the view of memory of a typical modern program actually has large gaps (think: a portion of the street that hasn’t had houses built on it, and so those addresses are skipped). But these are all details: the point is, computers store data, mostly sequentially, in memory.</p>
-<p>In this level, we will practice accessing data stored in memory. How might we do this? Recall that to move a value into a register, we did something like:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, 31337</span><br></pre></td></tr></table></figure>
-
-<p>After this, the value of is . Cool. Well, we can use the same instruction to access memory! There is another format of the command that, instead, uses the second parameter as an address to access memory! Consider that our memory looks like this:<code>rdi``31337</code></p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>To access the memory contents at memory address 31337, you would can do:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [31337]</span><br></pre></td></tr></table></figure>
-
-<p>When the CPU executes this instruction, it of course understands that is an <em>address</em>, not a raw value. If you think of the instruction as a person telling the CPU what to do, and we stick with our “houses on a street” analogy, then instead of just handing the CPU data, the instruction&#x2F;person <em>points at a house on the street</em>. The CPU will then go to that address, ring its doorbell, open its front door, drag the data that’s in there out, and put it into . Thus, the in this context is the <em>memory address</em> and serves to <em>point to</em> the data stored at that memory address. After this instruction executes, the value stored in will be !<code>31337``rdi``31337``rdi``42</code></p>
-<p>Let’s put this into practice! I’ve stored a secret number at memory address , as so:<code>133700</code></p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ ???      │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>You must retrieve this secret number and use it as the exit code for your program. To do this, you must read it into , whose value, if you recall, is the first parameter to and is used as the exit code. Good luck!<code>rdi``exit</code></p>
-<p>总结:</p>
-<ol>
-<li>访问地址133700处的数据</li>
-<li>把该地址的数据读取到rdi中</li>
-<li>使用这个数据作为退出参数</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mov rdi ,[133700] <span class="comment">#记住地址的表示</span></span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="dereferencing-pointers"><a href="#dereferencing-pointers" class="headerlink" title="dereferencing pointers"></a>dereferencing pointers</h2><p>Did you prefer to access memory at <code>133700</code> or at <code>123400</code>? Your answer might say something about your personality, but it’s not super relevant from a technical perspective. In fact, in most cases, you don’t deal with actual memory addresses when writing programs at all!</p>
-<p>How is this possible? Well, typically, memory addresses are stored in registers, and we use the values in the registers to point to data in memory! Let’s start with this memory configuration:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>And consider this assembly snippet:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, 133700</span><br></pre></td></tr></table></figure>
-
-<p>Now, what you have is the following situation:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │◂┐</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p><code>rdi</code> now holds a value that corresponds with the address of the data that want to load! Let’s load it:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [rax]</span><br></pre></td></tr></table></figure>
-
-<p>Here, we are accessing memory, but instead of specifying a fixed address like <code>133700</code> for the memory read, we’re using the value stored in <code>rax</code> as the memory address. By containing the memory address, <code>rax</code> is a <em>pointer</em> that <em>points to</em> the data we want to access! When we use <code>rax</code> in lieu of directly specifying the address that it stores to access the memory address that it references, we call this <em>dereferencing</em> the pointer. In the above example, we <em>dereference</em> <code>rax</code> to load the data it points to (the value <code>42</code> at address <code>133700</code>) into <code>rdi</code>. Neat!</p>
-<p>This also drives home another point: these registers are <em>general purpose</em>! Just because we’ve been using <code>rax</code> as the syscall index in our challenges so far doesn’t mean that it can’t have other uses as well. Here, it’s used as a pointer to our secret data in memory.</p>
-<p>Similarly, the <em>data</em> in the registers doesn’t have an implicit purpose. If <code>rax</code> contains the value <code>133700</code> and we write <code>mov rdi, [rax]</code>, the CPU uses the value as a memory address to dereference. But if we write <code>mov rdi, rax</code> in the same conditions, the CPU just happily puts <code>133700</code> into <code>rdi</code>. To the CPU, data is data; it only becomes differentiated when it’s used in different ways.</p>
-<p>In this challenge, we’ve initialized <code>rax</code> to contain the address of the secret data we’ve stored in memory. Dereference <code>rax</code> to the secret data into <code>rdi</code> and use it as the exit code of the program to get the flag!</p>
-<p>讲了个类似C语言中指针的用法。第一次做成了这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [rax]</span><br><span class="line">mov eax, rdi</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line">;报错：Your assembly did not assemble cleanly. The errors:</span><br><span class="line">;Error: unsupported instruction `mov&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>后来发现<code>mov eax, rdi</code>的问题。<code>eax</code> 是 32 位寄存器，而 <code>rdi</code> 是 64 位寄存器，不能直接传参,而且没搞懂程序的运行原理。修改为以下后通过：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rax]	;rdi 负责传参</span><br><span class="line">mov rax,60 	;rax负责调起exit()</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>补充：<code>60</code> -&gt; <code>exit</code>：退出程序</p>
-<pre><code>  ` 1` -&gt; `write`：写数据
-
-  `	3` -&gt; `read`：读数据
-
-  `	9` -&gt; `mmap`：内存映射
-</code></pre>
-<p>等等。</p>
-<h2 id="dereferencing-with-offsets"><a href="#dereferencing-with-offsets" class="headerlink" title="dereferencing with offsets"></a>dereferencing with offsets</h2><p>So now you can dereference pointers in memory like a pro! But pointers don’t always point directly at the data you need. Sometimes, for example, a pointer might point to a collection of data (say, an entire book), and you’ll need to reference partway into this collection for the specific data you need.</p>
-<p>For example, if your pointer (say, <code>rdi</code>) points to a sequence of numbers in memory, as so:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 50       │◂┐</span><br><span class="line">│ 133701  │ 42       │ │</span><br><span class="line">│ 133702  │ 99       │ │</span><br><span class="line">│ 133703  │ 14       │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>If you want the second number of that sequence, you could do:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [rdi+1]</span><br></pre></td></tr></table></figure>
-
-<p>Wow, super simple! In memory terms, we call these number slots <em>bytes</em>: each memory address represents a specific byte of memory. The above example is accessing memory 1 byte after the memory address pointed to by <code>rax</code>. In memory terms, we call this 1 byte difference an <em>offset</em>, so in this example, there is an offset of 1 from the address pointed to by <code>rdi</code>.</p>
-<p>Let’s practice this concept. As before, we will initialize <code>rdi</code> to point at the secret value, but not <em>directly</em> at it. This time, the secret value will have an offset of 8 bytes from where <code>rdi</code> points, something analogous to this:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 0        │◂┐</span><br><span class="line">│ 31337+1 │ 0        │ │</span><br><span class="line">│ 31337+2 │ 0        │ │</span><br><span class="line">│ 31337+3 │ 0        │ │</span><br><span class="line">│ 31337+4 │ 0        │ │</span><br><span class="line">│ 31337+5 │ 0        │ │</span><br><span class="line">│ 31337+6 │ 0        │ │</span><br><span class="line">│ 31337+7 │ 0        │ │</span><br><span class="line">│ 31337+8 │ ???      │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 31337    │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>Of course, the actual memory address is not <code>31337</code>. We’ll choose it randomly, and store it in <code>rdi</code>. Go dereference <code>rdi</code> with offset <code>8</code> and get the flag!</p>
-<p>仍然是类似指针的操作</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rdi+8]</span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="double-dereference"><a href="#double-dereference" class="headerlink" title="double dereference"></a>double dereference</h2><p>In the last few levels, you have:</p>
-<ul>
-<li>Used an address that we told you (in one level, <code>133700</code>, and in another, <code>123400</code>) to load a secret value from memory.</li>
-<li>Used an address that we put into <code>rax</code> for you to load a secret value from memory.</li>
-<li>Used an address that we told you (in the last level, <code>567800</code>) to load <em>the address</em> of a secret value from memory into a register, then used that register as a pointer to retrieve the secret value from memory!</li>
-</ul>
-<p>Let’s put those last two together. In this challenge, we stored our <code>SECRET_VALUE</code> in memory at the address <code>SECRET_LOCATION_1</code>, then stored <code>SECRET_LOCATION_1</code> in memory at the address <code>SECRET_LOCATION_2</code>. Then, we put <code>SECRET_ADDRESS_2</code> into <code>rax</code>! The result looks something like this, using <code>133700</code> for <code>SECRET_LOCATION_1</code> and 123400 for <code>SECRET_LOCATION_2</code> (not, in the real challenge, these values will be different and hidden from you!):</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂┐</span><br><span class="line">│ +────────────────────+ │</span><br><span class="line">└▸│ 123400  │ 42       │ │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">   Register │ Contents   │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">  │ rdi     │ 133700   │─┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>Here, you will need to perform two memory reads: one dereferencing <code>rax</code> to read <code>SECRET_LOCATION_1</code> from the location that <code>rax</code> is pointing to (which is <code>SECRET_LOCATION_2</code>), and the second one dereferencing whatever register now holds <code>SECRET_LOCATION_1</code> to read <code>SECRET_VALUE</code> into <code>rdi</code>, so you can use it as the exit code!</p>
-<p>That sounds like a lot, but you’ve done basically all of this already. Go put it together!</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [rax]    ; 第一步：通过rax指向的地址读取SECRET_LOCATION_1（第二层地址）</span><br><span class="line">mov rdi, [rax]    ; 第二步：通过rax指向的地址读取SECRET_VALUE</span><br><span class="line">mov rax, 60       </span><br><span class="line">syscall           </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>在 x86-64 架构中，系统调用的参数是通过寄存器传递的。根据系统调用的约定：</p>
-<ul>
-<li><code>rdi</code> 用于传递第一个参数。</li>
-<li><code>rsi</code> 用于传递第二个参数。</li>
-</ul>
-<h2 id="triple-dereference"><a href="#triple-dereference" class="headerlink" title="triple dereference"></a>triple dereference</h2><p>Okay, let’s stretch that to one more depth! We’ve added an additional level of indirection in this challenge, so now you’ll need <em>three</em> dereferences to find the secret value. Something like this:</p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂──┐</span><br><span class="line">│ +────────────────────+   │</span><br><span class="line">└▸│ 123400  │ 100000   │─┐ │</span><br><span class="line">  +────────────────────+ │ │</span><br><span class="line">  │ 100000  │ 42       │◂┘ │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">                           │</span><br><span class="line">                           │</span><br><span class="line">   Register │ Contents     │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">  │ rdi     │ 133700   │───┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
-
-<p>As you can see, we’ll place the first address that you must dereference into rdi. Go get the value!</p>
-<p>类似的操作</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rdi]</span><br><span class="line">mov rax,[rdi]</span><br><span class="line">mov rdi,[rax]</span><br><span class="line">mov rax,60</span><br><span class="line">syscall</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p> <code>rsi</code> 是用于传递参数的寄存器，而 <code>rdi</code> 才是系统调用时的退出代码传递寄存器。</p>
-<h2 id="writing-output"><a href="#writing-output" class="headerlink" title="writing output"></a>writing output</h2><p>Let’s learn to write text!</p>
-<p>Unsurprisingly, your program writes text to the screen by invoking a system call. Specifically, this is the <code>write</code> system call, and its syscall number is <code>1</code>. However, the write system call also needs to specify, via its parameters, <em>what</em> data to write and <em>where</em> to write it to.</p>
-<p>You may remember, from the <a href="https://pwn.college/linux-luminarium/piping">Practicing Piping</a> module of the <a href="https://pwn.college/linux-luminarium">Linux Luminarium</a> dojo, the concept of <em>File Descriptors</em> (FDs). As a reminder, each process starts out with three FDs:</p>
-<ul>
-<li><strong>FD 0:</strong> Standard <em>Input</em> is the channel through which the process takes input. For example, your shell uses Standard Input to read the commands that you input.</li>
-<li><strong>FD 1:</strong> Standard <em>Output</em> is the channel through which processes output normal data, such as the flag when it is printed to you in previous challenges or the output of utilities such as <code>ls</code>.</li>
-<li><strong>FD 2:</strong> Standard <em>Error</em> is the channel through which processes output error details. For example, if you mistype a command, the shell will output, over standard error, that this command does not exist.</li>
-</ul>
-<p>It turns out that, in your <code>write</code> system call, this is how you specify <em>where</em> to write the data to! The first (and only) parameter to your <code>exit</code> system call was your exit code (<code>mov rdi, 42</code>), and the first (but, in this case, not only!) parameter to <code>write</code> is the file descriptor. If you want to write to standard output, you would set <code>rdi</code> to 1. If you want to write to standard error, you would set <code>rdi</code> to 2. Super simple!</p>
-<p>This leaves us with <em>what</em> to write. Now, you could imagine a world where we specify what to write through yet another register parameter to the <code>write</code> system call. But these registers don’t fit a ton of data, and to write out a long story like this challenge description, you’d need to invoke the <code>write</code> system call multiple times. Relatively speaking, this has a lot of performance cost — the CPU needs to switch from executing the instructions of your program to executing the instructions of Linux itself, do a bunch of housekeeping computation, interact with your hardware to get the actual pixels to show up on your screen, and then switch back. This is slow, and so we try to minimize the number of times we invoke system calls.</p>
-<p>Of course, the solution to this is to write multiple characters at the same time. The <code>write</code> system call does this by taking <em>two</em> parameters for the “what”: a <em>where</em> (in memory) to start writing from and a <em>how many</em> characters to write. These parameters are passed as the second and third parameter to <code>write</code>. In the kinda-C syntax that we learned from <code>strace</code>, this would be:</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">write(file_descriptor, memory_address, number_of_characters_to_write)</span><br></pre></td></tr></table></figure>
-
-<p>For a more concrete example, if you wanted to write 10 characters from memory address 1337000 to standard output (file descriptor 1), this would be:</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">write(<span class="number">1</span>, <span class="number">1337000</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
-
-<p>Wow, that’s simple! Now, how do we actually specify these parameters?</p>
-<ol>
-<li>We’ll pass the first parameter of a system call, as we reviewed above, in the <code>rdi</code> register.</li>
-<li>We’ll pass the second parameter via the <code>rsi</code> register. The agreed-upon convention in Linux is that <code>rsi</code> is used as the second parameter to system calls.</li>
-<li>We’ll pass the third parameter via the <code>rdx</code> register. This is the most confusing part of this entire module: <code>rdi</code> (the register holding the first parameter) has such a similar name to <code>rdx</code> that it’s really easy to mix up and, unfortunately, the naming is this way for historic reasons and is here to stay. Oh well… It’s just something we have to be careful about. Maybe a mnemonic like “<code>rdi</code> is the <strong>i</strong>nitial parameter while <code>rdx</code> is the <strong>x</strong>tra parameter”? Or just think of it as having to keep track of different friends with similar names, and you’ll be fine.</li>
-</ol>
-<p>And, of course, the <code>write</code> syscall index into <code>rax</code> itself: <code>1</code>. Other than the <code>rdi</code> vs <code>rdx</code> confusion, this is really easy!</p>
-<p>Now, you know how to point a register at a memory address (from the <a href="https://pwn.college/computing-101/memory">Memory</a> module!), and yo know how to set the system call number, and how to set the rest of the registers. So, this should be cake!</p>
-<p>Similar to before, we wrote a single secret character value into memory at address <code>1337000</code>. Call <code>write</code> to that single character (for now! We’ll do multiple-character writes later) value onto standard out, and we’ll give you the flag!</p>
-<p>如何输出某个地址上的数值？？</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax,1</span><br><span class="line">mov rdi,1</span><br><span class="line">mov rsi,1337000</span><br><span class="line">mov rdx,1</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure>
-
-<p><code>rax</code>：存储系统调用号，<code>1</code> 对应于 <code>write</code>。</p>
-<p><code>rdi</code>：存储文件描述符，<code>1</code> 是标准输出。</p>
-<p><code>rsi</code>：存储要写的数据的内存地址，这里假设数据存储在地址 <code>0x1337000</code>。</p>
-<p><code>rdx</code>：存储要写入的字节数，这里是 1 个字节。</p>
-<p><code>syscall</code>：执行系统调用，将前面设置的寄存器参数传递给内核。</p>
-<p>依据x86_64 架构下的调用约定，即系统调用时，前四个参数分别通过 <code>rdi</code>, <code>rsi</code>, <code>rdx</code>, 和 <code>r10</code> 等寄存器传递。<code>rax</code> 存储系统调用编号，后面的寄存器则用来传递具体的参数值。</p>
-<h2 id="chaining-syscalls"><a href="#chaining-syscalls" class="headerlink" title="chaining syscalls"></a>chaining syscalls</h2><p>Okay, our previous solution wrote output but then crashed. In this level, you will write output, and then <em>not</em> crash!</p>
-<p>We’ll do this by invoking the system call, and then invoking the system call to cleanly exit the program. How do we invoke two system calls? Just like you invoke two instructions! First, you set up the necessary registers and invoke , then you set up the necessary registers and invoke <code>exit!</code>write<code>exit</code>write&#96;</p>
-<p>Your previous solution had 5 instructions (setting , setting , setting , setting , and ). This one should have those 5, plus three more for (setting to the exit code, setting to syscall index 60, and ). For this level, let’s exit with exit code !<code>rdi``rsi``rdx``rax``syscall``exit``rdi``rax``syscall``42</code></p>
-<p>为了避免程序崩溃，需要调用exit（）退出</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax,1</span><br><span class="line">mov rdi,1</span><br><span class="line">mov rsi,1337000</span><br><span class="line">mov rdx,1</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line">mov rdi,42</span><br><span class="line">mov rax,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ol>
-<li><strong>第一步（</strong><code>write</code><strong>）</strong>：<ul>
-<li>将 <code>rax</code> 设置为 <code>1</code>，表示调用 <code>write</code> 系统调用。</li>
-<li>将 <code>rdi</code> 设置为 <code>1</code>，表示目标文件描述符是标准输出（stdout）。</li>
-<li>将 <code>rsi</code> 设置为 <code>0x1337000</code>，这是要输出的数据的内存地址。</li>
-<li>将 <code>rdx</code> 设置为 <code>1</code>，表示只写入 1 个字节。</li>
-<li>使用 <code>syscall</code> 执行 <code>write</code>。</li>
-</ul>
-</li>
-<li><strong>第二步（</strong><code>exit</code><strong>）</strong>：<ul>
-<li>将 <code>rdi</code> 设置为 <code>42</code>，表示退出码为 42。</li>
-<li>将 <code>rax</code> 设置为 <code>60</code>，表示调用 <code>exit</code> 系统调用。</li>
-<li>使用 <code>syscall</code> 执行 <code>exit</code>。</li>
-</ul>
-</li>
-</ol>
-<p><font style="background-color:#f3bb2f;">为什么要有 </font><code>exit</code><font style="background-color:#f3bb2f;">？</font></p>
-<p>如果程序没有显式调用 <code>exit</code>，程序运行结束后可能会因为未定义的行为导致崩溃。调用 <code>exit</code> 是为了让内核知道程序已经正常终止，同时提供一个退出码供外部程序使用。</p>
-<p><code>write</code>** 系统调用**：</p>
-<ul>
-<li><strong>编号：1</strong></li>
-<li>该系统调用用于将数据写入到文件描述符指定的文件中，通常用于输出到屏幕（标准输出）。</li>
-</ul>
-<p><code>write</code>** 的参数**：</p>
-<ol>
-<li><code>rdi</code>：目标文件描述符（file descriptor）。<code>1</code> 表示标准输出（stdout）。</li>
-<li><code>rsi</code>：要写入的内存地址。即你要输出的数据所在的位置。</li>
-<li><code>rdx</code>：要写入的字节数，表示你希望写入多少数据。</li>
-</ol>
-<p><code>write</code>** 系统调用流程**：</p>
-<ol>
-<li>设置 <code>rax</code> 为系统调用编号 <code>1</code>（表示调用 <code>write</code>）。</li>
-<li>设置 <code>rdi</code> 为文件描述符 <code>1</code>（标准输出）。</li>
-<li>设置 <code>rsi</code> 为包含要输出数据的内存地址。</li>
-<li>设置 <code>rdx</code> 为数据的字节数，通常是你希望输出的字符数。</li>
-<li>执行 <code>syscall</code> 指令发起系统调用。</li>
-</ol>
-<p><code>寄存器顺序</code>：</p>
-<p>在 Linux x86_64 架构中，系统调用的参数需要按照一定的顺序存放在寄存器中，这些寄存器会被传递到内核：</p>
-<ol>
-<li><code>rdi</code>：第一个参数</li>
-<li><code>rsi</code>：第二个参数</li>
-<li><code>rdx</code>：第三个参数</li>
-<li><code>r10</code>：第四个参数</li>
-<li><code>r8</code>：第五个参数</li>
-<li><code>r9</code>：第六个参数</li>
-</ol>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>抽象记忆点</title>
     <url>/2024/05/07/OLD_2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/</url>
     <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
@@ -1135,71 +907,6 @@
       </categories>
       <tags>
         <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>鹏城杯三道</title>
-    <url>/2024/11/20/OLD_PCB/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
-<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
-
-<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
-<p>接着是tls改了表</p>
-<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
-<p>赛博厨子解密得到</p>
-<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
-<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
-<img src="/2024/11/20/OLD_PCB/image-0.png" class="">
-
-<img src="/2024/11/20/OLD_PCB/image-1.png" class="">
-
-<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
-<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/20/OLD_PCB/image-2.png" class="">
-
-
-
-<p>主要加密函数</p>
-<img src="/2024/11/20/OLD_PCB/image-3.png" class="">
-
-<p>发现是魔改的tea。</p>
-<p>我们尝试进行解密，钥匙为1 2 3 4</p>
-<p>但是不对，猜测有tls，继续找</p>
-<img src="/2024/11/20/OLD_PCB/image-4.png" class="">
-
-<p>函数挺少的，我们直接在函数窗口一个一个找</p>
-<p>然后发现这个</p>
-<img src="/2024/11/20/OLD_PCB/image-5.png" class="">
-
-<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
-<img src="/2024/11/20/OLD_PCB/image-6.png" class="">
-
-<p>第二次定位</p>
-<img src="/2024/11/20/OLD_PCB/image-7.png" class="">
-
-<p>我们动调发现了</p>
-<p>我们打印一下rand值：</p>
-<img src="/2024/11/20/OLD_PCB/image-8.png" class="">
-
-<img src="/2024/11/20/OLD_PCB/image-9.png" class="">
-
-<p>就是delta加上rand</p>
-<p>直接写个tea解密脚本就好</p>
-<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
-<img src="/2024/11/20/OLD_PCB/image-10.png" class="">
-
-<p>是通过异常来控制的</p>
-<p>这下对了</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>d555ce75ec293c8ed232d83dffb0ff82</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -1754,6 +1461,299 @@
       </categories>
       <tags>
         <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Compute 101</title>
+    <url>/2024/11/10/OLD_Compute%20101%20record/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-11-11 00:00:01<br>记录在pwncollege里的一些学习笔记</p>
+<h2 id="Tracing-Syscalls"><a href="#Tracing-Syscalls" class="headerlink" title="Tracing Syscalls"></a>Tracing Syscalls</h2><p>As you write larger and larger programs, you (yes, even you!) might make mistakes when implementing certain functionality, introducing <em>bugs</em> into your programs. Throughout this module, we’ll go over a few tools and techniques for <em>debugging</em> your program. The first one is pretty simple: the <strong>s</strong>yscall <strong>trace</strong>r, <code>strace</code>.</p>
+<p>Given a program to run, <code>strace</code> will use functionality of the Linux operating system to introspect and record every system call that the program invokes, and its result. For example, let’s look at our program from the previous challenge:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hacker@dojo:~$ strace /tmp/your-program</span><br><span class="line">execve(&quot;/tmp/your-program&quot;, [&quot;/tmp/your-program&quot;], 0x7ffd48ae28b0 /* 53 vars */) = 0</span><br><span class="line">exit(42)                                 = ?</span><br><span class="line">+++ exited with 42 +++</span><br><span class="line">hacker@dojo:~$</span><br></pre></td></tr></table></figure>
+
+<p>As you can see, <code>strace</code> reports what system calls are triggered, what parameters were passed to them, and what data they returned. The syntax used here for output is <code>system_call(parameter, parameter, parameter, ...)</code>. This syntax is borrowed from a programming language called C, but we don’t have to worry about that yet. Just keep in mind how to read this specific syntax.</p>
+<p>In this example, <code>strace</code> reports two system calls: the second is the <code>exit</code> system call that your program uses to request its own termination, and you can see the parameter you passed to it (42). The first is an <code>execve</code> system call. We’ll learn about this system call later, but it’s somewhat of a yin to <code>exit</code>‘s yang: it starts a new program (in this case, <code>your-program</code>). It’s not actually invoked by <code>your-program</code> in this case: its detection by <code>strace</code> is a weird artifact of how <code>strace</code> works, that we’ll investigate later.</p>
+<p>In the final line, you can see the result of <code>exit(42)</code>, which is that the program exits with an exit code of <code>42</code>!</p>
+<p>Now, the <code>exit</code> syscall is easy to introspect without using <code>strace</code> — after all, part of the point of <code>exit</code> is to give you an exit code that you can access. But other system calls are less visible. For example, the <code>alarm</code> system call (syscall number 37!) will set a timer in the operating system, and when that many seconds pass, Linux will terminate the program. The point of <code>alarm</code> is to, e.g., kill the program when it’s frozen, but in this case, we’ll use <code>alarm</code> to practice our <code>strace</code> snooping!</p>
+<p>In this challenge, you must <code>strace</code> the <code>/challenge/trace-me</code> program to figure out what value it passes as a parameter to the <code>alarm</code> system call, then call <code>/challenge/submit-number</code> with the number you’ve retrieved as the argument. Good luck!</p>
+<p>总结：</p>
+<ol>
+<li>使用strace跟踪&#x2F;challenge&#x2F;trace-me程序。</li>
+<li>观察并记录alarm系统调用的参数值。</li>
+<li>调用&#x2F;challenge&#x2F;submit-number，将上一步中找到的数字作为参数传递。</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hacker@your<span class="literal">-first-program</span>~tracing<span class="literal">-syscalls</span>:/challenge<span class="variable">$</span> strace  ./<span class="built_in">trace-me</span> </span><br><span class="line">execve(<span class="string">&quot;./trace-me&quot;</span>, [<span class="string">&quot;./trace-me&quot;</span>], <span class="number">0</span>x7ffd869ca7f0 /* <span class="number">28</span> vars */) = <span class="number">0</span></span><br><span class="line">alarm(<span class="number">18759</span>)                            = <span class="number">0</span></span><br><span class="line"><span class="keyword">exit</span>(<span class="number">0</span>)                                 = ?</span><br><span class="line">+++ exited with <span class="number">0</span> +++</span><br><span class="line"><span class="comment"># 提交数字即可</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="moving-betweening-registers"><a href="#moving-betweening-registers" class="headerlink" title="moving betweening registers"></a>moving betweening registers</h2><p>Okay, let’s learn about one more register: <code>rsi</code>! Like <code>rdi</code>, <code>rsi</code> is a place you can park some data. For example:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br></pre></td></tr></table></figure>
+
+<p>Of course, you can also move data around between registers! Watch:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rsi, 42</span><br><span class="line">mov rdi, rsi</span><br></pre></td></tr></table></figure>
+
+<p>Just like the first line there moves <code>42</code> into <code>rsi</code>, the second like moves the value in <code>rsi</code> to <code>rdi</code>. Here, we have to mention one complication: by <em>move</em>, we really mean <em>set</em>. After the snippet above, <code>rsi</code> <em>and</em> <code>rdi</code> will be <code>42</code>. It’s a mystery as to why the <code>mov</code> was chosen rather than something reasonable like <code>set</code> (even very knowledgeable people resort to <a href="https://retrocomputing.stackexchange.com/questions/12968/why-is-the-processor-instruction-called-move-not-copy">diverse speculation</a> when asked), but it was, and here we are.</p>
+<p>Anyways, on to the challenge! In this challenge, we will store a secret value in the <code>rsi</code> register, and your program must exit with that value as the return code. Since <code>exit</code> uses the value stored in <code>rdi</code> as the return code, you’ll need to move the secret value in <code>rsi</code> into <code>rdi</code>. Good luck!</p>
+<p>总结：</p>
+<ol>
+<li>在rsi寄存器中存储一个秘密值。</li>
+<li>编写一个程序，该程序需要将rsi寄存器中的秘密值移动到rdi寄存器中。</li>
+<li>程序必须使用exit函数退出，并且退出时的返回码应为rsi寄存器中存储的秘密值（此时已移动到rdi中，因为exit函数使用rdi的值作为返回码）。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, rsi</span><br><span class="line">mov rax,60 ;设置syscall号为exit（60）</span><br><span class="line">syscall </span><br><span class="line">;调用check即可</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="loading-from-memory"><a href="#loading-from-memory" class="headerlink" title="loading from memory"></a>loading from memory</h2><p>As seen by your program, computer memory is a huge place where data is housed. Like houses on a street, every part of memory has a numeric <em>address</em>, and like houses on a street, these numbers are (mostly) sequential. Modern computers have enormous amounts of memory, and the view of memory of a typical modern program actually has large gaps (think: a portion of the street that hasn’t had houses built on it, and so those addresses are skipped). But these are all details: the point is, computers store data, mostly sequentially, in memory.</p>
+<p>In this level, we will practice accessing data stored in memory. How might we do this? Recall that to move a value into a register, we did something like:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, 31337</span><br></pre></td></tr></table></figure>
+
+<p>After this, the value of is . Cool. Well, we can use the same instruction to access memory! There is another format of the command that, instead, uses the second parameter as an address to access memory! Consider that our memory looks like this:<code>rdi``31337</code></p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>To access the memory contents at memory address 31337, you would can do:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [31337]</span><br></pre></td></tr></table></figure>
+
+<p>When the CPU executes this instruction, it of course understands that is an <em>address</em>, not a raw value. If you think of the instruction as a person telling the CPU what to do, and we stick with our “houses on a street” analogy, then instead of just handing the CPU data, the instruction&#x2F;person <em>points at a house on the street</em>. The CPU will then go to that address, ring its doorbell, open its front door, drag the data that’s in there out, and put it into . Thus, the in this context is the <em>memory address</em> and serves to <em>point to</em> the data stored at that memory address. After this instruction executes, the value stored in will be !<code>31337``rdi``31337``rdi``42</code></p>
+<p>Let’s put this into practice! I’ve stored a secret number at memory address , as so:<code>133700</code></p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ ???      │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>You must retrieve this secret number and use it as the exit code for your program. To do this, you must read it into , whose value, if you recall, is the first parameter to and is used as the exit code. Good luck!<code>rdi``exit</code></p>
+<p>总结:</p>
+<ol>
+<li>访问地址133700处的数据</li>
+<li>把该地址的数据读取到rdi中</li>
+<li>使用这个数据作为退出参数</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mov rdi ,[133700] <span class="comment">#记住地址的表示</span></span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="dereferencing-pointers"><a href="#dereferencing-pointers" class="headerlink" title="dereferencing pointers"></a>dereferencing pointers</h2><p>Did you prefer to access memory at <code>133700</code> or at <code>123400</code>? Your answer might say something about your personality, but it’s not super relevant from a technical perspective. In fact, in most cases, you don’t deal with actual memory addresses when writing programs at all!</p>
+<p>How is this possible? Well, typically, memory addresses are stored in registers, and we use the values in the registers to point to data in memory! Let’s start with this memory configuration:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>And consider this assembly snippet:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, 133700</span><br></pre></td></tr></table></figure>
+
+<p>Now, what you have is the following situation:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 42       │◂┐</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p><code>rdi</code> now holds a value that corresponds with the address of the data that want to load! Let’s load it:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [rax]</span><br></pre></td></tr></table></figure>
+
+<p>Here, we are accessing memory, but instead of specifying a fixed address like <code>133700</code> for the memory read, we’re using the value stored in <code>rax</code> as the memory address. By containing the memory address, <code>rax</code> is a <em>pointer</em> that <em>points to</em> the data we want to access! When we use <code>rax</code> in lieu of directly specifying the address that it stores to access the memory address that it references, we call this <em>dereferencing</em> the pointer. In the above example, we <em>dereference</em> <code>rax</code> to load the data it points to (the value <code>42</code> at address <code>133700</code>) into <code>rdi</code>. Neat!</p>
+<p>This also drives home another point: these registers are <em>general purpose</em>! Just because we’ve been using <code>rax</code> as the syscall index in our challenges so far doesn’t mean that it can’t have other uses as well. Here, it’s used as a pointer to our secret data in memory.</p>
+<p>Similarly, the <em>data</em> in the registers doesn’t have an implicit purpose. If <code>rax</code> contains the value <code>133700</code> and we write <code>mov rdi, [rax]</code>, the CPU uses the value as a memory address to dereference. But if we write <code>mov rdi, rax</code> in the same conditions, the CPU just happily puts <code>133700</code> into <code>rdi</code>. To the CPU, data is data; it only becomes differentiated when it’s used in different ways.</p>
+<p>In this challenge, we’ve initialized <code>rax</code> to contain the address of the secret data we’ve stored in memory. Dereference <code>rax</code> to the secret data into <code>rdi</code> and use it as the exit code of the program to get the flag!</p>
+<p>讲了个类似C语言中指针的用法。第一次做成了这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi, [rax]</span><br><span class="line">mov eax, rdi</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line">;报错：Your assembly did not assemble cleanly. The errors:</span><br><span class="line">;Error: unsupported instruction `mov&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>后来发现<code>mov eax, rdi</code>的问题。<code>eax</code> 是 32 位寄存器，而 <code>rdi</code> 是 64 位寄存器，不能直接传参,而且没搞懂程序的运行原理。修改为以下后通过：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rax]	;rdi 负责传参</span><br><span class="line">mov rax,60 	;rax负责调起exit()</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>补充：<code>60</code> -&gt; <code>exit</code>：退出程序</p>
+<pre><code>  ` 1` -&gt; `write`：写数据
+
+  `	3` -&gt; `read`：读数据
+
+  `	9` -&gt; `mmap`：内存映射
+</code></pre>
+<p>等等。</p>
+<h2 id="dereferencing-with-offsets"><a href="#dereferencing-with-offsets" class="headerlink" title="dereferencing with offsets"></a>dereferencing with offsets</h2><p>So now you can dereference pointers in memory like a pro! But pointers don’t always point directly at the data you need. Sometimes, for example, a pointer might point to a collection of data (say, an entire book), and you’ll need to reference partway into this collection for the specific data you need.</p>
+<p>For example, if your pointer (say, <code>rdi</code>) points to a sequence of numbers in memory, as so:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 133700  │ 50       │◂┐</span><br><span class="line">│ 133701  │ 42       │ │</span><br><span class="line">│ 133702  │ 99       │ │</span><br><span class="line">│ 133703  │ 14       │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 133700   │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>If you want the second number of that sequence, you could do:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [rdi+1]</span><br></pre></td></tr></table></figure>
+
+<p>Wow, super simple! In memory terms, we call these number slots <em>bytes</em>: each memory address represents a specific byte of memory. The above example is accessing memory 1 byte after the memory address pointed to by <code>rax</code>. In memory terms, we call this 1 byte difference an <em>offset</em>, so in this example, there is an offset of 1 from the address pointed to by <code>rdi</code>.</p>
+<p>Let’s practice this concept. As before, we will initialize <code>rdi</code> to point at the secret value, but not <em>directly</em> at it. This time, the secret value will have an offset of 8 bytes from where <code>rdi</code> points, something analogous to this:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">  Address │ Contents</span><br><span class="line">+────────────────────+</span><br><span class="line">│ 31337   │ 0        │◂┐</span><br><span class="line">│ 31337+1 │ 0        │ │</span><br><span class="line">│ 31337+2 │ 0        │ │</span><br><span class="line">│ 31337+3 │ 0        │ │</span><br><span class="line">│ 31337+4 │ 0        │ │</span><br><span class="line">│ 31337+5 │ 0        │ │</span><br><span class="line">│ 31337+6 │ 0        │ │</span><br><span class="line">│ 31337+7 │ 0        │ │</span><br><span class="line">│ 31337+8 │ ???      │ │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">                       │</span><br><span class="line"> Register │ Contents   │</span><br><span class="line">+────────────────────+ │</span><br><span class="line">│ rdi     │ 31337    │─┘</span><br><span class="line">+────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>Of course, the actual memory address is not <code>31337</code>. We’ll choose it randomly, and store it in <code>rdi</code>. Go dereference <code>rdi</code> with offset <code>8</code> and get the flag!</p>
+<p>仍然是类似指针的操作</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rdi+8]</span><br><span class="line">mov rax ,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="double-dereference"><a href="#double-dereference" class="headerlink" title="double dereference"></a>double dereference</h2><p>In the last few levels, you have:</p>
+<ul>
+<li>Used an address that we told you (in one level, <code>133700</code>, and in another, <code>123400</code>) to load a secret value from memory.</li>
+<li>Used an address that we put into <code>rax</code> for you to load a secret value from memory.</li>
+<li>Used an address that we told you (in the last level, <code>567800</code>) to load <em>the address</em> of a secret value from memory into a register, then used that register as a pointer to retrieve the secret value from memory!</li>
+</ul>
+<p>Let’s put those last two together. In this challenge, we stored our <code>SECRET_VALUE</code> in memory at the address <code>SECRET_LOCATION_1</code>, then stored <code>SECRET_LOCATION_1</code> in memory at the address <code>SECRET_LOCATION_2</code>. Then, we put <code>SECRET_ADDRESS_2</code> into <code>rax</code>! The result looks something like this, using <code>133700</code> for <code>SECRET_LOCATION_1</code> and 123400 for <code>SECRET_LOCATION_2</code> (not, in the real challenge, these values will be different and hidden from you!):</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂┐</span><br><span class="line">│ +────────────────────+ │</span><br><span class="line">└▸│ 123400  │ 42       │ │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">                         │</span><br><span class="line">   Register │ Contents   │</span><br><span class="line">  +────────────────────+ │</span><br><span class="line">  │ rdi     │ 133700   │─┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>Here, you will need to perform two memory reads: one dereferencing <code>rax</code> to read <code>SECRET_LOCATION_1</code> from the location that <code>rax</code> is pointing to (which is <code>SECRET_LOCATION_2</code>), and the second one dereferencing whatever register now holds <code>SECRET_LOCATION_1</code> to read <code>SECRET_VALUE</code> into <code>rdi</code>, so you can use it as the exit code!</p>
+<p>That sounds like a lot, but you’ve done basically all of this already. Go put it together!</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax, [rax]    ; 第一步：通过rax指向的地址读取SECRET_LOCATION_1（第二层地址）</span><br><span class="line">mov rdi, [rax]    ; 第二步：通过rax指向的地址读取SECRET_VALUE</span><br><span class="line">mov rax, 60       </span><br><span class="line">syscall           </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在 x86-64 架构中，系统调用的参数是通过寄存器传递的。根据系统调用的约定：</p>
+<ul>
+<li><code>rdi</code> 用于传递第一个参数。</li>
+<li><code>rsi</code> 用于传递第二个参数。</li>
+</ul>
+<h2 id="triple-dereference"><a href="#triple-dereference" class="headerlink" title="triple dereference"></a>triple dereference</h2><p>Okay, let’s stretch that to one more depth! We’ve added an additional level of indirection in this challenge, so now you’ll need <em>three</em> dereferences to find the secret value. Something like this:</p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">    Address │ Contents</span><br><span class="line">  +────────────────────+</span><br><span class="line">┌─│ 133700  │ 123400   │◂──┐</span><br><span class="line">│ +────────────────────+   │</span><br><span class="line">└▸│ 123400  │ 100000   │─┐ │</span><br><span class="line">  +────────────────────+ │ │</span><br><span class="line">  │ 100000  │ 42       │◂┘ │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">                           │</span><br><span class="line">                           │</span><br><span class="line">   Register │ Contents     │</span><br><span class="line">  +────────────────────+   │</span><br><span class="line">  │ rdi     │ 133700   │───┘</span><br><span class="line">  +────────────────────+</span><br></pre></td></tr></table></figure>
+
+<p>As you can see, we’ll place the first address that you must dereference into rdi. Go get the value!</p>
+<p>类似的操作</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rdi,[rdi]</span><br><span class="line">mov rax,[rdi]</span><br><span class="line">mov rdi,[rax]</span><br><span class="line">mov rax,60</span><br><span class="line">syscall</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p> <code>rsi</code> 是用于传递参数的寄存器，而 <code>rdi</code> 才是系统调用时的退出代码传递寄存器。</p>
+<h2 id="writing-output"><a href="#writing-output" class="headerlink" title="writing output"></a>writing output</h2><p>Let’s learn to write text!</p>
+<p>Unsurprisingly, your program writes text to the screen by invoking a system call. Specifically, this is the <code>write</code> system call, and its syscall number is <code>1</code>. However, the write system call also needs to specify, via its parameters, <em>what</em> data to write and <em>where</em> to write it to.</p>
+<p>You may remember, from the <a href="https://pwn.college/linux-luminarium/piping">Practicing Piping</a> module of the <a href="https://pwn.college/linux-luminarium">Linux Luminarium</a> dojo, the concept of <em>File Descriptors</em> (FDs). As a reminder, each process starts out with three FDs:</p>
+<ul>
+<li><strong>FD 0:</strong> Standard <em>Input</em> is the channel through which the process takes input. For example, your shell uses Standard Input to read the commands that you input.</li>
+<li><strong>FD 1:</strong> Standard <em>Output</em> is the channel through which processes output normal data, such as the flag when it is printed to you in previous challenges or the output of utilities such as <code>ls</code>.</li>
+<li><strong>FD 2:</strong> Standard <em>Error</em> is the channel through which processes output error details. For example, if you mistype a command, the shell will output, over standard error, that this command does not exist.</li>
+</ul>
+<p>It turns out that, in your <code>write</code> system call, this is how you specify <em>where</em> to write the data to! The first (and only) parameter to your <code>exit</code> system call was your exit code (<code>mov rdi, 42</code>), and the first (but, in this case, not only!) parameter to <code>write</code> is the file descriptor. If you want to write to standard output, you would set <code>rdi</code> to 1. If you want to write to standard error, you would set <code>rdi</code> to 2. Super simple!</p>
+<p>This leaves us with <em>what</em> to write. Now, you could imagine a world where we specify what to write through yet another register parameter to the <code>write</code> system call. But these registers don’t fit a ton of data, and to write out a long story like this challenge description, you’d need to invoke the <code>write</code> system call multiple times. Relatively speaking, this has a lot of performance cost — the CPU needs to switch from executing the instructions of your program to executing the instructions of Linux itself, do a bunch of housekeeping computation, interact with your hardware to get the actual pixels to show up on your screen, and then switch back. This is slow, and so we try to minimize the number of times we invoke system calls.</p>
+<p>Of course, the solution to this is to write multiple characters at the same time. The <code>write</code> system call does this by taking <em>two</em> parameters for the “what”: a <em>where</em> (in memory) to start writing from and a <em>how many</em> characters to write. These parameters are passed as the second and third parameter to <code>write</code>. In the kinda-C syntax that we learned from <code>strace</code>, this would be:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">write(file_descriptor, memory_address, number_of_characters_to_write)</span><br></pre></td></tr></table></figure>
+
+<p>For a more concrete example, if you wanted to write 10 characters from memory address 1337000 to standard output (file descriptor 1), this would be:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">write(<span class="number">1</span>, <span class="number">1337000</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+
+<p>Wow, that’s simple! Now, how do we actually specify these parameters?</p>
+<ol>
+<li>We’ll pass the first parameter of a system call, as we reviewed above, in the <code>rdi</code> register.</li>
+<li>We’ll pass the second parameter via the <code>rsi</code> register. The agreed-upon convention in Linux is that <code>rsi</code> is used as the second parameter to system calls.</li>
+<li>We’ll pass the third parameter via the <code>rdx</code> register. This is the most confusing part of this entire module: <code>rdi</code> (the register holding the first parameter) has such a similar name to <code>rdx</code> that it’s really easy to mix up and, unfortunately, the naming is this way for historic reasons and is here to stay. Oh well… It’s just something we have to be careful about. Maybe a mnemonic like “<code>rdi</code> is the <strong>i</strong>nitial parameter while <code>rdx</code> is the <strong>x</strong>tra parameter”? Or just think of it as having to keep track of different friends with similar names, and you’ll be fine.</li>
+</ol>
+<p>And, of course, the <code>write</code> syscall index into <code>rax</code> itself: <code>1</code>. Other than the <code>rdi</code> vs <code>rdx</code> confusion, this is really easy!</p>
+<p>Now, you know how to point a register at a memory address (from the <a href="https://pwn.college/computing-101/memory">Memory</a> module!), and yo know how to set the system call number, and how to set the rest of the registers. So, this should be cake!</p>
+<p>Similar to before, we wrote a single secret character value into memory at address <code>1337000</code>. Call <code>write</code> to that single character (for now! We’ll do multiple-character writes later) value onto standard out, and we’ll give you the flag!</p>
+<p>如何输出某个地址上的数值？？</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax,1</span><br><span class="line">mov rdi,1</span><br><span class="line">mov rsi,1337000</span><br><span class="line">mov rdx,1</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure>
+
+<p><code>rax</code>：存储系统调用号，<code>1</code> 对应于 <code>write</code>。</p>
+<p><code>rdi</code>：存储文件描述符，<code>1</code> 是标准输出。</p>
+<p><code>rsi</code>：存储要写的数据的内存地址，这里假设数据存储在地址 <code>0x1337000</code>。</p>
+<p><code>rdx</code>：存储要写入的字节数，这里是 1 个字节。</p>
+<p><code>syscall</code>：执行系统调用，将前面设置的寄存器参数传递给内核。</p>
+<p>依据x86_64 架构下的调用约定，即系统调用时，前四个参数分别通过 <code>rdi</code>, <code>rsi</code>, <code>rdx</code>, 和 <code>r10</code> 等寄存器传递。<code>rax</code> 存储系统调用编号，后面的寄存器则用来传递具体的参数值。</p>
+<h2 id="chaining-syscalls"><a href="#chaining-syscalls" class="headerlink" title="chaining syscalls"></a>chaining syscalls</h2><p>Okay, our previous solution wrote output but then crashed. In this level, you will write output, and then <em>not</em> crash!</p>
+<p>We’ll do this by invoking the system call, and then invoking the system call to cleanly exit the program. How do we invoke two system calls? Just like you invoke two instructions! First, you set up the necessary registers and invoke , then you set up the necessary registers and invoke <code>exit!</code>write<code>exit</code>write&#96;</p>
+<p>Your previous solution had 5 instructions (setting , setting , setting , setting , and ). This one should have those 5, plus three more for (setting to the exit code, setting to syscall index 60, and ). For this level, let’s exit with exit code !<code>rdi``rsi``rdx``rax``syscall``exit``rdi``rax``syscall``42</code></p>
+<p>为了避免程序崩溃，需要调用exit（）退出</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov rax,1</span><br><span class="line">mov rdi,1</span><br><span class="line">mov rsi,1337000</span><br><span class="line">mov rdx,1</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line">mov rdi,42</span><br><span class="line">mov rax,60</span><br><span class="line">syscall</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>第一步（</strong><code>write</code><strong>）</strong>：<ul>
+<li>将 <code>rax</code> 设置为 <code>1</code>，表示调用 <code>write</code> 系统调用。</li>
+<li>将 <code>rdi</code> 设置为 <code>1</code>，表示目标文件描述符是标准输出（stdout）。</li>
+<li>将 <code>rsi</code> 设置为 <code>0x1337000</code>，这是要输出的数据的内存地址。</li>
+<li>将 <code>rdx</code> 设置为 <code>1</code>，表示只写入 1 个字节。</li>
+<li>使用 <code>syscall</code> 执行 <code>write</code>。</li>
+</ul>
+</li>
+<li><strong>第二步（</strong><code>exit</code><strong>）</strong>：<ul>
+<li>将 <code>rdi</code> 设置为 <code>42</code>，表示退出码为 42。</li>
+<li>将 <code>rax</code> 设置为 <code>60</code>，表示调用 <code>exit</code> 系统调用。</li>
+<li>使用 <code>syscall</code> 执行 <code>exit</code>。</li>
+</ul>
+</li>
+</ol>
+<p><font style="background-color:#f3bb2f;">为什么要有 </font><code>exit</code><font style="background-color:#f3bb2f;">？</font></p>
+<p>如果程序没有显式调用 <code>exit</code>，程序运行结束后可能会因为未定义的行为导致崩溃。调用 <code>exit</code> 是为了让内核知道程序已经正常终止，同时提供一个退出码供外部程序使用。</p>
+<p><code>write</code>** 系统调用**：</p>
+<ul>
+<li><strong>编号：1</strong></li>
+<li>该系统调用用于将数据写入到文件描述符指定的文件中，通常用于输出到屏幕（标准输出）。</li>
+</ul>
+<p><code>write</code>** 的参数**：</p>
+<ol>
+<li><code>rdi</code>：目标文件描述符（file descriptor）。<code>1</code> 表示标准输出（stdout）。</li>
+<li><code>rsi</code>：要写入的内存地址。即你要输出的数据所在的位置。</li>
+<li><code>rdx</code>：要写入的字节数，表示你希望写入多少数据。</li>
+</ol>
+<p><code>write</code>** 系统调用流程**：</p>
+<ol>
+<li>设置 <code>rax</code> 为系统调用编号 <code>1</code>（表示调用 <code>write</code>）。</li>
+<li>设置 <code>rdi</code> 为文件描述符 <code>1</code>（标准输出）。</li>
+<li>设置 <code>rsi</code> 为包含要输出数据的内存地址。</li>
+<li>设置 <code>rdx</code> 为数据的字节数，通常是你希望输出的字符数。</li>
+<li>执行 <code>syscall</code> 指令发起系统调用。</li>
+</ol>
+<p><code>寄存器顺序</code>：</p>
+<p>在 Linux x86_64 架构中，系统调用的参数需要按照一定的顺序存放在寄存器中，这些寄存器会被传递到内核：</p>
+<ol>
+<li><code>rdi</code>：第一个参数</li>
+<li><code>rsi</code>：第二个参数</li>
+<li><code>rdx</code>：第三个参数</li>
+<li><code>r10</code>：第四个参数</li>
+<li><code>r8</code>：第五个参数</li>
+<li><code>r9</code>：第六个参数</li>
+</ol>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>鹏城杯三道</title>
+    <url>/2024/11/19/OLD_PCB/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
+<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
+
+<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
+<p>接着是tls改了表</p>
+<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
+<p>赛博厨子解密得到</p>
+<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
+<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
+<img src="/2024/11/19/OLD_PCB/image-0.png" class="">
+
+<img src="/2024/11/19/OLD_PCB/image-1.png" class="">
+
+<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
+<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/19/OLD_PCB/image-2.png" class="">
+
+
+
+<p>主要加密函数</p>
+<img src="/2024/11/19/OLD_PCB/image-3.png" class="">
+
+<p>发现是魔改的tea。</p>
+<p>我们尝试进行解密，钥匙为1 2 3 4</p>
+<p>但是不对，猜测有tls，继续找</p>
+<img src="/2024/11/19/OLD_PCB/image-4.png" class="">
+
+<p>函数挺少的，我们直接在函数窗口一个一个找</p>
+<p>然后发现这个</p>
+<img src="/2024/11/19/OLD_PCB/image-5.png" class="">
+
+<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
+<img src="/2024/11/19/OLD_PCB/image-6.png" class="">
+
+<p>第二次定位</p>
+<img src="/2024/11/19/OLD_PCB/image-7.png" class="">
+
+<p>我们动调发现了</p>
+<p>我们打印一下rand值：</p>
+<img src="/2024/11/19/OLD_PCB/image-8.png" class="">
+
+<img src="/2024/11/19/OLD_PCB/image-9.png" class="">
+
+<p>就是delta加上rand</p>
+<p>直接写个tea解密脚本就好</p>
+<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
+<img src="/2024/11/19/OLD_PCB/image-10.png" class="">
+
+<p>是通过异常来控制的</p>
+<p>这下对了</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>d555ce75ec293c8ed232d83dffb0ff82</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -2913,8 +2913,62 @@
       </tags>
   </entry>
   <entry>
+    <title>bashshell基础命令</title>
+    <url>/2024/04/17/OLD_bashshell%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-04-17 23:10:12  </p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="启动终端"><a href="#启动终端" class="headerlink" title="启动终端"></a>启动终端</h2><p>启动终端后会看见 <strong>shell CLI</strong> 提示符，在此输入shell命令。默认的提示符符号是 $ </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[/etc]</span><br><span class="line">└─$ </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="与bash手册交互"><a href="#与bash手册交互" class="headerlink" title="与bash手册交互"></a>与bash手册交互</h2><p>大多数Linux发行版自带在线手册。使用man命令可以访问Linux系统的手册页。输入 <code>man 想要查看的命令</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">NAME</span><br><span class="line">       <span class="built_in">cat</span> - concatenate files and <span class="built_in">print</span> on the standard output</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       <span class="built_in">cat</span> [OPTION]... [FILE]...</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       Concatenate FILE(s) to standard output.</span><br><span class="line"></span><br><span class="line">       With no FILE, or when FILE is -, <span class="built_in">read</span> standard input.</span><br><span class="line"></span><br><span class="line">       -A, --show-all</span><br><span class="line">              equivalent to -vET</span><br><span class="line"></span><br><span class="line">       -b, --number-nonblank</span><br><span class="line">              number nonempty output lines, overrides -n</span><br><span class="line"></span><br><span class="line">       -e     equivalent to -vE</span><br><span class="line"></span><br><span class="line">       -E, --show-ends</span><br><span class="line">              display $ at end of each line</span><br><span class="line"></span><br><span class="line">       -n, --number</span><br><span class="line">              number all output lines</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以上是 <code>cat</code>的部分用法。输入 <code>man cat</code>即可查看</p>
+<p>其中 <strong>DESCRIPTION</strong> 部分提供了快速参考。从中可以迅速了解命令的作用以及用法。</p>
+<p>mannal里通过空格翻页，enter逐行查看，以及上下箭头进行滑动。按q退出。</p>
+<p>如果忘记命令了，可以通过 <code>man -k terminal</code>进行关键词查找。</p>
+<h2 id="浏览文件系统"><a href="#浏览文件系统" class="headerlink" title="浏览文件系统"></a>浏览文件系统</h2><h3 id="Linux中的目录"><a href="#Linux中的目录" class="headerlink" title="Linux中的目录"></a>Linux中的目录</h3><p>Linux采用名为“虚拟目录”的单个目录结构中。虚拟目录会将计算机中所有储存设备的文件路径都纳入单个目录结构。Linux的虚拟目录结构只包含一个叫做 root的目录的基础目录。所有文件都在root目录下一一列出。Linux中安装的第一块硬盘为根驱动器，所有目录都是从那里开始构建的。以下是kali的根目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span></span><br><span class="line">bin   home            lib32       mnt   run       sys  vmlinuz</span><br><span class="line">boot  initrd.img      lib64       opt   sbin      tmp  vmlinuz.old</span><br><span class="line">dev   initrd.img.old  lost+found  proc  srv       usr</span><br><span class="line">etc   lib             media       root  swapfile  var</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里使用了ls命令来查看文件夹中的内容。常见的Linux目录名均基于文件系统层级标准（filesytem hierarchy standard, FHS）。</p>
+<p>在Linux中，可以通过cd命令来切换目录。语法为 <code>cd destination</code>。使用 <code>cd ..</code>可以快速回到父目录。</p>
+<p>使用 <code>pwd</code>命令可以了解当前工作目录。</p>
+<p><code>ls</code>命令最基本的形式会显示当前目录下的文件和目录。使用 <code>ls -F</code>(注意，Linux系统严格区分大小写，-f和-F是两个不同的命令)可以区分文件和目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span> -F</span><br><span class="line">bin@   home/            lib32@       mnt/   run/      sys/  vmlinuz@</span><br><span class="line">boot/  initrd.img@      lib64@       opt/   sbin@     tmp/  vmlinuz.old@</span><br><span class="line">dev/   initrd.img.old@  lost+found/  proc/  srv/      usr/</span><br><span class="line">etc/   lib@             media/       root/  swapfile  var/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>-a选项能显示隐藏文件（通常是文件名以 . 开始的文件）</p>
+<p>-R选项称作递归选项，能列出当前目录包含的子目录的文件与目录。</p>
+<p>-l命令会产生长列表格式的输出，提供目录中各个文件的详细信息。在-l后跟上文件名即可只查看该文件的信息。</p>
+<h3 id="过滤输出列表"><a href="#过滤输出列表" class="headerlink" title="过滤输出列表"></a>过滤输出列表</h3><p>ls命令支持在命令行中定义过滤器，使用过滤器来决定该在命令行中显示哪些文件或者目录。</p>
+<p>在ls最后添加文件名是最基本的过滤方式，我们可以通过使用标准通配符来进行模式匹配。</p>
+<ul>
+<li>问号 （ ? ）代表任意单个字符</li>
+<li>星号 （ * ）代表零个或者多个任意字符</li>
+</ul>
+<p>以 <code>/home/kali/</code>目录为例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> -F                </span><br><span class="line">backup/   Documents/  fill    Pictures/  tast.py  teeeeeeeesy.txt  test.py</span><br><span class="line">Desktop/  Downloads/  Music/  Public/    te3t.py  Templates/       Videos/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[a-z]st*</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t*       </span><br><span class="line">tast.py  te3t.py  teeeeeeeesy.txt  test.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t?st.py</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[^/e]st.py       </span><br><span class="line">tast.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>!]可能被zsh认为是一个事件从而出错，把把方括号部分替换为 <code>&#39;[&#39;!what_you_think&#39;]&#39;</code>或者把 <code>!</code> 替换为 …<code>^/</code></p>
+<p>Zsh（Z Shell）是一个强大的命令行解释器，用于 UNIX 操作系统。它是 Bourne Shell 的扩展，具有许多改进，包括更好的用户交互、功能强大的脚本能力和自定义功能。</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>building_web_server_record</title>
-    <url>/2025/03/01/OLD_building_web_server_record/</url>
+    <url>/2025/02/28/OLD_building_web_server_record/</url>
     <content><![CDATA[<h2 id="level1"><a href="#level1" class="headerlink" title="level1"></a>level1</h2><p>跟着题目做即可</p>
 <h2 id="level2"><a href="#level2" class="headerlink" title="level2"></a>level2</h2><p>晃眼看好像和第一题一样，运行server又不正确，看了几遍题目，问了DS明白了这是要我用上socket套接字。当前的汇编代码只是调用了 <code>exit(0)</code>，需要修改它，使其调用 <code>socket()</code> 系统调用来创建一个套接字。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 41</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 60</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">.section .data</span><br></pre></td></tr></table></figure>
@@ -2986,60 +3040,6 @@
       </tags>
   </entry>
   <entry>
-    <title>bashshell基础命令</title>
-    <url>/2024/04/17/OLD_bashshell%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-04-17 23:10:12  </p>
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="启动终端"><a href="#启动终端" class="headerlink" title="启动终端"></a>启动终端</h2><p>启动终端后会看见 <strong>shell CLI</strong> 提示符，在此输入shell命令。默认的提示符符号是 $ </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[/etc]</span><br><span class="line">└─$ </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="与bash手册交互"><a href="#与bash手册交互" class="headerlink" title="与bash手册交互"></a>与bash手册交互</h2><p>大多数Linux发行版自带在线手册。使用man命令可以访问Linux系统的手册页。输入 <code>man 想要查看的命令</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">NAME</span><br><span class="line">       <span class="built_in">cat</span> - concatenate files and <span class="built_in">print</span> on the standard output</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       <span class="built_in">cat</span> [OPTION]... [FILE]...</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       Concatenate FILE(s) to standard output.</span><br><span class="line"></span><br><span class="line">       With no FILE, or when FILE is -, <span class="built_in">read</span> standard input.</span><br><span class="line"></span><br><span class="line">       -A, --show-all</span><br><span class="line">              equivalent to -vET</span><br><span class="line"></span><br><span class="line">       -b, --number-nonblank</span><br><span class="line">              number nonempty output lines, overrides -n</span><br><span class="line"></span><br><span class="line">       -e     equivalent to -vE</span><br><span class="line"></span><br><span class="line">       -E, --show-ends</span><br><span class="line">              display $ at end of each line</span><br><span class="line"></span><br><span class="line">       -n, --number</span><br><span class="line">              number all output lines</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>以上是 <code>cat</code>的部分用法。输入 <code>man cat</code>即可查看</p>
-<p>其中 <strong>DESCRIPTION</strong> 部分提供了快速参考。从中可以迅速了解命令的作用以及用法。</p>
-<p>mannal里通过空格翻页，enter逐行查看，以及上下箭头进行滑动。按q退出。</p>
-<p>如果忘记命令了，可以通过 <code>man -k terminal</code>进行关键词查找。</p>
-<h2 id="浏览文件系统"><a href="#浏览文件系统" class="headerlink" title="浏览文件系统"></a>浏览文件系统</h2><h3 id="Linux中的目录"><a href="#Linux中的目录" class="headerlink" title="Linux中的目录"></a>Linux中的目录</h3><p>Linux采用名为“虚拟目录”的单个目录结构中。虚拟目录会将计算机中所有储存设备的文件路径都纳入单个目录结构。Linux的虚拟目录结构只包含一个叫做 root的目录的基础目录。所有文件都在root目录下一一列出。Linux中安装的第一块硬盘为根驱动器，所有目录都是从那里开始构建的。以下是kali的根目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span></span><br><span class="line">bin   home            lib32       mnt   run       sys  vmlinuz</span><br><span class="line">boot  initrd.img      lib64       opt   sbin      tmp  vmlinuz.old</span><br><span class="line">dev   initrd.img.old  lost+found  proc  srv       usr</span><br><span class="line">etc   lib             media       root  swapfile  var</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这里使用了ls命令来查看文件夹中的内容。常见的Linux目录名均基于文件系统层级标准（filesytem hierarchy standard, FHS）。</p>
-<p>在Linux中，可以通过cd命令来切换目录。语法为 <code>cd destination</code>。使用 <code>cd ..</code>可以快速回到父目录。</p>
-<p>使用 <code>pwd</code>命令可以了解当前工作目录。</p>
-<p><code>ls</code>命令最基本的形式会显示当前目录下的文件和目录。使用 <code>ls -F</code>(注意，Linux系统严格区分大小写，-f和-F是两个不同的命令)可以区分文件和目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span> -F</span><br><span class="line">bin@   home/            lib32@       mnt/   run/      sys/  vmlinuz@</span><br><span class="line">boot/  initrd.img@      lib64@       opt/   sbin@     tmp/  vmlinuz.old@</span><br><span class="line">dev/   initrd.img.old@  lost+found/  proc/  srv/      usr/</span><br><span class="line">etc/   lib@             media/       root/  swapfile  var/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>-a选项能显示隐藏文件（通常是文件名以 . 开始的文件）</p>
-<p>-R选项称作递归选项，能列出当前目录包含的子目录的文件与目录。</p>
-<p>-l命令会产生长列表格式的输出，提供目录中各个文件的详细信息。在-l后跟上文件名即可只查看该文件的信息。</p>
-<h3 id="过滤输出列表"><a href="#过滤输出列表" class="headerlink" title="过滤输出列表"></a>过滤输出列表</h3><p>ls命令支持在命令行中定义过滤器，使用过滤器来决定该在命令行中显示哪些文件或者目录。</p>
-<p>在ls最后添加文件名是最基本的过滤方式，我们可以通过使用标准通配符来进行模式匹配。</p>
-<ul>
-<li>问号 （ ? ）代表任意单个字符</li>
-<li>星号 （ * ）代表零个或者多个任意字符</li>
-</ul>
-<p>以 <code>/home/kali/</code>目录为例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> -F                </span><br><span class="line">backup/   Documents/  fill    Pictures/  tast.py  teeeeeeeesy.txt  test.py</span><br><span class="line">Desktop/  Downloads/  Music/  Public/    te3t.py  Templates/       Videos/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[a-z]st*</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t*       </span><br><span class="line">tast.py  te3t.py  teeeeeeeesy.txt  test.py</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t?st.py</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[^/e]st.py       </span><br><span class="line">tast.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>!]可能被zsh认为是一个事件从而出错，把把方括号部分替换为 <code>&#39;[&#39;!what_you_think&#39;]&#39;</code>或者把 <code>!</code> 替换为 …<code>^/</code></p>
-<p>Zsh（Z Shell）是一个强大的命令行解释器，用于 UNIX 操作系统。它是 Bourne Shell 的扩展，具有许多改进，包括更好的用户交互、功能强大的脚本能力和自定义功能。</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>&#39;embryogdb-襁褓中的调试&#39;</title>
     <url>/2025/01/17/OLD_embryogdb%20record/</url>
     <content><![CDATA[<h2 id="level6"><a href="#level6" class="headerlink" title="level6"></a>level6</h2><p>主要提下level6和level8，前者是靠<code>call (void)win()</code>水过的，后者是花了比较多的精力才理解</p>
@@ -3084,7 +3084,7 @@
   </entry>
   <entry>
     <title>与学习相关的技巧</title>
-    <url>/2024/07/24/OLD_%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8A%80%E5%B7%A7/</url>
+    <url>/2024/07/23/OLD_%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8A%80%E5%B7%A7/</url>
     <content><![CDATA[<hr>
 <p>date: 2024-7-24 00:00:01<br>本节设计神经网络的学习中的一些重要的观点。主题有寻找最优权重参数的优化方法，权重参数的初始值，超参数的设定方法等。为了应对过拟合（神经网络在训练样本中表现过于优越，导致在验证数据集和测试数据集中表现不佳），还会介绍权值衰减，Dropout等正则化方法。</p>
 <h2 id="参数的更新"><a href="#参数的更新" class="headerlink" title="参数的更新"></a>参数的更新</h2><p>神经网络的学习的目的是找到使损失函数的值尽可能小的参数，这个过程被称作“最优化”。参数空间非常复杂，且深度神经网络中，参数的数目十分庞大，导致了最优化问题非常复杂。</p>
@@ -3158,70 +3158,6 @@
 <h3 id="权值衰减"><a href="#权值衰减" class="headerlink" title="权值衰减"></a>权值衰减</h3><p>权值衰减是一直以来经常被用作的一种抑制过拟合的方法。该方法通过在学习的过程中对大的权重进行乘法来抑制过拟合。很多过拟合正是由于权重参数取值过大才发生的。</p>
 <p>对于所有权重，权值衰减方法都会为损失函数加上$ \frac{1}{2}\lambda W^2 $。因此，在求权重梯度的计算中，要为之前的误差反向传播法的结果加上正则化的导数λW。</p>
 <h3 id="Dropout"><a href="#Dropout" class="headerlink" title="Dropout"></a>Dropout</h3><p>作为抑制过拟合的方法，前面我们介绍了为损失函数加上权重的L2范数的权值衰减方法。该方法可以简单地实现，在某种程度上能够抑制过拟合。但是，如果网络的模型变得很复杂，只用权值衰减就难以应对了。在这种情况下，我们经常会使用Dropout方法。<br>Dropout是一种在学习的过程中随机删除神经元的方法。训练时，随机选出隐藏层的神经元，然后将其删除。被删除的神经元不再进行信号的传递.训练时，每传递一次数据，就会随机选择要删除的神经元。热后，测试时，虽然会传递所有的神经元信号，但是对于各个神经元的输出，要乘上训练时的删除比例后再输出。</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>深度学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>简单学习算法的实现</title>
-    <url>/2024/07/01/OLD_%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/</url>
-    <content><![CDATA[<p>normalize : 将图像的像素值正规化为0.0~1.0<br>    one_hot_label :<br>        one_hot_label为True的情况下，标签作为one-hot数组返回<br>        one-hot数组是指[0,0,1,0,0,0,0,0,0,0]这样的数组<br>    flatten : 是否将图像展开为一维数组</p>
-<pre><code>Returns
--------
-(训练图像, 训练标签), (测试图像, 测试标签)
-&quot;&quot;&quot;
-mnist_path = &quot;E:\\deap_learning\\resource&quot;
-
-dataset = &#123;
-    &#39;train_img&#39;: load_images(os.path.join(mnist_path, &#39;train-images-idx3-ubyte.gz&#39;)),
-    &#39;train_label&#39;: load_labels(os.path.join(mnist_path, &#39;train-labels-idx1-ubyte.gz&#39;)),
-    &#39;test_img&#39;: load_images(os.path.join(mnist_path, &#39;t10k-images-idx3-ubyte.gz&#39;)),
-    &#39;test_label&#39;: load_labels(os.path.join(mnist_path, &#39;t10k-labels-idx1-ubyte.gz&#39;))
-&#125;
-
-if normalize:
-    for key in (&#39;train_img&#39;, &#39;test_img&#39;):
-        dataset[key] = dataset[key].astype(np.float32)
-        dataset[key] /= 255.0
-        
-if one_hot_label:
-    dataset[&#39;train_label&#39;] = _change_one_hot_label(dataset[&#39;train_label&#39;])
-    dataset[&#39;test_label&#39;] = _change_one_hot_label(dataset[&#39;test_label&#39;])
-
-if not flatten:
-    for key in (&#39;train_img&#39;, &#39;test_img&#39;):
-        dataset[key] = dataset[key].reshape(-1, 1, 28, 28)
-
-return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[&#39;test_img&#39;], dataset[&#39;test_label&#39;])
-</code></pre>
-<p>def load_images(file_path):<br>    with gzip.open(file_path, ‘rb’) as f:<br>        data &#x3D; np.frombuffer(f.read(), np.uint8, offset&#x3D;16)<br>    return data.reshape(-1, 784)</p>
-<p>def load_labels(file_path):<br>    with gzip.open(file_path, ‘rb’) as f:<br>        data &#x3D; np.frombuffer(f.read(), np.uint8, offset&#x3D;8)<br>    return data</p>
-<p>def _change_one_hot_label(X):<br>    T &#x3D; np.zeros((X.size, 10))<br>    for idx, row in enumerate(T):<br>        row[X[idx]] &#x3D; 1<br>    return T</p>
-<pre><code>
-在代码中出现了epoch作为学习时的次数单位。
-
-### 什么是 `epoch`？
-在机器学习和深度学习中，`epoch` 是一个重要的概念。`epoch` 表示整个训练数据集通过神经网络一次。简单来说，一个 `epoch` 就是将所有的训练数据都用来更新模型参数一次。
-
-### `epoch` 在神经网络中的作用
-在训练神经网络时，我们通常不会一次性将整个训练数据集都输入到模型中进行训练，而是将数据集分成多个小批次（batch），然后依次输入模型。这样做的原因包括：
-
-1. **内存限制**：一次性处理整个数据集可能会导致内存不足，尤其是当数据集非常大时。
-2. **更稳定的梯度更新**：使用小批次数据可以使梯度更新更加平稳，并能有效避免一些局部最优解。
-
-在每个 `epoch` 中，模型会经历以下过程：
-
-1. 将训练数据集分成若干个批次（batches）。
-2. 对每个批次进行前向传播、计算损失、后向传播、更新模型参数。
-3. 一个 `epoch` 结束后，通常会进行一次验证，检查模型在验证集上的表现，以判断模型是否在训练中取得进展。
-
-## 总结
-我们以损失函数为基准，找出了使神经网络的值达到最小的权重参数，也就是神经网络学习的目标。为了尽可能找到小的损失函数值，我们使用了函数斜率的梯度法。
-</code></pre>
 ]]></content>
       <categories>
         <category>学习笔记</category>
@@ -3436,6 +3372,70 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
+    <title>简单学习算法的实现</title>
+    <url>/2024/06/30/OLD_%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/</url>
+    <content><![CDATA[<p>normalize : 将图像的像素值正规化为0.0~1.0<br>    one_hot_label :<br>        one_hot_label为True的情况下，标签作为one-hot数组返回<br>        one-hot数组是指[0,0,1,0,0,0,0,0,0,0]这样的数组<br>    flatten : 是否将图像展开为一维数组</p>
+<pre><code>Returns
+-------
+(训练图像, 训练标签), (测试图像, 测试标签)
+&quot;&quot;&quot;
+mnist_path = &quot;E:\\deap_learning\\resource&quot;
+
+dataset = &#123;
+    &#39;train_img&#39;: load_images(os.path.join(mnist_path, &#39;train-images-idx3-ubyte.gz&#39;)),
+    &#39;train_label&#39;: load_labels(os.path.join(mnist_path, &#39;train-labels-idx1-ubyte.gz&#39;)),
+    &#39;test_img&#39;: load_images(os.path.join(mnist_path, &#39;t10k-images-idx3-ubyte.gz&#39;)),
+    &#39;test_label&#39;: load_labels(os.path.join(mnist_path, &#39;t10k-labels-idx1-ubyte.gz&#39;))
+&#125;
+
+if normalize:
+    for key in (&#39;train_img&#39;, &#39;test_img&#39;):
+        dataset[key] = dataset[key].astype(np.float32)
+        dataset[key] /= 255.0
+        
+if one_hot_label:
+    dataset[&#39;train_label&#39;] = _change_one_hot_label(dataset[&#39;train_label&#39;])
+    dataset[&#39;test_label&#39;] = _change_one_hot_label(dataset[&#39;test_label&#39;])
+
+if not flatten:
+    for key in (&#39;train_img&#39;, &#39;test_img&#39;):
+        dataset[key] = dataset[key].reshape(-1, 1, 28, 28)
+
+return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[&#39;test_img&#39;], dataset[&#39;test_label&#39;])
+</code></pre>
+<p>def load_images(file_path):<br>    with gzip.open(file_path, ‘rb’) as f:<br>        data &#x3D; np.frombuffer(f.read(), np.uint8, offset&#x3D;16)<br>    return data.reshape(-1, 784)</p>
+<p>def load_labels(file_path):<br>    with gzip.open(file_path, ‘rb’) as f:<br>        data &#x3D; np.frombuffer(f.read(), np.uint8, offset&#x3D;8)<br>    return data</p>
+<p>def _change_one_hot_label(X):<br>    T &#x3D; np.zeros((X.size, 10))<br>    for idx, row in enumerate(T):<br>        row[X[idx]] &#x3D; 1<br>    return T</p>
+<pre><code>
+在代码中出现了epoch作为学习时的次数单位。
+
+### 什么是 `epoch`？
+在机器学习和深度学习中，`epoch` 是一个重要的概念。`epoch` 表示整个训练数据集通过神经网络一次。简单来说，一个 `epoch` 就是将所有的训练数据都用来更新模型参数一次。
+
+### `epoch` 在神经网络中的作用
+在训练神经网络时，我们通常不会一次性将整个训练数据集都输入到模型中进行训练，而是将数据集分成多个小批次（batch），然后依次输入模型。这样做的原因包括：
+
+1. **内存限制**：一次性处理整个数据集可能会导致内存不足，尤其是当数据集非常大时。
+2. **更稳定的梯度更新**：使用小批次数据可以使梯度更新更加平稳，并能有效避免一些局部最优解。
+
+在每个 `epoch` 中，模型会经历以下过程：
+
+1. 将训练数据集分成若干个批次（batches）。
+2. 对每个批次进行前向传播、计算损失、后向传播、更新模型参数。
+3. 一个 `epoch` 结束后，通常会进行一次验证，检查模型在验证集上的表现，以判断模型是否在训练中取得进展。
+
+## 总结
+我们以损失函数为基准，找出了使神经网络的值达到最小的权重参数，也就是神经网络学习的目标。为了尽可能找到小的损失函数值，我们使用了函数斜率的梯度法。
+</code></pre>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>深度学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>&#39;Building a Web Server study&#39;</title>
     <url>/2025/01/25/OLD_%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%84%E7%AD%91/</url>
     <content><![CDATA[<hr>
@@ -3592,7 +3592,7 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
   </entry>
   <entry>
     <title>误差反向传播法</title>
-    <url>/2024/07/18/OLD_%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/</url>
+    <url>/2024/07/17/OLD_%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/</url>
     <content><![CDATA[<hr>
 <p>date: 2024-7-18 00:02:48<br>误差反向传播法是一种能高效计算权重参数梯度的方法。要理解它一般有两种方法，一种是基于数学式，另一种是基于<strong>计算图</strong>（computational graph）。接下来会补充讲解计算图的理解方法。</p>
 <h2 id="计算图"><a href="#计算图" class="headerlink" title="计算图"></a>计算图</h2><p>计算图会将计算过程用图表现出来。这里的图形是数据结构图，通过多个节点和边来表示。</p>
@@ -3776,7 +3776,7 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
   </entry>
   <entry>
     <title>wsl图形化界面安装踩坑</title>
-    <url>/2025/01/06/OLD_%E9%85%8D%E7%BD%AEwsl%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</url>
+    <url>/2025/01/05/OLD_%E9%85%8D%E7%BD%AEwsl%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</url>
     <content><![CDATA[<hr>
 <p>date: 2025-1-06 00:53:29<br>安装wsl后只有终端界面太单调了，遂网上寻找给Ubuntu添加图形界面的方法。中间遇见了一些坑，记下来以备查阅。</p>
 <blockquote>
@@ -3851,8 +3851,27 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
+    <title>level1</title>
+    <url>/2025/02/28/PwnCollege_level1/</url>
+    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>level2</p>
+]]></content>
+      <categories>
+        <category>PwnCollege</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>PwnCollege</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>building_a_web_server</title>
-    <url>/2025/03/01/PwnCollege_building_a_web_server/</url>
+    <url>/2025/02/28/PwnCollege_building_a_web_server/</url>
     <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    # Socket syscall</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 0x29</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Bind syscall</span><br><span class="line">    mov rdi, 3</span><br><span class="line">    lea rsi, [rip+sockaddr]</span><br><span class="line">    mov rdx, 16</span><br><span class="line">    mov rax, 0x31</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Listen syscall</span><br><span class="line">    mov rdi, 3</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rax, 0x32</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Accept syscall</span><br><span class="line">    mov rdi, 3</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 0x2b</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Read syscall</span><br><span class="line">    mov rdi, 4</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov rdx, 1024</span><br><span class="line">    mov rax, 0x00</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Write syscall</span><br><span class="line">    mov rdi, 4</span><br><span class="line">    lea rsi, [rip+response]</span><br><span class="line">    mov rdx, 19</span><br><span class="line">    mov rax, 0x01</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Delay before closing the connection</span><br><span class="line">    mov rax, 0x20</span><br><span class="line">    mov rdi, 1</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Close syscall</span><br><span class="line">    mov rdi, 4</span><br><span class="line">    mov rax, 0x03</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    # Exit syscall</span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 0x3c    </span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">.section .data</span><br><span class="line">sockaddr:</span><br><span class="line">    .2byte 2</span><br><span class="line">    .2byte 0x5000</span><br><span class="line">    .4byte 0</span><br><span class="line">    .8byte 0</span><br><span class="line"></span><br><span class="line">response: </span><br><span class="line">    .string &quot;HTTP/1.0 200 OK\r\n\r\n&quot;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>目前的服务器代码，能监听http接口并返回固定http消息。</p>
@@ -3921,27 +3940,8 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
-    <title>level1</title>
-    <url>/2025/03/01/PwnCollege_level1/</url>
-    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>level2</p>
-]]></content>
-      <categories>
-        <category>PwnCollege</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>PwnCollege</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>细节说明（步骤与查找优先级）</title>
-    <url>/2025/03/01/PwnCollege_sniffing%20input/</url>
+    <url>/2025/02/28/PwnCollege_sniffing%20input/</url>
     <content><![CDATA[<p><strong>Bash 在查找命令时会优先使用 shell 函数（如果存在）</strong>，而不是去执行 PATH 中的外部可执行文件。所以当你在 zardus 的启动文件里 <strong>定义</strong>（但不执行）一个名为 <code>flag_checker</code> 的函数，后来在交互里用户输入 <code>flag_checker</code> 时，shell 调用的就是你定义的函数，从而完全拦截了对 <code>/challenge/bin/flag_checker</code> 的调用。</p>
 <h1 id="细节说明（步骤与查找优先级）"><a href="#细节说明（步骤与查找优先级）" class="headerlink" title="细节说明（步骤与查找优先级）"></a>细节说明（步骤与查找优先级）</h1><ul>
 <li>真实的外部程序（你贴的那个）行为是：打印提示、<code>read -r candidate</code>，把输入和 <code>/flag</code> 内容比较，输出 Correct&#x2F;Incorrect。</li>
@@ -4022,7 +4022,7 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
   </entry>
   <entry>
     <title>两两交换链表中的节点</title>
-    <url>/2026/07/26/%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9/</url>
+    <url>/2026/07/25/%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9/</url>
     <content><![CDATA[<h2 id="Problem-statement"><a href="#Problem-statement" class="headerlink" title="Problem statement"></a>Problem statement</h2><p>两两交换链表相邻节点，不能修改节点的值</p>
 <h2 id="My-Solution"><a href="#My-Solution" class="headerlink" title="My Solution"></a>My Solution</h2><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>先创建一个哑节点，连接链表的起始位置，创建一个指针指向哑节点。先检查是不是空链表，是的话直接返还没有连接哑巴节点的原始链表。随后进入一个while循环，条件是指针节点的下一个节点不是空节点且下一个节点的下一个节点也不是空节点。进入循环后，让指针节点指向下一位的下一位，指针节点的下一位指向指针节点的下一位的下一位的下一位，然后才把指针节点的下一位的下一位指向指针节点的下一位。然后指针向后移动两位。退出循环后，进入一个if判断，如果下一位是空节点，退出循环返还除掉哑节点的链表。如果下一位不是空但是下下一位是空，也返还除掉哑节点的链表</p>
 <h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">ListNode* <span class="title">swapPairs</span><span class="params">(ListNode* head)</span> </span>&#123;                                         </span><br><span class="line">    <span class="function">ListNode <span class="title">dummy</span><span class="params">(<span class="number">0</span>)</span></span>;                                                        </span><br><span class="line">    dummy.next = head;                                                        </span><br><span class="line">    ListNode* cur = &amp;dummy;                                                   </span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (cur-&gt;next &amp;&amp; cur-&gt;next-&gt;next) &#123;                                    </span><br><span class="line">        ListNode* first = cur-&gt;next;                                          </span><br><span class="line">        ListNode* second = cur-&gt;next-&gt;next;                                   </span><br><span class="line"></span><br><span class="line">        first-&gt;next = second-&gt;next;                                           </span><br><span class="line">        second-&gt;next = first;                                                 </span><br><span class="line">        cur-&gt;next = second;                                                   </span><br><span class="line"></span><br><span class="line">        cur = first;                                                          </span><br><span class="line">    &#125;                                                                         </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dummy.next;                                                        </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -4074,135 +4074,8 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       </tags>
   </entry>
   <entry>
-    <title>内存池</title>
-    <url>/2025/03/01/%E6%98%A5%E6%8B%9B_%E5%86%85%E5%AD%98%E6%B1%A0/</url>
-    <content><![CDATA[<p>面试问答：</p>
-<ul>
-<li>为什么需要设计内存池？和系统自带的内存分配器相比有什么区别和优势？</li>
-<li><strong>内存对齐</strong>的意义是什么？一般如何实现<strong>内存对齐？</strong></li>
-<li>如何避免内容池内的<strong>内容碎片化</strong></li>
-<li>如何实现<strong>线程安全</strong>的内存池？在项目中使用了什么<strong>同步机制</strong>？</li>
-<li><strong>无锁队列</strong>的实现原理是什么？项目中的无锁结构如何工作？</li>
-<li>项目中的<strong>自旋锁</strong>和<code>std::this_thread::yield</code>的作用和使用场景是什么？</li>
-<li><strong>伪共享</strong>问题是什么？如何避免<strong>伪共享</strong>？</li>
-<li>为什么选择三重架构(<strong>threadcache,centralcache,pagecache</strong>)？每一层的职责是什么？</li>
-<li><strong>动态批量分配策略</strong>是如何设计的？他又是如何根据使用模式调整的？</li>
-<li><strong>智能预取机制</strong>的实现原理是什么？如何优化内存分配延迟？</li>
-<li>如何测试内存池的性能？测试中发现了哪些瓶颈？又是如何解决的？</li>
-<li>高并发场景下，如何保证内存池的性能优于系统内存分配器？</li>
-<li>项目中用到了哪些c++特性？</li>
-<li><strong>原子操作</strong>和<strong>互斥锁</strong>的区别是什么？二者分别在什么时候使用？</li>
-<li>高并发场景下，<code>compare_exchange_weak</code> 和<code>compare_exchange_strong</code> 的区别是什么？为什么要选择前者？</li>
-<li>内存池如何支持不同大小的对象的内存分配？</li>
-</ul>
-<h2 id="项目框架"><a href="#项目框架" class="headerlink" title="项目框架"></a>项目框架</h2><p>该项目是基于哈希映射的多种定长内存分配器： 预先向系统申请一大片内存，之后内存的申请和释放都由应用层的内存池管理，从而减少内存调用。</p>
-<img src="/2025/03/01/%E6%98%A5%E6%8B%9B_%E5%86%85%E5%AD%98%E6%B1%A0/image-0.png" class="">
-
-<p>本质上是一个哈希桶，内含多个block，block内又有不定长的slot,block固定长度4096B，slot是2 8 16字节不定，最大不超过512B,当系统需要多个小暂用的内存空间时对内存池发送请求，内存池根据需求大小在block里找寻对应的slot，这样可以避免大量内存碎片的出现。当需求超过512B时还是要new和malloc。</p>
-<img src="/2025/03/01/%E6%98%A5%E6%8B%9B_%E5%86%85%E5%AD%98%E6%B1%A0/image-1.png" class="">
-
-<p>每个内存池主要有三个对象：<code>Slot FirstBlock</code> <code>Slot FreeSlot</code> <code>Slot currentSlot</code>。</p>
-<p><strong>FirstSlot</strong>是指向第一个block的指针</p>
-<p><strong>FreeSlot</strong>存储着所有被释放的slot空间，当占用结束不会回归系统，而是放入内存池中的这个链表，插入最前，需要申请新的slot时优先从中查找</p>
-<p><strong>CurrentSlot</strong>是还未使用的保留内存资源。需要空间时优先在Freeslot内找，若为空再向block内的currentslot申请。如果没有了再向系统申请block。</p>
-<p>对外有两个重要的接口：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;</span></span><br><span class="line"><span class="function">T* <span class="title">newElement</span><span class="params">(Args&amp;&amp;... args)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">deleteElement</span><span class="params">(T* p)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>添加“我如何用AI快速开发提升公司的效率，增加效果+减少成本”</p>
-<p>具体：</p>
-<p>1.擅长使用vscode+某插件、Claude code开发。例：开发xx程序。</p>
-<p>2.调用coze、glm-5 agent等多种智能体。例：利用AI工作流让AI自动开发xx程序。</p>
-<p>3.对主流的人工智能模型的应用都有涉猎，如影刀、n8n编程、秒哒等。例：类似内容同上。</p>
-<p>相较于传统开发，运用以上方法只需要z天，节省了xxx的开发时间&#x2F;增加了xxx种功能。</p>
-<p>【ps】参考b站的glm-5一站封神视频，还了解一些这些AI模型该怎么用相关的事情。</p>
-<p>作为程序员，要与时俱进了解最新的思想，大多数HR都很好奇AI是怎么用的，想要更多的了解AI的更多的应用场景，单凭你对AI的很多技术有了解就足以吸引HR让你参加面试。此时你再展示出你本身有一定的编程能力，尤其是通过CTF-RE中训练的逆向调试技术，展示出你对于作问题是很有耐心和方法的，展示出你的兜底能力。</p>
-<p>另外，你还应当在简历当中惜字如金，不要写“套话、废话”，比如我是一个乐观的人（x），谁都是乐观的人。</p>
-<p>我会用python（x)，谁都会用python。正确做法：我用python开发了xx程序，上线在某某域名，使用人数：xxx&#x2F;代码量：xxx，开发时间：x天，其中遇到的关键问题是：xxx性能不足&#x2F;xxx无法正常运行。</p>
-<p>惜字如金的关键和本质是信息量。面试简历非常多，HR没有时间仔细去阅读，此时“差异化”就成为了重点。在确保每个句子都惜字如金传递有效信息的前提之下，尽可能选用那些“你有别人没有”的关键优势，你不需要成为100分战士，你需要做到的是展示你在x方面具有优势就可以了。企业需要的不是全能战士（虽然他很想要），他只需要对接他这个缺口&#x2F;需求的尖兵，所以务必好好罗列一下自己的优势，一定有。</p>
-<p>目前最难的部分还是没有实习经历，简历的项目包装还能靠这个月剩下的时间，但是代码能力的提升和实际工作经验的缺失我觉得才是难被选中的直接原因。尤其是很多厂商面试时禁止使用本地ide，几乎封死了使用ai辅助工具的路径。当然会使用ai工具确实是一个亮点，我也准备添加，但是简历被筛选中的一个重要部分还是缺失。</p>
-<p>这是一个“错误”的观点。实习经历的意义在于降低企业用人时选择人员的成本。</p>
-<p>作为一个HR，在筛选用户时，首先摔出所有非985的。。。所以如果说硬性门槛的话，绝对不是实习经历，而是学历和院校层次。所以我们不讨论这个硬性条件，因为都已经校招了，所以“实习经历”只是加分项，减少企业的筛人成本。有没有比“实习经历”更重要的加分项呢？答案是有的，就是你能帮企业挣到更多的钱。</p>
-<p>这是个很简单的问题，谁能为企业创造更多的价值，企业自然就会选择谁，而不是简单的通过有无实习经历来判断。那一个企业是怎么挣钱的呢？通过合理的组合，产品经理发现需求+设计，程序员进行开发，测试工程师测试，上市后宣传部负责各种渠道的宣传，最后用户使用或者付费企业赚到了钱。</p>
-<p>所以如果你要针对开发岗来说，挣到钱的本质就是你开发的效率更快。所以你刚才说“面试禁止使用IDE “是因为他们不想要找到不能开发的水货，因为HR没有能力区分用AI开发时你是真懂还是假懂。关键在于你能不能把AI给的东西弄到实际项目来，如果能，即使你不懂代码为什么这样写也没关系，企业只是想挣钱。因此你可以对标企业的实际需求开发项目。比如，面试爱奇艺，就开发视频管理软件；面试微信，就开发通讯软件；面试steam，就开发游戏平台。你就直直地做你面试部门让你去工作时会做的事情，通过这种方式展示出我是适合这个岗位的，即使我可能不会背八股文，但是我能够帮企业挣到更多钱。你抓住这个本质，任何一个聪明的HR都会选择你。</p>
-<p>理想的情况是这样，也许进面之后这个点更重要？现在更紧迫的是要先让HR选中我的简历——这点就决定了实习已经八股的必要性，当然这也不算讨论的重点，因为时间条件不再允许。你考虑的确实很有意思，我想想我接下来得在简历里添加那种内容？  </p>
-<ol>
-<li>熟练使用各类ai开发工具？太宽泛了，改成实现一个ai agent，负责实时搜索回答国内旅游信息（因为确实做了这个，只需要免费的token便行），目前的智能体经历不知道是否够用。</li>
-<li>熟悉c++和java开发？因为目前的就业环境java占据了百分之三十&#x2F;四十，偏偏我的java开发经验最少，只有一个简单的增删改查的小数据库，但是校招其实我感觉不会太过刁难，毕竟和社招区别很大，会开发ai相关产品几乎就默认熟悉python，不过这不是重点，与其写熟悉语言完全不如写上某个项目。当前我开发的项目除开前几年的课设，就没多少能拿得出手的，关于aiagent，最能看的就是hello——agent的最终项目；c++的还能在后续写上卡哥提供的，数目不少。所以目前需要做的还是通过数个项目包装简历？</li>
-<li>关于投递简历的部分，在没有参与正式的生产活动时，我觉得通过完全符合某个部门的要求来想获得工作不是特别准确，因为开发的过程是通用的，并非是不可逾越的部分，况且校招的话，能给HR展示自己做好的几个”轮子“，应该就足够了。</li>
-</ol>
-<p>你的这些想法完全合理，但是太”naive“了，甚至有点让我觉得你没抓到本质。</p>
-<p>本质是：HR到大学挑选一个适合工作岗位的人。你的做法是：成为”通用型“人才，这样你的就业概率最大，比如你迁就就业环境弄Java，但这简直是暴殄天物！</p>
-<p>你要找的不是一万份工作，你要找的是1份工作。你能，且仅能有1份正式工作！</p>
-<p>这就意味着，通用-&gt;平庸&#x2F;一般化-&gt;无亮点。除非你是通用型no.1工人，否则HR为什么要选你呢？</p>
-<p>但是作为特长匹配工人，你虽然不是通用no.1，但是这个岗位，你最熟悉、相关经验最丰富，是匹配no.1。</p>
-<p>匹配no.1&gt;通用no.1。这是一个简单的不等式。最坏也应该是约等于。</p>
-<p>所以你要做的不是迁就这个就业环境，而是全力找出自己的最佳特长，然后把这个特长放到一个合适的岗位当中去。再次强调，你不需要为一万份工作准备简历。你只需要为一份工作准备简历。</p>
-<p>这就意味着你需要对标一个具体的工作（而非抽象的就业环境），比如某游戏公司的python开发。</p>
-<p>假如你最熟悉python-&gt;拒绝一切非python的工作</p>
-<p>假如你的特长是x-&gt;只做与x有关的工作</p>
-<p>所以你不是现在去拿自己的短处以卵击石，或者kuku补短板，这是错的。</p>
-<p>你要做的是找到自己的所有长处，然后找到最匹配你的工作岗位，这才是你”找工作“的意义，否则直接给你分配一个就完了。”找“才是最有含金量的操作。</p>
-<p>因此，你需要做的是2步：</p>
-<p>1.我到底在哪些方面有优势</p>
-<p>2.有哪些岗位就需要这些优势</p>
-<p>有一句话，叫做没有垃圾，只有放错地方的宝藏。</p>
-<p>所以你本身是非常优秀的，只是你一直拿别人的优势丈量自己。</p>
-<p>你的看法确实和我差别很大，我一直没有去寻找自身的长处，所做的准备都是为了广撒网。但目前的形势给我的感觉是寻找一份适合自己的工作困难重重，我了解到的一个方法就是放低自己的姿态，尽量包装自己的简历，当然也不是说要适配所有人，只是要尽量适配当前求职环境下HR最希望出现的那类人，前面提到java就是处于这个原因。目前我是没打算去华为od这种外包，宁愿去个中小厂商，先待几年再跳槽跑路，这是我工作的初衷。校招的难度显著小于社招——没有空窗期这个绝对致命的弱点，不会太看你开发能力，岗位开放不在少数。但是我并不觉得这能成为“寻找一份工作”，因为找到”匹配“一份工作的概率也许并不会高于“适配”一份工作的概率。不过你说的确实很有道理，优先展示自己的长处，自己能做什么才是最重要的。虽然前面提到要多补充短板，但时间看起来并不允许，所以确实你提到的“找到自己的长处”才是当下最需要着重的地方。</p>
-<p>现在思路已经理清，“找到自己的长处”才是当下最需要着重的地方。</p>
-<p>推荐你从以下角度梳理：</p>
-<p>1.我开发的最自豪的项目是什么？</p>
-<p>2.我解决的最困难的问题是什么？</p>
-<p>3.我最习惯用什么语言解决问题？</p>
-<p>4.我最喜欢解决什么类型的问题？</p>
-<p>5.什么样的事情让我着迷以至于忘记了吃饭或者睡觉？</p>
-<p>6.哪个地方是我早就想要去工作的？</p>
-<p>将以上内容回答，然后就可以整理你的简历。而后将简历发给每一个你能找到的工作入口：</p>
-<p>包括但不限于</p>
-<p>①微信公众号、各类招聘软件</p>
-<p>②学长&#x2F;学姐、辅导员等人脉进行内推</p>
-<p>③发朋友圈寻找潜在工作机会</p>
-<p>顺势而为，抓住你的所有机会和可能，你身边的机会远超你想象。中国有1.3 +billion人口，即使你只在x地工作，也有millions of的工作岗位，抓住一切可以投递的机会去投递，走向更高的更好的平台（当然也是更合适的）。而后你在此基础上提升自己的实际工作能力，走向更广阔的世界。</p>
-<p>确实，这就是我想说的，没想到你替我说出来了。目前大概也就这条路还有机会，三月还是中旬，还有大把企业的校招入口还开着，纠结有没有实习是没有结果的，优先要做的是完成春招，内推也许有机会，但是纠结实习这个心病的来源就是一个互联网公司工作的学长因为我没有实习而拒绝了我的投递请求。不过这都不算是matters的内容，这几天要干的除了包装项目和提升代码能力，最重要的就是找出能写在简历里的“特殊亮点”了，目前看来，aiagent的开发看起来是最有特点的，无论有无作用都得写上去点。大概就是这么多吧，顺便说一句，感觉你做自媒体会很有一套啊。</p>
-<p>人类是个很聪明的生物，“抱歉，你没有实习经历”的含义是，真抱歉学弟我们不太熟，我不太想帮你但是我这样说显得我很冷漠，这样吧，我找一个你肯定不可能完成的指标拒绝你让你和我都不那么尴尬。</p>
-<p>如果我是和你关系很好的学长，我会帮助你发掘你的亮点，在公司里找到一个合适你的岗位内推，如果没有，我也会告诉你how to成为一个合适于公司某岗位的前进方法。</p>
-<p>至于你说“有无作用都要写上去的 ai agent”，这是错的。因为AI agent写上去的目标是展示你的与时俱进。仍旧是老话，简历里的内容必须言之有物，惜字如金。你甚至可以不写满（比如我保研的时候简历只有半页A4），但是要保证每一个字都能与目标严格对齐或者相关。</p>
-<p>另外，我感受到你因为投递被拒绝后就产生了恐惧心理，不敢于再投递，这也是严重错误的。首先在校招，被拒绝简历或者不给内推没什么的，我们又不是king of the ncepu，本来被拒绝就是常态。只有在被拒绝中才能找到合适，每次被拒绝都是让你走向更加合适的道路。因此你要做的是直面投递，疯狂投递。</p>
-<p>强烈建议你现在梳理你的特长，哪怕梳理的很糟糕很垃圾，今天开始投递5封简历，要成功，先发疯（x），先疯狂投递简历。一个合格的投递者至少应该目标投递100+简历（并且每过几天都有改变，因为对工作越发清晰，能力越强）。最低的一个要求是每天5封，投30天，投150封。投过了的也可以再投因为你发现他根本不记得他拒绝过你，不要把自己太当回事。在投递的过程中，免费投递就是0成本，你拿0成本博取一份大几千的工作，请问还有比这更划算的活动吗？所以这种薅羊毛的机会不要让我求你疯狂投了哈哈哈哈。</p>
-<p>特长吗？让我想想。。。。大概这就是一份合格简历出现的最关键一步。</p>
-<ol>
-<li>丰富的c++开发经验？附带卡哥手里的数份预制项目。</li>
-</ol>
-<p>我怎么想来这便是最重要的一步也是仅需的一步？钻之弥坚，一个需要用c++开发的公司为什么需要一个不知道熟练开发神经网络或者智能体的人？HR准备问这方面的问题，或者说他需要这方面的人才吗似乎全面是个伪命题，或者是我之前理解的全面是完全自我曲解的。我既然大部分时间都用来开发c相关的项目，我何必要自讨苦吃，在自己的简历上添油加醋，弄得不伦不类，或者说，他们为什么一定要出现在一份简历里呢？当然目前的侧重点必须要分清楚。话说回来，你谈论的投递相关问题确实有道理，之前我子啊这方面有点幼稚的幻想，不过你一语中的，多投才是唯一正确的做法，虽然目前项目还没完全完成，但是在面试前，或者说得到面试前，包装这方面得尽可能做到最好。大概这才是正确的做法。</p>
-<p>你已经进步巨大。首先你愿意购买卡哥的课程来学习，这是非常值得肯定的。（因为你是一个与时俱进敢于投资自己的人）。其次你能够更新你的思想，听取别人的建议，这说明你是一个擅长吸收别人的经验的人。而且你还开始思考多投的意义和到底什么内容才该出现在简历上。</p>
-<p>把你所有已经做的项目都列出来，无论大小，做一个排序，把最重要的一个展开说说，做一份简历拿出去投呢。你最最骄傲的项目（最熟悉的那个项目），不要觉得这个项目很简单，和xx的yy项目比差远了。这是错的。你做的项目很好，哪怕就是最最最垃圾的大一图书管理项目，也可以获取一份月薪3k的程序员工作，因为你做的是一个完整可运行的项目。项目普通不等于没有工作，项目普通工作不过是工资低一点，你可以通过这个项目了解到你的真实水平，比如可能是月薪w。而后，你再此基础上，每天一半时间面试，一半时间精进自己，不断提高自己能够拿到的offer等级。不要刚开始就否定自己。你去投一投，3k,5k,7k,9k,11k,13k,15k，不断投，不断定位自己。行动是比思考更重要的，直面问题的行动比盲目的行动更加重要。你做卡哥的项目，其实是在逃避面对真实的自己，害怕自己什么都拿不出手，害怕自己四年的努力被别人的一句”抱歉，拒绝“所否定。但你其实很优秀，你不需要包装（编造）自己，你不需要给自己添油加醋，展现最真实的你不仅能找到最合适的工作，而且能让你在工作中发挥出自己的真实水平，过的愉快。希望你成功，如有问题欢迎你随时微信&#x2F;电话联系我。18612523133。加油好兄弟！待会把对话微信发我一份，谢谢！嘻嘻</p>
-<p>现在思路已经理清，“找到自己的长处”才是当下最需要着重的地方。</p>
-<p>推荐你从以下角度梳理：</p>
-<p>1.我开发的最自豪的项目是什么？</p>
-<p>2.我解决的最困难的问题是什么？</p>
-<p>3.我最习惯用什么语言解决问题？</p>
-<p>4.我最喜欢解决什么类型的问题？</p>
-<p>5.什么样的事情让我着迷以至于忘记了吃饭或者睡觉？</p>
-<p>6.哪个地方是我早就想要去工作的？</p>
-<p>将以上内容回答，然后就可以整理你的简历。而后将简历发给每一个你能找到的工作入口：</p>
-<p>包括但不限于</p>
-<p>①微信公众号、各类招聘软件</p>
-<p>②学长&#x2F;学姐、辅导员等人脉进行内推</p>
-<p>③发朋友圈寻找潜在工作机会</p>
-<p>顺势而为，抓住你的所有机会和可能，你身边的机会远超你想象。中国有1.3 +billion人口，即使你只在x地工作，也有millions of的工作岗位，抓住一切可以投递的机会去投递，走向更高的更好的平台（当然也是更合适的）。而后你在此基础上提升自己的实际工作能力，走向更广阔的世界。</p>
-]]></content>
-      <categories>
-        <category>春招</category>
-      </categories>
-      <tags>
-        <tag>春招</tag>
-        <tag>面试</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>webServer_learning</title>
-    <url>/2025/03/01/%E6%98%A5%E6%8B%9B_webServer_learning/</url>
+    <url>/2025/02/28/%E6%98%A5%E6%8B%9B_webServer_learning/</url>
     <content><![CDATA[<p>项目框架</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">kama -webserver/</span><br><span class="line">|-- img</span><br><span class="line">|-- include</span><br><span class="line">|-- lib</span><br><span class="line">|</span><br><span class="line">|--log/ #日志管理模块</span><br><span class="line">    |--log.cc #日志实现</span><br><span class="line">|--memory/ #内存管理模块</span><br><span class="line">    |--memory.cc #内存管理实现</span><br><span class="line">|--src/ #源代码目录</span><br><span class="line">    |--main.cpp #主程序入口</span><br><span class="line">    |--... # 其他源文件</span><br><span class="line">|-- CMakeLists.txt #CMake构建文件</span><br><span class="line">|-- LISCENSE #许可证文件</span><br><span class="line">|-- README.md #项目说明文件</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
 
@@ -4318,51 +4191,135 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       </tags>
   </entry>
   <entry>
-    <title>玩转语雀文档💡</title>
-    <url>/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/</url>
-    <content><![CDATA[<p>Hi，欢迎来到语雀～</p>
-<p>语雀文档是一个给个人和团队提供的写好文档的工具，我们希望每个人都可以快速、舒适的记录自己的所思所想，为此，语雀的文档编辑器提供了强大的能力。</p>
-<h3 id="文档：专注于编辑体验"><a href="#文档：专注于编辑体验" class="headerlink" title="文档：专注于编辑体验"></a>文档：专注于编辑体验</h3><ul>
-<li>我们提供了常用的字体设置能力，例如：调整字号大小、<strong>粗体</strong>、_斜体_、<u>下划线</u>、<del>删除线</del>、<code>代码</code>、**<font style="color:#FF4F3E;background-color:#FADB14;">颜色</font>**等，这些丰富的设置能力，可以让你的内容更清晰，更漂亮。</li>
-<li>如果你需要在文档中插入列表，语雀提供了“有序列表”和“无序列表”两种方式，我们这一段话使用的就是无序列表样式。</li>
-<li>你还可以用语雀文档记录待办事项，帮助你把要做的事记录下来，你只需点击✔️，就可以轻松记录这条待办的状态。以下就是待办样式。<ul>
-<li><input disabled="" type="checkbox"> 未完成项</li>
-<li><input checked="" disabled="" type="checkbox"> 已完成项</li>
+    <title>内存池</title>
+    <url>/2025/02/28/%E6%98%A5%E6%8B%9B_%E5%86%85%E5%AD%98%E6%B1%A0/</url>
+    <content><![CDATA[<p>面试问答：</p>
+<ul>
+<li>为什么需要设计内存池？和系统自带的内存分配器相比有什么区别和优势？</li>
+<li><strong>内存对齐</strong>的意义是什么？一般如何实现<strong>内存对齐？</strong></li>
+<li>如何避免内容池内的<strong>内容碎片化</strong></li>
+<li>如何实现<strong>线程安全</strong>的内存池？在项目中使用了什么<strong>同步机制</strong>？</li>
+<li><strong>无锁队列</strong>的实现原理是什么？项目中的无锁结构如何工作？</li>
+<li>项目中的<strong>自旋锁</strong>和<code>std::this_thread::yield</code>的作用和使用场景是什么？</li>
+<li><strong>伪共享</strong>问题是什么？如何避免<strong>伪共享</strong>？</li>
+<li>为什么选择三重架构(<strong>threadcache,centralcache,pagecache</strong>)？每一层的职责是什么？</li>
+<li><strong>动态批量分配策略</strong>是如何设计的？他又是如何根据使用模式调整的？</li>
+<li><strong>智能预取机制</strong>的实现原理是什么？如何优化内存分配延迟？</li>
+<li>如何测试内存池的性能？测试中发现了哪些瓶颈？又是如何解决的？</li>
+<li>高并发场景下，如何保证内存池的性能优于系统内存分配器？</li>
+<li>项目中用到了哪些c++特性？</li>
+<li><strong>原子操作</strong>和<strong>互斥锁</strong>的区别是什么？二者分别在什么时候使用？</li>
+<li>高并发场景下，<code>compare_exchange_weak</code> 和<code>compare_exchange_strong</code> 的区别是什么？为什么要选择前者？</li>
+<li>内存池如何支持不同大小的对象的内存分配？</li>
 </ul>
-</li>
-<li>语雀文档还可以上传图片、表格、附件等等，让你在文档的世界游刃有余。认准绿色“+”号，他们都在这等你。</li>
-<li>以上提到所有功能，都可以在工具栏找到，里边还有更多神奇功能，待你挖掘。<ul>
-<li>移动端 app 的工具栏：</li>
-<li><img src="/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-0.png" class=""></li>
-<li>web 端的工具栏：</li>
-<li><img src="/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-1.png" class=""></li>
-</ul>
-</li>
-</ul>
-<h3 id="知识库：专注于文档整理"><a href="#知识库：专注于文档整理" class="headerlink" title="知识库：专注于文档整理"></a>知识库：专注于文档整理</h3><p>文档整理至关重要，做好文档整理，可以让你的知识真正积累起来，成为一生的财富，那如何利用语雀做好文档整理呢？</p>
-<p>语雀提供了“<strong>知识库</strong>”用来解决文档整理。知识库有点像电脑上的文件夹，用来存放你的文档。当一个知识库有多篇文档时，这个知识库会形成一个目录，这也是语雀的特色，可以让这个知识库变得井井有条。</p>
-<p>当你第一次使用语雀 app 时，可以点击最下边的“文档”，然后点击右上角的“+”新建知识库，再点击右上角“+”开始“新建文档”，开始你的书写✍🏻。为了方便你理解，请看下图。</p>
-<img src="/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-2.png" class="">
+<h2 id="项目框架"><a href="#项目框架" class="headerlink" title="项目框架"></a>项目框架</h2><p>该项目是基于哈希映射的多种定长内存分配器： 预先向系统申请一大片内存，之后内存的申请和释放都由应用层的内存池管理，从而减少内存调用。</p>
+<img src="/2025/02/28/%E6%98%A5%E6%8B%9B_%E5%86%85%E5%AD%98%E6%B1%A0/image-0.png" class="">
 
-<p>在 PC 端，新建知识库依然很方便，点击链接查看详情。<a href="https://www.yuque.com/yuque/thyzgp/gbdfpb">PC 端新建知识库</a></p>
-<h3 id="语雀还能做什么？"><a href="#语雀还能做什么？" class="headerlink" title="语雀还能做什么？"></a>语雀还能做什么？</h3><ul>
-<li>利用语雀，可以很好的做团队协同，做好团队的知识沉淀。<a href="https://www.yuque.com/about/organization">详情</a></li>
-<li>想要了解更多，查看👉<a href="https://www.yuque.com/about/help">语雀帮助中心</a></li>
-</ul>
-<h3 id="联系我们"><a href="#联系我们" class="headerlink" title="联系我们"></a>联系我们</h3><ul>
-<li>更多反馈和建议，请移步👉<a href="https://www.yuque.com/zze08m/topics">语雀移动端讨论区</a></li>
-</ul>
+<p>本质上是一个哈希桶，内含多个block，block内又有不定长的slot,block固定长度4096B，slot是2 8 16字节不定，最大不超过512B,当系统需要多个小暂用的内存空间时对内存池发送请求，内存池根据需求大小在block里找寻对应的slot，这样可以避免大量内存碎片的出现。当需求超过512B时还是要new和malloc。</p>
+<img src="/2025/02/28/%E6%98%A5%E6%8B%9B_%E5%86%85%E5%AD%98%E6%B1%A0/image-1.png" class="">
+
+<p>每个内存池主要有三个对象：<code>Slot FirstBlock</code> <code>Slot FreeSlot</code> <code>Slot currentSlot</code>。</p>
+<p><strong>FirstSlot</strong>是指向第一个block的指针</p>
+<p><strong>FreeSlot</strong>存储着所有被释放的slot空间，当占用结束不会回归系统，而是放入内存池中的这个链表，插入最前，需要申请新的slot时优先从中查找</p>
+<p><strong>CurrentSlot</strong>是还未使用的保留内存资源。需要空间时优先在Freeslot内找，若为空再向block内的currentslot申请。如果没有了再向系统申请block。</p>
+<p>对外有两个重要的接口：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;</span></span><br><span class="line"><span class="function">T* <span class="title">newElement</span><span class="params">(Args&amp;&amp;... args)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">deleteElement</span><span class="params">(T* p)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>添加“我如何用AI快速开发提升公司的效率，增加效果+减少成本”</p>
+<p>具体：</p>
+<p>1.擅长使用vscode+某插件、Claude code开发。例：开发xx程序。</p>
+<p>2.调用coze、glm-5 agent等多种智能体。例：利用AI工作流让AI自动开发xx程序。</p>
+<p>3.对主流的人工智能模型的应用都有涉猎，如影刀、n8n编程、秒哒等。例：类似内容同上。</p>
+<p>相较于传统开发，运用以上方法只需要z天，节省了xxx的开发时间&#x2F;增加了xxx种功能。</p>
+<p>【ps】参考b站的glm-5一站封神视频，还了解一些这些AI模型该怎么用相关的事情。</p>
+<p>作为程序员，要与时俱进了解最新的思想，大多数HR都很好奇AI是怎么用的，想要更多的了解AI的更多的应用场景，单凭你对AI的很多技术有了解就足以吸引HR让你参加面试。此时你再展示出你本身有一定的编程能力，尤其是通过CTF-RE中训练的逆向调试技术，展示出你对于作问题是很有耐心和方法的，展示出你的兜底能力。</p>
+<p>另外，你还应当在简历当中惜字如金，不要写“套话、废话”，比如我是一个乐观的人（x），谁都是乐观的人。</p>
+<p>我会用python（x)，谁都会用python。正确做法：我用python开发了xx程序，上线在某某域名，使用人数：xxx&#x2F;代码量：xxx，开发时间：x天，其中遇到的关键问题是：xxx性能不足&#x2F;xxx无法正常运行。</p>
+<p>惜字如金的关键和本质是信息量。面试简历非常多，HR没有时间仔细去阅读，此时“差异化”就成为了重点。在确保每个句子都惜字如金传递有效信息的前提之下，尽可能选用那些“你有别人没有”的关键优势，你不需要成为100分战士，你需要做到的是展示你在x方面具有优势就可以了。企业需要的不是全能战士（虽然他很想要），他只需要对接他这个缺口&#x2F;需求的尖兵，所以务必好好罗列一下自己的优势，一定有。</p>
+<p>目前最难的部分还是没有实习经历，简历的项目包装还能靠这个月剩下的时间，但是代码能力的提升和实际工作经验的缺失我觉得才是难被选中的直接原因。尤其是很多厂商面试时禁止使用本地ide，几乎封死了使用ai辅助工具的路径。当然会使用ai工具确实是一个亮点，我也准备添加，但是简历被筛选中的一个重要部分还是缺失。</p>
+<p>这是一个“错误”的观点。实习经历的意义在于降低企业用人时选择人员的成本。</p>
+<p>作为一个HR，在筛选用户时，首先摔出所有非985的。。。所以如果说硬性门槛的话，绝对不是实习经历，而是学历和院校层次。所以我们不讨论这个硬性条件，因为都已经校招了，所以“实习经历”只是加分项，减少企业的筛人成本。有没有比“实习经历”更重要的加分项呢？答案是有的，就是你能帮企业挣到更多的钱。</p>
+<p>这是个很简单的问题，谁能为企业创造更多的价值，企业自然就会选择谁，而不是简单的通过有无实习经历来判断。那一个企业是怎么挣钱的呢？通过合理的组合，产品经理发现需求+设计，程序员进行开发，测试工程师测试，上市后宣传部负责各种渠道的宣传，最后用户使用或者付费企业赚到了钱。</p>
+<p>所以如果你要针对开发岗来说，挣到钱的本质就是你开发的效率更快。所以你刚才说“面试禁止使用IDE “是因为他们不想要找到不能开发的水货，因为HR没有能力区分用AI开发时你是真懂还是假懂。关键在于你能不能把AI给的东西弄到实际项目来，如果能，即使你不懂代码为什么这样写也没关系，企业只是想挣钱。因此你可以对标企业的实际需求开发项目。比如，面试爱奇艺，就开发视频管理软件；面试微信，就开发通讯软件；面试steam，就开发游戏平台。你就直直地做你面试部门让你去工作时会做的事情，通过这种方式展示出我是适合这个岗位的，即使我可能不会背八股文，但是我能够帮企业挣到更多钱。你抓住这个本质，任何一个聪明的HR都会选择你。</p>
+<p>理想的情况是这样，也许进面之后这个点更重要？现在更紧迫的是要先让HR选中我的简历——这点就决定了实习已经八股的必要性，当然这也不算讨论的重点，因为时间条件不再允许。你考虑的确实很有意思，我想想我接下来得在简历里添加那种内容？  </p>
+<ol>
+<li>熟练使用各类ai开发工具？太宽泛了，改成实现一个ai agent，负责实时搜索回答国内旅游信息（因为确实做了这个，只需要免费的token便行），目前的智能体经历不知道是否够用。</li>
+<li>熟悉c++和java开发？因为目前的就业环境java占据了百分之三十&#x2F;四十，偏偏我的java开发经验最少，只有一个简单的增删改查的小数据库，但是校招其实我感觉不会太过刁难，毕竟和社招区别很大，会开发ai相关产品几乎就默认熟悉python，不过这不是重点，与其写熟悉语言完全不如写上某个项目。当前我开发的项目除开前几年的课设，就没多少能拿得出手的，关于aiagent，最能看的就是hello——agent的最终项目；c++的还能在后续写上卡哥提供的，数目不少。所以目前需要做的还是通过数个项目包装简历？</li>
+<li>关于投递简历的部分，在没有参与正式的生产活动时，我觉得通过完全符合某个部门的要求来想获得工作不是特别准确，因为开发的过程是通用的，并非是不可逾越的部分，况且校招的话，能给HR展示自己做好的几个”轮子“，应该就足够了。</li>
+</ol>
+<p>你的这些想法完全合理，但是太”naive“了，甚至有点让我觉得你没抓到本质。</p>
+<p>本质是：HR到大学挑选一个适合工作岗位的人。你的做法是：成为”通用型“人才，这样你的就业概率最大，比如你迁就就业环境弄Java，但这简直是暴殄天物！</p>
+<p>你要找的不是一万份工作，你要找的是1份工作。你能，且仅能有1份正式工作！</p>
+<p>这就意味着，通用-&gt;平庸&#x2F;一般化-&gt;无亮点。除非你是通用型no.1工人，否则HR为什么要选你呢？</p>
+<p>但是作为特长匹配工人，你虽然不是通用no.1，但是这个岗位，你最熟悉、相关经验最丰富，是匹配no.1。</p>
+<p>匹配no.1&gt;通用no.1。这是一个简单的不等式。最坏也应该是约等于。</p>
+<p>所以你要做的不是迁就这个就业环境，而是全力找出自己的最佳特长，然后把这个特长放到一个合适的岗位当中去。再次强调，你不需要为一万份工作准备简历。你只需要为一份工作准备简历。</p>
+<p>这就意味着你需要对标一个具体的工作（而非抽象的就业环境），比如某游戏公司的python开发。</p>
+<p>假如你最熟悉python-&gt;拒绝一切非python的工作</p>
+<p>假如你的特长是x-&gt;只做与x有关的工作</p>
+<p>所以你不是现在去拿自己的短处以卵击石，或者kuku补短板，这是错的。</p>
+<p>你要做的是找到自己的所有长处，然后找到最匹配你的工作岗位，这才是你”找工作“的意义，否则直接给你分配一个就完了。”找“才是最有含金量的操作。</p>
+<p>因此，你需要做的是2步：</p>
+<p>1.我到底在哪些方面有优势</p>
+<p>2.有哪些岗位就需要这些优势</p>
+<p>有一句话，叫做没有垃圾，只有放错地方的宝藏。</p>
+<p>所以你本身是非常优秀的，只是你一直拿别人的优势丈量自己。</p>
+<p>你的看法确实和我差别很大，我一直没有去寻找自身的长处，所做的准备都是为了广撒网。但目前的形势给我的感觉是寻找一份适合自己的工作困难重重，我了解到的一个方法就是放低自己的姿态，尽量包装自己的简历，当然也不是说要适配所有人，只是要尽量适配当前求职环境下HR最希望出现的那类人，前面提到java就是处于这个原因。目前我是没打算去华为od这种外包，宁愿去个中小厂商，先待几年再跳槽跑路，这是我工作的初衷。校招的难度显著小于社招——没有空窗期这个绝对致命的弱点，不会太看你开发能力，岗位开放不在少数。但是我并不觉得这能成为“寻找一份工作”，因为找到”匹配“一份工作的概率也许并不会高于“适配”一份工作的概率。不过你说的确实很有道理，优先展示自己的长处，自己能做什么才是最重要的。虽然前面提到要多补充短板，但时间看起来并不允许，所以确实你提到的“找到自己的长处”才是当下最需要着重的地方。</p>
+<p>现在思路已经理清，“找到自己的长处”才是当下最需要着重的地方。</p>
+<p>推荐你从以下角度梳理：</p>
+<p>1.我开发的最自豪的项目是什么？</p>
+<p>2.我解决的最困难的问题是什么？</p>
+<p>3.我最习惯用什么语言解决问题？</p>
+<p>4.我最喜欢解决什么类型的问题？</p>
+<p>5.什么样的事情让我着迷以至于忘记了吃饭或者睡觉？</p>
+<p>6.哪个地方是我早就想要去工作的？</p>
+<p>将以上内容回答，然后就可以整理你的简历。而后将简历发给每一个你能找到的工作入口：</p>
+<p>包括但不限于</p>
+<p>①微信公众号、各类招聘软件</p>
+<p>②学长&#x2F;学姐、辅导员等人脉进行内推</p>
+<p>③发朋友圈寻找潜在工作机会</p>
+<p>顺势而为，抓住你的所有机会和可能，你身边的机会远超你想象。中国有1.3 +billion人口，即使你只在x地工作，也有millions of的工作岗位，抓住一切可以投递的机会去投递，走向更高的更好的平台（当然也是更合适的）。而后你在此基础上提升自己的实际工作能力，走向更广阔的世界。</p>
+<p>确实，这就是我想说的，没想到你替我说出来了。目前大概也就这条路还有机会，三月还是中旬，还有大把企业的校招入口还开着，纠结有没有实习是没有结果的，优先要做的是完成春招，内推也许有机会，但是纠结实习这个心病的来源就是一个互联网公司工作的学长因为我没有实习而拒绝了我的投递请求。不过这都不算是matters的内容，这几天要干的除了包装项目和提升代码能力，最重要的就是找出能写在简历里的“特殊亮点”了，目前看来，aiagent的开发看起来是最有特点的，无论有无作用都得写上去点。大概就是这么多吧，顺便说一句，感觉你做自媒体会很有一套啊。</p>
+<p>人类是个很聪明的生物，“抱歉，你没有实习经历”的含义是，真抱歉学弟我们不太熟，我不太想帮你但是我这样说显得我很冷漠，这样吧，我找一个你肯定不可能完成的指标拒绝你让你和我都不那么尴尬。</p>
+<p>如果我是和你关系很好的学长，我会帮助你发掘你的亮点，在公司里找到一个合适你的岗位内推，如果没有，我也会告诉你how to成为一个合适于公司某岗位的前进方法。</p>
+<p>至于你说“有无作用都要写上去的 ai agent”，这是错的。因为AI agent写上去的目标是展示你的与时俱进。仍旧是老话，简历里的内容必须言之有物，惜字如金。你甚至可以不写满（比如我保研的时候简历只有半页A4），但是要保证每一个字都能与目标严格对齐或者相关。</p>
+<p>另外，我感受到你因为投递被拒绝后就产生了恐惧心理，不敢于再投递，这也是严重错误的。首先在校招，被拒绝简历或者不给内推没什么的，我们又不是king of the ncepu，本来被拒绝就是常态。只有在被拒绝中才能找到合适，每次被拒绝都是让你走向更加合适的道路。因此你要做的是直面投递，疯狂投递。</p>
+<p>强烈建议你现在梳理你的特长，哪怕梳理的很糟糕很垃圾，今天开始投递5封简历，要成功，先发疯（x），先疯狂投递简历。一个合格的投递者至少应该目标投递100+简历（并且每过几天都有改变，因为对工作越发清晰，能力越强）。最低的一个要求是每天5封，投30天，投150封。投过了的也可以再投因为你发现他根本不记得他拒绝过你，不要把自己太当回事。在投递的过程中，免费投递就是0成本，你拿0成本博取一份大几千的工作，请问还有比这更划算的活动吗？所以这种薅羊毛的机会不要让我求你疯狂投了哈哈哈哈。</p>
+<p>特长吗？让我想想。。。。大概这就是一份合格简历出现的最关键一步。</p>
+<ol>
+<li>丰富的c++开发经验？附带卡哥手里的数份预制项目。</li>
+</ol>
+<p>我怎么想来这便是最重要的一步也是仅需的一步？钻之弥坚，一个需要用c++开发的公司为什么需要一个不知道熟练开发神经网络或者智能体的人？HR准备问这方面的问题，或者说他需要这方面的人才吗似乎全面是个伪命题，或者是我之前理解的全面是完全自我曲解的。我既然大部分时间都用来开发c相关的项目，我何必要自讨苦吃，在自己的简历上添油加醋，弄得不伦不类，或者说，他们为什么一定要出现在一份简历里呢？当然目前的侧重点必须要分清楚。话说回来，你谈论的投递相关问题确实有道理，之前我子啊这方面有点幼稚的幻想，不过你一语中的，多投才是唯一正确的做法，虽然目前项目还没完全完成，但是在面试前，或者说得到面试前，包装这方面得尽可能做到最好。大概这才是正确的做法。</p>
+<p>你已经进步巨大。首先你愿意购买卡哥的课程来学习，这是非常值得肯定的。（因为你是一个与时俱进敢于投资自己的人）。其次你能够更新你的思想，听取别人的建议，这说明你是一个擅长吸收别人的经验的人。而且你还开始思考多投的意义和到底什么内容才该出现在简历上。</p>
+<p>把你所有已经做的项目都列出来，无论大小，做一个排序，把最重要的一个展开说说，做一份简历拿出去投呢。你最最骄傲的项目（最熟悉的那个项目），不要觉得这个项目很简单，和xx的yy项目比差远了。这是错的。你做的项目很好，哪怕就是最最最垃圾的大一图书管理项目，也可以获取一份月薪3k的程序员工作，因为你做的是一个完整可运行的项目。项目普通不等于没有工作，项目普通工作不过是工资低一点，你可以通过这个项目了解到你的真实水平，比如可能是月薪w。而后，你再此基础上，每天一半时间面试，一半时间精进自己，不断提高自己能够拿到的offer等级。不要刚开始就否定自己。你去投一投，3k,5k,7k,9k,11k,13k,15k，不断投，不断定位自己。行动是比思考更重要的，直面问题的行动比盲目的行动更加重要。你做卡哥的项目，其实是在逃避面对真实的自己，害怕自己什么都拿不出手，害怕自己四年的努力被别人的一句”抱歉，拒绝“所否定。但你其实很优秀，你不需要包装（编造）自己，你不需要给自己添油加醋，展现最真实的你不仅能找到最合适的工作，而且能让你在工作中发挥出自己的真实水平，过的愉快。希望你成功，如有问题欢迎你随时微信&#x2F;电话联系我。18612523133。加油好兄弟！待会把对话微信发我一份，谢谢！嘻嘻</p>
+<p>现在思路已经理清，“找到自己的长处”才是当下最需要着重的地方。</p>
+<p>推荐你从以下角度梳理：</p>
+<p>1.我开发的最自豪的项目是什么？</p>
+<p>2.我解决的最困难的问题是什么？</p>
+<p>3.我最习惯用什么语言解决问题？</p>
+<p>4.我最喜欢解决什么类型的问题？</p>
+<p>5.什么样的事情让我着迷以至于忘记了吃饭或者睡觉？</p>
+<p>6.哪个地方是我早就想要去工作的？</p>
+<p>将以上内容回答，然后就可以整理你的简历。而后将简历发给每一个你能找到的工作入口：</p>
+<p>包括但不限于</p>
+<p>①微信公众号、各类招聘软件</p>
+<p>②学长&#x2F;学姐、辅导员等人脉进行内推</p>
+<p>③发朋友圈寻找潜在工作机会</p>
+<p>顺势而为，抓住你的所有机会和可能，你身边的机会远超你想象。中国有1.3 +billion人口，即使你只在x地工作，也有millions of的工作岗位，抓住一切可以投递的机会去投递，走向更高的更好的平台（当然也是更合适的）。而后你在此基础上提升自己的实际工作能力，走向更广阔的世界。</p>
 ]]></content>
       <categories>
-        <category>默认知识库</category>
+        <category>春招</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
+        <tag>春招</tag>
+        <tag>面试</tag>
       </tags>
   </entry>
   <entry>
     <title>小说《了不起的盖茨比》到底好在哪里？</title>
-    <url>/2026/07/28/%E8%BD%AC%E8%BD%BD_%E4%BA%86%E4%B8%8D%E8%B5%B7%E7%9A%84%E7%9B%96%E8%8C%A8%E6%AF%94%E5%88%B0%E5%BA%95%E5%A5%BD%E5%9C%A8%E5%93%AA%E9%87%8C/</url>
+    <url>/2026/07/27/%E8%BD%AC%E8%BD%BD_%E4%BA%86%E4%B8%8D%E8%B5%B7%E7%9A%84%E7%9B%96%E8%8C%A8%E6%AF%94%E5%88%B0%E5%BA%95%E5%A5%BD%E5%9C%A8%E5%93%AA%E9%87%8C/</url>
     <content><![CDATA[<blockquote>
 <p><strong>转载声明</strong>：本文转载自知乎，原作者 <a href="https://www.zhihu.com/question/20706948/answer/2039997281873699646">杪秋</a>，已获授权禁止转载。此处仅为个人收藏存档，侵权即删。</p>
 </blockquote>
@@ -4649,7 +4606,7 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
   </entry>
   <entry>
     <title>How to learn _hello agent_</title>
-    <url>/2025/03/01/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_How%20to%20learn%20_hello%20agent_/</url>
+    <url>/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_How%20to%20learn%20_hello%20agent_/</url>
     <content><![CDATA[<p>_<strong>agent</strong>_是什么？</p>
 <p>能自主收集信息思考后做出反应的智能体,要求运行的每步都有_thought_与_action_，</p>
 <p>利用在线模型和在线api供应商<br><strong>推理时代</strong></p>
@@ -5269,6 +5226,49 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       </categories>
       <tags>
         <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>玩转语雀文档💡</title>
+    <url>/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/</url>
+    <content><![CDATA[<p>Hi，欢迎来到语雀～</p>
+<p>语雀文档是一个给个人和团队提供的写好文档的工具，我们希望每个人都可以快速、舒适的记录自己的所思所想，为此，语雀的文档编辑器提供了强大的能力。</p>
+<h3 id="文档：专注于编辑体验"><a href="#文档：专注于编辑体验" class="headerlink" title="文档：专注于编辑体验"></a>文档：专注于编辑体验</h3><ul>
+<li>我们提供了常用的字体设置能力，例如：调整字号大小、<strong>粗体</strong>、_斜体_、<u>下划线</u>、<del>删除线</del>、<code>代码</code>、**<font style="color:#FF4F3E;background-color:#FADB14;">颜色</font>**等，这些丰富的设置能力，可以让你的内容更清晰，更漂亮。</li>
+<li>如果你需要在文档中插入列表，语雀提供了“有序列表”和“无序列表”两种方式，我们这一段话使用的就是无序列表样式。</li>
+<li>你还可以用语雀文档记录待办事项，帮助你把要做的事记录下来，你只需点击✔️，就可以轻松记录这条待办的状态。以下就是待办样式。<ul>
+<li><input disabled="" type="checkbox"> 未完成项</li>
+<li><input checked="" disabled="" type="checkbox"> 已完成项</li>
+</ul>
+</li>
+<li>语雀文档还可以上传图片、表格、附件等等，让你在文档的世界游刃有余。认准绿色“+”号，他们都在这等你。</li>
+<li>以上提到所有功能，都可以在工具栏找到，里边还有更多神奇功能，待你挖掘。<ul>
+<li>移动端 app 的工具栏：</li>
+<li><img src="/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-0.png" class=""></li>
+<li>web 端的工具栏：</li>
+<li><img src="/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-1.png" class=""></li>
+</ul>
+</li>
+</ul>
+<h3 id="知识库：专注于文档整理"><a href="#知识库：专注于文档整理" class="headerlink" title="知识库：专注于文档整理"></a>知识库：专注于文档整理</h3><p>文档整理至关重要，做好文档整理，可以让你的知识真正积累起来，成为一生的财富，那如何利用语雀做好文档整理呢？</p>
+<p>语雀提供了“<strong>知识库</strong>”用来解决文档整理。知识库有点像电脑上的文件夹，用来存放你的文档。当一个知识库有多篇文档时，这个知识库会形成一个目录，这也是语雀的特色，可以让这个知识库变得井井有条。</p>
+<p>当你第一次使用语雀 app 时，可以点击最下边的“文档”，然后点击右上角的“+”新建知识库，再点击右上角“+”开始“新建文档”，开始你的书写✍🏻。为了方便你理解，请看下图。</p>
+<img src="/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-2.png" class="">
+
+<p>在 PC 端，新建知识库依然很方便，点击链接查看详情。<a href="https://www.yuque.com/yuque/thyzgp/gbdfpb">PC 端新建知识库</a></p>
+<h3 id="语雀还能做什么？"><a href="#语雀还能做什么？" class="headerlink" title="语雀还能做什么？"></a>语雀还能做什么？</h3><ul>
+<li>利用语雀，可以很好的做团队协同，做好团队的知识沉淀。<a href="https://www.yuque.com/about/organization">详情</a></li>
+<li>想要了解更多，查看👉<a href="https://www.yuque.com/about/help">语雀帮助中心</a></li>
+</ul>
+<h3 id="联系我们"><a href="#联系我们" class="headerlink" title="联系我们"></a>联系我们</h3><ul>
+<li>更多反馈和建议，请移步👉<a href="https://www.yuque.com/zze08m/topics">语雀移动端讨论区</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>默认知识库</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
 </search>
