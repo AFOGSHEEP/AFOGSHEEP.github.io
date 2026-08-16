@@ -209,52 +209,6 @@
       </tags>
   </entry>
   <entry>
-    <title>## 题目要点</title>
-    <url>/2025/02/28/Leetcode_%E5%9B%9B%E6%95%B0%E4%B9%8B%E5%92%8C/</url>
-    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="题目要点"><a href="#题目要点" class="headerlink" title="题目要点"></a>题目要点</h2><ul>
-<li>给定一个整数数组 <code>nums</code> 和目标值 <code>target</code>，找出所有不重复的四元组 <code>[a, b, c, d]</code>，使得 <code>a + b + c + d == target</code>。</li>
-<li>结果中不能有重复四元组。</li>
-</ul>
-<h2 id="核心思路"><a href="#核心思路" class="headerlink" title="核心思路"></a>核心思路</h2><ul>
-<li>先对数组排序。</li>
-<li>固定前两个数 <code>nums[i]</code>、<code>nums[j]</code>。</li>
-<li>剩下两个数用双指针 <code>left</code>、<code>right</code> 在有序数组中夹逼查找。</li>
-<li>遇到命中结果时，把四元组加入答案，并跳过重复值。</li>
-</ul>
-<h2 id="为什么这样做"><a href="#为什么这样做" class="headerlink" title="为什么这样做"></a>为什么这样做</h2><ul>
-<li>排序后可以用双指针把四数之和降成三层结构：<code>i</code>、<code>j</code> 枚举，<code>left/right</code> 收缩。</li>
-<li>相比暴力四重循环，复杂度从 <code>O(n^4)</code> 降到 <code>O(n^3)</code>。</li>
-</ul>
-<h2 id="关键实现细节"><a href="#关键实现细节" class="headerlink" title="关键实现细节"></a>关键实现细节</h2><ul>
-<li>使用 <code>long long</code> 计算和，避免四个 <code>int</code> 相加溢出。</li>
-<li>数组长度小于 4 时直接返回空结果。</li>
-<li>去重规则：<ul>
-<li><code>i &gt; 0 &amp;&amp; nums[i] == nums[i - 1]</code> 时跳过。</li>
-<li><code>j &gt; i + 1 &amp;&amp; nums[j] == nums[j - 1]</code> 时跳过。</li>
-<li>找到答案后，<code>left</code> 和 <code>right</code> 都要跳过重复值。</li>
-</ul>
-</li>
-</ul>
-<h2 id="常见坑"><a href="#常见坑" class="headerlink" title="常见坑"></a>常见坑</h2><ul>
-<li>返回类型必须是 <code>vector&lt;vector&lt;int&gt;&gt;</code>，不能误写成 <code>vector&lt;string&gt;</code>。</li>
-<li>结果里保存的是四个整数，不要拼成字符串。</li>
-<li>不能直接用 <code>nums.size() - 3</code> 之类的表达式而不做长度判断，短数组时容易出问题。</li>
-<li>求和一定要防溢出，尤其是数据范围较大时。</li>
-</ul>
-<h2 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h2><ul>
-<li>时间复杂度：<code>O(n^3)</code></li>
-<li>空间复杂度：<code>O(1)</code>，不算输出结果</li>
-</ul>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line"><span class="code">    vector&lt;vector&lt;int&gt;&gt; fourSum(vector&lt;int&gt;&amp; nums, int target) &#123;</span></span><br><span class="line"><span class="code">        sort(nums.begin(), nums.end());</span></span><br><span class="line"><span class="code">        vector&lt;vector&lt;int&gt;&gt; res;</span></span><br><span class="line"><span class="code">        int n = nums.size();</span></span><br><span class="line"><span class="code">        if (n &lt; 4) return res;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">        for (int i = 0; i &lt; n - 3; i++) &#123;</span></span><br><span class="line"><span class="code">            if (i &gt; 0 &amp;&amp; nums[i] == nums[i - 1]) continue;</span></span><br><span class="line"><span class="code">            for (int j = i + 1; j &lt; n - 2; j++) &#123;</span></span><br><span class="line"><span class="code">                if (j &gt; i + 1 &amp;&amp; nums[j] == nums[j - 1]) continue;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">                int left = j + 1, right = n - 1;</span></span><br><span class="line"><span class="code">                while (left &lt; right) &#123;</span></span><br><span class="line"><span class="code">                    long long sum = 1LL * nums[i] + nums[j] + nums[left] + nums[right];</span></span><br><span class="line"><span class="code">                    if (sum == target) &#123;</span></span><br><span class="line"><span class="code">                        res.push_back(&#123;nums[i], nums[j], nums[left], nums[right]&#125;);</span></span><br><span class="line"><span class="code">                        while (left &lt; right &amp;&amp; nums[left] == nums[left + 1]) left++;</span></span><br><span class="line"><span class="code">                        while (left &lt; right &amp;&amp; nums[right] == nums[right - 1]) right--;</span></span><br><span class="line"><span class="code">                        left++;</span></span><br><span class="line"><span class="code">                        right--;</span></span><br><span class="line"><span class="code">                    &#125; else if (sum &lt; target) &#123;</span></span><br><span class="line"><span class="code">                        left++;</span></span><br><span class="line"><span class="code">                    &#125; else &#123;</span></span><br><span class="line"><span class="code">                        right--;</span></span><br><span class="line"><span class="code">                    &#125;</span></span><br><span class="line"><span class="code">                &#125;</span></span><br><span class="line"><span class="code">            &#125;</span></span><br><span class="line"><span class="code">        &#125;</span></span><br><span class="line"><span class="code">        return res;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">&#125;;</span></span><br><span class="line"><span class="code"></span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>合并两个有序链表</title>
     <url>/2025/02/28/Leetcode_%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/</url>
     <content><![CDATA[<img src="/2025/02/28/Leetcode_%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/image-0.png" class="">
@@ -295,6 +249,52 @@
 
 <p>如果直接在while循环里改退出条件是二者都不空，容易导致访问空指针。</p>
 ]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>## 题目要点</title>
+    <url>/2025/02/28/Leetcode_%E5%9B%9B%E6%95%B0%E4%B9%8B%E5%92%8C/</url>
+    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="题目要点"><a href="#题目要点" class="headerlink" title="题目要点"></a>题目要点</h2><ul>
+<li>给定一个整数数组 <code>nums</code> 和目标值 <code>target</code>，找出所有不重复的四元组 <code>[a, b, c, d]</code>，使得 <code>a + b + c + d == target</code>。</li>
+<li>结果中不能有重复四元组。</li>
+</ul>
+<h2 id="核心思路"><a href="#核心思路" class="headerlink" title="核心思路"></a>核心思路</h2><ul>
+<li>先对数组排序。</li>
+<li>固定前两个数 <code>nums[i]</code>、<code>nums[j]</code>。</li>
+<li>剩下两个数用双指针 <code>left</code>、<code>right</code> 在有序数组中夹逼查找。</li>
+<li>遇到命中结果时，把四元组加入答案，并跳过重复值。</li>
+</ul>
+<h2 id="为什么这样做"><a href="#为什么这样做" class="headerlink" title="为什么这样做"></a>为什么这样做</h2><ul>
+<li>排序后可以用双指针把四数之和降成三层结构：<code>i</code>、<code>j</code> 枚举，<code>left/right</code> 收缩。</li>
+<li>相比暴力四重循环，复杂度从 <code>O(n^4)</code> 降到 <code>O(n^3)</code>。</li>
+</ul>
+<h2 id="关键实现细节"><a href="#关键实现细节" class="headerlink" title="关键实现细节"></a>关键实现细节</h2><ul>
+<li>使用 <code>long long</code> 计算和，避免四个 <code>int</code> 相加溢出。</li>
+<li>数组长度小于 4 时直接返回空结果。</li>
+<li>去重规则：<ul>
+<li><code>i &gt; 0 &amp;&amp; nums[i] == nums[i - 1]</code> 时跳过。</li>
+<li><code>j &gt; i + 1 &amp;&amp; nums[j] == nums[j - 1]</code> 时跳过。</li>
+<li>找到答案后，<code>left</code> 和 <code>right</code> 都要跳过重复值。</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见坑"><a href="#常见坑" class="headerlink" title="常见坑"></a>常见坑</h2><ul>
+<li>返回类型必须是 <code>vector&lt;vector&lt;int&gt;&gt;</code>，不能误写成 <code>vector&lt;string&gt;</code>。</li>
+<li>结果里保存的是四个整数，不要拼成字符串。</li>
+<li>不能直接用 <code>nums.size() - 3</code> 之类的表达式而不做长度判断，短数组时容易出问题。</li>
+<li>求和一定要防溢出，尤其是数据范围较大时。</li>
+</ul>
+<h2 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h2><ul>
+<li>时间复杂度：<code>O(n^3)</code></li>
+<li>空间复杂度：<code>O(1)</code>，不算输出结果</li>
+</ul>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line"><span class="code">    vector&lt;vector&lt;int&gt;&gt; fourSum(vector&lt;int&gt;&amp; nums, int target) &#123;</span></span><br><span class="line"><span class="code">        sort(nums.begin(), nums.end());</span></span><br><span class="line"><span class="code">        vector&lt;vector&lt;int&gt;&gt; res;</span></span><br><span class="line"><span class="code">        int n = nums.size();</span></span><br><span class="line"><span class="code">        if (n &lt; 4) return res;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">        for (int i = 0; i &lt; n - 3; i++) &#123;</span></span><br><span class="line"><span class="code">            if (i &gt; 0 &amp;&amp; nums[i] == nums[i - 1]) continue;</span></span><br><span class="line"><span class="code">            for (int j = i + 1; j &lt; n - 2; j++) &#123;</span></span><br><span class="line"><span class="code">                if (j &gt; i + 1 &amp;&amp; nums[j] == nums[j - 1]) continue;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">                int left = j + 1, right = n - 1;</span></span><br><span class="line"><span class="code">                while (left &lt; right) &#123;</span></span><br><span class="line"><span class="code">                    long long sum = 1LL * nums[i] + nums[j] + nums[left] + nums[right];</span></span><br><span class="line"><span class="code">                    if (sum == target) &#123;</span></span><br><span class="line"><span class="code">                        res.push_back(&#123;nums[i], nums[j], nums[left], nums[right]&#125;);</span></span><br><span class="line"><span class="code">                        while (left &lt; right &amp;&amp; nums[left] == nums[left + 1]) left++;</span></span><br><span class="line"><span class="code">                        while (left &lt; right &amp;&amp; nums[right] == nums[right - 1]) right--;</span></span><br><span class="line"><span class="code">                        left++;</span></span><br><span class="line"><span class="code">                        right--;</span></span><br><span class="line"><span class="code">                    &#125; else if (sum &lt; target) &#123;</span></span><br><span class="line"><span class="code">                        left++;</span></span><br><span class="line"><span class="code">                    &#125; else &#123;</span></span><br><span class="line"><span class="code">                        right--;</span></span><br><span class="line"><span class="code">                    &#125;</span></span><br><span class="line"><span class="code">                &#125;</span></span><br><span class="line"><span class="code">            &#125;</span></span><br><span class="line"><span class="code">        &#125;</span></span><br><span class="line"><span class="code">        return res;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">&#125;;</span></span><br><span class="line"><span class="code"></span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Leetcode</category>
       </categories>
@@ -480,53 +480,6 @@
       </tags>
   </entry>
   <entry>
-    <title>有效的括号</title>
-    <url>/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/</url>
-    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/image-0.png" class="">
-
-
-
-<p>初解没有考虑分开的单类符号的情况,显然光暴力枚举没有未来。还是需要用到栈这个工具。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> length = s.<span class="built_in">size</span>();</span><br><span class="line">    <span class="keyword">if</span>(length % <span class="number">2</span> == <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>((s == <span class="string">&quot;()[]&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;()&#123;&#125;[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;()[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;[]()&quot;</span>) || (s == <span class="string">&quot;[]()&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;[]&#123;&#125;()&quot;</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; length /<span class="number">2</span>; ++i)&#123;</span><br><span class="line">        <span class="type">char</span> c1 = s[i];</span><br><span class="line">        <span class="type">char</span> c2 = s[length <span class="number">-1</span> - i];</span><br><span class="line">        <span class="keyword">if</span>((c1 == <span class="string">&#x27;(&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;)&#x27;</span> ) || (c1 == <span class="string">&#x27;&#123;&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;&#125;&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>标准解法</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.<span class="built_in">size</span>() % <span class="number">2</span> == <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">char</span>&gt; st;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="string">&#x27;(&#x27;</span> || c == <span class="string">&#x27;[&#x27;</span> || c == <span class="string">&#x27;&#123;&#x27;</span>) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(c);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (st.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                <span class="type">char</span> t = st.<span class="built_in">top</span>();</span><br><span class="line">                st.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span> ((c == <span class="string">&#x27;)&#x27;</span> &amp;&amp; t != <span class="string">&#x27;(&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;]&#x27;</span> &amp;&amp; t != <span class="string">&#x27;[&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;&#125;&#x27;</span> &amp;&amp; t != <span class="string">&#x27;&#123;&#x27;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> st.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>盛最多水的容器</title>
-    <url>/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/</url>
-    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/image-0.png" class="">
-
-
-
-
-
-<p>一开始的暴力解</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">maxArea</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> n = height.<span class="built_in">size</span>();</span><br><span class="line">        <span class="type">int</span> max_Area = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> left = <span class="number">0</span>; left &lt; n; ++left) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> right = left + <span class="number">1</span>; right &lt; n; ++right) &#123;</span><br><span class="line">                <span class="type">int</span> area = <span class="built_in">min</span>(height[left], height[right]) * (right - left);</span><br><span class="line">                max_Area = <span class="built_in">max</span>(max_Area, area);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max_Area;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>超时了</p>
-<p>标准解答双指针</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">maxArea</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> left = <span class="number">0</span>, right = (<span class="type">int</span>)height.<span class="built_in">size</span>() - <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">            <span class="type">int</span> h = <span class="built_in">min</span>(height[left], height[right]);</span><br><span class="line">            ans = <span class="built_in">max</span>(ans, h * (right - left));</span><br><span class="line">            <span class="keyword">if</span> (height[left] &lt; height[right]) &#123;</span><br><span class="line">                ++left;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                --right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>正则表达式匹配</title>
     <url>/2025/02/28/Leetcode_%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/</url>
     <content><![CDATA[<p>给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 ‘.’ 和 ‘*’ 的正则表达式匹配。</p>
@@ -666,6 +619,53 @@
 <li><code>&lt;font style=&quot;color:rgb(215, 186, 125);background-color:rgba(255, 255, 255, 0.1);&quot;&gt;.*&lt;/font&gt;</code> 匹配 <code>&lt;font style=&quot;color:rgb(215, 186, 125);background-color:rgba(255, 255, 255, 0.1);&quot;&gt;&quot;aaab&quot;&lt;/font&gt;</code>：可以</li>
 </ol>
 ]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>盛最多水的容器</title>
+    <url>/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/</url>
+    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/image-0.png" class="">
+
+
+
+
+
+<p>一开始的暴力解</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">maxArea</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> n = height.<span class="built_in">size</span>();</span><br><span class="line">        <span class="type">int</span> max_Area = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> left = <span class="number">0</span>; left &lt; n; ++left) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> right = left + <span class="number">1</span>; right &lt; n; ++right) &#123;</span><br><span class="line">                <span class="type">int</span> area = <span class="built_in">min</span>(height[left], height[right]) * (right - left);</span><br><span class="line">                max_Area = <span class="built_in">max</span>(max_Area, area);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max_Area;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>超时了</p>
+<p>标准解答双指针</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">maxArea</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> left = <span class="number">0</span>, right = (<span class="type">int</span>)height.<span class="built_in">size</span>() - <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">            <span class="type">int</span> h = <span class="built_in">min</span>(height[left], height[right]);</span><br><span class="line">            ans = <span class="built_in">max</span>(ans, h * (right - left));</span><br><span class="line">            <span class="keyword">if</span> (height[left] &lt; height[right]) &#123;</span><br><span class="line">                ++left;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                --right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>有效的括号</title>
+    <url>/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/</url>
+    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/image-0.png" class="">
+
+
+
+<p>初解没有考虑分开的单类符号的情况,显然光暴力枚举没有未来。还是需要用到栈这个工具。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> length = s.<span class="built_in">size</span>();</span><br><span class="line">    <span class="keyword">if</span>(length % <span class="number">2</span> == <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>((s == <span class="string">&quot;()[]&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;()&#123;&#125;[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;()[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;[]()&quot;</span>) || (s == <span class="string">&quot;[]()&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;[]&#123;&#125;()&quot;</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; length /<span class="number">2</span>; ++i)&#123;</span><br><span class="line">        <span class="type">char</span> c1 = s[i];</span><br><span class="line">        <span class="type">char</span> c2 = s[length <span class="number">-1</span> - i];</span><br><span class="line">        <span class="keyword">if</span>((c1 == <span class="string">&#x27;(&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;)&#x27;</span> ) || (c1 == <span class="string">&#x27;&#123;&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;&#125;&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>标准解法</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.<span class="built_in">size</span>() % <span class="number">2</span> == <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">char</span>&gt; st;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="string">&#x27;(&#x27;</span> || c == <span class="string">&#x27;[&#x27;</span> || c == <span class="string">&#x27;&#123;&#x27;</span>) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(c);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (st.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                <span class="type">char</span> t = st.<span class="built_in">top</span>();</span><br><span class="line">                st.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span> ((c == <span class="string">&#x27;)&#x27;</span> &amp;&amp; t != <span class="string">&#x27;(&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;]&#x27;</span> &amp;&amp; t != <span class="string">&#x27;[&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;&#125;&#x27;</span> &amp;&amp; t != <span class="string">&#x27;&#123;&#x27;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> st.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Leetcode</category>
       </categories>
@@ -836,6 +836,149 @@
       </categories>
       <tags>
         <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>抽象记忆点</title>
+    <url>/2024/05/07/OLD_2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/</url>
+    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
+<li><strong>软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。</strong><ul>
+<li>这表明现代软件的规模和复杂性，需要采取有效的管理和设计方法。</li>
+</ul>
+</li>
+<li><strong>软件系统中的单个错误值可能导致整个系统失败。</strong><ul>
+<li>这凸显了在编写软件时准确性和健壮性的重要性。</li>
+</ul>
+</li>
+<li><strong>软件系统中可能的交互数量随着系统组件数量的增加呈指数增长。</strong><ul>
+<li>这提醒我们，随着系统复杂性的增加，需要考虑和管理其交互。</li>
+</ul>
+</li>
+<li><strong>抽象提供了一种以更简单的术语呈现复杂对象的方法。</strong><ul>
+<li>通过抽象，我们可以隐藏细节，使用户能够更轻松地理解和操作对象。</li>
+</ul>
+</li>
+<li><strong>抽象将用户分为客户端和实现者，每个都有不同的任务。这种分离有时被称为抽象屏障。</strong><ul>
+<li>这种分离使系统的设计更模块化和可维护，同时提供了清晰的界面和实现。</li>
+</ul>
+</li>
+<li><strong>抽象描述了许多可能的实现方式，而封装防止客户端窥视这些实现。</strong><ul>
+<li>封装确保了实现细节的安全性和私密性，使得对象的内部状态可以受到保护。</li>
+</ul>
+</li>
+<li><strong>客户端与对象交互的方式称为该对象的接口。</strong><ul>
+<li>接口定义了对象可用的方法和操作，隐藏了实现的细节。</li>
+</ul>
+</li>
+<li><strong>抽象减少了软件系统中的组件数量，降低了系统的最大复杂性。</strong><ul>
+<li>通过抽象，我们可以简化系统的设计和实现，减少潜在的错误和复杂度。</li>
+</ul>
+</li>
+<li><strong>C++的结构体缺乏封装性，因为它们的实现即为接口。</strong><ul>
+<li>这强调了使用类而不是结构体的重要性，以实现更好的封装和抽象。</li>
+</ul>
+</li>
+<li><strong>C++类的概念是接口与实现的实现。</strong><ul>
+<li>类提供了一种结构化的方法来组织代码和数据，同时隐藏了实现的细节。</li>
+</ul>
+</li>
+<li><strong>类中列为public的成员形成了该类的接口，并对任何人可见。</strong><ul>
+<li>这强调了设计良好的接口的重要性，以促进代码的重用和可维护性。</li>
+</ul>
+</li>
+<li><strong>类中列为private的成员属于类的实现部分，只能被该类的成员函数查看。</strong><ul>
+<li>封装私有成员确保了对实现细节的访问限制，提高了代码的安全性和可靠性。</li>
+</ul>
+</li>
+<li><strong>构造函数允许实现者从类被创建的那一刻开始强制执行不变量。</strong><ul>
+<li>构造函数确保了对象的有效初始化，并在创建对象时执行必要的设置和验证。</li>
+</ul>
+</li>
+<li><strong>私有成员函数允许实现者在不暴露实现细节给客户端的情况下分解代码。</strong><ul>
+<li>私有成员函数提供了一种将代码组织成更小、更易管理的部分的方法，同时保持了接口的简洁性和清晰性。</li>
+</ul>
+</li>
+<li><strong>类的实现通常分为包含类定义的.h文件和包含类实现的.cpp文件。</strong><ul>
+<li>这种文件分区方法有助于组织代码，并使其更易于维护和理解。</li>
+</ul>
+</li>
+<li><strong>在实现之前设计类接口，以避免过度专门化接口。</strong><ul>
+<li>这强调了设计良好的接口对于软件系统的灵活性和可维护性的重要性。</li>
+</ul>
+</li>
+</ol>
+<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><ol>
+<li><strong>在我们讨论抽象时，我们谈到接口和模块化如何指数地降低了系统的最大复杂性。你能想到现实世界中引入间接性如何使得复杂系统更易于管理的例子吗？</strong><ul>
+<li>在现实世界中，一个例子是网络路由器。路由器通过在网络设备之间引入抽象层，如IP地址和路由表，来管理网络流量的路由。这种抽象层使得网络管理员可以轻松地管理和配置网络，而不必直接处理底层硬件和协议细节。</li>
+</ul>
+</li>
+<li><strong>getFrequency和setFrequency等函数的动机是什么，相对于只有一个公有频率数据成员来说？</strong><ul>
+<li>使用getFrequency和setFrequency函数而不是公有频率数据成员的动机在于封装。通过提供访问和修改频率的公共接口，类可以隐藏其内部实现细节，并且可以在必要时对这些操作进行验证和限制，确保数据的一致性和有效性。</li>
+</ul>
+</li>
+<li><strong>构造函数是在什么时候调用的？为什么构造函数有用？</strong><ul>
+<li>构造函数在创建类的新实例时被调用。它用于初始化新对象的状态，确保对象在被使用之前处于一个已知的有效状态。构造函数可以执行必要的设置和验证，以确保对象的一致性和完整性。</li>
+</ul>
+</li>
+<li><strong>公有成员函数和私有成员函数有什么区别？</strong><ul>
+<li>公有成员函数是类的接口的一部分，可以被任何人访问和调用。私有成员函数是类的实现的一部分，只能被类的其他成员函数调用，对外部代码不可见。</li>
+</ul>
+</li>
+<li><strong>类的.h文件中放置什么？.cpp文件中呢？</strong><ul>
+<li>类的.h文件包含类的声明和接口，包括成员变量和公有成员函数的声明。.cpp文件包含类的实现细节，包括构造函数、析构函数和其他私有成员函数的定义。</li>
+</ul>
+</li>
+<li><strong>我们在很大程度上谈论了流库和STL，却没有提及这些库在幕后是如何实现的。解释一下为什么抽象使得可以在不完全了解其工作原理的情况下使用这些库。</strong><ul>
+<li>抽象使得可以在不了解其实现细节的情况下使用这些库，因为它们提供了清晰简洁的接口，隐藏了复杂的内部实现。通过使用这些接口，开发人员可以方便地使用库中提供的功能，而不必担心其底层的实现细节。</li>
+</ul>
+</li>
+<li><strong>假设C++的设计略有不同，即标记为私有的数据成员只能读取但不能写入。也就是说，如果一个名为volume的数据成员被标记为私有，那么客户端可以通过写入myObject.volume来读取值，但不能直接写入volume变量。这将阻止类的客户端错误地修改实现，因为任何可能改变对象数据成员的操作都必须通过公共接口进行。然而，这种设置存在严重的设计缺陷，会使得类的实现变得困难。这个缺陷是什么？（提示：回想一下之前的音量&#x2F;衰减例子）</strong><ul>
+<li>这种设置的主要设计缺陷在于它破坏了封装性。封装的一个关键原则是将数据和操作放在一起，并确保它们是一致的。如果数据成员只能读取而不能写入，那么类的内部状态可能会在未受控制的情况下被外部修改，这会导致不一致和不可预测的行为，从而破坏了类的封装性和可维护性。</li>
+</ul>
+</li>
+<li>下面是一个表示购物清单的类的接口：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>实现GroceryList类的代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    map&lt;string, string&gt; items;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span> </span>&#123;</span><br><span class="line">        items[item] = quantity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        items.<span class="built_in">erase</span>(item);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            <span class="keyword">return</span> items[item];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>; <span class="comment">// Return empty string if item not found</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol start="9">
+<li>为什么使用GroceryList类而不只是使用原始的map&lt;string, string&gt;？  <ul>
+<li>GroceryList类提供了更高层次的抽象，使得添加、删除和查询商品更加简单和直观。它封装了map的细节，提供了更清晰的接口，使得代码更易于维护和理解。</li>
+</ul>
+</li>
+<li>GroceryList类需要构造函数吗？为什么或为什么不？  <ul>
+<li>是的，GroceryList类需要构造函数。构造函数用于初始化类的内部状态，例如清单中包含的商品列表。</li>
+</ul>
+</li>
+<li>给出你在STL中遇到的带参数的构造函数的一个例子。  <ul>
+<li>一个例子是vector的构造函数，它接受一个初始大小作为参数：<code>vector&lt;int&gt; vec(10);</code></li>
+</ul>
+</li>
+<li>参数化构造函数有什么用？  <ul>
+<li>参数化构造函数允许我们在创建对象时提供初始值，从而初始化对象的状态。这使得对象在创建时可以立即设置为特定的状态，而不需要调用额外的初始化函数。</li>
+</ul>
+</li>
+<li>下面是一个代表Keno游戏的类KenoGame的接口：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>实现KenoGame类的代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; chosenNumbers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line">        chosenNumbers.<span class="built_in">push_back</span>(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> chosenNumbers.<span class="built_in">size</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span> </span>&#123;</span><br><span class="line">        <span class="type">size_t</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : chosenNumbers) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">find</span>(values.<span class="built_in">begin</span>(), values.<span class="built_in">end</span>(), num) != values.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol start="14">
+<li>参考STL容器章节中Snake的实现。设计并实现一个代表蛇的类。在公共接口中支持哪些操作？如何实现它？<ul>
+<li>蛇类的公共接口可能包括移动、增长、检查碰撞等操作。它可以通过一个链表或数组来存储蛇的身体部分，每次移动时更新身体部分的位置。</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
       </tags>
   </entry>
   <entry>
@@ -1384,149 +1527,6 @@
 <li>解释为什么静态成员函数不能被标记为 <code>const</code>。</li>
 </ol>
 <p>静态成员函数不与类的任何特定实例绑定，因此没有 <code>this</code> 指针。由于 <code>const</code> 成员函数的含义是不修改通过 <code>this</code> 指针访问的成员数据，而静态成员函数没有 <code>this</code> 指针，所以不可能声明一个静态成员函数为 <code>const</code>。静态成员函数的行为与常量性无关，因为它们不操作类的实例状态。</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>抽象记忆点</title>
-    <url>/2024/05/07/OLD_2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/</url>
-    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
-<li><strong>软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。</strong><ul>
-<li>这表明现代软件的规模和复杂性，需要采取有效的管理和设计方法。</li>
-</ul>
-</li>
-<li><strong>软件系统中的单个错误值可能导致整个系统失败。</strong><ul>
-<li>这凸显了在编写软件时准确性和健壮性的重要性。</li>
-</ul>
-</li>
-<li><strong>软件系统中可能的交互数量随着系统组件数量的增加呈指数增长。</strong><ul>
-<li>这提醒我们，随着系统复杂性的增加，需要考虑和管理其交互。</li>
-</ul>
-</li>
-<li><strong>抽象提供了一种以更简单的术语呈现复杂对象的方法。</strong><ul>
-<li>通过抽象，我们可以隐藏细节，使用户能够更轻松地理解和操作对象。</li>
-</ul>
-</li>
-<li><strong>抽象将用户分为客户端和实现者，每个都有不同的任务。这种分离有时被称为抽象屏障。</strong><ul>
-<li>这种分离使系统的设计更模块化和可维护，同时提供了清晰的界面和实现。</li>
-</ul>
-</li>
-<li><strong>抽象描述了许多可能的实现方式，而封装防止客户端窥视这些实现。</strong><ul>
-<li>封装确保了实现细节的安全性和私密性，使得对象的内部状态可以受到保护。</li>
-</ul>
-</li>
-<li><strong>客户端与对象交互的方式称为该对象的接口。</strong><ul>
-<li>接口定义了对象可用的方法和操作，隐藏了实现的细节。</li>
-</ul>
-</li>
-<li><strong>抽象减少了软件系统中的组件数量，降低了系统的最大复杂性。</strong><ul>
-<li>通过抽象，我们可以简化系统的设计和实现，减少潜在的错误和复杂度。</li>
-</ul>
-</li>
-<li><strong>C++的结构体缺乏封装性，因为它们的实现即为接口。</strong><ul>
-<li>这强调了使用类而不是结构体的重要性，以实现更好的封装和抽象。</li>
-</ul>
-</li>
-<li><strong>C++类的概念是接口与实现的实现。</strong><ul>
-<li>类提供了一种结构化的方法来组织代码和数据，同时隐藏了实现的细节。</li>
-</ul>
-</li>
-<li><strong>类中列为public的成员形成了该类的接口，并对任何人可见。</strong><ul>
-<li>这强调了设计良好的接口的重要性，以促进代码的重用和可维护性。</li>
-</ul>
-</li>
-<li><strong>类中列为private的成员属于类的实现部分，只能被该类的成员函数查看。</strong><ul>
-<li>封装私有成员确保了对实现细节的访问限制，提高了代码的安全性和可靠性。</li>
-</ul>
-</li>
-<li><strong>构造函数允许实现者从类被创建的那一刻开始强制执行不变量。</strong><ul>
-<li>构造函数确保了对象的有效初始化，并在创建对象时执行必要的设置和验证。</li>
-</ul>
-</li>
-<li><strong>私有成员函数允许实现者在不暴露实现细节给客户端的情况下分解代码。</strong><ul>
-<li>私有成员函数提供了一种将代码组织成更小、更易管理的部分的方法，同时保持了接口的简洁性和清晰性。</li>
-</ul>
-</li>
-<li><strong>类的实现通常分为包含类定义的.h文件和包含类实现的.cpp文件。</strong><ul>
-<li>这种文件分区方法有助于组织代码，并使其更易于维护和理解。</li>
-</ul>
-</li>
-<li><strong>在实现之前设计类接口，以避免过度专门化接口。</strong><ul>
-<li>这强调了设计良好的接口对于软件系统的灵活性和可维护性的重要性。</li>
-</ul>
-</li>
-</ol>
-<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><ol>
-<li><strong>在我们讨论抽象时，我们谈到接口和模块化如何指数地降低了系统的最大复杂性。你能想到现实世界中引入间接性如何使得复杂系统更易于管理的例子吗？</strong><ul>
-<li>在现实世界中，一个例子是网络路由器。路由器通过在网络设备之间引入抽象层，如IP地址和路由表，来管理网络流量的路由。这种抽象层使得网络管理员可以轻松地管理和配置网络，而不必直接处理底层硬件和协议细节。</li>
-</ul>
-</li>
-<li><strong>getFrequency和setFrequency等函数的动机是什么，相对于只有一个公有频率数据成员来说？</strong><ul>
-<li>使用getFrequency和setFrequency函数而不是公有频率数据成员的动机在于封装。通过提供访问和修改频率的公共接口，类可以隐藏其内部实现细节，并且可以在必要时对这些操作进行验证和限制，确保数据的一致性和有效性。</li>
-</ul>
-</li>
-<li><strong>构造函数是在什么时候调用的？为什么构造函数有用？</strong><ul>
-<li>构造函数在创建类的新实例时被调用。它用于初始化新对象的状态，确保对象在被使用之前处于一个已知的有效状态。构造函数可以执行必要的设置和验证，以确保对象的一致性和完整性。</li>
-</ul>
-</li>
-<li><strong>公有成员函数和私有成员函数有什么区别？</strong><ul>
-<li>公有成员函数是类的接口的一部分，可以被任何人访问和调用。私有成员函数是类的实现的一部分，只能被类的其他成员函数调用，对外部代码不可见。</li>
-</ul>
-</li>
-<li><strong>类的.h文件中放置什么？.cpp文件中呢？</strong><ul>
-<li>类的.h文件包含类的声明和接口，包括成员变量和公有成员函数的声明。.cpp文件包含类的实现细节，包括构造函数、析构函数和其他私有成员函数的定义。</li>
-</ul>
-</li>
-<li><strong>我们在很大程度上谈论了流库和STL，却没有提及这些库在幕后是如何实现的。解释一下为什么抽象使得可以在不完全了解其工作原理的情况下使用这些库。</strong><ul>
-<li>抽象使得可以在不了解其实现细节的情况下使用这些库，因为它们提供了清晰简洁的接口，隐藏了复杂的内部实现。通过使用这些接口，开发人员可以方便地使用库中提供的功能，而不必担心其底层的实现细节。</li>
-</ul>
-</li>
-<li><strong>假设C++的设计略有不同，即标记为私有的数据成员只能读取但不能写入。也就是说，如果一个名为volume的数据成员被标记为私有，那么客户端可以通过写入myObject.volume来读取值，但不能直接写入volume变量。这将阻止类的客户端错误地修改实现，因为任何可能改变对象数据成员的操作都必须通过公共接口进行。然而，这种设置存在严重的设计缺陷，会使得类的实现变得困难。这个缺陷是什么？（提示：回想一下之前的音量&#x2F;衰减例子）</strong><ul>
-<li>这种设置的主要设计缺陷在于它破坏了封装性。封装的一个关键原则是将数据和操作放在一起，并确保它们是一致的。如果数据成员只能读取而不能写入，那么类的内部状态可能会在未受控制的情况下被外部修改，这会导致不一致和不可预测的行为，从而破坏了类的封装性和可维护性。</li>
-</ul>
-</li>
-<li>下面是一个表示购物清单的类的接口：</li>
-</ol>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>实现GroceryList类的代码如下：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    map&lt;string, string&gt; items;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span> </span>&#123;</span><br><span class="line">        items[item] = quantity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        items.<span class="built_in">erase</span>(item);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            <span class="keyword">return</span> items[item];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>; <span class="comment">// Return empty string if item not found</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<ol start="9">
-<li>为什么使用GroceryList类而不只是使用原始的map&lt;string, string&gt;？  <ul>
-<li>GroceryList类提供了更高层次的抽象，使得添加、删除和查询商品更加简单和直观。它封装了map的细节，提供了更清晰的接口，使得代码更易于维护和理解。</li>
-</ul>
-</li>
-<li>GroceryList类需要构造函数吗？为什么或为什么不？  <ul>
-<li>是的，GroceryList类需要构造函数。构造函数用于初始化类的内部状态，例如清单中包含的商品列表。</li>
-</ul>
-</li>
-<li>给出你在STL中遇到的带参数的构造函数的一个例子。  <ul>
-<li>一个例子是vector的构造函数，它接受一个初始大小作为参数：<code>vector&lt;int&gt; vec(10);</code></li>
-</ul>
-</li>
-<li>参数化构造函数有什么用？  <ul>
-<li>参数化构造函数允许我们在创建对象时提供初始值，从而初始化对象的状态。这使得对象在创建时可以立即设置为特定的状态，而不需要调用额外的初始化函数。</li>
-</ul>
-</li>
-<li>下面是一个代表Keno游戏的类KenoGame的接口：</li>
-</ol>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>实现KenoGame类的代码如下：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; chosenNumbers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line">        chosenNumbers.<span class="built_in">push_back</span>(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> chosenNumbers.<span class="built_in">size</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span> </span>&#123;</span><br><span class="line">        <span class="type">size_t</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : chosenNumbers) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">find</span>(values.<span class="built_in">begin</span>(), values.<span class="built_in">end</span>(), num) != values.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<ol start="14">
-<li>参考STL容器章节中Snake的实现。设计并实现一个代表蛇的类。在公共接口中支持哪些操作？如何实现它？<ul>
-<li>蛇类的公共接口可能包括移动、增长、检查碰撞等操作。它可以通过一个链表或数组来存储蛇的身体部分，每次移动时更新身体部分的位置。</li>
-</ul>
-</li>
-</ol>
 ]]></content>
       <categories>
         <category>学习笔记</category>
@@ -3919,7 +3919,26 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
         <category>学习笔记</category>
       </categories>
       <tags>
-        <tag>linux</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>level1</title>
+    <url>/2025/02/28/PwnCollege_level1/</url>
+    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>level2</p>
+]]></content>
+      <categories>
+        <category>PwnCollege</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>PwnCollege</tag>
       </tags>
   </entry>
   <entry>
@@ -3983,25 +4002,6 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    # Open socket</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 41</span><br><span class="line">    syscall</span><br><span class="line">    # Store socket fd in rbx</span><br><span class="line">    mov rbx, rax</span><br><span class="line"></span><br><span class="line">    # Bind socket to address</span><br><span class="line">    mov rdi, rbx</span><br><span class="line">    lea rsi, sa_family_t</span><br><span class="line">    mov rdx, 16</span><br><span class="line">    mov rax, 49</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Listen on socket</span><br><span class="line">    mov rdi, rbx</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rax, 50</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    accept_jump:</span><br><span class="line">    # Accept a connection</span><br><span class="line">    mov rdi, rbx</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 43</span><br><span class="line">    syscall</span><br><span class="line">    # Save new fd for bound connection in r12</span><br><span class="line">    mov r12, rax</span><br><span class="line"></span><br><span class="line">    # Fork the process and let the child do the serving</span><br><span class="line">    mov rax, 57</span><br><span class="line">    syscall</span><br><span class="line">    cmp rax, 0</span><br><span class="line">    je serve_connection</span><br><span class="line">    # Close the connection if parent</span><br><span class="line">    mov rdi, r12</span><br><span class="line">    mov rax, 3</span><br><span class="line">    syscall</span><br><span class="line">    # Then go back to listening</span><br><span class="line">    jmp accept_jump</span><br><span class="line"></span><br><span class="line">    serve_connection:</span><br><span class="line">    # Close listening socket</span><br><span class="line">    mov rdi, rbx</span><br><span class="line">    mov rax, 3</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Read from the connection</span><br><span class="line">    mov rdi, r12</span><br><span class="line">    lea rsi, read_buffer</span><br><span class="line">    mov rdx, [read_packet_length]</span><br><span class="line">    mov rax, 0</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Figure out what file was requested</span><br><span class="line">    lea rdi, read_buffer</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    lea rdx, space</span><br><span class="line">    call get_nth_substr</span><br><span class="line">    mov r13, rax</span><br><span class="line">    lea rdi, read_buffer</span><br><span class="line">    mov rsi, 2</span><br><span class="line">    call get_nth_substr</span><br><span class="line">    mov r14, rax</span><br><span class="line">    sub r14, 1</span><br><span class="line">    # r13 = start (exclusive), r14 = end (inclusive)</span><br><span class="line">    mov rdi, r13</span><br><span class="line">    mov rsi, r14</span><br><span class="line">    lea rdx, file_name_buffer</span><br><span class="line">    call write_to_buf</span><br><span class="line">    # Filename is now stored in file_name_buffer</span><br><span class="line"></span><br><span class="line">    # Check request type</span><br><span class="line">    mov dil, [read_buffer]</span><br><span class="line">    # Compare to &quot;G&quot;</span><br><span class="line">    cmp dil, 0x47</span><br><span class="line">    # Continue (GET process) if G, otherwise do POST</span><br><span class="line">    jne POST</span><br><span class="line"></span><br><span class="line">    GET:</span><br><span class="line">        # Open that file</span><br><span class="line">        lea rdi, file_name_buffer</span><br><span class="line">        mov rsi, 0</span><br><span class="line">        mov rdx, 0</span><br><span class="line">        mov rax, 2</span><br><span class="line">        syscall</span><br><span class="line">        mov r13, rax</span><br><span class="line"></span><br><span class="line">        # Read file contents</span><br><span class="line">        mov rdi, r13</span><br><span class="line">        lea rsi, file_read_buffer</span><br><span class="line">        mov rdx, 1024</span><br><span class="line">        mov rax, 0</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Close the file</span><br><span class="line">        mov rdi, r13</span><br><span class="line">        mov rax, 3</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Write status to connection</span><br><span class="line">        mov rdi, r12</span><br><span class="line">        lea rsi, write_static</span><br><span class="line">        mov rdx, 19</span><br><span class="line">        mov rax, 1</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Write file contents to connection</span><br><span class="line">        lea rdi, file_read_buffer</span><br><span class="line">        call get_len</span><br><span class="line">        mov rdx, rax</span><br><span class="line">        sub rdx, 1</span><br><span class="line">        mov rdi, r12</span><br><span class="line">        lea rsi, file_read_buffer</span><br><span class="line">        mov rax, 1</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        jmp exit</span><br><span class="line"></span><br><span class="line">    POST:</span><br><span class="line">        # Open that file</span><br><span class="line">        lea rdi, file_name_buffer</span><br><span class="line">        mov rsi, 0x41 # O_CREAT, O_WRONLY</span><br><span class="line">        mov rdx, 0777</span><br><span class="line">        mov rax, 2</span><br><span class="line">        syscall</span><br><span class="line">        mov r13, rax</span><br><span class="line"></span><br><span class="line">        # Get the POST content</span><br><span class="line">        lea rdi, read_buffer</span><br><span class="line">        mov rsi, 1</span><br><span class="line">        lea rdx, double_cr_lf</span><br><span class="line">        call get_nth_substr</span><br><span class="line">        mov rsi, rax</span><br><span class="line">        add rsi, 1</span><br><span class="line"></span><br><span class="line">        # Get write length</span><br><span class="line">        mov rdi, rsi</span><br><span class="line">        call get_len</span><br><span class="line">        mov rdx, rax</span><br><span class="line">        # Get rid of the pesky null byte</span><br><span class="line">        sub rdx, 1</span><br><span class="line">        # Write to file</span><br><span class="line">        mov rdi, r13</span><br><span class="line">        mov rax, 1</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Close the file</span><br><span class="line">        mov rdi, r13</span><br><span class="line">        mov rax, 3</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Write status to connection</span><br><span class="line">        mov rdi, r12</span><br><span class="line">        lea rsi, write_static</span><br><span class="line">        mov rdx, 19</span><br><span class="line">        mov rax, 1</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">    exit:</span><br><span class="line">    # Close the connection</span><br><span class="line">    mov rdi, r12</span><br><span class="line">    mov rax, 3</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Sys exit</span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 60</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Get the length of a null-terminated string (including the first null byte)</span><br><span class="line">    # Args:</span><br><span class="line">    # rdi - buffer we&#x27;re checking the length of</span><br><span class="line">    # rax - length</span><br><span class="line">    get_len:</span><br><span class="line">        mov rax, 0</span><br><span class="line">        get_len_loop:</span><br><span class="line">            # See if rdi + rax-th byte is null</span><br><span class="line">            mov r10, rdi</span><br><span class="line">            add r10, rax</span><br><span class="line">            mov r10, [r10]</span><br><span class="line">            add rax, 1</span><br><span class="line">            cmp r10, 0x00</span><br><span class="line">            jne get_len_loop</span><br><span class="line">        ret</span><br><span class="line"></span><br><span class="line">    # Copy the bytes spanning rdi to rsi to the buffer rdx</span><br><span class="line">    # rdx MUST BE LONGER THAN rsi - rdi BYTES, rdi MUST BE LESS THAN rsi</span><br><span class="line">    # Args:</span><br><span class="line">    # rdi - start (exclusive) of the string we&#x27;re copying</span><br><span class="line">    # rsi - end (inclusive) of the string we&#x27;re copying</span><br><span class="line">    # rdx - buffer we&#x27;re copying to</span><br><span class="line">    # rax - unchanged</span><br><span class="line">    write_to_buf:</span><br><span class="line">        write_to_buf_loop:</span><br><span class="line">            add rdi, 1</span><br><span class="line">            mov r9, [rdi]</span><br><span class="line">            mov [rdx], r9</span><br><span class="line">            add rdx, 1</span><br><span class="line">            cmp rdi, rsi</span><br><span class="line">            jne write_to_buf_loop</span><br><span class="line">        mov byte ptr [rdx], 0x00</span><br><span class="line">        ret</span><br><span class="line"></span><br><span class="line">    # Get address of the (last byte of) the nth occurence of substring in string (occurences must be non-overlapping)</span><br><span class="line">    # ONLY GUARANTEED TO WORK ON NULL-TERMINATED STRINGS</span><br><span class="line">    # Args:</span><br><span class="line">    # rdi - target string address</span><br><span class="line">    # rsi - n</span><br><span class="line">    # rdx - substring</span><br><span class="line"></span><br><span class="line">    # rax - address of nth character</span><br><span class="line">    get_nth_substr:</span><br><span class="line">        # Set rcx (ocurrence counter)</span><br><span class="line">        mov rcx, 0</span><br><span class="line">        # Set r10 (to traverse substring)</span><br><span class="line">        mov r10, rdx</span><br><span class="line">        check_character_loop:</span><br><span class="line">            # r9b = character at position</span><br><span class="line">            mov r9b, [rdi]</span><br><span class="line">            # If string&#x27;s terminated, obviously the substring doesn&#x27;t occur enough times</span><br><span class="line">            cmp r9b, 0x00</span><br><span class="line">            je not_enough_occurrences</span><br><span class="line">            # Step through substring iff r9b = current byte</span><br><span class="line">            cmp r9b, byte ptr [r10]</span><br><span class="line">            jne character_not_equal</span><br><span class="line">                add r10, 1</span><br><span class="line">                # If we&#x27;ve reached the end of the substring, increment counter and reset r10</span><br><span class="line">                cmp byte ptr [r10], 0x00</span><br><span class="line">                jne after_comparison</span><br><span class="line">                    mov r10, rdx</span><br><span class="line">                    add rcx, 1</span><br><span class="line">                    jmp after_comparison</span><br><span class="line">            character_not_equal:</span><br><span class="line">                # Reset r10 without adding to count</span><br><span class="line">                mov r10, rdx</span><br><span class="line">            after_comparison:</span><br><span class="line">            # Return address if we&#x27;ve got the nth ocurrence</span><br><span class="line">            cmp rcx, rsi</span><br><span class="line">            je match</span><br><span class="line">            # Otherwise increment and continue</span><br><span class="line">            add rdi, 1</span><br><span class="line">            jmp check_character_loop</span><br><span class="line">        match:</span><br><span class="line">        mov rax, rdi</span><br><span class="line">        ret</span><br><span class="line">        not_enough_occurrences:</span><br><span class="line">        mov rax, -1</span><br><span class="line">        ret</span><br><span class="line"></span><br><span class="line">.section .data</span><br><span class="line">    # sockaddr_in struct</span><br><span class="line">    sa_family_t: .word 2</span><br><span class="line">    bind_port: .word 0x5000</span><br><span class="line">    bind_address: .double 0x00000000</span><br><span class="line">    pad: .byte 0,0,0,0,0,0,0,0</span><br><span class="line">    # Make empty buffers to read to</span><br><span class="line">    read_buffer: .space 1024</span><br><span class="line">    file_name_buffer: .space 1024</span><br><span class="line">    file_read_buffer: .space 1024</span><br><span class="line">    # Constants</span><br><span class="line">    # Yes it&#x27;s dumb to use a quad word for this, but it simplifies copying it to the register</span><br><span class="line">    read_packet_length: .quad 0x0000000000000400</span><br><span class="line">    write_static: .string &quot;HTTP/1.0 200 OK\r\n\r\n&quot;</span><br><span class="line">    space: .string &quot; &quot;</span><br><span class="line">    double_cr_lf: .string &quot;\r\n\r\n&quot;</span><br></pre></td></tr></table></figure>
 
 <p>网上找的完整版。没写出来post的部分</p>
-]]></content>
-      <categories>
-        <category>PwnCollege</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>PwnCollege</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>level1</title>
-    <url>/2025/02/28/PwnCollege_level1/</url>
-    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>level2</p>
 ]]></content>
       <categories>
         <category>PwnCollege</category>
