@@ -1,4 +1,47 @@
 <div data-aos="fade-up" class="max-w-4xl mx-auto">
   <h1 class="text-center text-3xl font-bold mb-12"><%= __('tags') %></h1>
-  <div class="tag-cloud"><% site.tags.sort('length', -1).each(function(tag) { %><a href="<%= url_for(tag.path) %>" style="font-size:<%= Math.min(2, 0.8 + tag.length/site.tags.first().length*1.2).toFixed(1) %>rem"><%= tag.name %> <sup class="opacity-50"><%= tag.length %></sup></a><% }) %></div>
+  <% var groups = theme.tag_groups || []; %>
+  <% var byName = {}; site.tags.each(function(t){ byName[t.name] = t; }); %>
+  <% var assigned = {}; %>
+  <div class="tag-groups">
+    <% groups.forEach(function(g, gi) {
+      var items = [];
+      (g.tags || []).forEach(function(n){ if (byName[n]) { items.push(byName[n]); assigned[n] = true; } });
+      var total = 0; items.forEach(function(t){ total += t.length; }); %>
+    <div class="tag-group" data-aos="fade-up" data-aos-delay="<%= gi * 60 %>">
+      <button class="tag-group-header" type="button" aria-expanded="false">
+        <span class="tag-group-icon"><i data-lucide="<%= g.icon || 'folder' %>"></i></span>
+        <span class="tag-group-name"><%= g.name %></span>
+        <span class="tag-group-count"><%= items.length %> 标签 · <%= total %> 篇</span>
+        <span class="tag-group-chevron"><i data-lucide="chevron-down"></i></span>
+      </button>
+      <div class="tag-group-body">
+        <div class="tag-group-inner">
+          <% items.forEach(function(t, ii) { %>
+          <a href="<%= url_for(t.path) %>" class="tag-chip" style="animation-delay:<%= ii * 30 %>ms"><%= t.name %><span class="tag-chip-count"><%= t.length %></span></a>
+          <% }) %>
+          <% if (!items.length) { %><span class="tag-empty">该分组暂无标签</span><% } %>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+    <% var others = []; site.tags.each(function(t){ if (!assigned[t.name]) others.push(t); }); %>
+    <% if (others.length) { %>
+    <div class="tag-group" data-aos="fade-up" data-aos-delay="<%= groups.length * 60 %>">
+      <button class="tag-group-header" type="button" aria-expanded="false">
+        <span class="tag-group-icon"><i data-lucide="more-horizontal"></i></span>
+        <span class="tag-group-name">其他</span>
+        <span class="tag-group-count"><%= others.length %> 标签</span>
+        <span class="tag-group-chevron"><i data-lucide="chevron-down"></i></span>
+      </button>
+      <div class="tag-group-body">
+        <div class="tag-group-inner">
+          <% others.forEach(function(t, ii) { %>
+          <a href="<%= url_for(t.path) %>" class="tag-chip" style="animation-delay:<%= ii * 30 %>ms"><%= t.name %><span class="tag-chip-count"><%= t.length %></span></a>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </div>
 </div>

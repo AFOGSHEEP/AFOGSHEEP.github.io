@@ -1,7 +1,7 @@
 <% var cover = post_cover(post); var isIndex = typeof isIndex !== 'undefined' ? isIndex : false; %>
 <a href="<%= url_for(post.path) %>" class="post-card glass-card flex flex-col gap-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 <%= post.top ? 'featured' : '' %>" data-aos="fade-up" data-aos-duration="500">
 
-  <% if (cover) { %><div class="rounded-lg bg-cover bg-center flex-shrink-0" style="background-image:url('<%= cover %>'); height:120px;"></div><% } %>
+  <% if (cover) { %><div class="card-cover rounded-lg bg-cover bg-center flex-shrink-0" style="background-image:url('<%= cover %>'); height:120px;"></div><% } %>
 
   <% if (post.categories && post.categories.length > 0) { %>
   <div class="inline-flex items-center gap-1 text-xs font-medium uppercase tracking-wider text-accent-500 dark:text-accent-400">

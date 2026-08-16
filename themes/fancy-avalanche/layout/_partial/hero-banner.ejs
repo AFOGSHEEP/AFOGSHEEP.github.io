@@ -8,8 +8,8 @@
   <% } %>
   <% if (hero.social_links !== false && theme.social) { %>
   <div class="flex gap-4">
-    <% var si = { github:'github', email:'mail', twitter:'twitter', zhihu:'message-circle', rss:'rss' }; for (var key in theme.social) { %>
-    <a href="<%= theme.social[key] %>" target="_blank" rel="noopener noreferrer" class="hero-social-btn" aria-label="<%= key %>"><i data-lucide="<%= si[key]||'link' %>" class="w-5 h-5"></i></a>
+    <% var si = { github:'github', email:'mail', twitter:'twitter', zhihu:'message-circle', rss:'rss' }; var sn = { github:'GitHub', email:'Email', twitter:'Twitter', zhihu:'知乎', rss:'RSS' }; for (var key in theme.social) { %>
+    <a href="<%= theme.social[key] %>" target="_blank" rel="noopener noreferrer" class="hero-social-btn" data-tooltip="<%= sn[key] || key %>" aria-label="<%= sn[key] || key %>"><i data-lucide="<%= si[key]||'link' %>" class="w-5 h-5"></i></a>
     <% } %>
   </div>
   <% } %>

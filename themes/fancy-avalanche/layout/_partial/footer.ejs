@@ -2,10 +2,17 @@
   <div class="max-w-7xl mx-auto px-4 py-4 text-center">
     <% if (theme.social) { %>
     <div class="flex justify-center gap-6 mb-3">
-      <% var si = { github:'github', email:'mail', twitter:'twitter', zhihu:'message-circle', rss:'rss' }; for (var key in theme.social) { %>
-      <a href="<%= theme.social[key] %>" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-full text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/10 transition-all" aria-label="<%= key %>"><i data-lucide="<%= si[key] || 'link' %>" class="w-5 h-5"></i></a>
+      <% var si = { github:'github', email:'mail', twitter:'twitter', zhihu:'message-circle', rss:'rss' }; var sn = { github:'GitHub', email:'Email', twitter:'Twitter', zhihu:'知乎', rss:'RSS' }; for (var key in theme.social) { %>
+      <a href="<%= theme.social[key] %>" target="_blank" rel="noopener noreferrer" class="social-btn flex items-center justify-center w-10 h-10 rounded-full text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/10 transition-all" data-tooltip="<%= sn[key] || key %>" aria-label="<%= sn[key] || key %>"><i data-lucide="<%= si[key] || 'link' %>" class="w-5 h-5"></i></a>
       <% } %>
     </div>
+    <% } %>
+    <% if (theme.components && theme.components.view_counter) { %>
+    <div class="flex justify-center gap-4 text-xs text-zinc-400 dark:text-zinc-500 mb-3">
+      <span id="busuanzi_container_site_pv" style="display:none"><i data-lucide="eye" class="w-3.5 h-3.5 inline -mt-0.5"></i> 访问 <span id="busuanzi_value_site_pv"></span> 次</span>
+      <span id="busuanzi_container_site_uv" style="display:none"><i data-lucide="users" class="w-3.5 h-3.5 inline -mt-0.5"></i> 访客 <span id="busuanzi_value_site_uv"></span> 人</span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-no-instant></script>
     <% } %>
     <div class="text-sm text-zinc-400 dark:text-zinc-500">
       <p>&copy; <%= theme.footer.since ? theme.footer.since + ' - ' : '' %><%= new Date().getFullYear() %> <%= config.author || config.title %>. Powered by <a href="https://hexo.io" target="_blank" class="hover:text-accent-500">Hexo</a> &amp; Fancy Avalanche.</p>

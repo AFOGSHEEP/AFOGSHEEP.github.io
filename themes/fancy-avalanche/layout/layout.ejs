@@ -15,8 +15,12 @@
   <%- partial('_partial/search', { page, config, theme, site }) %>
 
   <% if (theme.effects && theme.effects.back_to_top) { %>
-  <button id="back-to-top" class="fixed bottom-8 right-8 z-50 w-10 h-10 rounded-full flex items-center justify-center glass opacity-0 invisible" aria-label="回到顶部">
-    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  <button id="back-to-top" class="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full flex items-center justify-center glass opacity-0 invisible" aria-label="回到顶部">
+    <svg class="progress-ring" viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
+      <circle class="ring-bg" cx="24" cy="24" r="20"></circle>
+      <circle class="ring-fg" cx="24" cy="24" r="20"></circle>
+    </svg>
+    <i data-lucide="arrow-up" class="btt-icon w-5 h-5"></i>
   </button>
   <% } %>
 

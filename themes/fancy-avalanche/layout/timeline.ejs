@@ -1,0 +1,23 @@
+<div data-aos="fade-up" class="max-w-4xl mx-auto">
+  <h1 class="text-center text-3xl font-bold mb-12"><%= page.title || __('archives') %></h1>
+  <% var posts = site.posts.sort('date', -1); var cy = null; %>
+  <div class="timeline-page">
+    <% posts.each(function(post) {
+      var yr = format_date(post.date, 'year');
+      if (yr !== cy) { cy = yr; %>
+    <div class="tl-year" data-aos="fade-right"><span class="tl-year-num"><%= yr %></span></div>
+    <% } %>
+    <div class="tl-item" data-aos="fade-up" data-aos-duration="400">
+      <div class="tl-dot"></div>
+      <span class="tl-date"><%= format_date(post.date, 'date') %></span>
+      <div class="tl-card glass-card">
+        <% var cover = post_cover(post); if (cover) { %><a href="<%= url_for(post.path) %>" class="tl-cover" style="background-image:url('<%= cover %>')"></a><% } %>
+        <div class="tl-body">
+          <a href="<%= url_for(post.path) %>" class="tl-title"><%= post.title %></a>
+          <% if (post.categories && post.categories.length > 0) { var c0 = post.categories.data ? post.categories.data[0].name : (typeof post.categories[0] === 'object' ? post.categories[0].name : post.categories[0]); %><span class="tl-cat"><i data-lucide="folder" class="w-3 h-3 inline -mt-0.5"></i> <%= c0 %></span><% } %>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>

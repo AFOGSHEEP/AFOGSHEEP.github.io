@@ -4,7 +4,7 @@ date: 2025-1-06 00:53:29
 categories:
   - 学习笔记
 tags:
-  - linux
+  - Linux
 ---
 
 ---

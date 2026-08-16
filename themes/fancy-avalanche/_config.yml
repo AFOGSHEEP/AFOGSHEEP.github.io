@@ -15,6 +15,7 @@ navbar:
   menu:
     首页: /
     归档: /archives/
+    时间轴: /timeline/
     分类: /categories/
     标签: /tags/
     关于: /about/
@@ -202,8 +203,30 @@ components:
   notification: false    # 公告弹窗
   music_player: false    # 背景音乐
   friend_links: false    # 友链
-  view_counter: false    # 阅读量统计
-  timeline: false        # 时间轴页面
+  view_counter: true     # 阅读量统计（不蒜子）
+  timeline: true         # 时间轴页面
+
+# ---------- 标签分级分组 ----------
+# 未归组的标签会自动归入「其他」组
+tag_groups:
+  - name: 力扣
+    icon: code
+    tags: [Leetcode, 算法, 链表, 双指针, 数组, 交换, 翻转, 递归]
+  - name: 科技
+    icon: cpu
+    tags: [C++, 深度学习, 数据库, Linux, linux, C语言]
+  - name: 安全
+    icon: shield
+    tags: [CTF, 网安, PwnCollege]
+  - name: 阅读
+    icon: book-open
+    tags: [书评, 了不起的盖茨比, 转载]
+  - name: 笔记
+    icon: book-marked
+    tags: [学习笔记]
+  - name: 求职
+    icon: briefcase
+    tags: [面试, 春招]
 
 # ---------- 页脚 ----------
 footer:
