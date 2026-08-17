@@ -202,7 +202,7 @@ hr {
   line-height: 1.9;
   word-break: break-word;
   overflow-wrap: break-word;
-  font-family: 'Plus Jakarta Sans', 'Inter', 'Noto Serif SC', 'Source Serif 4', Georgia, serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', 'LXGW WenKai', 'Noto Serif SC', 'Source Serif 4', Georgia, serif;
 }
 .article-body p { margin-bottom: 1.6em; text-align: justify; text-justify: inter-ideograph; }
 .article-body ul, .article-body ol { margin-bottom: 1.5em; }
@@ -628,11 +628,11 @@ footer {
 [data-font="source-serif"] body,
 [data-font="source-serif"] .post-card .card-title,
 [data-font="source-serif"] .article-body {
-  font-family: 'Source Serif 4', 'Noto Serif SC', Georgia, 'Iowan Old Style', serif !important;
+  font-family: 'LXGW WenKai', 'Source Serif 4', 'Noto Serif SC', Georgia, 'Iowan Old Style', serif !important;
 }
 [data-font="source-serif"] h1, [data-font="source-serif"] h2,
 [data-font="source-serif"] h3, [data-font="source-serif"] h4 {
-  font-family: 'Source Serif 4', 'Noto Serif SC', Georgia, serif !important;
+  font-family: 'LXGW WenKai', 'Source Serif 4', 'Noto Serif SC', Georgia, serif !important;
 }
 
 /* Font switcher button */
