@@ -111,11 +111,22 @@
     "Et pourtant vous serez semblable à cette ordure, / À cette horrible infection, / Étoile de mes yeux, soleil de ma nature, / Vous, mon ange et ma passion ! — Baudelaire",
     "Alors, ô ma beauté, dites à la vermine / Qui vous mangera de baisers / Que j'ai gardé la forme et l'essence divine / De mes amours décomposés ! — Baudelaire, Une Charogne"
   ];
-  var idx = Math.floor(Math.random() * quotes.length);
+  var history = [];  // 记录最近显示的索引，最多保留5条
   var typing = false;
 
-  function show(n) {
-    idx = ((n % quotes.length) + quotes.length) % quotes.length;
+  // 随机选择，但避开最近5条
+  function randomIndex() {
+    if (quotes.length <= 1) return 0;
+    var next;
+    do { next = Math.floor(Math.random() * quotes.length); } while (history.indexOf(next) !== -1);
+    // 加入历史，保持最多5条
+    history.push(next);
+    if (history.length > 5) history.shift();
+    return next;
+  }
+
+  function show() {
+    var idx = randomIndex();
     var el = document.getElementById('terminal-quote-text');
     var text = quotes[idx];
     el.textContent = '';
@@ -130,9 +141,9 @@
 
   window._termRefresh = function() {
     typing = false;
-    setTimeout(function(){ show(idx + 1); }, 150);
+    setTimeout(show, 150);
   };
 
-  if (document.getElementById('terminal-quote-text')) setTimeout(function(){ show(idx); }, 500);
+  if (document.getElementById('terminal-quote-text')) setTimeout(show, 500);
 })();
 </script>
