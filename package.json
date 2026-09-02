@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "hexo generate",
+    "tw": "tailwindcss -c tailwind.config.js -i tailwind.input.css -o themes/fancy-avalanche/source/css/tailwind.css --minify",
+    "build": "npm run tw && hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",
-    "server": "hexo server"
+    "server": "npm run tw && hexo server"
   },
   "hexo": {
     "version": "7.3.0"
@@ -27,5 +28,8 @@
     "hexo-server": "^3.0.0",
     "hexo-theme-butterfly": "^5.5.4",
     "hexo-wordcount": "^6.0.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
   }
 }

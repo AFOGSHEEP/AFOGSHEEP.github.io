@@ -1,7 +1,14 @@
-<%# Background — slideshow with auto-rotate + manual controls %>
-<% var bg = theme.background || {}; var bgType = bg.type || 'image'; %>
+<%# Background — ambient (default, pure CSS) | slideshow with auto-rotate + manual controls %>
+<% var bg = theme.background || {}; var bgType = bg.type || 'ambient'; %>
 
-<% if (bgType === 'image' || bgType === 'slideshow') { %>
+<% if (bgType === 'ambient') { %>
+<div class="ambient-bg" aria-hidden="true">
+  <div class="ambient-blob ambient-blob-1"></div>
+  <div class="ambient-blob ambient-blob-2"></div>
+  <div class="ambient-grain"></div>
+</div>
+
+<% } else if (bgType === 'image' || bgType === 'slideshow') { %>
 <div id="bg-layer-a" class="bg-fullscreen" style="background-image:url('<%= bg.image_url || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2560&q=100' %>'); z-index:-1;"></div>
 <div id="bg-layer-b" class="bg-fullscreen" style="opacity:0; z-index:-1;"></div>
 

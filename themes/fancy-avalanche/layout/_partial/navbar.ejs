@@ -1,34 +1,49 @@
 <nav class="fixed top-0 left-0 right-0 z-50 h-[4.5rem] border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-xl transition-colors duration-300">
   <div class="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6 lg:px-8">
 
-    <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 hover:text-accent-500 dark:hover:text-accent-400 transition-colors">
-      <% if (theme.images && theme.images.avatar && theme.images.avatar.url) { %><img src="<%= theme.images.avatar.url %>" alt="avatar" class="w-16 h-16 rounded-full ring-2 ring-zinc-200 dark:ring-zinc-700"><% } %>
-      <%= config.title %>
+    <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 hover:text-accent-500 dark:hover:text-accent-400 transition-colors min-w-0">
+      <% if (theme.images && theme.images.avatar && theme.images.avatar.url) { %><img src="<%= theme.images.avatar.url %>" alt="avatar" class="w-16 h-16 rounded-full ring-2 ring-zinc-200 dark:ring-zinc-700" width="64" height="64"><% } %>
+      <span class="truncate"><%= config.title %></span>
+      <span class="nav-date hidden xl:inline" aria-hidden="true"><span id="nav-date"></span></span>
     </a>
 
-    <div class="hidden md:flex items-center gap-1">
+    <div class="hidden md:flex items-center gap-0.5">
       <% if (theme.navbar.menu) { for (var key in theme.navbar.menu) { var path = theme.navbar.menu[key]; var isActive = (page.path === path) || (path !== '/' && page.path && page.path.indexOf(path.replace(/\//g,'')) === 0); %>
-      <a href="<%= path %>" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <%= isActive ? 'text-accent-500 dark:text-accent-400 bg-accent-50 dark:bg-accent-500/10' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800' %>"><%= key %></a>
+      <a href="<%= path %>" class="nav-link <%= isActive ? 'nav-link-active' : '' %>"><%= key %></a>
       <% }} %>
-      <% if (theme.search && theme.search.enable) { %>
-      <button onclick="toggleSearch()" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="搜索"><i data-lucide="search" class="w-4 h-4"></i></button>
-      <% } %>
-      <% if (theme.color_scheme && theme.color_scheme.toggle) { %>
-      <button id="theme-toggle" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="切换主题"><i data-lucide="sun" class="w-4 h-4"></i></button>
-      <% } %>
-      <button id="font-switcher" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="切换字体" title="切换字体"><i data-lucide="type" class="w-4 h-4"></i></button>
+      <div class="flex items-center gap-1 ml-2 pl-2 border-l border-zinc-200 dark:border-zinc-800">
+        <% if (theme.search && theme.search.enable) { %>
+        <button onclick="toggleSearch()" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all flex items-center" aria-label="搜索">
+          <i data-lucide="search" class="w-4 h-4"></i><kbd class="nav-kbd hidden lg:inline-flex">/</kbd>
+        </button>
+        <% } %>
+        <% if (theme.color_scheme && theme.color_scheme.toggle) { %>
+        <div class="hidden lg:flex items-center gap-0.5 p-0.5 rounded-full border border-zinc-200 dark:border-zinc-800 ml-1" role="group" aria-label="界面风格">
+          <button class="style-chip" data-style-btn="whale" aria-label="鲸蓝瓷面" title="鲸蓝瓷面"><span class="style-dot" style="background:#4d6bfe"></span></button>
+          <button class="style-chip" data-style-btn="porcelain" aria-label="素瓷" title="素瓷"><span class="style-dot" style="background:#10a37f"></span></button>
+        </div>
+        <button data-mode-toggle class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="切换深色/浅色"><i data-mode-icon data-lucide="sun" class="w-4 h-4"></i></button>
+        <% } %>
+        <button id="font-switcher" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="切换字体" title="切换字体"><i data-lucide="type" class="w-4 h-4"></i></button>
+      </div>
     </div>
 
     <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-zinc-500" aria-label="菜单"><i data-lucide="menu" class="w-5 h-5"></i></button>
   </div>
 
+  <div id="nav-progress" class="nav-progress" aria-hidden="true"></div>
+
   <div id="mobile-menu" class="md:hidden hidden border-t border-zinc-200 dark:border-zinc-800 px-4 pb-4 pt-2">
     <% if (theme.navbar.menu) { for (var key in theme.navbar.menu) { var path = theme.navbar.menu[key]; var isActive = (page.path === path) || (path !== '/' && page.path && page.path.indexOf(path.replace(/\//g,'')) === 0); %>
     <a href="<%= path %>" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all <%= isActive ? 'text-accent-500 dark:text-accent-400 bg-accent-50 dark:bg-accent-500/10' : 'text-zinc-500 dark:text-zinc-400' %>"><%= key %></a>
     <% }} %>
-    <div class="flex gap-2 px-4 pt-2">
+    <div class="flex gap-2 px-4 pt-2 items-center">
       <% if (theme.search && theme.search.enable) { %><button onclick="toggleSearch()" class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400">搜索</button><% } %>
-      <% if (theme.color_scheme && theme.color_scheme.toggle) { %><button id="theme-toggle-mobile" class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400">切换主题</button><% } %>
+      <% if (theme.color_scheme && theme.color_scheme.toggle) { %>
+      <button class="style-chip-text" data-style-btn="whale" aria-pressed="false">鲸蓝</button>
+      <button class="style-chip-text" data-style-btn="porcelain" aria-pressed="false">素瓷</button>
+      <button data-mode-toggle class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400"><i data-mode-icon data-lucide="sun" class="w-4 h-4 inline"></i> 明暗</button>
+      <% } %>
     </div>
   </div>
 </nav>

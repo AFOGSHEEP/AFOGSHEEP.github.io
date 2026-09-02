@@ -239,5 +239,88 @@
       }
     });
 
+    // Style-theme (鲸蓝 whale / 素瓷 porcelain) + light-dark mode switcher.
+    // Buttons carry data-style-btn / data-mode-toggle so desktop and mobile
+    // variants bind identically; re-run after pjax via InstantClick hook.
+    window.__faTheme = function () {
+      var root = document.documentElement;
+      function curStyle() { return root.getAttribute('data-style') === 'porcelain' ? 'porcelain' : 'whale'; }
+      function syncMeta() {
+        var m = document.querySelector('meta[name="theme-color"]');
+        var v = getComputedStyle(root).getPropertyValue('--fa-theme-color').trim();
+        if (m && v) m.setAttribute('content', v);
+      }
+      function paint() {
+        var s = curStyle();
+        var isDark = root.classList.contains('dark');
+        document.querySelectorAll('[data-style-btn]').forEach(function (b) {
+          b.setAttribute('aria-pressed', b.getAttribute('data-style-btn') === s ? 'true' : 'false');
+        });
+        document.querySelectorAll('[data-mode-icon]').forEach(function (i) {
+          i.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        });
+        if (window.lucide) lucide.createIcons();
+        syncMeta();
+      }
+      function applyMode(isDark) {
+        root.classList.toggle('dark', isDark);
+        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+      }
+      function setStyle(name) {
+        if (name === 'whale') root.removeAttribute('data-style');
+        else root.setAttribute('data-style', name);
+        try { localStorage.setItem('fa-style', name); } catch (e) {}
+        // signature look per brand: 素瓷 → OpenAI's charcoal dark · 鲸蓝 → DeepSeek's cool light
+        applyMode(name === 'porcelain');
+        paint();
+      }
+      function toggleMode() {
+        applyMode(!root.classList.contains('dark'));
+        paint();
+      }
+      document.querySelectorAll('[data-style-btn]').forEach(function (b) {
+        if (b.dataset.faBound) return;
+        b.dataset.faBound = '1';
+        b.addEventListener('click', function () { setStyle(b.getAttribute('data-style-btn')); });
+      });
+      document.querySelectorAll('[data-mode-toggle]').forEach(function (b) {
+        if (b.dataset.faBound) return;
+        b.dataset.faBound = '1';
+        b.addEventListener('click', toggleMode);
+      });
+      paint();
+    };
+    window.__faTheme();
+
+    // Editorial masthead date + global scroll progress hairline.
+    // Exposed as window.__faWidgets so InstantClick's 'change' hook can
+    // re-run it after pjax swaps the navbar DOM.
+    window.__faWidgets = function () {
+      var d = document.getElementById('nav-date');
+      if (d) {
+        var now = new Date();
+        var weeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+        var sep = '<span class="nav-date-sep">·</span>';
+        d.innerHTML = now.getFullYear() + sep + pad(now.getMonth() + 1) + sep + pad(now.getDate()) + sep + weeks[now.getDay()];
+      }
+      var bar = document.getElementById('nav-progress');
+      if (bar && !bar.dataset.bound) {
+        bar.dataset.bound = '1';
+        var ticking = false;
+        var update = function () {
+          ticking = false;
+          var max = document.documentElement.scrollHeight - window.innerHeight;
+          var p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+          bar.style.transform = 'scaleX(' + p + ')';
+        };
+        window.addEventListener('scroll', function () {
+          if (!ticking) { ticking = true; requestAnimationFrame(update); }
+        }, { passive: true });
+        update();
+      }
+    };
+    window.__faWidgets();
+
   });
 })();

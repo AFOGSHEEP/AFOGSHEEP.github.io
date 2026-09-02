@@ -1,6 +1,6 @@
 <% if (page.posts && page.posts.length > 0) { %>
 <div class="bento-grid">
-  <% page.posts.each(function(post) { %><%- partial('_partial/post-card', { post: post, isIndex: true }) %><% }) %>
+  <% page.posts.each(function(post, idx) { %><%- partial('_partial/post-card', { post: post, isIndex: true, idx: idx }) %><% }) %>
 </div>
 <% } else { %>
 <div class="text-center py-20 text-[var(--c-text3)]">

@@ -14,6 +14,7 @@
     </div>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-no-instant></script>
     <% } %>
+    <div class="footer-ornament" aria-hidden="true">❋</div>
     <div class="text-sm text-zinc-400 dark:text-zinc-500">
       <p>&copy; <%= theme.footer.since ? theme.footer.since + ' - ' : '' %><%= new Date().getFullYear() %> <%= config.author || config.title %>. Powered by <a href="https://hexo.io" target="_blank" class="hover:text-accent-500">Hexo</a> &amp; Fancy Avalanche.</p>
       <% if (theme.footer.custom_text) { %><p class="mt-2"><%- theme.footer.custom_text %></p><% } %>

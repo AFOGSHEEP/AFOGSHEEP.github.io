@@ -10,11 +10,20 @@
   </div>
 </div>
 <script data-no-instant>
-  <% var sd = []; site.posts.each(function(p) { sd.push({ t: p.title, u: url_for(p.path), e: p.excerpt ? p.excerpt.replace(/<[^>]+>/g,'').slice(0,120) : '', c: p.content ? p.content.replace(/<[^>]+>/g,'').slice(0,500) : '', d: format_date(p.date, 'date') }); }) %>
-  var __SD = <%- JSON.stringify(sd) %>;
+  // Search index is lazy-fetched from /search.json (generated at build time,
+  // see scripts/trimmed-search.js) — nothing search-related ships inline.
+  var __SD = null;
   function performSearch(q) {
     var r = document.getElementById('search-results');
     if (!q || q.trim().length < 1) { r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]"><%= __("search_empty") %></div>'; return; }
+    if (!__SD) {
+      r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]">加载索引…</div>';
+      fetch('<%= url_for("search.json") %>')
+        .then(function (res) { return res.json(); })
+        .then(function (data) { __SD = data; performSearch(q); })
+        .catch(function () { r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]">索引加载失败</div>'; });
+      return;
+    }
     var kw = q.toLowerCase(), hits = __SD.filter(function(i){ return i.t.toLowerCase().includes(kw)||i.e.toLowerCase().includes(kw)||i.c.toLowerCase().includes(kw); }).slice(0,15);
     if (!hits.length) { r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]">没有找到相关文章</div>'; return; }
     r.innerHTML = hits.map(function(i){ var re = new RegExp('('+kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'); return '<a href="'+i.u+'" class="search-result"><div class="result-title">'+i.t.replace(re,'<mark style="background:var(--c-accent-bg);color:var(--c-accent)">$1</mark>')+'</div><div class="text-xs text-[var(--c-text3)] mt-1">'+i.d+'</div></a>'; }).join('');

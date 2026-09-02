@@ -122,7 +122,8 @@ images:
 # ---------- 背景系统 ----------
 background:
   # 全局默认背景类型
-  type: slideshow  # slideshow | image | static | gradient | canvas | three
+  # ambient：纯 CSS 暖调渐层环境光（零网络请求、零 JS，推荐）
+  type: ambient  # ambient | slideshow | image | static | gradient | canvas | three
   # 单张背景图（type=image 时生效）
   image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80'
   # 背景轮播图（type=slideshow 时生效，可任意增减）
@@ -246,7 +247,7 @@ cdn:
   highlight_js: https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js
   highlight_css: https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/dracula.min.css
   instantclick: https://cdn.jsdelivr.net/npm/instantclick@3.1.1/instantclick.min.js
-  lucide: https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js
+  lucide: https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js
 
 # ---------- SEO ----------
 seo:

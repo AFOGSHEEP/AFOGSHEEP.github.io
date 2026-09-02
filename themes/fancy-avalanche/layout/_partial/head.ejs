@@ -1,6 +1,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#FEFBF7">
+<meta name="theme-color" content="#f9fbff">
+<script>
+/* pre-paint boot: apply saved style theme (鲸蓝/素瓷) + light/dark before first paint */
+(function(){try{var s=localStorage.getItem('fa-style');if(s==='porcelain')document.documentElement.setAttribute('data-style','porcelain');if(localStorage.getItem('theme')!=='light')document.documentElement.classList.add('dark');}catch(e){}})();
+</script>
 <title><%= page.title ? page.title + ' | ' + config.title : config.title %></title>
 <% if (page.description || config.description) { %><meta name="description" content="<%= page.description || config.description %>"><% } %>
 <meta name="author" content="<%= config.author %>">
@@ -19,28 +23,15 @@
 <link rel="alternate" href="/atom.xml" title="<%= config.title %>" type="application/rss+xml">
 <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
 
-<!-- Tailwind CSS v3 CDN (battle-tested) -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        colors: {
-          accent: { 50: '#fdf8f0', 100: '#faf0dc', 200: '#f2dfb4', 300: '#ECD08C', 400: '#E2BE6E', 500: '#D4A853', 600: '#B8892F', 700: '#9A6F22' },
-          surface: { DEFAULT: '#FEFBF7', dark: '#1A1815' },
-        }
-      }
-    }
-  }
-</script>
+<!-- Tailwind — precompiled at build time (was: runtime CDN JIT compiler, the top jank source) -->
+<link rel="stylesheet" href="/css/tailwind.css">
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- 霞鹜文楷：中文衬线字体，适合阅读模式 -->
-<link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Press+Start+2P&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+<!-- Fonts — self-hosted latin (zero cross-origin in default view) -->
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/fonts/inter.css">
+<!-- CJK display/serif extras: loaded async (media=print swap) — never render-blocking -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=ZCOOL+QingKe+HuangYou&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" media="print" onload="this.media='all'">
 
 <!-- Custom CSS (theme variables + components) -->
 <link rel="stylesheet" href="/css/style.css">

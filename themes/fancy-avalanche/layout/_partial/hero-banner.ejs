@@ -1,7 +1,8 @@
 <% var hero = (theme.homepage && theme.homepage.hero) ? theme.homepage.hero : {}; %>
 <% if (hero.enable !== false) { %>
 <section class="hero-banner glass-strong flex flex-col items-center justify-center text-center px-4 py-4 mb-4 mx-auto max-w-3xl" data-aos="fade-down" data-aos-duration="800">
-  <h1 class="text-2xl sm:text-3xl font-bold mb-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-rose-400 bg-clip-text text-transparent"><%= config.title %></h1>
+  <p class="hero-kicker" aria-hidden="true"><%= config.author %><span class="hero-kicker-dot"></span>Est. <%= theme.footer && theme.footer.since ? theme.footer.since : new Date().getFullYear() %><span class="hero-kicker-dot"></span>技术随笔</p>
+  <h1 class="hero-title-display text-2xl sm:text-4xl mb-1.5"><%= config.title %></h1>
   <% if (hero.typewriter !== false) { %>
   <div class="text-sm text-zinc-500 dark:text-zinc-400 font-mono mb-3 min-h-[1.4em]"><span id="typewriter-text"></span><span class="cursor"></span></div>
   <script data-no-instant>(function(){var s=<%- JSON.stringify((theme.subtitle&&theme.subtitle.sub)?theme.subtitle.sub:[config.subtitle||'']) %>;if(!s.length)return;var i=0,j=0,d=false,e=document.getElementById('typewriter-text');function t(){var c=s[i];if(!d){e.textContent=c.slice(0,j+1);j++;if(j===c.length){d=true;setTimeout(t,2000);return}}else{e.textContent=c.slice(0,j-1);j--;if(j===0){d=false;i=(i+1)%s.length}}setTimeout(t,d?40:100+Math.random()*80)}t()})();</script>
