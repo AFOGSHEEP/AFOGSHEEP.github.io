@@ -455,7 +455,7 @@ footer {
 .post-card.featured .card-title { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
 .post-card .card-excerpt {
   font-size: 0.875rem; line-height: 1.65;
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden;
 }
 
 /* === Reading Progress === */
