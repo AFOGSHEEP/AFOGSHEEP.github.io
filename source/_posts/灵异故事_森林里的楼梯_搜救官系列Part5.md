@@ -1,6 +1,7 @@
 ---
 title: 森林里的楼梯 · 搜救官系列 Part 5
 date: 2026-09-08 12:00:00
+cover: /images/stories/cover-6.jpg
 categories:
   - 灵异故事
 tags:
