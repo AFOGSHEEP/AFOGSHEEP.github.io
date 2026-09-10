@@ -1,6 +1,7 @@
 ---
 title: 让 iPhone 和 iPad 访问 Mac 上的 DSH：Caddy 反向代理 + launchd 闸门
 date: 2026-09-10 14:00:00
+cover: /images/dsh-lan-gate-cover.jpg
 categories:
   - 学习笔记
 tags:
