@@ -1,5 +1,5 @@
 ---
-title: 让 iPhone 和 iPad 无感用上 Mac 里的 DSH：Caddy + launchd 局域网网关实录
+title: 让 iPhone 和 iPad 访问 Mac 上的 DSH：Caddy 反向代理 + launchd 闸门
 date: 2026-09-10 14:00:00
 categories:
   - 学习笔记
@@ -9,40 +9,55 @@ tags:
   - launchd
   - HomeLab
   - Safari
-  - 踩坑
 ---
 
-我想做的事很小：在 Mac 上用 DSH 写到一半，拿起 iPhone 或 iPad，用 Safari 把这个对话接着看下去。Safari 的接力（Handoff）确实把 URL 递过来了，但打开的是 `127.0.0.1`，那在手机上指向的是手机自己。
+## 问题
 
-DSH 的 Web GUI 只监听 `127.0.0.1:3080`，这件事一开始我并没当回事，甚至试过直接 `--host 0.0.0.0`，被新版 dsh 一口回绝。现在回头看这是好事：这个 GUI 能跑 bash，绑到局域网等于把电脑交出去。域名、Cloudflare Tunnel、Tailscale 也全被我否了：不想为家里内网买个域名放公网，也不想每台设备装客户端。
+DSH 的 Web GUI 只监听 `127.0.0.1:3080`。在 Mac 上用 Safari 的接力（Handoff）把这个页面递到 iPhone 或 iPad 时，传的只是 URL，`127.0.0.1` 在手机上指向手机自己，页面打不开。
 
-剩下的路只有一条：在 Mac 本机架一个反向代理，dsh 的绑定一个字节不动，隧道包在外面。而代理的入口，必须由一道闸门管着，只有我确认过的 Wi-Fi 才开门。
+目标是在不改动 DSH 的前提下，让家里的 iPhone 和 iPad 能直接访问。约束有三个：
+
+1. dsh 的绑定地址不动。新版 dsh 直接拒绝 `--host 0.0.0.0` 这类非回环绑定：GUI 能执行 bash，暴露到局域网风险不可控。
+2. 不出公网。域名、Cloudflare Tunnel、Tailscale 都不用。
+3. 入口可控。只有白名单里的 Wi-Fi 才对外提供服务。
+
+## 方案
+
+在 Mac 本机跑 Caddy 做反向代理，前面加一道基于 Wi-Fi 白名单的闸门，由 launchd 管理启停。
 
 ```
 iPhone / iPad Safari ──HTTPS──> Caddy :8443（校验门禁Cookie）
                                    │
                                    ▼
-                           dsh web 127.0.0.1:3080（绑定从未改动）
+                           dsh web 127.0.0.1:3080（绑定未改动）
 
-:8444（纯HTTP）：只发根证书 root.crt
+:8444（纯HTTP）：只用于分发根证书 root.crt
 
 launchd 闸门（每60秒 + 网络切换事件）：
-  当前 Wi-Fi 在白名单 → 让 Caddy 活着
-  陌生网络 / 公网 / 无Wi-Fi → 整个作业卸载，入口物理消失
+  当前 Wi-Fi 在白名单 → 保持 Caddy 运行
+  陌生网络 / 公网 / 无Wi-Fi → 卸载 Caddy 作业
 ```
 
-## 动手
+三层控制：
 
-先装 Caddy：
+- 闸门：当前 Wi-Fi 不在白名单，一分钟内卸载 Caddy 作业
+- 门禁：访问者先通过带令牌的链接换取一年期 Cookie
+- HTTPS：Caddy 内部 CA 签发证书，同时满足 iOS 对安全上下文的要求
+
+## 配置
+
+### 安装 Caddy
 
 ```bash
 brew install caddy
 ```
 
-Caddyfile 放在 `~/.config/dsh-lan-gate/`：
+### Caddyfile
+
+文件放在 `~/.config/dsh-lan-gate/`：
 
 ```caddyfile
-# 把 <TOKEN> 换成你自己的随机串（openssl rand -hex 16 之类）
+# 把 <TOKEN> 换成自己的随机串（openssl rand -hex 16 之类）
 https://your-mac.local:8443 {
 	tls internal
 	@gated not header Cookie *dsh_gate=<TOKEN>*
@@ -57,7 +72,7 @@ https://your-mac.local:8443 {
 		reverse_proxy 127.0.0.1:3080
 	}
 }
-# 纯HTTP辅助口：只用于向手机分发根证书
+# 纯HTTP辅助口：只用于分发根证书
 http://your-mac.local:8444 {
 	root * "/Users/你的用户名/Library/Application Support/Caddy/pki/authorities/local"
 	handle /root.crt {
@@ -69,9 +84,15 @@ http://your-mac.local:8444 {
 }
 ```
 
-`your-mac.local` 用 Mac 的 Bonjour 名（`scutil --get LocalHostName` 查看），好处是不随路由器分 IP 变化而失效。`tls internal` 让 Caddy 自建 CA 给这个名字签证书，手机上装一次根证书就终身无警告。门禁是个带令牌的链接，访问一次种下一年期 Cookie，之后再无任何登录环节。
+说明：
 
-然后是闸门。白名单文件 `allowed-ssids.txt` 一行一个 Wi-Fi 名，脚本每次跑的时候取当前 SSID 做比对，不在名单里就把 Caddy 的 launchd 作业整个卸载：
+- `your-mac.local` 是 Mac 的 Bonjour 名（`scutil --get LocalHostName` 查询），不随 DHCP 分配的 IP 变化
+- `tls internal` 由 Caddy 自建 CA 签发证书，手机端安装根证书后不再有证书警告
+- `/gate?t=<TOKEN>` 设置一年期 Cookie，之后的请求直接放行
+
+### Wi-Fi 白名单闸门
+
+白名单文件 `~/.config/dsh-lan-gate/allowed-ssids.txt`，一行一个 Wi-Fi 名称。
 
 ```zsh
 #!/bin/zsh
@@ -106,7 +127,7 @@ fi
 exit 0
 ```
 
-注意这里 Caddy 是**独立的 launchd 作业**（`RunAtLoad` + `KeepAlive`），闸门只做 bootstrap/bootout，绝不亲自去拉进程。为什么非要这样，踩坑一节细说。
+Caddy 用独立的 launchd 作业承载（`RunAtLoad` + `KeepAlive`），闸门只做 `bootstrap` / `bootout`，不在脚本里直接拉起进程，原因见「遇到的问题」第 3 条。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -129,34 +150,78 @@ exit 0
 </plist>
 ```
 
-闸门自己的 plist 同款格式，程序是 `/bin/zsh gate.sh路径`，`RunAtLoad` + `StartInterval 60`，再加两个 `WatchPaths` 指向 `/Library/Preferences/SystemConfiguration/` 下的网络配置文件，Wi-Fi 一切换立刻触发。
+闸门自己的 plist 同样格式，程序为 `/bin/zsh <gate.sh 路径>`，加 `StartInterval 60` 和两个 `WatchPaths`（指向 `/Library/Preferences/SystemConfiguration/` 下的网络配置文件），网络切换时立即执行。
 
-dsh 这边只加信任白名单，绑定地址不动：
+### dsh 启动参数
 
 ```bash
 nohup dsh web --no-open --host 127.0.0.1 --trusted-host your-mac.local --trusted-host 192.168.3.137 &
 ```
 
-这里有个读源码才知道的细节：dsh 的 `/api` 有两层围栏。外层是路由层的信任名单，吃 `--trusted-host` 参数；内层是一批特权方法（`host.pickDirectory` 选目录、`host.openPath`、`settings.*`、`credentials.*`），源码里硬编码 `isTrustedApiRequest(request, [])`，传的是空名单，永远只认本机回环，白名单也放不开。后来 iPhone 上点「选择文件夹」报 403 就是它干的，设计如此，这类操作老老实实回 Mac 上做。
+dsh 的 `/api` 有两层访问控制。外层是路由级信任名单，由 `--trusted-host` 控制；内层是一组特权方法（`host.pickDirectory`、`host.openPath`、`settings.*`、`credentials.*`），源码中固定为只接受本机回环请求，`--trusted-host` 对其无效。因此手机上「选择文件夹」返回 403 是预期行为，这类操作在 Mac 本机执行。
 
-手机端每台三分钟，iOS 和 iPadOS 步骤完全一样：Safari 开 `http://your-mac.local:8444/root.crt` 下载描述文件，去 设置 → 通用 → VPN与设备管理 安装；然后 设置 → 通用 → 关于本机 → 证书信任设置，把 Caddy 根证书的完全信任打开（这步最容易漏，漏了就一直报证书错误）；最后访问一次 `https://your-mac.local:8443/gate?t=<TOKEN>`，跳进 DSH 的同时 Cookie 已经种好，分享菜单加到主屏幕就完事。
+### 手机端设置
 
-想体验 Mac 看一半、手机接着看的串联，还得满足接力的前提：所有设备同一个 Apple ID，设置 → 通用 → 隔空播放与接力里打开接力，Wi-Fi 和蓝牙都开着。没开接力的备胎是 iCloud 标签页同步，效果差不多。
+iPhone 和 iPad 步骤相同，每台设备做一次：
 
-## 踩坑
+1. Safari 打开 `http://your-mac.local:8444/root.crt`，下载描述文件，在 设置 → 通用 → VPN与设备管理 中安装
+2. 设置 → 通用 → 关于本机 → 证书信任设置，开启该证书的完全信任
+3. Safari 打开 `https://your-mac.local:8443/gate?t=<TOKEN>`，自动设置 Cookie 并进入 DSH
+4. 分享菜单 → 添加到主屏幕
 
-第一个坑其实是 Apple 埋的。最初图省事走纯 HTTP，结果 iPhone 上点选文件夹直接弹 `crypto.randomUUID is not a function`。非 HTTPS 页面不算安全上下文，iOS Safari 禁用一批 Web API，没有绕路的余地，只能上 HTTPS，于是才有了自建 CA 那套。上 HTTPS 之前我还用过 HTTP Basic Auth，iOS Safari 对它的凭据缓存出了名地不可靠，新开个标签页就重新要密码，烦到怀疑人生。换成门禁链接种 Cookie 之后，一年没再见过登录框。
+使用接力的前提：所有设备登录同一 Apple ID，并在 设置 → 通用 → 隔空播放与接力 中开启接力。不满足时可用 iCloud 标签页同步代替。
 
-最大的翻车是 Caddy 的存活问题，翻得很难看。闸门脚本第一版，我用 Linux 时代的老手艺：`nohup caddy ... & disown`，觉得这就是守护进程了。结果 Caddy 每次只活两秒。日志里看得清清楚楚，前一行 `serving initial configuration`，下一行 `shutting down apps, then terminating, signal: SIGTERM`。查了半天才想明白：`nohup` 只挡 SIGHUP，`disown` 只把进程从 shell 的任务表里划掉，进程还坐在 launchd 作业的进程组里，脚本一退出，launchd 给整个进程组发 SIGTERM，Caddy 属于陪葬。更糟的是闸门作业后来自己也停了，Caddy 死了没人拉，iPad 上就是一句「无法连接服务器」。我对着 401/403 全套正常、TCP 却连不上的现场发懵了很久。
+## 遇到的问题
 
-修法其实很干脆：Caddy 独立成自己的 launchd 作业，`KeepAlive` 守着，崩了 launchd 自己拉活，闸门只负责 bootstrap/bootout。macOS 连 `setsid` 都没有，别想在进程组上耍花样，launchd 作业化是唯一的正解。修完我特意等了七十秒再查：闸门跑了两轮，Caddy 纹丝不动。
+### 1. 选文件夹报 `crypto.randomUUID is not a function`
 
-还有两个小的。一个是 Caddy v2 的 `redir / 302` 写在 `/gate` 的 handle 块里根本不生效，它会把 `/` 当成路径匹配条件，必须写完整目标 `redir https://your-mac.local:8443/ 302`，这个坑吞了我一次「验证通过」的假阳性。另一个是最开始的死胡同：`--host 0.0.0.0` 被新版 dsh 直接拒绝，理由写在设计里，不能把能跑 bash 的 GUI 暴露到局域网。整个方案因此才定型成「dsh 零改动，隧道外包」，事后看这个约束反而救了整个架构的形态。
+现象：通过 HTTP 访问时，iPhone 上点击「选择文件夹」直接报错。
+原因：非 HTTPS 页面不属于安全上下文，iOS Safari 禁用部分 Web API。
+解决：整体改用 HTTPS，证书由 Caddy 内部 CA 签发。
 
-## 现在什么样
+### 2. HTTP Basic Auth 反复弹出登录框
 
-家里 Wi-Fi 下，iPhone 和 iPad 点主屏幕图标直接进 DSH，没有证书警告，没有登录框。Mac 上开着的页面，拿起手机从 Safari 接力里一点就接上了，反向也一样。出门或连上陌生 Wi-Fi，入口六十秒内消失，回家自动恢复，`gate.log` 里每一次起停都有时间和 SSID 记录。
+现象：iOS Safari 不断要求输入用户名密码。
+原因：iOS Safari 对 Basic Auth 凭据的缓存不可靠，新标签页或新连接都会重新认证。
+解决：改用门禁链接设置一年期 Cookie，之后不再出现认证提示。
 
-代价也明说：出门用不了；Mac 合盖就断；文件夹级的操作（DSH 的特权方法）只认 Mac 本机。安卓暂时没做，系统根本不解析 `.local`，得走 IP 加独立证书，哪天有兴致再说。
+### 3. Caddy 进程启动两秒后被杀
 
-整套东西拢共一个 Caddyfile、一个 gate.sh、两个 plist，加上启动命令里几个参数。搭完之后 launchd 自己管自己，我再没碰过。
+现象：`gate.sh` 用 `nohup caddy ... & disown` 拉起 Caddy，进程只存活约两秒。caddy.log 中前一行是 `serving initial configuration`，下一行是 `shutting down apps, then terminating, signal: SIGTERM`。
+原因：`nohup` 只忽略 SIGHUP，`disown` 只把进程从 shell 任务表移除，进程仍在该 launchd 作业的进程组内；脚本退出时，launchd 向整个进程组发送 SIGTERM。另外闸门作业自身停止触发后，Caddy 死亡后无人重启，iPad 端表现为无法建立连接。
+解决：Caddy 独立为 launchd 作业（`RunAtLoad` + `KeepAlive`，崩溃自动重启），闸门只做 `bootstrap` / `bootout`。macOS 没有 `setsid` 命令，launchd 作业化是标准做法。修改后观察 70 秒以上，闸门连续两轮调度，Caddy 均存活。
+
+### 4. `redir / 302` 不生效
+
+现象：写在 `/gate` 的 `handle` 块内，重定向不触发，返回 200。
+原因：这种写法把 `/` 解析为路径匹配条件，而不是重定向目标。
+解决：写完整目标 `redir https://your-mac.local:8443/ 302`。
+
+### 5. `host.pickDirectory` 返回 403
+
+现象：手机端选择 Mac 文件夹时返回 403，其余功能正常。
+原因：特权方法在源码中固定为只接受回环请求，`--trusted-host` 不影响它。
+解决：不处理。这是 dsh 的安全设计，相关操作在 Mac 本机完成。
+
+### 6. `--host 0.0.0.0` 无法启动
+
+现象：dsh 直接拒绝启动。
+原因：新版本出于安全考虑只允许回环绑定。
+解决：维持 `127.0.0.1` 绑定，由外部反向代理提供局域网访问。这也是整个方案的前提。
+
+## 结果与限制
+
+生效后的状态：
+
+- 家里 Wi-Fi 下，iPhone/iPad 从主屏幕图标直接进入 DSH，无证书警告、无登录框
+- Mac、iPhone、iPad 之间通过接力或 iCloud 标签页同步互相打开页面
+- 离开白名单 Wi-Fi 后入口在一分钟内关闭，回家自动恢复，`gate.log` 记录每次起停
+
+限制：
+
+- 仅限家庭网络使用
+- Mac 睡眠或未登录桌面时不可用
+- 特权操作（选择文件夹、修改设置、管理凭据）只能在 Mac 本机进行
+- 安卓未支持：系统不解析 `.local` 域名，需要改用 IP 加独立证书，暂未实施
+
+涉及的文件：一个 Caddyfile、一个 `gate.sh`、两个 plist，以及 dsh 启动命令中的 `--trusted-host` 参数。
