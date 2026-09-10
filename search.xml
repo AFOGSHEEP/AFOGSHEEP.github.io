@@ -332,6 +332,45 @@
       </tags>
   </entry>
   <entry>
+    <title>括号生成</title>
+    <url>/2025/02/28/Leetcode_%E6%8B%AC%E5%8F%B7%E7%94%9F%E6%88%90/</url>
+    <content><![CDATA[<p>感觉是最近最难的一道题</p>
+<img src="/2025/02/28/Leetcode_%E6%8B%AC%E5%8F%B7%E7%94%9F%E6%88%90/image-0.png" class="">
+
+
+
+<p>首先想到的思路是深度优先，遍历括号的左中右三个位置递归生成，为了防止重复所以用无重复集合<code>unordered_set</code>来保存每一轮的结果。为了防止多轮</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;unordered_set&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">generateParenthesis</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(n==<span class="number">0</span>) <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">        unordered_set&lt;string&gt; res;</span><br><span class="line">        res.<span class="built_in">insert</span>(<span class="string">&quot;()&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> step =<span class="number">2</span> ; step &lt;= n ; step++)&#123;</span><br><span class="line">            unordered_set&lt;string&gt; cur_round;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">const</span> string&amp; s:res)&#123;</span><br><span class="line">                <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt; s.<span class="built_in">size</span>(); i++)&#123;</span><br><span class="line">                    string t = s.<span class="built_in">substr</span>(<span class="number">0</span>,i) + <span class="string">&quot;()&quot;</span> + s.<span class="built_in">substr</span>(i);</span><br><span class="line">                    cur_round.<span class="built_in">insert</span>(t);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            res.<span class="built_in">swap</span>(cur_round);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function">vector&lt;string&gt; <span class="title">ans</span><span class="params">(res.begin(), res.end())</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// () () ()</span></span><br><span class="line"><span class="comment">// (())()</span></span><br><span class="line"><span class="comment">// ((())) </span></span><br><span class="line"><span class="comment">// ()(())       how to insert ? </span></span><br><span class="line"><span class="comment">//总先生成一个（），之后根据n，来分别在（）里面和外面插入。</span></span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li>我这段代码在做什么<br>我想从 1 对括号开始，逐轮扩展到 n 对括号。<br>每一轮里，我会把旧结果中的每个字符串都插入一对新的 ()，得到新结果。<br>我用 unordered_set 来自动去重。</li>
+<li>变量在我脑子里的意义<br>res：我上一轮已经得到的完整答案集合。<br>cur_round：我这一轮新生成的答案集合。<br>s：我从 res 里拿出来的一个完整括号串，不是单个字符。<br>i：插入位置。<br>t：我把 s 切成两段，在中间插入 () 拼出来的新串。</li>
+<li>t 是怎么构成的<br>我用这个式子构造：<br>前半段 + () + 后半段。<br>也就是：<br>s.substr(0, i) + “()” + s.substr(i)。</li>
+</ol>
+<p>举例：当 s &#x3D; (()) 时<br>i&#x3D;0：() (()) -&gt; ()(())<br>i&#x3D;1：( + () + ()) -&gt; (()())<br>i&#x3D;2：(( + () + )) -&gt; ((()))<br>i&#x3D;3：(() + () + ) -&gt; (())()<br>i&#x3D;4：在末尾插入（只有 i &lt;&#x3D; s.size() 时才会枚举到）</p>
+<ol start="4">
+<li>我为什么要用两个无序集合<br>我必须把旧结果和新结果分开。<br>如果我一边遍历 res 一边往 res 里插入，会有两个问题：</li>
+</ol>
+<p>第一，容器层面有风险。<br>在 C++ 的 unordered_set 里，插入新元素可能触发 rehash（扩容重排），这会让迭代器失效，导致遍历行为不稳定，甚至崩溃。</p>
+<p>第二，逻辑层面会错轮。<br>我本来希望“这一轮只加 1 对括号”，但如果新插入的元素又被本轮继续处理，就会变成“本轮加了 2 对甚至更多”，相当于多插一轮，结果层次就乱了。</p>
+<ol start="5">
+<li>错轮的具体样子（我怎么理解）<br>假设我当前只有 ()，这一轮目标是得到 2 对括号。<br>正确结果应该只有：()() 和 (())。<br>如果我在同一个集合里边遍历边插入，可能会先生成 ()()，然后又立刻拿 ()() 继续插，生成 3 对括号的串。<br>这样本轮就混入了下一轮内容，step 的意义被破坏。</li>
+<li>step 为什么从 2 开始到 n<br>因为我已经手动放了基础答案 ()，它就是 1 对括号的结果。<br>所以后面循环从 step&#x3D;2 开始，一直扩展到 step&#x3D;n。</li>
+<li>我这版代码的一个注意点<br>如果我写 i &lt; s.size()，会漏掉“在末尾插入”的位置。<br>更完整的是 i &lt;&#x3D; s.size()，这样能覆盖所有插入点。</li>
+</ol>
+<p>标准做法</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;string&gt; ans;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> left, <span class="type">int</span> right, string&amp; path)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ((<span class="type">int</span>)path.<span class="built_in">size</span>() == <span class="number">2</span> * n) &#123;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(path);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (left &lt; n) &#123;</span><br><span class="line">            path.<span class="built_in">push_back</span>(<span class="string">&#x27;(&#x27;</span>);</span><br><span class="line">            <span class="built_in">dfs</span>(n, left + <span class="number">1</span>, right, path);</span><br><span class="line">            path.<span class="built_in">pop_back</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (right &lt; left) &#123;</span><br><span class="line">            path.<span class="built_in">push_back</span>(<span class="string">&#x27;)&#x27;</span>);</span><br><span class="line">            <span class="built_in">dfs</span>(n, left, right + <span class="number">1</span>, path);</span><br><span class="line">            path.<span class="built_in">pop_back</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">generateParenthesis</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        ans.<span class="built_in">clear</span>();</span><br><span class="line">        string path;</span><br><span class="line">        <span class="built_in">dfs</span>(n, <span class="number">0</span>, <span class="number">0</span>, path);</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>无重复字符的最长子串</title>
     <url>/2025/02/28/Leetcode_%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/</url>
     <content><![CDATA[<p>给定一个字符串 <code>s</code> ，请你找出其中不含有重复字符的 最长 子串 的长度。</p>
@@ -373,45 +412,6 @@
       </tags>
   </entry>
   <entry>
-    <title>括号生成</title>
-    <url>/2025/02/28/Leetcode_%E6%8B%AC%E5%8F%B7%E7%94%9F%E6%88%90/</url>
-    <content><![CDATA[<p>感觉是最近最难的一道题</p>
-<img src="/2025/02/28/Leetcode_%E6%8B%AC%E5%8F%B7%E7%94%9F%E6%88%90/image-0.png" class="">
-
-
-
-<p>首先想到的思路是深度优先，遍历括号的左中右三个位置递归生成，为了防止重复所以用无重复集合<code>unordered_set</code>来保存每一轮的结果。为了防止多轮</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;unordered_set&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">generateParenthesis</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(n==<span class="number">0</span>) <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">        unordered_set&lt;string&gt; res;</span><br><span class="line">        res.<span class="built_in">insert</span>(<span class="string">&quot;()&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> step =<span class="number">2</span> ; step &lt;= n ; step++)&#123;</span><br><span class="line">            unordered_set&lt;string&gt; cur_round;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">const</span> string&amp; s:res)&#123;</span><br><span class="line">                <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt; s.<span class="built_in">size</span>(); i++)&#123;</span><br><span class="line">                    string t = s.<span class="built_in">substr</span>(<span class="number">0</span>,i) + <span class="string">&quot;()&quot;</span> + s.<span class="built_in">substr</span>(i);</span><br><span class="line">                    cur_round.<span class="built_in">insert</span>(t);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            res.<span class="built_in">swap</span>(cur_round);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function">vector&lt;string&gt; <span class="title">ans</span><span class="params">(res.begin(), res.end())</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// () () ()</span></span><br><span class="line"><span class="comment">// (())()</span></span><br><span class="line"><span class="comment">// ((())) </span></span><br><span class="line"><span class="comment">// ()(())       how to insert ? </span></span><br><span class="line"><span class="comment">//总先生成一个（），之后根据n，来分别在（）里面和外面插入。</span></span><br></pre></td></tr></table></figure>
-
-
-
-<ol>
-<li>我这段代码在做什么<br>我想从 1 对括号开始，逐轮扩展到 n 对括号。<br>每一轮里，我会把旧结果中的每个字符串都插入一对新的 ()，得到新结果。<br>我用 unordered_set 来自动去重。</li>
-<li>变量在我脑子里的意义<br>res：我上一轮已经得到的完整答案集合。<br>cur_round：我这一轮新生成的答案集合。<br>s：我从 res 里拿出来的一个完整括号串，不是单个字符。<br>i：插入位置。<br>t：我把 s 切成两段，在中间插入 () 拼出来的新串。</li>
-<li>t 是怎么构成的<br>我用这个式子构造：<br>前半段 + () + 后半段。<br>也就是：<br>s.substr(0, i) + “()” + s.substr(i)。</li>
-</ol>
-<p>举例：当 s &#x3D; (()) 时<br>i&#x3D;0：() (()) -&gt; ()(())<br>i&#x3D;1：( + () + ()) -&gt; (()())<br>i&#x3D;2：(( + () + )) -&gt; ((()))<br>i&#x3D;3：(() + () + ) -&gt; (())()<br>i&#x3D;4：在末尾插入（只有 i &lt;&#x3D; s.size() 时才会枚举到）</p>
-<ol start="4">
-<li>我为什么要用两个无序集合<br>我必须把旧结果和新结果分开。<br>如果我一边遍历 res 一边往 res 里插入，会有两个问题：</li>
-</ol>
-<p>第一，容器层面有风险。<br>在 C++ 的 unordered_set 里，插入新元素可能触发 rehash（扩容重排），这会让迭代器失效，导致遍历行为不稳定，甚至崩溃。</p>
-<p>第二，逻辑层面会错轮。<br>我本来希望“这一轮只加 1 对括号”，但如果新插入的元素又被本轮继续处理，就会变成“本轮加了 2 对甚至更多”，相当于多插一轮，结果层次就乱了。</p>
-<ol start="5">
-<li>错轮的具体样子（我怎么理解）<br>假设我当前只有 ()，这一轮目标是得到 2 对括号。<br>正确结果应该只有：()() 和 (())。<br>如果我在同一个集合里边遍历边插入，可能会先生成 ()()，然后又立刻拿 ()() 继续插，生成 3 对括号的串。<br>这样本轮就混入了下一轮内容，step 的意义被破坏。</li>
-<li>step 为什么从 2 开始到 n<br>因为我已经手动放了基础答案 ()，它就是 1 对括号的结果。<br>所以后面循环从 step&#x3D;2 开始，一直扩展到 step&#x3D;n。</li>
-<li>我这版代码的一个注意点<br>如果我写 i &lt; s.size()，会漏掉“在末尾插入”的位置。<br>更完整的是 i &lt;&#x3D; s.size()，这样能覆盖所有插入点。</li>
-</ol>
-<p>标准做法</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;string&gt; ans;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> left, <span class="type">int</span> right, string&amp; path)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ((<span class="type">int</span>)path.<span class="built_in">size</span>() == <span class="number">2</span> * n) &#123;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(path);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (left &lt; n) &#123;</span><br><span class="line">            path.<span class="built_in">push_back</span>(<span class="string">&#x27;(&#x27;</span>);</span><br><span class="line">            <span class="built_in">dfs</span>(n, left + <span class="number">1</span>, right, path);</span><br><span class="line">            path.<span class="built_in">pop_back</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (right &lt; left) &#123;</span><br><span class="line">            path.<span class="built_in">push_back</span>(<span class="string">&#x27;)&#x27;</span>);</span><br><span class="line">            <span class="built_in">dfs</span>(n, left, right + <span class="number">1</span>, path);</span><br><span class="line">            path.<span class="built_in">pop_back</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">generateParenthesis</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        ans.<span class="built_in">clear</span>();</span><br><span class="line">        string path;</span><br><span class="line">        <span class="built_in">dfs</span>(n, <span class="number">0</span>, <span class="number">0</span>, path);</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>最长公共前缀</title>
     <url>/2025/02/28/Leetcode_%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%89%8D%E7%BC%80/</url>
     <content><![CDATA[<img src="/2025/02/28/Leetcode_%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%89%8D%E7%BC%80/image-0.png" class="">
@@ -420,30 +420,6 @@
 
 <p>最短板原则</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">longestCommonPrefix</span><span class="params">(vector&lt;string&gt;&amp; strs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(strs.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">if</span>(strs.<span class="built_in">size</span>() == <span class="number">1</span>) <span class="keyword">return</span> strs[<span class="number">0</span>];</span><br><span class="line">        <span class="type">int</span> minStrIndex = <span class="number">0</span>;    <span class="comment">//寻找最短的字符串</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span> ;i&lt; strs.<span class="built_in">size</span>();++i)&#123;</span><br><span class="line">            <span class="keyword">if</span>(strs[i].<span class="built_in">size</span>() &lt; strs[minStrIndex].<span class="built_in">size</span>())&#123;</span><br><span class="line">                minStrIndex = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">const</span> string&amp; base =  strs[minStrIndex];</span><br><span class="line">        <span class="type">int</span> index = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(; index &lt; strs[minStrIndex].<span class="built_in">size</span>(); index++)&#123;</span><br><span class="line">            <span class="type">char</span> c = base[index];</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; strs.<span class="built_in">size</span>(); i++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(strs[i][index] != c)&#123;</span><br><span class="line">                    <span class="keyword">return</span> base.<span class="built_in">substr</span>(<span class="number">0</span>,index);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> base;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>有效的括号</title>
-    <url>/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/</url>
-    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/image-0.png" class="">
-
-
-
-<p>初解没有考虑分开的单类符号的情况,显然光暴力枚举没有未来。还是需要用到栈这个工具。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> length = s.<span class="built_in">size</span>();</span><br><span class="line">    <span class="keyword">if</span>(length % <span class="number">2</span> == <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>((s == <span class="string">&quot;()[]&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;()&#123;&#125;[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;()[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;[]()&quot;</span>) || (s == <span class="string">&quot;[]()&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;[]&#123;&#125;()&quot;</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; length /<span class="number">2</span>; ++i)&#123;</span><br><span class="line">        <span class="type">char</span> c1 = s[i];</span><br><span class="line">        <span class="type">char</span> c2 = s[length <span class="number">-1</span> - i];</span><br><span class="line">        <span class="keyword">if</span>((c1 == <span class="string">&#x27;(&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;)&#x27;</span> ) || (c1 == <span class="string">&#x27;&#123;&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;&#125;&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>标准解法</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.<span class="built_in">size</span>() % <span class="number">2</span> == <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">char</span>&gt; st;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="string">&#x27;(&#x27;</span> || c == <span class="string">&#x27;[&#x27;</span> || c == <span class="string">&#x27;&#123;&#x27;</span>) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(c);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (st.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                <span class="type">char</span> t = st.<span class="built_in">top</span>();</span><br><span class="line">                st.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span> ((c == <span class="string">&#x27;)&#x27;</span> &amp;&amp; t != <span class="string">&#x27;(&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;]&#x27;</span> &amp;&amp; t != <span class="string">&#x27;[&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;&#125;&#x27;</span> &amp;&amp; t != <span class="string">&#x27;&#123;&#x27;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> st.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Leetcode</category>
       </categories>
@@ -643,6 +619,30 @@
 <li><code>&lt;font style=&quot;color:rgb(215, 186, 125);background-color:rgba(255, 255, 255, 0.1);&quot;&gt;.*&lt;/font&gt;</code> 匹配 <code>&lt;font style=&quot;color:rgb(215, 186, 125);background-color:rgba(255, 255, 255, 0.1);&quot;&gt;&quot;aaab&quot;&lt;/font&gt;</code>：可以</li>
 </ol>
 ]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>有效的括号</title>
+    <url>/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/</url>
+    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7/image-0.png" class="">
+
+
+
+<p>初解没有考虑分开的单类符号的情况,显然光暴力枚举没有未来。还是需要用到栈这个工具。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> length = s.<span class="built_in">size</span>();</span><br><span class="line">    <span class="keyword">if</span>(length % <span class="number">2</span> == <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>((s == <span class="string">&quot;()[]&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;()&#123;&#125;[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;()[]&quot;</span>) || (s == <span class="string">&quot;&#123;&#125;[]()&quot;</span>) || (s == <span class="string">&quot;[]()&#123;&#125;&quot;</span>) || (s == <span class="string">&quot;[]&#123;&#125;()&quot;</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; length /<span class="number">2</span>; ++i)&#123;</span><br><span class="line">        <span class="type">char</span> c1 = s[i];</span><br><span class="line">        <span class="type">char</span> c2 = s[length <span class="number">-1</span> - i];</span><br><span class="line">        <span class="keyword">if</span>((c1 == <span class="string">&#x27;(&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;)&#x27;</span> ) || (c1 == <span class="string">&#x27;&#123;&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;&#125;&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>) || (c1 == <span class="string">&#x27;[&#x27;</span> &amp;&amp; c2 != <span class="string">&#x27;]&#x27;</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>标准解法</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.<span class="built_in">size</span>() % <span class="number">2</span> == <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">char</span>&gt; st;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="string">&#x27;(&#x27;</span> || c == <span class="string">&#x27;[&#x27;</span> || c == <span class="string">&#x27;&#123;&#x27;</span>) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(c);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (st.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                <span class="type">char</span> t = st.<span class="built_in">top</span>();</span><br><span class="line">                st.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span> ((c == <span class="string">&#x27;)&#x27;</span> &amp;&amp; t != <span class="string">&#x27;(&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;]&#x27;</span> &amp;&amp; t != <span class="string">&#x27;[&#x27;</span>) ||</span><br><span class="line">                    (c == <span class="string">&#x27;&#125;&#x27;</span> &amp;&amp; t != <span class="string">&#x27;&#123;&#x27;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> st.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Leetcode</category>
       </categories>
@@ -1384,149 +1384,6 @@
 <li>解释为什么静态成员函数不能被标记为 <code>const</code>。</li>
 </ol>
 <p>静态成员函数不与类的任何特定实例绑定，因此没有 <code>this</code> 指针。由于 <code>const</code> 成员函数的含义是不修改通过 <code>this</code> 指针访问的成员数据，而静态成员函数没有 <code>this</code> 指针，所以不可能声明一个静态成员函数为 <code>const</code>。静态成员函数的行为与常量性无关，因为它们不操作类的实例状态。</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>抽象记忆点</title>
-    <url>/2024/05/07/OLD_2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/</url>
-    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
-<li><strong>软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。</strong><ul>
-<li>这表明现代软件的规模和复杂性，需要采取有效的管理和设计方法。</li>
-</ul>
-</li>
-<li><strong>软件系统中的单个错误值可能导致整个系统失败。</strong><ul>
-<li>这凸显了在编写软件时准确性和健壮性的重要性。</li>
-</ul>
-</li>
-<li><strong>软件系统中可能的交互数量随着系统组件数量的增加呈指数增长。</strong><ul>
-<li>这提醒我们，随着系统复杂性的增加，需要考虑和管理其交互。</li>
-</ul>
-</li>
-<li><strong>抽象提供了一种以更简单的术语呈现复杂对象的方法。</strong><ul>
-<li>通过抽象，我们可以隐藏细节，使用户能够更轻松地理解和操作对象。</li>
-</ul>
-</li>
-<li><strong>抽象将用户分为客户端和实现者，每个都有不同的任务。这种分离有时被称为抽象屏障。</strong><ul>
-<li>这种分离使系统的设计更模块化和可维护，同时提供了清晰的界面和实现。</li>
-</ul>
-</li>
-<li><strong>抽象描述了许多可能的实现方式，而封装防止客户端窥视这些实现。</strong><ul>
-<li>封装确保了实现细节的安全性和私密性，使得对象的内部状态可以受到保护。</li>
-</ul>
-</li>
-<li><strong>客户端与对象交互的方式称为该对象的接口。</strong><ul>
-<li>接口定义了对象可用的方法和操作，隐藏了实现的细节。</li>
-</ul>
-</li>
-<li><strong>抽象减少了软件系统中的组件数量，降低了系统的最大复杂性。</strong><ul>
-<li>通过抽象，我们可以简化系统的设计和实现，减少潜在的错误和复杂度。</li>
-</ul>
-</li>
-<li><strong>C++的结构体缺乏封装性，因为它们的实现即为接口。</strong><ul>
-<li>这强调了使用类而不是结构体的重要性，以实现更好的封装和抽象。</li>
-</ul>
-</li>
-<li><strong>C++类的概念是接口与实现的实现。</strong><ul>
-<li>类提供了一种结构化的方法来组织代码和数据，同时隐藏了实现的细节。</li>
-</ul>
-</li>
-<li><strong>类中列为public的成员形成了该类的接口，并对任何人可见。</strong><ul>
-<li>这强调了设计良好的接口的重要性，以促进代码的重用和可维护性。</li>
-</ul>
-</li>
-<li><strong>类中列为private的成员属于类的实现部分，只能被该类的成员函数查看。</strong><ul>
-<li>封装私有成员确保了对实现细节的访问限制，提高了代码的安全性和可靠性。</li>
-</ul>
-</li>
-<li><strong>构造函数允许实现者从类被创建的那一刻开始强制执行不变量。</strong><ul>
-<li>构造函数确保了对象的有效初始化，并在创建对象时执行必要的设置和验证。</li>
-</ul>
-</li>
-<li><strong>私有成员函数允许实现者在不暴露实现细节给客户端的情况下分解代码。</strong><ul>
-<li>私有成员函数提供了一种将代码组织成更小、更易管理的部分的方法，同时保持了接口的简洁性和清晰性。</li>
-</ul>
-</li>
-<li><strong>类的实现通常分为包含类定义的.h文件和包含类实现的.cpp文件。</strong><ul>
-<li>这种文件分区方法有助于组织代码，并使其更易于维护和理解。</li>
-</ul>
-</li>
-<li><strong>在实现之前设计类接口，以避免过度专门化接口。</strong><ul>
-<li>这强调了设计良好的接口对于软件系统的灵活性和可维护性的重要性。</li>
-</ul>
-</li>
-</ol>
-<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><ol>
-<li><strong>在我们讨论抽象时，我们谈到接口和模块化如何指数地降低了系统的最大复杂性。你能想到现实世界中引入间接性如何使得复杂系统更易于管理的例子吗？</strong><ul>
-<li>在现实世界中，一个例子是网络路由器。路由器通过在网络设备之间引入抽象层，如IP地址和路由表，来管理网络流量的路由。这种抽象层使得网络管理员可以轻松地管理和配置网络，而不必直接处理底层硬件和协议细节。</li>
-</ul>
-</li>
-<li><strong>getFrequency和setFrequency等函数的动机是什么，相对于只有一个公有频率数据成员来说？</strong><ul>
-<li>使用getFrequency和setFrequency函数而不是公有频率数据成员的动机在于封装。通过提供访问和修改频率的公共接口，类可以隐藏其内部实现细节，并且可以在必要时对这些操作进行验证和限制，确保数据的一致性和有效性。</li>
-</ul>
-</li>
-<li><strong>构造函数是在什么时候调用的？为什么构造函数有用？</strong><ul>
-<li>构造函数在创建类的新实例时被调用。它用于初始化新对象的状态，确保对象在被使用之前处于一个已知的有效状态。构造函数可以执行必要的设置和验证，以确保对象的一致性和完整性。</li>
-</ul>
-</li>
-<li><strong>公有成员函数和私有成员函数有什么区别？</strong><ul>
-<li>公有成员函数是类的接口的一部分，可以被任何人访问和调用。私有成员函数是类的实现的一部分，只能被类的其他成员函数调用，对外部代码不可见。</li>
-</ul>
-</li>
-<li><strong>类的.h文件中放置什么？.cpp文件中呢？</strong><ul>
-<li>类的.h文件包含类的声明和接口，包括成员变量和公有成员函数的声明。.cpp文件包含类的实现细节，包括构造函数、析构函数和其他私有成员函数的定义。</li>
-</ul>
-</li>
-<li><strong>我们在很大程度上谈论了流库和STL，却没有提及这些库在幕后是如何实现的。解释一下为什么抽象使得可以在不完全了解其工作原理的情况下使用这些库。</strong><ul>
-<li>抽象使得可以在不了解其实现细节的情况下使用这些库，因为它们提供了清晰简洁的接口，隐藏了复杂的内部实现。通过使用这些接口，开发人员可以方便地使用库中提供的功能，而不必担心其底层的实现细节。</li>
-</ul>
-</li>
-<li><strong>假设C++的设计略有不同，即标记为私有的数据成员只能读取但不能写入。也就是说，如果一个名为volume的数据成员被标记为私有，那么客户端可以通过写入myObject.volume来读取值，但不能直接写入volume变量。这将阻止类的客户端错误地修改实现，因为任何可能改变对象数据成员的操作都必须通过公共接口进行。然而，这种设置存在严重的设计缺陷，会使得类的实现变得困难。这个缺陷是什么？（提示：回想一下之前的音量&#x2F;衰减例子）</strong><ul>
-<li>这种设置的主要设计缺陷在于它破坏了封装性。封装的一个关键原则是将数据和操作放在一起，并确保它们是一致的。如果数据成员只能读取而不能写入，那么类的内部状态可能会在未受控制的情况下被外部修改，这会导致不一致和不可预测的行为，从而破坏了类的封装性和可维护性。</li>
-</ul>
-</li>
-<li>下面是一个表示购物清单的类的接口：</li>
-</ol>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>实现GroceryList类的代码如下：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    map&lt;string, string&gt; items;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span> </span>&#123;</span><br><span class="line">        items[item] = quantity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        items.<span class="built_in">erase</span>(item);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            <span class="keyword">return</span> items[item];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>; <span class="comment">// Return empty string if item not found</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<ol start="9">
-<li>为什么使用GroceryList类而不只是使用原始的map&lt;string, string&gt;？  <ul>
-<li>GroceryList类提供了更高层次的抽象，使得添加、删除和查询商品更加简单和直观。它封装了map的细节，提供了更清晰的接口，使得代码更易于维护和理解。</li>
-</ul>
-</li>
-<li>GroceryList类需要构造函数吗？为什么或为什么不？  <ul>
-<li>是的，GroceryList类需要构造函数。构造函数用于初始化类的内部状态，例如清单中包含的商品列表。</li>
-</ul>
-</li>
-<li>给出你在STL中遇到的带参数的构造函数的一个例子。  <ul>
-<li>一个例子是vector的构造函数，它接受一个初始大小作为参数：<code>vector&lt;int&gt; vec(10);</code></li>
-</ul>
-</li>
-<li>参数化构造函数有什么用？  <ul>
-<li>参数化构造函数允许我们在创建对象时提供初始值，从而初始化对象的状态。这使得对象在创建时可以立即设置为特定的状态，而不需要调用额外的初始化函数。</li>
-</ul>
-</li>
-<li>下面是一个代表Keno游戏的类KenoGame的接口：</li>
-</ol>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>实现KenoGame类的代码如下：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; chosenNumbers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line">        chosenNumbers.<span class="built_in">push_back</span>(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> chosenNumbers.<span class="built_in">size</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span> </span>&#123;</span><br><span class="line">        <span class="type">size_t</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : chosenNumbers) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">find</span>(values.<span class="built_in">begin</span>(), values.<span class="built_in">end</span>(), num) != values.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<ol start="14">
-<li>参考STL容器章节中Snake的实现。设计并实现一个代表蛇的类。在公共接口中支持哪些操作？如何实现它？<ul>
-<li>蛇类的公共接口可能包括移动、增长、检查碰撞等操作。它可以通过一个链表或数组来存储蛇的身体部分，每次移动时更新身体部分的位置。</li>
-</ul>
-</li>
-</ol>
 ]]></content>
       <categories>
         <category>学习笔记</category>
@@ -2367,68 +2224,146 @@
       </tags>
   </entry>
   <entry>
-    <title>鹏城杯三道</title>
-    <url>/2024/11/19/OLD_PCB/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
-<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
+    <title>抽象记忆点</title>
+    <url>/2024/05/07/OLD_2024-5-7-%E6%8A%BD%E8%B1%A1%E5%85%A5%E9%97%A8/</url>
+    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
+<li><strong>软件系统通常包含数百万行代码，远远超过即使是最有经验的程序员一次能够完全跟踪的范围。</strong><ul>
+<li>这表明现代软件的规模和复杂性，需要采取有效的管理和设计方法。</li>
+</ul>
+</li>
+<li><strong>软件系统中的单个错误值可能导致整个系统失败。</strong><ul>
+<li>这凸显了在编写软件时准确性和健壮性的重要性。</li>
+</ul>
+</li>
+<li><strong>软件系统中可能的交互数量随着系统组件数量的增加呈指数增长。</strong><ul>
+<li>这提醒我们，随着系统复杂性的增加，需要考虑和管理其交互。</li>
+</ul>
+</li>
+<li><strong>抽象提供了一种以更简单的术语呈现复杂对象的方法。</strong><ul>
+<li>通过抽象，我们可以隐藏细节，使用户能够更轻松地理解和操作对象。</li>
+</ul>
+</li>
+<li><strong>抽象将用户分为客户端和实现者，每个都有不同的任务。这种分离有时被称为抽象屏障。</strong><ul>
+<li>这种分离使系统的设计更模块化和可维护，同时提供了清晰的界面和实现。</li>
+</ul>
+</li>
+<li><strong>抽象描述了许多可能的实现方式，而封装防止客户端窥视这些实现。</strong><ul>
+<li>封装确保了实现细节的安全性和私密性，使得对象的内部状态可以受到保护。</li>
+</ul>
+</li>
+<li><strong>客户端与对象交互的方式称为该对象的接口。</strong><ul>
+<li>接口定义了对象可用的方法和操作，隐藏了实现的细节。</li>
+</ul>
+</li>
+<li><strong>抽象减少了软件系统中的组件数量，降低了系统的最大复杂性。</strong><ul>
+<li>通过抽象，我们可以简化系统的设计和实现，减少潜在的错误和复杂度。</li>
+</ul>
+</li>
+<li><strong>C++的结构体缺乏封装性，因为它们的实现即为接口。</strong><ul>
+<li>这强调了使用类而不是结构体的重要性，以实现更好的封装和抽象。</li>
+</ul>
+</li>
+<li><strong>C++类的概念是接口与实现的实现。</strong><ul>
+<li>类提供了一种结构化的方法来组织代码和数据，同时隐藏了实现的细节。</li>
+</ul>
+</li>
+<li><strong>类中列为public的成员形成了该类的接口，并对任何人可见。</strong><ul>
+<li>这强调了设计良好的接口的重要性，以促进代码的重用和可维护性。</li>
+</ul>
+</li>
+<li><strong>类中列为private的成员属于类的实现部分，只能被该类的成员函数查看。</strong><ul>
+<li>封装私有成员确保了对实现细节的访问限制，提高了代码的安全性和可靠性。</li>
+</ul>
+</li>
+<li><strong>构造函数允许实现者从类被创建的那一刻开始强制执行不变量。</strong><ul>
+<li>构造函数确保了对象的有效初始化，并在创建对象时执行必要的设置和验证。</li>
+</ul>
+</li>
+<li><strong>私有成员函数允许实现者在不暴露实现细节给客户端的情况下分解代码。</strong><ul>
+<li>私有成员函数提供了一种将代码组织成更小、更易管理的部分的方法，同时保持了接口的简洁性和清晰性。</li>
+</ul>
+</li>
+<li><strong>类的实现通常分为包含类定义的.h文件和包含类实现的.cpp文件。</strong><ul>
+<li>这种文件分区方法有助于组织代码，并使其更易于维护和理解。</li>
+</ul>
+</li>
+<li><strong>在实现之前设计类接口，以避免过度专门化接口。</strong><ul>
+<li>这强调了设计良好的接口对于软件系统的灵活性和可维护性的重要性。</li>
+</ul>
+</li>
+</ol>
+<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><ol>
+<li><strong>在我们讨论抽象时，我们谈到接口和模块化如何指数地降低了系统的最大复杂性。你能想到现实世界中引入间接性如何使得复杂系统更易于管理的例子吗？</strong><ul>
+<li>在现实世界中，一个例子是网络路由器。路由器通过在网络设备之间引入抽象层，如IP地址和路由表，来管理网络流量的路由。这种抽象层使得网络管理员可以轻松地管理和配置网络，而不必直接处理底层硬件和协议细节。</li>
+</ul>
+</li>
+<li><strong>getFrequency和setFrequency等函数的动机是什么，相对于只有一个公有频率数据成员来说？</strong><ul>
+<li>使用getFrequency和setFrequency函数而不是公有频率数据成员的动机在于封装。通过提供访问和修改频率的公共接口，类可以隐藏其内部实现细节，并且可以在必要时对这些操作进行验证和限制，确保数据的一致性和有效性。</li>
+</ul>
+</li>
+<li><strong>构造函数是在什么时候调用的？为什么构造函数有用？</strong><ul>
+<li>构造函数在创建类的新实例时被调用。它用于初始化新对象的状态，确保对象在被使用之前处于一个已知的有效状态。构造函数可以执行必要的设置和验证，以确保对象的一致性和完整性。</li>
+</ul>
+</li>
+<li><strong>公有成员函数和私有成员函数有什么区别？</strong><ul>
+<li>公有成员函数是类的接口的一部分，可以被任何人访问和调用。私有成员函数是类的实现的一部分，只能被类的其他成员函数调用，对外部代码不可见。</li>
+</ul>
+</li>
+<li><strong>类的.h文件中放置什么？.cpp文件中呢？</strong><ul>
+<li>类的.h文件包含类的声明和接口，包括成员变量和公有成员函数的声明。.cpp文件包含类的实现细节，包括构造函数、析构函数和其他私有成员函数的定义。</li>
+</ul>
+</li>
+<li><strong>我们在很大程度上谈论了流库和STL，却没有提及这些库在幕后是如何实现的。解释一下为什么抽象使得可以在不完全了解其工作原理的情况下使用这些库。</strong><ul>
+<li>抽象使得可以在不了解其实现细节的情况下使用这些库，因为它们提供了清晰简洁的接口，隐藏了复杂的内部实现。通过使用这些接口，开发人员可以方便地使用库中提供的功能，而不必担心其底层的实现细节。</li>
+</ul>
+</li>
+<li><strong>假设C++的设计略有不同，即标记为私有的数据成员只能读取但不能写入。也就是说，如果一个名为volume的数据成员被标记为私有，那么客户端可以通过写入myObject.volume来读取值，但不能直接写入volume变量。这将阻止类的客户端错误地修改实现，因为任何可能改变对象数据成员的操作都必须通过公共接口进行。然而，这种设置存在严重的设计缺陷，会使得类的实现变得困难。这个缺陷是什么？（提示：回想一下之前的音量&#x2F;衰减例子）</strong><ul>
+<li>这种设置的主要设计缺陷在于它破坏了封装性。封装的一个关键原则是将数据和操作放在一起，并确保它们是一致的。如果数据成员只能读取而不能写入，那么类的内部状态可能会在未受控制的情况下被外部修改，这会导致不一致和不可预测的行为，从而破坏了类的封装性和可维护性。</li>
+</ul>
+</li>
+<li>下面是一个表示购物清单的类的接口：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
-<p>接着是tls改了表</p>
-<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
-<p>赛博厨子解密得到</p>
-<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
-<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
-<img src="/2024/11/19/OLD_PCB/image-0.png" class="">
+<p>实现GroceryList类的代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GroceryList</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    map&lt;string, string&gt; items;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">GroceryList</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addItem</span><span class="params">(string quantity, string item)</span> </span>&#123;</span><br><span class="line">        items[item] = quantity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeItem</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        items.<span class="built_in">erase</span>(item);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">string <span class="title">itemQuantity</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            <span class="keyword">return</span> items[item];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>; <span class="comment">// Return empty string if item not found</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">itemExists</span><span class="params">(string item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> items.<span class="built_in">find</span>(item) != items.<span class="built_in">end</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<img src="/2024/11/19/OLD_PCB/image-1.png" class="">
+<ol start="9">
+<li>为什么使用GroceryList类而不只是使用原始的map&lt;string, string&gt;？  <ul>
+<li>GroceryList类提供了更高层次的抽象，使得添加、删除和查询商品更加简单和直观。它封装了map的细节，提供了更清晰的接口，使得代码更易于维护和理解。</li>
+</ul>
+</li>
+<li>GroceryList类需要构造函数吗？为什么或为什么不？  <ul>
+<li>是的，GroceryList类需要构造函数。构造函数用于初始化类的内部状态，例如清单中包含的商品列表。</li>
+</ul>
+</li>
+<li>给出你在STL中遇到的带参数的构造函数的一个例子。  <ul>
+<li>一个例子是vector的构造函数，它接受一个初始大小作为参数：<code>vector&lt;int&gt; vec(10);</code></li>
+</ul>
+</li>
+<li>参数化构造函数有什么用？  <ul>
+<li>参数化构造函数允许我们在创建对象时提供初始值，从而初始化对象的状态。这使得对象在创建时可以立即设置为特定的状态，而不需要调用额外的初始化函数。</li>
+</ul>
+</li>
+<li>下面是一个代表Keno游戏的类KenoGame的接口：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>();</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
-<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/19/OLD_PCB/image-2.png" class="">
+<p>实现KenoGame类的代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">KenoGame</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; chosenNumbers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">KenoGame</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addNumber</span><span class="params">(<span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line">        chosenNumbers.<span class="built_in">push_back</span>(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numChosen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> chosenNumbers.<span class="built_in">size</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">numWinners</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; values)</span> </span>&#123;</span><br><span class="line">        <span class="type">size_t</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : chosenNumbers) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">find</span>(values.<span class="built_in">begin</span>(), values.<span class="built_in">end</span>(), num) != values.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-
-
-<p>主要加密函数</p>
-<img src="/2024/11/19/OLD_PCB/image-3.png" class="">
-
-<p>发现是魔改的tea。</p>
-<p>我们尝试进行解密，钥匙为1 2 3 4</p>
-<p>但是不对，猜测有tls，继续找</p>
-<img src="/2024/11/19/OLD_PCB/image-4.png" class="">
-
-<p>函数挺少的，我们直接在函数窗口一个一个找</p>
-<p>然后发现这个</p>
-<img src="/2024/11/19/OLD_PCB/image-5.png" class="">
-
-<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
-<img src="/2024/11/19/OLD_PCB/image-6.png" class="">
-
-<p>第二次定位</p>
-<img src="/2024/11/19/OLD_PCB/image-7.png" class="">
-
-<p>我们动调发现了</p>
-<p>我们打印一下rand值：</p>
-<img src="/2024/11/19/OLD_PCB/image-8.png" class="">
-
-<img src="/2024/11/19/OLD_PCB/image-9.png" class="">
-
-<p>就是delta加上rand</p>
-<p>直接写个tea解密脚本就好</p>
-<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
-<img src="/2024/11/19/OLD_PCB/image-10.png" class="">
-
-<p>是通过异常来控制的</p>
-<p>这下对了</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>d555ce75ec293c8ed232d83dffb0ff82</p>
+<ol start="14">
+<li>参考STL容器章节中Snake的实现。设计并实现一个代表蛇的类。在公共接口中支持哪些操作？如何实现它？<ul>
+<li>蛇类的公共接口可能包括移动、增长、检查碰撞等操作。它可以通过一个链表或数组来存储蛇的身体部分，每次移动时更新身体部分的位置。</li>
+</ul>
+</li>
+</ol>
 ]]></content>
       <categories>
         <category>学习笔记</category>
       </categories>
       <tags>
-        <tag>CTF</tag>
+        <tag>C++</tag>
       </tags>
   </entry>
   <entry>
@@ -2657,6 +2592,71 @@
       </categories>
       <tags>
         <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>鹏城杯三道</title>
+    <url>/2024/11/19/OLD_PCB/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
+<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
+
+<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
+<p>接着是tls改了表</p>
+<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
+<p>赛博厨子解密得到</p>
+<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
+<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
+<img src="/2024/11/19/OLD_PCB/image-0.png" class="">
+
+<img src="/2024/11/19/OLD_PCB/image-1.png" class="">
+
+<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
+<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/19/OLD_PCB/image-2.png" class="">
+
+
+
+<p>主要加密函数</p>
+<img src="/2024/11/19/OLD_PCB/image-3.png" class="">
+
+<p>发现是魔改的tea。</p>
+<p>我们尝试进行解密，钥匙为1 2 3 4</p>
+<p>但是不对，猜测有tls，继续找</p>
+<img src="/2024/11/19/OLD_PCB/image-4.png" class="">
+
+<p>函数挺少的，我们直接在函数窗口一个一个找</p>
+<p>然后发现这个</p>
+<img src="/2024/11/19/OLD_PCB/image-5.png" class="">
+
+<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
+<img src="/2024/11/19/OLD_PCB/image-6.png" class="">
+
+<p>第二次定位</p>
+<img src="/2024/11/19/OLD_PCB/image-7.png" class="">
+
+<p>我们动调发现了</p>
+<p>我们打印一下rand值：</p>
+<img src="/2024/11/19/OLD_PCB/image-8.png" class="">
+
+<img src="/2024/11/19/OLD_PCB/image-9.png" class="">
+
+<p>就是delta加上rand</p>
+<p>直接写个tea解密脚本就好</p>
+<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
+<img src="/2024/11/19/OLD_PCB/image-10.png" class="">
+
+<p>是通过异常来控制的</p>
+<p>这下对了</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>d555ce75ec293c8ed232d83dffb0ff82</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -2901,60 +2901,6 @@
       </tags>
   </entry>
   <entry>
-    <title>bashshell基础命令</title>
-    <url>/2024/04/17/OLD_bashshell%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-04-17 23:10:12  </p>
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="启动终端"><a href="#启动终端" class="headerlink" title="启动终端"></a>启动终端</h2><p>启动终端后会看见 <strong>shell CLI</strong> 提示符，在此输入shell命令。默认的提示符符号是 $ </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[/etc]</span><br><span class="line">└─$ </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="与bash手册交互"><a href="#与bash手册交互" class="headerlink" title="与bash手册交互"></a>与bash手册交互</h2><p>大多数Linux发行版自带在线手册。使用man命令可以访问Linux系统的手册页。输入 <code>man 想要查看的命令</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">NAME</span><br><span class="line">       <span class="built_in">cat</span> - concatenate files and <span class="built_in">print</span> on the standard output</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       <span class="built_in">cat</span> [OPTION]... [FILE]...</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       Concatenate FILE(s) to standard output.</span><br><span class="line"></span><br><span class="line">       With no FILE, or when FILE is -, <span class="built_in">read</span> standard input.</span><br><span class="line"></span><br><span class="line">       -A, --show-all</span><br><span class="line">              equivalent to -vET</span><br><span class="line"></span><br><span class="line">       -b, --number-nonblank</span><br><span class="line">              number nonempty output lines, overrides -n</span><br><span class="line"></span><br><span class="line">       -e     equivalent to -vE</span><br><span class="line"></span><br><span class="line">       -E, --show-ends</span><br><span class="line">              display $ at end of each line</span><br><span class="line"></span><br><span class="line">       -n, --number</span><br><span class="line">              number all output lines</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>以上是 <code>cat</code>的部分用法。输入 <code>man cat</code>即可查看</p>
-<p>其中 <strong>DESCRIPTION</strong> 部分提供了快速参考。从中可以迅速了解命令的作用以及用法。</p>
-<p>mannal里通过空格翻页，enter逐行查看，以及上下箭头进行滑动。按q退出。</p>
-<p>如果忘记命令了，可以通过 <code>man -k terminal</code>进行关键词查找。</p>
-<h2 id="浏览文件系统"><a href="#浏览文件系统" class="headerlink" title="浏览文件系统"></a>浏览文件系统</h2><h3 id="Linux中的目录"><a href="#Linux中的目录" class="headerlink" title="Linux中的目录"></a>Linux中的目录</h3><p>Linux采用名为“虚拟目录”的单个目录结构中。虚拟目录会将计算机中所有储存设备的文件路径都纳入单个目录结构。Linux的虚拟目录结构只包含一个叫做 root的目录的基础目录。所有文件都在root目录下一一列出。Linux中安装的第一块硬盘为根驱动器，所有目录都是从那里开始构建的。以下是kali的根目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span></span><br><span class="line">bin   home            lib32       mnt   run       sys  vmlinuz</span><br><span class="line">boot  initrd.img      lib64       opt   sbin      tmp  vmlinuz.old</span><br><span class="line">dev   initrd.img.old  lost+found  proc  srv       usr</span><br><span class="line">etc   lib             media       root  swapfile  var</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这里使用了ls命令来查看文件夹中的内容。常见的Linux目录名均基于文件系统层级标准（filesytem hierarchy standard, FHS）。</p>
-<p>在Linux中，可以通过cd命令来切换目录。语法为 <code>cd destination</code>。使用 <code>cd ..</code>可以快速回到父目录。</p>
-<p>使用 <code>pwd</code>命令可以了解当前工作目录。</p>
-<p><code>ls</code>命令最基本的形式会显示当前目录下的文件和目录。使用 <code>ls -F</code>(注意，Linux系统严格区分大小写，-f和-F是两个不同的命令)可以区分文件和目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span> -F</span><br><span class="line">bin@   home/            lib32@       mnt/   run/      sys/  vmlinuz@</span><br><span class="line">boot/  initrd.img@      lib64@       opt/   sbin@     tmp/  vmlinuz.old@</span><br><span class="line">dev/   initrd.img.old@  lost+found/  proc/  srv/      usr/</span><br><span class="line">etc/   lib@             media/       root/  swapfile  var/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>-a选项能显示隐藏文件（通常是文件名以 . 开始的文件）</p>
-<p>-R选项称作递归选项，能列出当前目录包含的子目录的文件与目录。</p>
-<p>-l命令会产生长列表格式的输出，提供目录中各个文件的详细信息。在-l后跟上文件名即可只查看该文件的信息。</p>
-<h3 id="过滤输出列表"><a href="#过滤输出列表" class="headerlink" title="过滤输出列表"></a>过滤输出列表</h3><p>ls命令支持在命令行中定义过滤器，使用过滤器来决定该在命令行中显示哪些文件或者目录。</p>
-<p>在ls最后添加文件名是最基本的过滤方式，我们可以通过使用标准通配符来进行模式匹配。</p>
-<ul>
-<li>问号 （ ? ）代表任意单个字符</li>
-<li>星号 （ * ）代表零个或者多个任意字符</li>
-</ul>
-<p>以 <code>/home/kali/</code>目录为例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> -F                </span><br><span class="line">backup/   Documents/  fill    Pictures/  tast.py  teeeeeeeesy.txt  test.py</span><br><span class="line">Desktop/  Downloads/  Music/  Public/    te3t.py  Templates/       Videos/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[a-z]st*</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t*       </span><br><span class="line">tast.py  te3t.py  teeeeeeeesy.txt  test.py</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t?st.py</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[^/e]st.py       </span><br><span class="line">tast.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>!]可能被zsh认为是一个事件从而出错，把把方括号部分替换为 <code>&#39;[&#39;!what_you_think&#39;]&#39;</code>或者把 <code>!</code> 替换为 …<code>^/</code></p>
-<p>Zsh（Z Shell）是一个强大的命令行解释器，用于 UNIX 操作系统。它是 Bourne Shell 的扩展，具有许多改进，包括更好的用户交互、功能强大的脚本能力和自定义功能。</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>XYCTF_WP</title>
     <url>/2024/04/25/OLD_XYCTF%20WP/</url>
     <content><![CDATA[<hr>
@@ -3036,6 +2982,60 @@
       </categories>
       <tags>
         <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>bashshell基础命令</title>
+    <url>/2024/04/17/OLD_bashshell%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-04-17 23:10:12  </p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="启动终端"><a href="#启动终端" class="headerlink" title="启动终端"></a>启动终端</h2><p>启动终端后会看见 <strong>shell CLI</strong> 提示符，在此输入shell命令。默认的提示符符号是 $ </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[/etc]</span><br><span class="line">└─$ </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="与bash手册交互"><a href="#与bash手册交互" class="headerlink" title="与bash手册交互"></a>与bash手册交互</h2><p>大多数Linux发行版自带在线手册。使用man命令可以访问Linux系统的手册页。输入 <code>man 想要查看的命令</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">NAME</span><br><span class="line">       <span class="built_in">cat</span> - concatenate files and <span class="built_in">print</span> on the standard output</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       <span class="built_in">cat</span> [OPTION]... [FILE]...</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       Concatenate FILE(s) to standard output.</span><br><span class="line"></span><br><span class="line">       With no FILE, or when FILE is -, <span class="built_in">read</span> standard input.</span><br><span class="line"></span><br><span class="line">       -A, --show-all</span><br><span class="line">              equivalent to -vET</span><br><span class="line"></span><br><span class="line">       -b, --number-nonblank</span><br><span class="line">              number nonempty output lines, overrides -n</span><br><span class="line"></span><br><span class="line">       -e     equivalent to -vE</span><br><span class="line"></span><br><span class="line">       -E, --show-ends</span><br><span class="line">              display $ at end of each line</span><br><span class="line"></span><br><span class="line">       -n, --number</span><br><span class="line">              number all output lines</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以上是 <code>cat</code>的部分用法。输入 <code>man cat</code>即可查看</p>
+<p>其中 <strong>DESCRIPTION</strong> 部分提供了快速参考。从中可以迅速了解命令的作用以及用法。</p>
+<p>mannal里通过空格翻页，enter逐行查看，以及上下箭头进行滑动。按q退出。</p>
+<p>如果忘记命令了，可以通过 <code>man -k terminal</code>进行关键词查找。</p>
+<h2 id="浏览文件系统"><a href="#浏览文件系统" class="headerlink" title="浏览文件系统"></a>浏览文件系统</h2><h3 id="Linux中的目录"><a href="#Linux中的目录" class="headerlink" title="Linux中的目录"></a>Linux中的目录</h3><p>Linux采用名为“虚拟目录”的单个目录结构中。虚拟目录会将计算机中所有储存设备的文件路径都纳入单个目录结构。Linux的虚拟目录结构只包含一个叫做 root的目录的基础目录。所有文件都在root目录下一一列出。Linux中安装的第一块硬盘为根驱动器，所有目录都是从那里开始构建的。以下是kali的根目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span></span><br><span class="line">bin   home            lib32       mnt   run       sys  vmlinuz</span><br><span class="line">boot  initrd.img      lib64       opt   sbin      tmp  vmlinuz.old</span><br><span class="line">dev   initrd.img.old  lost+found  proc  srv       usr</span><br><span class="line">etc   lib             media       root  swapfile  var</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里使用了ls命令来查看文件夹中的内容。常见的Linux目录名均基于文件系统层级标准（filesytem hierarchy standard, FHS）。</p>
+<p>在Linux中，可以通过cd命令来切换目录。语法为 <code>cd destination</code>。使用 <code>cd ..</code>可以快速回到父目录。</p>
+<p>使用 <code>pwd</code>命令可以了解当前工作目录。</p>
+<p><code>ls</code>命令最基本的形式会显示当前目录下的文件和目录。使用 <code>ls -F</code>(注意，Linux系统严格区分大小写，-f和-F是两个不同的命令)可以区分文件和目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span> -F</span><br><span class="line">bin@   home/            lib32@       mnt/   run/      sys/  vmlinuz@</span><br><span class="line">boot/  initrd.img@      lib64@       opt/   sbin@     tmp/  vmlinuz.old@</span><br><span class="line">dev/   initrd.img.old@  lost+found/  proc/  srv/      usr/</span><br><span class="line">etc/   lib@             media/       root/  swapfile  var/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>-a选项能显示隐藏文件（通常是文件名以 . 开始的文件）</p>
+<p>-R选项称作递归选项，能列出当前目录包含的子目录的文件与目录。</p>
+<p>-l命令会产生长列表格式的输出，提供目录中各个文件的详细信息。在-l后跟上文件名即可只查看该文件的信息。</p>
+<h3 id="过滤输出列表"><a href="#过滤输出列表" class="headerlink" title="过滤输出列表"></a>过滤输出列表</h3><p>ls命令支持在命令行中定义过滤器，使用过滤器来决定该在命令行中显示哪些文件或者目录。</p>
+<p>在ls最后添加文件名是最基本的过滤方式，我们可以通过使用标准通配符来进行模式匹配。</p>
+<ul>
+<li>问号 （ ? ）代表任意单个字符</li>
+<li>星号 （ * ）代表零个或者多个任意字符</li>
+</ul>
+<p>以 <code>/home/kali/</code>目录为例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> -F                </span><br><span class="line">backup/   Documents/  fill    Pictures/  tast.py  teeeeeeeesy.txt  test.py</span><br><span class="line">Desktop/  Downloads/  Music/  Public/    te3t.py  Templates/       Videos/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[a-z]st*</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t*       </span><br><span class="line">tast.py  te3t.py  teeeeeeeesy.txt  test.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t?st.py</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[^/e]st.py       </span><br><span class="line">tast.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>!]可能被zsh认为是一个事件从而出错，把把方括号部分替换为 <code>&#39;[&#39;!what_you_think&#39;]&#39;</code>或者把 <code>!</code> 替换为 …<code>^/</code></p>
+<p>Zsh（Z Shell）是一个强大的命令行解释器，用于 UNIX 操作系统。它是 Bourne Shell 的扩展，具有许多改进，包括更好的用户交互、功能强大的脚本能力和自定义功能。</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -3444,6 +3444,70 @@
       </tags>
   </entry>
   <entry>
+    <title>简单学习算法的实现</title>
+    <url>/2024/06/30/OLD_%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/</url>
+    <content><![CDATA[<p>normalize : 将图像的像素值正规化为0.0~1.0<br>    one_hot_label :<br>        one_hot_label为True的情况下，标签作为one-hot数组返回<br>        one-hot数组是指[0,0,1,0,0,0,0,0,0,0]这样的数组<br>    flatten : 是否将图像展开为一维数组</p>
+<pre><code>Returns
+-------
+(训练图像, 训练标签), (测试图像, 测试标签)
+&quot;&quot;&quot;
+mnist_path = &quot;E:\\deap_learning\\resource&quot;
+
+dataset = &#123;
+    &#39;train_img&#39;: load_images(os.path.join(mnist_path, &#39;train-images-idx3-ubyte.gz&#39;)),
+    &#39;train_label&#39;: load_labels(os.path.join(mnist_path, &#39;train-labels-idx1-ubyte.gz&#39;)),
+    &#39;test_img&#39;: load_images(os.path.join(mnist_path, &#39;t10k-images-idx3-ubyte.gz&#39;)),
+    &#39;test_label&#39;: load_labels(os.path.join(mnist_path, &#39;t10k-labels-idx1-ubyte.gz&#39;))
+&#125;
+
+if normalize:
+    for key in (&#39;train_img&#39;, &#39;test_img&#39;):
+        dataset[key] = dataset[key].astype(np.float32)
+        dataset[key] /= 255.0
+        
+if one_hot_label:
+    dataset[&#39;train_label&#39;] = _change_one_hot_label(dataset[&#39;train_label&#39;])
+    dataset[&#39;test_label&#39;] = _change_one_hot_label(dataset[&#39;test_label&#39;])
+
+if not flatten:
+    for key in (&#39;train_img&#39;, &#39;test_img&#39;):
+        dataset[key] = dataset[key].reshape(-1, 1, 28, 28)
+
+return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[&#39;test_img&#39;], dataset[&#39;test_label&#39;])
+</code></pre>
+<p>def load_images(file_path):<br>    with gzip.open(file_path, ‘rb’) as f:<br>        data &#x3D; np.frombuffer(f.read(), np.uint8, offset&#x3D;16)<br>    return data.reshape(-1, 784)</p>
+<p>def load_labels(file_path):<br>    with gzip.open(file_path, ‘rb’) as f:<br>        data &#x3D; np.frombuffer(f.read(), np.uint8, offset&#x3D;8)<br>    return data</p>
+<p>def _change_one_hot_label(X):<br>    T &#x3D; np.zeros((X.size, 10))<br>    for idx, row in enumerate(T):<br>        row[X[idx]] &#x3D; 1<br>    return T</p>
+<pre><code>
+在代码中出现了epoch作为学习时的次数单位。
+
+### 什么是 `epoch`？
+在机器学习和深度学习中，`epoch` 是一个重要的概念。`epoch` 表示整个训练数据集通过神经网络一次。简单来说，一个 `epoch` 就是将所有的训练数据都用来更新模型参数一次。
+
+### `epoch` 在神经网络中的作用
+在训练神经网络时，我们通常不会一次性将整个训练数据集都输入到模型中进行训练，而是将数据集分成多个小批次（batch），然后依次输入模型。这样做的原因包括：
+
+1. **内存限制**：一次性处理整个数据集可能会导致内存不足，尤其是当数据集非常大时。
+2. **更稳定的梯度更新**：使用小批次数据可以使梯度更新更加平稳，并能有效避免一些局部最优解。
+
+在每个 `epoch` 中，模型会经历以下过程：
+
+1. 将训练数据集分成若干个批次（batches）。
+2. 对每个批次进行前向传播、计算损失、后向传播、更新模型参数。
+3. 一个 `epoch` 结束后，通常会进行一次验证，检查模型在验证集上的表现，以判断模型是否在训练中取得进展。
+
+## 总结
+我们以损失函数为基准，找出了使神经网络的值达到最小的权重参数，也就是神经网络学习的目标。为了尽可能找到小的损失函数值，我们使用了函数斜率的梯度法。
+</code></pre>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>深度学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>&#39;Building a Web Server study&#39;</title>
     <url>/2025/01/25/OLD_%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%84%E7%AD%91/</url>
     <content><![CDATA[<hr>
@@ -3560,70 +3624,6 @@
       </categories>
       <tags>
         <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>简单学习算法的实现</title>
-    <url>/2024/06/30/OLD_%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0/</url>
-    <content><![CDATA[<p>normalize : 将图像的像素值正规化为0.0~1.0<br>    one_hot_label :<br>        one_hot_label为True的情况下，标签作为one-hot数组返回<br>        one-hot数组是指[0,0,1,0,0,0,0,0,0,0]这样的数组<br>    flatten : 是否将图像展开为一维数组</p>
-<pre><code>Returns
--------
-(训练图像, 训练标签), (测试图像, 测试标签)
-&quot;&quot;&quot;
-mnist_path = &quot;E:\\deap_learning\\resource&quot;
-
-dataset = &#123;
-    &#39;train_img&#39;: load_images(os.path.join(mnist_path, &#39;train-images-idx3-ubyte.gz&#39;)),
-    &#39;train_label&#39;: load_labels(os.path.join(mnist_path, &#39;train-labels-idx1-ubyte.gz&#39;)),
-    &#39;test_img&#39;: load_images(os.path.join(mnist_path, &#39;t10k-images-idx3-ubyte.gz&#39;)),
-    &#39;test_label&#39;: load_labels(os.path.join(mnist_path, &#39;t10k-labels-idx1-ubyte.gz&#39;))
-&#125;
-
-if normalize:
-    for key in (&#39;train_img&#39;, &#39;test_img&#39;):
-        dataset[key] = dataset[key].astype(np.float32)
-        dataset[key] /= 255.0
-        
-if one_hot_label:
-    dataset[&#39;train_label&#39;] = _change_one_hot_label(dataset[&#39;train_label&#39;])
-    dataset[&#39;test_label&#39;] = _change_one_hot_label(dataset[&#39;test_label&#39;])
-
-if not flatten:
-    for key in (&#39;train_img&#39;, &#39;test_img&#39;):
-        dataset[key] = dataset[key].reshape(-1, 1, 28, 28)
-
-return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[&#39;test_img&#39;], dataset[&#39;test_label&#39;])
-</code></pre>
-<p>def load_images(file_path):<br>    with gzip.open(file_path, ‘rb’) as f:<br>        data &#x3D; np.frombuffer(f.read(), np.uint8, offset&#x3D;16)<br>    return data.reshape(-1, 784)</p>
-<p>def load_labels(file_path):<br>    with gzip.open(file_path, ‘rb’) as f:<br>        data &#x3D; np.frombuffer(f.read(), np.uint8, offset&#x3D;8)<br>    return data</p>
-<p>def _change_one_hot_label(X):<br>    T &#x3D; np.zeros((X.size, 10))<br>    for idx, row in enumerate(T):<br>        row[X[idx]] &#x3D; 1<br>    return T</p>
-<pre><code>
-在代码中出现了epoch作为学习时的次数单位。
-
-### 什么是 `epoch`？
-在机器学习和深度学习中，`epoch` 是一个重要的概念。`epoch` 表示整个训练数据集通过神经网络一次。简单来说，一个 `epoch` 就是将所有的训练数据都用来更新模型参数一次。
-
-### `epoch` 在神经网络中的作用
-在训练神经网络时，我们通常不会一次性将整个训练数据集都输入到模型中进行训练，而是将数据集分成多个小批次（batch），然后依次输入模型。这样做的原因包括：
-
-1. **内存限制**：一次性处理整个数据集可能会导致内存不足，尤其是当数据集非常大时。
-2. **更稳定的梯度更新**：使用小批次数据可以使梯度更新更加平稳，并能有效避免一些局部最优解。
-
-在每个 `epoch` 中，模型会经历以下过程：
-
-1. 将训练数据集分成若干个批次（batches）。
-2. 对每个批次进行前向传播、计算损失、后向传播、更新模型参数。
-3. 一个 `epoch` 结束后，通常会进行一次验证，检查模型在验证集上的表现，以判断模型是否在训练中取得进展。
-
-## 总结
-我们以损失函数为基准，找出了使神经网络的值达到最小的权重参数，也就是神经网络学习的目标。为了尽可能找到小的损失函数值，我们使用了函数斜率的梯度法。
-</code></pre>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -3923,6 +3923,25 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
+    <title>level1</title>
+    <url>/2025/02/28/PwnCollege_level1/</url>
+    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>level2</p>
+]]></content>
+      <categories>
+        <category>PwnCollege</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>PwnCollege</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>building_a_web_server</title>
     <url>/2025/02/28/PwnCollege_building_a_web_server/</url>
     <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    # Socket syscall</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 0x29</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Bind syscall</span><br><span class="line">    mov rdi, 3</span><br><span class="line">    lea rsi, [rip+sockaddr]</span><br><span class="line">    mov rdx, 16</span><br><span class="line">    mov rax, 0x31</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Listen syscall</span><br><span class="line">    mov rdi, 3</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rax, 0x32</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Accept syscall</span><br><span class="line">    mov rdi, 3</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 0x2b</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Read syscall</span><br><span class="line">    mov rdi, 4</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov rdx, 1024</span><br><span class="line">    mov rax, 0x00</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Write syscall</span><br><span class="line">    mov rdi, 4</span><br><span class="line">    lea rsi, [rip+response]</span><br><span class="line">    mov rdx, 19</span><br><span class="line">    mov rax, 0x01</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Delay before closing the connection</span><br><span class="line">    mov rax, 0x20</span><br><span class="line">    mov rdi, 1</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Close syscall</span><br><span class="line">    mov rdi, 4</span><br><span class="line">    mov rax, 0x03</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    # Exit syscall</span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 0x3c    </span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">.section .data</span><br><span class="line">sockaddr:</span><br><span class="line">    .2byte 2</span><br><span class="line">    .2byte 0x5000</span><br><span class="line">    .4byte 0</span><br><span class="line">    .8byte 0</span><br><span class="line"></span><br><span class="line">response: </span><br><span class="line">    .string &quot;HTTP/1.0 200 OK\r\n\r\n&quot;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -3983,25 +4002,6 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    # Open socket</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 41</span><br><span class="line">    syscall</span><br><span class="line">    # Store socket fd in rbx</span><br><span class="line">    mov rbx, rax</span><br><span class="line"></span><br><span class="line">    # Bind socket to address</span><br><span class="line">    mov rdi, rbx</span><br><span class="line">    lea rsi, sa_family_t</span><br><span class="line">    mov rdx, 16</span><br><span class="line">    mov rax, 49</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Listen on socket</span><br><span class="line">    mov rdi, rbx</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rax, 50</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    accept_jump:</span><br><span class="line">    # Accept a connection</span><br><span class="line">    mov rdi, rbx</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 43</span><br><span class="line">    syscall</span><br><span class="line">    # Save new fd for bound connection in r12</span><br><span class="line">    mov r12, rax</span><br><span class="line"></span><br><span class="line">    # Fork the process and let the child do the serving</span><br><span class="line">    mov rax, 57</span><br><span class="line">    syscall</span><br><span class="line">    cmp rax, 0</span><br><span class="line">    je serve_connection</span><br><span class="line">    # Close the connection if parent</span><br><span class="line">    mov rdi, r12</span><br><span class="line">    mov rax, 3</span><br><span class="line">    syscall</span><br><span class="line">    # Then go back to listening</span><br><span class="line">    jmp accept_jump</span><br><span class="line"></span><br><span class="line">    serve_connection:</span><br><span class="line">    # Close listening socket</span><br><span class="line">    mov rdi, rbx</span><br><span class="line">    mov rax, 3</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Read from the connection</span><br><span class="line">    mov rdi, r12</span><br><span class="line">    lea rsi, read_buffer</span><br><span class="line">    mov rdx, [read_packet_length]</span><br><span class="line">    mov rax, 0</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Figure out what file was requested</span><br><span class="line">    lea rdi, read_buffer</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    lea rdx, space</span><br><span class="line">    call get_nth_substr</span><br><span class="line">    mov r13, rax</span><br><span class="line">    lea rdi, read_buffer</span><br><span class="line">    mov rsi, 2</span><br><span class="line">    call get_nth_substr</span><br><span class="line">    mov r14, rax</span><br><span class="line">    sub r14, 1</span><br><span class="line">    # r13 = start (exclusive), r14 = end (inclusive)</span><br><span class="line">    mov rdi, r13</span><br><span class="line">    mov rsi, r14</span><br><span class="line">    lea rdx, file_name_buffer</span><br><span class="line">    call write_to_buf</span><br><span class="line">    # Filename is now stored in file_name_buffer</span><br><span class="line"></span><br><span class="line">    # Check request type</span><br><span class="line">    mov dil, [read_buffer]</span><br><span class="line">    # Compare to &quot;G&quot;</span><br><span class="line">    cmp dil, 0x47</span><br><span class="line">    # Continue (GET process) if G, otherwise do POST</span><br><span class="line">    jne POST</span><br><span class="line"></span><br><span class="line">    GET:</span><br><span class="line">        # Open that file</span><br><span class="line">        lea rdi, file_name_buffer</span><br><span class="line">        mov rsi, 0</span><br><span class="line">        mov rdx, 0</span><br><span class="line">        mov rax, 2</span><br><span class="line">        syscall</span><br><span class="line">        mov r13, rax</span><br><span class="line"></span><br><span class="line">        # Read file contents</span><br><span class="line">        mov rdi, r13</span><br><span class="line">        lea rsi, file_read_buffer</span><br><span class="line">        mov rdx, 1024</span><br><span class="line">        mov rax, 0</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Close the file</span><br><span class="line">        mov rdi, r13</span><br><span class="line">        mov rax, 3</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Write status to connection</span><br><span class="line">        mov rdi, r12</span><br><span class="line">        lea rsi, write_static</span><br><span class="line">        mov rdx, 19</span><br><span class="line">        mov rax, 1</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Write file contents to connection</span><br><span class="line">        lea rdi, file_read_buffer</span><br><span class="line">        call get_len</span><br><span class="line">        mov rdx, rax</span><br><span class="line">        sub rdx, 1</span><br><span class="line">        mov rdi, r12</span><br><span class="line">        lea rsi, file_read_buffer</span><br><span class="line">        mov rax, 1</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        jmp exit</span><br><span class="line"></span><br><span class="line">    POST:</span><br><span class="line">        # Open that file</span><br><span class="line">        lea rdi, file_name_buffer</span><br><span class="line">        mov rsi, 0x41 # O_CREAT, O_WRONLY</span><br><span class="line">        mov rdx, 0777</span><br><span class="line">        mov rax, 2</span><br><span class="line">        syscall</span><br><span class="line">        mov r13, rax</span><br><span class="line"></span><br><span class="line">        # Get the POST content</span><br><span class="line">        lea rdi, read_buffer</span><br><span class="line">        mov rsi, 1</span><br><span class="line">        lea rdx, double_cr_lf</span><br><span class="line">        call get_nth_substr</span><br><span class="line">        mov rsi, rax</span><br><span class="line">        add rsi, 1</span><br><span class="line"></span><br><span class="line">        # Get write length</span><br><span class="line">        mov rdi, rsi</span><br><span class="line">        call get_len</span><br><span class="line">        mov rdx, rax</span><br><span class="line">        # Get rid of the pesky null byte</span><br><span class="line">        sub rdx, 1</span><br><span class="line">        # Write to file</span><br><span class="line">        mov rdi, r13</span><br><span class="line">        mov rax, 1</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Close the file</span><br><span class="line">        mov rdi, r13</span><br><span class="line">        mov rax, 3</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">        # Write status to connection</span><br><span class="line">        mov rdi, r12</span><br><span class="line">        lea rsi, write_static</span><br><span class="line">        mov rdx, 19</span><br><span class="line">        mov rax, 1</span><br><span class="line">        syscall</span><br><span class="line"></span><br><span class="line">    exit:</span><br><span class="line">    # Close the connection</span><br><span class="line">    mov rdi, r12</span><br><span class="line">    mov rax, 3</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Sys exit</span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 60</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Get the length of a null-terminated string (including the first null byte)</span><br><span class="line">    # Args:</span><br><span class="line">    # rdi - buffer we&#x27;re checking the length of</span><br><span class="line">    # rax - length</span><br><span class="line">    get_len:</span><br><span class="line">        mov rax, 0</span><br><span class="line">        get_len_loop:</span><br><span class="line">            # See if rdi + rax-th byte is null</span><br><span class="line">            mov r10, rdi</span><br><span class="line">            add r10, rax</span><br><span class="line">            mov r10, [r10]</span><br><span class="line">            add rax, 1</span><br><span class="line">            cmp r10, 0x00</span><br><span class="line">            jne get_len_loop</span><br><span class="line">        ret</span><br><span class="line"></span><br><span class="line">    # Copy the bytes spanning rdi to rsi to the buffer rdx</span><br><span class="line">    # rdx MUST BE LONGER THAN rsi - rdi BYTES, rdi MUST BE LESS THAN rsi</span><br><span class="line">    # Args:</span><br><span class="line">    # rdi - start (exclusive) of the string we&#x27;re copying</span><br><span class="line">    # rsi - end (inclusive) of the string we&#x27;re copying</span><br><span class="line">    # rdx - buffer we&#x27;re copying to</span><br><span class="line">    # rax - unchanged</span><br><span class="line">    write_to_buf:</span><br><span class="line">        write_to_buf_loop:</span><br><span class="line">            add rdi, 1</span><br><span class="line">            mov r9, [rdi]</span><br><span class="line">            mov [rdx], r9</span><br><span class="line">            add rdx, 1</span><br><span class="line">            cmp rdi, rsi</span><br><span class="line">            jne write_to_buf_loop</span><br><span class="line">        mov byte ptr [rdx], 0x00</span><br><span class="line">        ret</span><br><span class="line"></span><br><span class="line">    # Get address of the (last byte of) the nth occurence of substring in string (occurences must be non-overlapping)</span><br><span class="line">    # ONLY GUARANTEED TO WORK ON NULL-TERMINATED STRINGS</span><br><span class="line">    # Args:</span><br><span class="line">    # rdi - target string address</span><br><span class="line">    # rsi - n</span><br><span class="line">    # rdx - substring</span><br><span class="line"></span><br><span class="line">    # rax - address of nth character</span><br><span class="line">    get_nth_substr:</span><br><span class="line">        # Set rcx (ocurrence counter)</span><br><span class="line">        mov rcx, 0</span><br><span class="line">        # Set r10 (to traverse substring)</span><br><span class="line">        mov r10, rdx</span><br><span class="line">        check_character_loop:</span><br><span class="line">            # r9b = character at position</span><br><span class="line">            mov r9b, [rdi]</span><br><span class="line">            # If string&#x27;s terminated, obviously the substring doesn&#x27;t occur enough times</span><br><span class="line">            cmp r9b, 0x00</span><br><span class="line">            je not_enough_occurrences</span><br><span class="line">            # Step through substring iff r9b = current byte</span><br><span class="line">            cmp r9b, byte ptr [r10]</span><br><span class="line">            jne character_not_equal</span><br><span class="line">                add r10, 1</span><br><span class="line">                # If we&#x27;ve reached the end of the substring, increment counter and reset r10</span><br><span class="line">                cmp byte ptr [r10], 0x00</span><br><span class="line">                jne after_comparison</span><br><span class="line">                    mov r10, rdx</span><br><span class="line">                    add rcx, 1</span><br><span class="line">                    jmp after_comparison</span><br><span class="line">            character_not_equal:</span><br><span class="line">                # Reset r10 without adding to count</span><br><span class="line">                mov r10, rdx</span><br><span class="line">            after_comparison:</span><br><span class="line">            # Return address if we&#x27;ve got the nth ocurrence</span><br><span class="line">            cmp rcx, rsi</span><br><span class="line">            je match</span><br><span class="line">            # Otherwise increment and continue</span><br><span class="line">            add rdi, 1</span><br><span class="line">            jmp check_character_loop</span><br><span class="line">        match:</span><br><span class="line">        mov rax, rdi</span><br><span class="line">        ret</span><br><span class="line">        not_enough_occurrences:</span><br><span class="line">        mov rax, -1</span><br><span class="line">        ret</span><br><span class="line"></span><br><span class="line">.section .data</span><br><span class="line">    # sockaddr_in struct</span><br><span class="line">    sa_family_t: .word 2</span><br><span class="line">    bind_port: .word 0x5000</span><br><span class="line">    bind_address: .double 0x00000000</span><br><span class="line">    pad: .byte 0,0,0,0,0,0,0,0</span><br><span class="line">    # Make empty buffers to read to</span><br><span class="line">    read_buffer: .space 1024</span><br><span class="line">    file_name_buffer: .space 1024</span><br><span class="line">    file_read_buffer: .space 1024</span><br><span class="line">    # Constants</span><br><span class="line">    # Yes it&#x27;s dumb to use a quad word for this, but it simplifies copying it to the register</span><br><span class="line">    read_packet_length: .quad 0x0000000000000400</span><br><span class="line">    write_static: .string &quot;HTTP/1.0 200 OK\r\n\r\n&quot;</span><br><span class="line">    space: .string &quot; &quot;</span><br><span class="line">    double_cr_lf: .string &quot;\r\n\r\n&quot;</span><br></pre></td></tr></table></figure>
 
 <p>网上找的完整版。没写出来post的部分</p>
-]]></content>
-      <categories>
-        <category>PwnCollege</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>PwnCollege</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>level1</title>
-    <url>/2025/02/28/PwnCollege_level1/</url>
-    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>level2</p>
 ]]></content>
       <categories>
         <category>PwnCollege</category>
@@ -5505,119 +5505,6 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       </tags>
   </entry>
   <entry>
-    <title>How to learn _hello agent_</title>
-    <url>/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_How%20to%20learn%20_hello%20agent_/</url>
-    <content><![CDATA[<p>_<strong>agent</strong>_是什么？</p>
-<p>能自主收集信息思考后做出反应的智能体,要求运行的每步都有_thought_与_action_，</p>
-<p>利用在线模型和在线api供应商<br><strong>推理时代</strong></p>
-<p><strong>tavily</strong></p>
-<hr>
-<hr>
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>如何生成一个简单的旅游推荐agent？  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AGENT_SYSTEM_PROMPT = &quot;&quot;&quot;</span><br><span class="line">你是一个智能旅行助手。你的任务是分析用户的请求，并使用可用工具一步步地解决问题。</span><br><span class="line"></span><br><span class="line"># 可用工具:</span><br><span class="line">- `get_weather(city: str)`: 查询指定城市的实时天气。</span><br><span class="line">- `get_attraction(city: str, weather: str)`: 根据城市和天气搜索推荐的旅游景点。</span><br><span class="line"></span><br><span class="line"># 输出格式要求:</span><br><span class="line">你的每次回复必须严格遵循以下格式，包含一对Thought和Action：</span><br><span class="line"></span><br><span class="line">Thought: [你的思考过程和下一步计划]</span><br><span class="line">Action: [你要执行的具体行动]</span><br><span class="line"></span><br><span class="line">Action的格式必须是以下之一：</span><br><span class="line">1. 调用工具：function_name(arg_name=&quot;arg_value&quot;)</span><br><span class="line">2. 结束任务：Finish[最终答案]</span><br><span class="line"></span><br><span class="line"># 重要提示:</span><br><span class="line">- 每次只输出一对Thought-Action</span><br><span class="line">- Action必须在同一行，不要换行</span><br><span class="line">- 当收集到足够信息可以回答用户问题时，必须使用 Action: Finish[最终答案] 格式结束</span><br><span class="line"></span><br><span class="line">请开始吧！</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">from pathlib import Path</span><br><span class="line"></span><br><span class="line">def get_weather(city: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    通过调用 wttr.in API 查询真实的天气信息。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # API端点，我们请求JSON格式的数据</span><br><span class="line">    url = f&quot;https://wttr.in/&#123;city&#125;?format=j1&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 发起网络请求</span><br><span class="line">        response = requests.get(url)</span><br><span class="line">        # 检查响应状态码是否为200 (成功)</span><br><span class="line">        response.raise_for_status() </span><br><span class="line">        # 解析返回的JSON数据</span><br><span class="line">        data = response.json()</span><br><span class="line">        </span><br><span class="line">        # 提取当前天气状况</span><br><span class="line">        current_condition = data[&#x27;current_condition&#x27;][0]</span><br><span class="line">        weather_desc = current_condition[&#x27;weatherDesc&#x27;][0][&#x27;value&#x27;]</span><br><span class="line">        temp_c = current_condition[&#x27;temp_C&#x27;]</span><br><span class="line">        </span><br><span class="line">        # 格式化成自然语言返回</span><br><span class="line">        return f&quot;&#123;city&#125;当前天气:&#123;weather_desc&#125;，气温&#123;temp_c&#125;摄氏度&quot;</span><br><span class="line">        </span><br><span class="line">    except requests.exceptions.RequestException as e:</span><br><span class="line">        # 处理网络错误</span><br><span class="line">        return f&quot;错误:查询天气时遇到网络问题 - &#123;e&#125;&quot;</span><br><span class="line">    except (KeyError, IndexError) as e:</span><br><span class="line">        # 处理数据解析错误</span><br><span class="line">        return f&quot;错误:解析天气数据失败，可能是城市名称无效 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">from tavily import TavilyClient</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def load_root_env() -&gt; None:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    从项目根目录加载 .env 文件到环境变量。</span><br><span class="line">    ez_2.py 位于 chapter_1 下，所以根目录是上一级目录。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    env_path = Path(__file__).resolve().parents[1] / &quot;.env&quot;</span><br><span class="line">    if not env_path.exists():</span><br><span class="line">        print(f&quot;警告: 未找到环境变量文件 &#123;env_path&#125;&quot;)</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">    for raw_line in env_path.read_text(encoding=&quot;utf-8&quot;).splitlines():</span><br><span class="line">        line = raw_line.strip()</span><br><span class="line">        if not line or line.startswith(&quot;#&quot;) or &quot;=&quot; not in line:</span><br><span class="line">            continue</span><br><span class="line"></span><br><span class="line">        key, value = line.split(&quot;=&quot;, 1)</span><br><span class="line">        key = key.strip()</span><br><span class="line">        value = value.strip().strip(&#x27;&quot;&#x27;).strip(&quot;&#x27;&quot;)</span><br><span class="line">        os.environ.setdefault(key, value)</span><br><span class="line"></span><br><span class="line">def get_attraction(city: str, weather: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    根据城市和天气，使用Tavily Search API搜索并返回优化后的景点推荐。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # 1. 从环境变量中读取API密钥</span><br><span class="line">    api_key = os.environ.get(&quot;TAVILY_API_KEY&quot;)</span><br><span class="line">    if not api_key:</span><br><span class="line">        return &quot;错误:未配置TAVILY_API_KEY环境变量。&quot;</span><br><span class="line"></span><br><span class="line">    # 2. 初始化Tavily客户端</span><br><span class="line">    tavily = TavilyClient(api_key=api_key)</span><br><span class="line">    </span><br><span class="line">    # 3. 构造一个精确的查询</span><br><span class="line">    query = f&quot;&#x27;&#123;city&#125;&#x27; 在&#x27;&#123;weather&#125;&#x27;天气下最值得去的旅游景点推荐及理由&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 4. 调用API，include_answer=True会返回一个综合性的回答</span><br><span class="line">        response = tavily.search(query=query, search_depth=&quot;basic&quot;, include_answer=True)</span><br><span class="line">        </span><br><span class="line">        # 5. Tavily返回的结果已经非常干净，可以直接使用</span><br><span class="line">        # response[&#x27;answer&#x27;] 是一个基于所有搜索结果的总结性回答</span><br><span class="line">        if response.get(&quot;answer&quot;):</span><br><span class="line">            return response[&quot;answer&quot;]</span><br><span class="line">        </span><br><span class="line">        # 如果没有综合性回答，则格式化原始结果</span><br><span class="line">        formatted_results = []</span><br><span class="line">        for result in response.get(&quot;results&quot;, []):</span><br><span class="line">            formatted_results.append(f&quot;- &#123;result[&#x27;title&#x27;]&#125;: &#123;result[&#x27;content&#x27;]&#125;&quot;)</span><br><span class="line">        </span><br><span class="line">        if not formatted_results:</span><br><span class="line">             return &quot;抱歉，没有找到相关的旅游景点推荐。&quot;</span><br><span class="line"></span><br><span class="line">        return &quot;根据搜索，为您找到以下信息:\n&quot; + &quot;\n&quot;.join(formatted_results)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        return f&quot;错误:执行Tavily搜索时出现问题 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 将所有工具函数放入一个字典，方便后续调用</span><br><span class="line">available_tools = &#123;</span><br><span class="line">    &quot;get_weather&quot;: get_weather,</span><br><span class="line">    &quot;get_attraction&quot;: get_attraction,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">from openai import OpenAI</span><br><span class="line"></span><br><span class="line">class OpenAICompatibleClient:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    一个用于调用任何兼容OpenAI接口的LLM服务的客户端。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def __init__(self, model: str, api_key: str, base_url: str):</span><br><span class="line">        self.model = model</span><br><span class="line">        self.client = OpenAI(api_key=api_key, base_url=base_url)</span><br><span class="line"></span><br><span class="line">    def generate(self, prompt: str, system_prompt: str) -&gt; str:</span><br><span class="line">        &quot;&quot;&quot;调用LLM API来生成回应。&quot;&quot;&quot;</span><br><span class="line">        print(&quot;正在调用大语言模型...&quot;)</span><br><span class="line">        try:</span><br><span class="line">            messages = [</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;system&#x27;, &#x27;content&#x27;: system_prompt&#125;,</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;user&#x27;, &#x27;content&#x27;: prompt&#125;</span><br><span class="line">            ]</span><br><span class="line">            response = self.client.chat.completions.create(</span><br><span class="line">                model=self.model,</span><br><span class="line">                messages=messages,</span><br><span class="line">                stream=False</span><br><span class="line">            )</span><br><span class="line">            answer = response.choices[0].message.content</span><br><span class="line">            print(&quot;大语言模型响应成功。&quot;)</span><br><span class="line">            return answer</span><br><span class="line">        except Exception as e:</span><br><span class="line">            print(f&quot;调用LLM API时发生错误: &#123;e&#125;&quot;)</span><br><span class="line">            return &quot;错误:调用语言模型服务时出错。&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import re</span><br><span class="line"></span><br><span class="line"># --- 1. 配置LLM客户端 ---</span><br><span class="line"># 从根目录 .env 加载配置</span><br><span class="line">load_root_env()</span><br><span class="line"></span><br><span class="line">API_KEY = os.environ.get(&quot;OPENAI_API_KEY&quot;)</span><br><span class="line">BASE_URL = os.environ.get(&quot;OPENAI_BASE_URL&quot;)</span><br><span class="line">MODEL_ID = os.environ.get(&quot;MODEL_NAME&quot;)</span><br><span class="line"></span><br><span class="line">missing_keys = [</span><br><span class="line">    key for key, value in &#123;</span><br><span class="line">        &quot;OPENAI_API_KEY&quot;: API_KEY,</span><br><span class="line">        &quot;OPENAI_BASE_URL&quot;: BASE_URL,</span><br><span class="line">        &quot;MODEL_NAME&quot;: MODEL_ID,</span><br><span class="line">        &quot;TAVILY_API_KEY&quot;: os.environ.get(&quot;TAVILY_API_KEY&quot;),</span><br><span class="line">    &#125;.items() if not value</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">if missing_keys:</span><br><span class="line">    raise ValueError(f&quot;缺少环境变量: &#123;&#x27;, &#x27;.join(missing_keys)&#125;。请检查根目录 .env 文件。&quot;)</span><br><span class="line"></span><br><span class="line">llm = OpenAICompatibleClient(</span><br><span class="line">    model=MODEL_ID,</span><br><span class="line">    api_key=API_KEY,</span><br><span class="line">    base_url=BASE_URL</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># --- 2. 初始化 ---</span><br><span class="line">user_prompt = &quot;你好，请帮我查询一下今天北京的天气，然后根据天气推荐一个合适的旅游景点。&quot;</span><br><span class="line">prompt_history = [f&quot;用户请求: &#123;user_prompt&#125;&quot;]</span><br><span class="line"></span><br><span class="line">print(f&quot;用户输入: &#123;user_prompt&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line"></span><br><span class="line"># --- 3. 运行主循环 ---</span><br><span class="line">for i in range(5): # 设置最大循环次数</span><br><span class="line">    print(f&quot;--- 循环 &#123;i+1&#125; ---\n&quot;)</span><br><span class="line">    </span><br><span class="line">    # 3.1. 构建Prompt</span><br><span class="line">    full_prompt = &quot;\n&quot;.join(prompt_history)</span><br><span class="line">    </span><br><span class="line">    # 3.2. 调用LLM进行思考</span><br><span class="line">    llm_output = llm.generate(full_prompt, system_prompt=AGENT_SYSTEM_PROMPT)</span><br><span class="line">    # 模型可能会输出多余的Thought-Action，需要截断</span><br><span class="line">    match = re.search(r&#x27;(Thought:.*?Action:.*?)(?=\n\s*(?:Thought:|Action:|Observation:)|\Z)&#x27;, llm_output, re.DOTALL)</span><br><span class="line">    if match:</span><br><span class="line">        truncated = match.group(1).strip()</span><br><span class="line">        if truncated != llm_output.strip():</span><br><span class="line">            llm_output = truncated</span><br><span class="line">            print(&quot;已截断多余的 Thought-Action 对&quot;)</span><br><span class="line">    print(f&quot;模型输出:\n&#123;llm_output&#125;\n&quot;)</span><br><span class="line">    prompt_history.append(llm_output)</span><br><span class="line">    </span><br><span class="line">    # 3.3. 解析并执行行动</span><br><span class="line">    action_match = re.search(r&quot;Action: (.*)&quot;, llm_output, re.DOTALL)</span><br><span class="line">    if not action_match:</span><br><span class="line">        observation = &quot;错误: 未能解析到 Action 字段。请确保你的回复严格遵循 &#x27;Thought: ... Action: ...&#x27; 的格式。&quot;</span><br><span class="line">        observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">        print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">        prompt_history.append(observation_str)</span><br><span class="line">        continue</span><br><span class="line">    action_str = action_match.group(1).strip()</span><br><span class="line"></span><br><span class="line">    if action_str.startswith(&quot;Finish&quot;):</span><br><span class="line">        final_answer = re.match(r&quot;Finish\[(.*)\]&quot;, action_str).group(1)</span><br><span class="line">        print(f&quot;任务完成，最终答案: &#123;final_answer&#125;&quot;)</span><br><span class="line">        break</span><br><span class="line">    </span><br><span class="line">    tool_name = re.search(r&quot;(\w+)\(&quot;, action_str).group(1)</span><br><span class="line">    args_str = re.search(r&quot;\((.*)\)&quot;, action_str).group(1)</span><br><span class="line">    kwargs = dict(re.findall(r&#x27;(\w+)=&quot;([^&quot;]*)&quot;&#x27;, args_str))</span><br><span class="line"></span><br><span class="line">    if tool_name in available_tools:</span><br><span class="line">        observation = available_tools[tool_name](**kwargs)</span><br><span class="line">    else:</span><br><span class="line">        observation = f&quot;错误:未定义的工具 &#x27;&#123;tool_name&#125;&#x27;&quot;</span><br><span class="line"></span><br><span class="line">    # 3.4. 记录观察结果</span><br><span class="line">    observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">    print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">    prompt_history.append(observation_str)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>workflow和agent的区别是什么？</p>
-<h2 id="亲手实现一个transformer"><a href="#亲手实现一个transformer" class="headerlink" title="亲手实现一个transformer"></a>亲手实现一个transformer</h2><p>自注意力机制：</p>
-<ul>
-<li><strong><font style="color:rgb(44, 62, 80);">查询 (Query, Q)</font></strong><font style="color:rgb(52, 73, 94);">：代表当前词元，它正在主动地“查询”其他词元以获取信息。</font></li>
-<li><strong><font style="color:rgb(44, 62, 80);">键 (Key, K)</font></strong><font style="color:rgb(52, 73, 94);">：代表句子中可被查询的词元“标签”或“索引”。</font></li>
-<li><strong><font style="color:rgb(44, 62, 80);">值 (Value, V)</font></strong><font style="color:rgb(52, 73, 94);">：代表词元本身所携带的“内容”或“信息”。</font></li>
-</ul>
-<p><font style="color:rgb(52, 73, 94);">这三个向量都是由原始的词嵌入向量乘以三个不同的、可学习的权重矩阵 (W^Q,W^K,W^V</font><em><font style="color:rgb(52, 73, 94);">W^Q</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^K</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^V</font></em><font style="color:rgb(52, 73, 94);">) 得到的。整个计算过程可以分为以下几步，我们可以把它想象成一次高效的开卷考试：</font></p>
-<ul>
-<li><font style="color:rgb(52, 73, 94);">准备“考题”和“资料”：对于句子中的每个词，都通过权重矩阵生成其Q,K,V</font><em><font style="color:rgb(52, 73, 94);"></font></em><font style="color:rgb(52, 73, 94);">向量。</font></li>
-<li><font style="color:rgb(52, 73, 94);">计算相关性得分：要计算词A的新表示，就用词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的</font><em><font style="color:rgb(52, 73, 94);">Q</font></em><font style="color:rgb(52, 73, 94);">向量，去和句子中所有词（包括</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">自己）的</font><em><font style="color:rgb(52, 73, 94);">K</font></em><font style="color:rgb(52, 73, 94);">向量进行点积运算。这个得分反映了其他词对于理解词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的重要性。</font></li>
-<li><font style="color:rgb(52, 73, 94);">稳定化与归一化：将得到的所有分数除以一个缩放因子</font><font style="color:#DF2A3F;">\sqrt{d_k}</font><font style="color:rgb(52, 73, 94);">（是K向量的维度），以防止梯度过小，然后用Softmax函数将分数转换成总和为1的权重，也就是归一化的过程。</font></li>
-<li><font style="color:rgb(52, 73, 94);">加权求和：将上一步得到的权重分别乘以每个词对应的V向量，然后将所有结果相加。最终得到的向量，就是词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">融合了全局上下文信息后的新表示。</font></li>
-</ul>
-<p><font style="color:rgb(52, 73, 94);"></font></p>
-<ul>
-<li><font style="color:rgb(52, 73, 94);">自注意力机制（Self-Attention）的核心思想是什么？</font></li>
-<li><font style="color:rgb(52, 73, 94);">为什么Transformer能够并行处理序列，而RNN必须串行处理？位置编码（Positional Encoding）在其中起什么作用？</font></li>
-<li><font style="color:rgb(52, 73, 94);">Decoder-Only架构与完整的Encoder-Decoder架构有什么区别？为什么现在主流的大语言模型都采用Decoder-Only架构？</font></li>
-</ul>
-<p><font style="color:rgb(52, 73, 94);">答：</font></p>
-<ol>
-<li><font style="color:rgb(52, 73, 94);">Self-Attention 的核心思想</font></li>
-</ol>
-<p><font style="color:rgb(52, 73, 94);">核心就一句话：让序列中每个 token 都能“按需”查看其他 token，并动态决定关注谁、关注多少。</font></p>
-<p><font style="color:rgb(52, 73, 94);">更形式化一点：</font></p>
-<p><font style="color:rgb(52, 73, 94);">对每个 token，都会生成 Q（query）、K（key）、V（value）。<br></font><font style="color:rgb(52, 73, 94);">当前 token 用自己的 Q 去和所有 token 的 K 做相似度，得到一组权重（attention score）。<br></font><font style="color:rgb(52, 73, 94);">用这些权重对所有 token 的 V 做加权求和，得到当前 token 的新表示。<br></font><font style="color:rgb(52, 73, 94);">这带来的好处：</font></p>
-<p><font style="color:rgb(52, 73, 94);">能建模长距离依赖（句首和句尾可以直接交互）。<br></font><font style="color:rgb(52, 73, 94);">关注模式是数据驱动、上下文相关的，不是固定窗口。<br></font><font style="color:rgb(52, 73, 94);">多头注意力（Multi-Head）可以并行学习不同关系（语法、语义、指代等）。<br></font><font style="color:rgb(52, 73, 94);">2. 为什么 Transformer 能并行，RNN 必须串行？</font></p>
-<p><font style="color:rgb(52, 73, 94);">关键在计算依赖关系：</font></p>
-<p><font style="color:rgb(52, 73, 94);">RNN：<br></font><font style="color:rgb(52, 73, 94);">h_t &#x3D; f(x_t, h_{t-1})<br></font><font style="color:rgb(52, 73, 94);">第 t 步必须等 t-1 步算完，天然时间依赖，训练和推理都难并行（尤其训练时）。<br></font><font style="color:rgb(52, 73, 94);">Transformer（自注意力）：<br></font><font style="color:rgb(52, 73, 94);">一层内所有位置的 Q&#x2F;K&#x2F;V 可以同时算。<br></font><font style="color:rgb(52, 73, 94);">注意力矩阵本质是大规模矩阵乘法（GPU&#x2F;TPU 非常擅长），所以训练可高度并行。<br></font><font style="color:rgb(52, 73, 94);">即使是 Decoder 用了因果 mask，训练时仍可把整段序列一次性喂入，mask 保证“看不到未来”，所以仍能并行算整段 loss。<br></font><font style="color:rgb(52, 73, 94);">补一句：<br></font><font style="color:rgb(52, 73, 94);">Decoder 在生成阶段仍是逐 token 自回归（因为下一个 token 依赖已生成结果），但这和 RNN 的“每层每步都串行”不是一个层面的瓶颈，且可用 KV cache 大幅优化。</font></p>
-<ol start="3">
-<li><font style="color:rgb(52, 73, 94);">Positional Encoding 的作用</font></li>
-</ol>
-<p><font style="color:rgb(52, 73, 94);">因为纯自注意力本身对输入是“集合式”的，不知道顺序。<br></font><font style="color:rgb(52, 73, 94);">位置编码就是把“第几个词”信息注入模型，让模型区分：</font></p>
-<p><font style="color:rgb(52, 73, 94);">“猫追狗” vs “狗追猫”<br></font><font style="color:rgb(52, 73, 94);">邻近关系、远距关系、相对顺序等<br></font><font style="color:rgb(52, 73, 94);">常见做法：</font></p>
-<p><font style="color:rgb(52, 73, 94);">绝对位置编码（sin&#x2F;cos 或可学习向量）<br></font><font style="color:rgb(52, 73, 94);">相对位置编码（如 RoPE、ALiBi 一类思想）<br></font><font style="color:rgb(52, 73, 94);">它的本质作用：给注意力机制补上序列结构先验。</font></p>
-<ol start="4">
-<li><font style="color:rgb(52, 73, 94);">Decoder-Only vs Encoder-Decoder 的区别</font></li>
-</ol>
-<p><font style="color:rgb(52, 73, 94);">Encoder-Decoder（完整 Transformer）</font></p>
-<p><font style="color:rgb(52, 73, 94);">Encoder：双向看输入，得到源序列表征。<br></font><font style="color:rgb(52, 73, 94);">Decoder：带因果 mask，自回归生成输出，并通过 cross-attention 读取 encoder 输出。<br></font><font style="color:rgb(52, 73, 94);">典型任务：机器翻译、摘要、问答（输入-&gt;输出映射明确）。<br></font><font style="color:rgb(52, 73, 94);">Decoder-Only</font></p>
-<p><font style="color:rgb(52, 73, 94);">只有一个自回归 decoder 堆栈（causal self-attention）。<br></font><font style="color:rgb(52, 73, 94);">把“输入+输出”都当成同一串 token，训练目标是下一 token 预测。<br></font><font style="color:rgb(52, 73, 94);">典型代表：GPT 系列。<br></font><font style="color:rgb(52, 73, 94);">5. 为什么主流大语言模型多用 Decoder-Only？</font></p>
-<p><font style="color:rgb(52, 73, 94);">主要是工程与规模化优势叠加：</font></p>
-<p><font style="color:rgb(52, 73, 94);">统一目标简单且通用<br></font><font style="color:rgb(52, 73, 94);">直接做 next-token prediction，几乎所有文本都可用作训练数据，不需要复杂标注。</font></p>
-<p><font style="color:rgb(52, 73, 94);">训练管线更简单<br></font><font style="color:rgb(52, 73, 94);">一个网络、一个损失，适配海量互联网语料最自然，扩展到万亿 token 训练更直接。</font></p>
-<p><font style="color:rgb(52, 73, 94);">生成任务适配最好<br></font><font style="color:rgb(52, 73, 94);">聊天、写作、代码补全本质是连续生成，Decoder-Only 和使用场景高度一致。</font></p>
-<p><font style="color:rgb(52, 73, 94);">in-context learning 能力强<br></font><font style="color:rgb(52, 73, 94);">把指令、示例、上下文拼在 prompt 里即可完成多任务，减少任务特定头和复杂架构需求。</font></p>
-<p><font style="color:rgb(52, 73, 94);">推理系统成熟<br></font><font style="color:rgb(52, 73, 94);">KV cache、张量并行、流水并行、量化等优化在 Decoder-Only 上生态最成熟，部署成本更可控。</font></p>
-<p><font style="color:rgb(52, 73, 94);">不是说 Encoder-Decoder 过时：</font></p>
-<p><font style="color:rgb(52, 73, 94);">在一些“输入理解很重、输出相对短”的任务上（如高质量翻译）仍可能很强。<br></font><font style="color:rgb(52, 73, 94);">但在“统一大模型 + 通用生成”范式下，Decoder-Only 的性价比和扩展性目前最占优。</font></p>
-]]></content>
-      <categories>
-        <category>默认知识库</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>玩转语雀文档💡</title>
-    <url>/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/</url>
-    <content><![CDATA[<p>Hi，欢迎来到语雀～</p>
-<p>语雀文档是一个给个人和团队提供的写好文档的工具，我们希望每个人都可以快速、舒适的记录自己的所思所想，为此，语雀的文档编辑器提供了强大的能力。</p>
-<h3 id="文档：专注于编辑体验"><a href="#文档：专注于编辑体验" class="headerlink" title="文档：专注于编辑体验"></a>文档：专注于编辑体验</h3><ul>
-<li>我们提供了常用的字体设置能力，例如：调整字号大小、<strong>粗体</strong>、_斜体_、<u>下划线</u>、<del>删除线</del>、<code>代码</code>、**<font style="color:#FF4F3E;background-color:#FADB14;">颜色</font>**等，这些丰富的设置能力，可以让你的内容更清晰，更漂亮。</li>
-<li>如果你需要在文档中插入列表，语雀提供了“有序列表”和“无序列表”两种方式，我们这一段话使用的就是无序列表样式。</li>
-<li>你还可以用语雀文档记录待办事项，帮助你把要做的事记录下来，你只需点击✔️，就可以轻松记录这条待办的状态。以下就是待办样式。<ul>
-<li><input disabled="" type="checkbox"> 未完成项</li>
-<li><input checked="" disabled="" type="checkbox"> 已完成项</li>
-</ul>
-</li>
-<li>语雀文档还可以上传图片、表格、附件等等，让你在文档的世界游刃有余。认准绿色“+”号，他们都在这等你。</li>
-<li>以上提到所有功能，都可以在工具栏找到，里边还有更多神奇功能，待你挖掘。<ul>
-<li>移动端 app 的工具栏：</li>
-<li><img src="/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-0.png" class=""></li>
-<li>web 端的工具栏：</li>
-<li><img src="/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-1.png" class=""></li>
-</ul>
-</li>
-</ul>
-<h3 id="知识库：专注于文档整理"><a href="#知识库：专注于文档整理" class="headerlink" title="知识库：专注于文档整理"></a>知识库：专注于文档整理</h3><p>文档整理至关重要，做好文档整理，可以让你的知识真正积累起来，成为一生的财富，那如何利用语雀做好文档整理呢？</p>
-<p>语雀提供了“<strong>知识库</strong>”用来解决文档整理。知识库有点像电脑上的文件夹，用来存放你的文档。当一个知识库有多篇文档时，这个知识库会形成一个目录，这也是语雀的特色，可以让这个知识库变得井井有条。</p>
-<p>当你第一次使用语雀 app 时，可以点击最下边的“文档”，然后点击右上角的“+”新建知识库，再点击右上角“+”开始“新建文档”，开始你的书写✍🏻。为了方便你理解，请看下图。</p>
-<img src="/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-2.png" class="">
-
-<p>在 PC 端，新建知识库依然很方便，点击链接查看详情。<a href="https://www.yuque.com/yuque/thyzgp/gbdfpb">PC 端新建知识库</a></p>
-<h3 id="语雀还能做什么？"><a href="#语雀还能做什么？" class="headerlink" title="语雀还能做什么？"></a>语雀还能做什么？</h3><ul>
-<li>利用语雀，可以很好的做团队协同，做好团队的知识沉淀。<a href="https://www.yuque.com/about/organization">详情</a></li>
-<li>想要了解更多，查看👉<a href="https://www.yuque.com/about/help">语雀帮助中心</a></li>
-</ul>
-<h3 id="联系我们"><a href="#联系我们" class="headerlink" title="联系我们"></a>联系我们</h3><ul>
-<li>更多反馈和建议，请移步👉<a href="https://www.yuque.com/zze08m/topics">语雀移动端讨论区</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>默认知识库</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>森林里的楼梯 · 搜救官系列(全五部)</title>
     <url>/2026/09/08/%E7%81%B5%E5%BC%82%E6%95%85%E4%BA%8B_%E6%A3%AE%E6%9E%97%E9%87%8C%E7%9A%84%E6%A5%BC%E6%A2%AF_%E6%90%9C%E6%95%91%E5%AE%98%E7%B3%BB%E5%88%97/</url>
     <content><![CDATA[<blockquote>
@@ -5986,6 +5873,119 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
         <tag>翻译</tag>
         <tag>恐怖</tag>
         <tag>搜救官系列</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>玩转语雀文档💡</title>
+    <url>/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/</url>
+    <content><![CDATA[<p>Hi，欢迎来到语雀～</p>
+<p>语雀文档是一个给个人和团队提供的写好文档的工具，我们希望每个人都可以快速、舒适的记录自己的所思所想，为此，语雀的文档编辑器提供了强大的能力。</p>
+<h3 id="文档：专注于编辑体验"><a href="#文档：专注于编辑体验" class="headerlink" title="文档：专注于编辑体验"></a>文档：专注于编辑体验</h3><ul>
+<li>我们提供了常用的字体设置能力，例如：调整字号大小、<strong>粗体</strong>、_斜体_、<u>下划线</u>、<del>删除线</del>、<code>代码</code>、**<font style="color:#FF4F3E;background-color:#FADB14;">颜色</font>**等，这些丰富的设置能力，可以让你的内容更清晰，更漂亮。</li>
+<li>如果你需要在文档中插入列表，语雀提供了“有序列表”和“无序列表”两种方式，我们这一段话使用的就是无序列表样式。</li>
+<li>你还可以用语雀文档记录待办事项，帮助你把要做的事记录下来，你只需点击✔️，就可以轻松记录这条待办的状态。以下就是待办样式。<ul>
+<li><input disabled="" type="checkbox"> 未完成项</li>
+<li><input checked="" disabled="" type="checkbox"> 已完成项</li>
+</ul>
+</li>
+<li>语雀文档还可以上传图片、表格、附件等等，让你在文档的世界游刃有余。认准绿色“+”号，他们都在这等你。</li>
+<li>以上提到所有功能，都可以在工具栏找到，里边还有更多神奇功能，待你挖掘。<ul>
+<li>移动端 app 的工具栏：</li>
+<li><img src="/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-0.png" class=""></li>
+<li>web 端的工具栏：</li>
+<li><img src="/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-1.png" class=""></li>
+</ul>
+</li>
+</ul>
+<h3 id="知识库：专注于文档整理"><a href="#知识库：专注于文档整理" class="headerlink" title="知识库：专注于文档整理"></a>知识库：专注于文档整理</h3><p>文档整理至关重要，做好文档整理，可以让你的知识真正积累起来，成为一生的财富，那如何利用语雀做好文档整理呢？</p>
+<p>语雀提供了“<strong>知识库</strong>”用来解决文档整理。知识库有点像电脑上的文件夹，用来存放你的文档。当一个知识库有多篇文档时，这个知识库会形成一个目录，这也是语雀的特色，可以让这个知识库变得井井有条。</p>
+<p>当你第一次使用语雀 app 时，可以点击最下边的“文档”，然后点击右上角的“+”新建知识库，再点击右上角“+”开始“新建文档”，开始你的书写✍🏻。为了方便你理解，请看下图。</p>
+<img src="/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_%E7%8E%A9%E8%BD%AC%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%F0%9F%92%A1/image-2.png" class="">
+
+<p>在 PC 端，新建知识库依然很方便，点击链接查看详情。<a href="https://www.yuque.com/yuque/thyzgp/gbdfpb">PC 端新建知识库</a></p>
+<h3 id="语雀还能做什么？"><a href="#语雀还能做什么？" class="headerlink" title="语雀还能做什么？"></a>语雀还能做什么？</h3><ul>
+<li>利用语雀，可以很好的做团队协同，做好团队的知识沉淀。<a href="https://www.yuque.com/about/organization">详情</a></li>
+<li>想要了解更多，查看👉<a href="https://www.yuque.com/about/help">语雀帮助中心</a></li>
+</ul>
+<h3 id="联系我们"><a href="#联系我们" class="headerlink" title="联系我们"></a>联系我们</h3><ul>
+<li>更多反馈和建议，请移步👉<a href="https://www.yuque.com/zze08m/topics">语雀移动端讨论区</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>默认知识库</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>How to learn _hello agent_</title>
+    <url>/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_How%20to%20learn%20_hello%20agent_/</url>
+    <content><![CDATA[<p>_<strong>agent</strong>_是什么？</p>
+<p>能自主收集信息思考后做出反应的智能体,要求运行的每步都有_thought_与_action_，</p>
+<p>利用在线模型和在线api供应商<br><strong>推理时代</strong></p>
+<p><strong>tavily</strong></p>
+<hr>
+<hr>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>如何生成一个简单的旅游推荐agent？  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AGENT_SYSTEM_PROMPT = &quot;&quot;&quot;</span><br><span class="line">你是一个智能旅行助手。你的任务是分析用户的请求，并使用可用工具一步步地解决问题。</span><br><span class="line"></span><br><span class="line"># 可用工具:</span><br><span class="line">- `get_weather(city: str)`: 查询指定城市的实时天气。</span><br><span class="line">- `get_attraction(city: str, weather: str)`: 根据城市和天气搜索推荐的旅游景点。</span><br><span class="line"></span><br><span class="line"># 输出格式要求:</span><br><span class="line">你的每次回复必须严格遵循以下格式，包含一对Thought和Action：</span><br><span class="line"></span><br><span class="line">Thought: [你的思考过程和下一步计划]</span><br><span class="line">Action: [你要执行的具体行动]</span><br><span class="line"></span><br><span class="line">Action的格式必须是以下之一：</span><br><span class="line">1. 调用工具：function_name(arg_name=&quot;arg_value&quot;)</span><br><span class="line">2. 结束任务：Finish[最终答案]</span><br><span class="line"></span><br><span class="line"># 重要提示:</span><br><span class="line">- 每次只输出一对Thought-Action</span><br><span class="line">- Action必须在同一行，不要换行</span><br><span class="line">- 当收集到足够信息可以回答用户问题时，必须使用 Action: Finish[最终答案] 格式结束</span><br><span class="line"></span><br><span class="line">请开始吧！</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">from pathlib import Path</span><br><span class="line"></span><br><span class="line">def get_weather(city: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    通过调用 wttr.in API 查询真实的天气信息。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # API端点，我们请求JSON格式的数据</span><br><span class="line">    url = f&quot;https://wttr.in/&#123;city&#125;?format=j1&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 发起网络请求</span><br><span class="line">        response = requests.get(url)</span><br><span class="line">        # 检查响应状态码是否为200 (成功)</span><br><span class="line">        response.raise_for_status() </span><br><span class="line">        # 解析返回的JSON数据</span><br><span class="line">        data = response.json()</span><br><span class="line">        </span><br><span class="line">        # 提取当前天气状况</span><br><span class="line">        current_condition = data[&#x27;current_condition&#x27;][0]</span><br><span class="line">        weather_desc = current_condition[&#x27;weatherDesc&#x27;][0][&#x27;value&#x27;]</span><br><span class="line">        temp_c = current_condition[&#x27;temp_C&#x27;]</span><br><span class="line">        </span><br><span class="line">        # 格式化成自然语言返回</span><br><span class="line">        return f&quot;&#123;city&#125;当前天气:&#123;weather_desc&#125;，气温&#123;temp_c&#125;摄氏度&quot;</span><br><span class="line">        </span><br><span class="line">    except requests.exceptions.RequestException as e:</span><br><span class="line">        # 处理网络错误</span><br><span class="line">        return f&quot;错误:查询天气时遇到网络问题 - &#123;e&#125;&quot;</span><br><span class="line">    except (KeyError, IndexError) as e:</span><br><span class="line">        # 处理数据解析错误</span><br><span class="line">        return f&quot;错误:解析天气数据失败，可能是城市名称无效 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">from tavily import TavilyClient</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def load_root_env() -&gt; None:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    从项目根目录加载 .env 文件到环境变量。</span><br><span class="line">    ez_2.py 位于 chapter_1 下，所以根目录是上一级目录。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    env_path = Path(__file__).resolve().parents[1] / &quot;.env&quot;</span><br><span class="line">    if not env_path.exists():</span><br><span class="line">        print(f&quot;警告: 未找到环境变量文件 &#123;env_path&#125;&quot;)</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">    for raw_line in env_path.read_text(encoding=&quot;utf-8&quot;).splitlines():</span><br><span class="line">        line = raw_line.strip()</span><br><span class="line">        if not line or line.startswith(&quot;#&quot;) or &quot;=&quot; not in line:</span><br><span class="line">            continue</span><br><span class="line"></span><br><span class="line">        key, value = line.split(&quot;=&quot;, 1)</span><br><span class="line">        key = key.strip()</span><br><span class="line">        value = value.strip().strip(&#x27;&quot;&#x27;).strip(&quot;&#x27;&quot;)</span><br><span class="line">        os.environ.setdefault(key, value)</span><br><span class="line"></span><br><span class="line">def get_attraction(city: str, weather: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    根据城市和天气，使用Tavily Search API搜索并返回优化后的景点推荐。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # 1. 从环境变量中读取API密钥</span><br><span class="line">    api_key = os.environ.get(&quot;TAVILY_API_KEY&quot;)</span><br><span class="line">    if not api_key:</span><br><span class="line">        return &quot;错误:未配置TAVILY_API_KEY环境变量。&quot;</span><br><span class="line"></span><br><span class="line">    # 2. 初始化Tavily客户端</span><br><span class="line">    tavily = TavilyClient(api_key=api_key)</span><br><span class="line">    </span><br><span class="line">    # 3. 构造一个精确的查询</span><br><span class="line">    query = f&quot;&#x27;&#123;city&#125;&#x27; 在&#x27;&#123;weather&#125;&#x27;天气下最值得去的旅游景点推荐及理由&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 4. 调用API，include_answer=True会返回一个综合性的回答</span><br><span class="line">        response = tavily.search(query=query, search_depth=&quot;basic&quot;, include_answer=True)</span><br><span class="line">        </span><br><span class="line">        # 5. Tavily返回的结果已经非常干净，可以直接使用</span><br><span class="line">        # response[&#x27;answer&#x27;] 是一个基于所有搜索结果的总结性回答</span><br><span class="line">        if response.get(&quot;answer&quot;):</span><br><span class="line">            return response[&quot;answer&quot;]</span><br><span class="line">        </span><br><span class="line">        # 如果没有综合性回答，则格式化原始结果</span><br><span class="line">        formatted_results = []</span><br><span class="line">        for result in response.get(&quot;results&quot;, []):</span><br><span class="line">            formatted_results.append(f&quot;- &#123;result[&#x27;title&#x27;]&#125;: &#123;result[&#x27;content&#x27;]&#125;&quot;)</span><br><span class="line">        </span><br><span class="line">        if not formatted_results:</span><br><span class="line">             return &quot;抱歉，没有找到相关的旅游景点推荐。&quot;</span><br><span class="line"></span><br><span class="line">        return &quot;根据搜索，为您找到以下信息:\n&quot; + &quot;\n&quot;.join(formatted_results)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        return f&quot;错误:执行Tavily搜索时出现问题 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 将所有工具函数放入一个字典，方便后续调用</span><br><span class="line">available_tools = &#123;</span><br><span class="line">    &quot;get_weather&quot;: get_weather,</span><br><span class="line">    &quot;get_attraction&quot;: get_attraction,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">from openai import OpenAI</span><br><span class="line"></span><br><span class="line">class OpenAICompatibleClient:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    一个用于调用任何兼容OpenAI接口的LLM服务的客户端。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def __init__(self, model: str, api_key: str, base_url: str):</span><br><span class="line">        self.model = model</span><br><span class="line">        self.client = OpenAI(api_key=api_key, base_url=base_url)</span><br><span class="line"></span><br><span class="line">    def generate(self, prompt: str, system_prompt: str) -&gt; str:</span><br><span class="line">        &quot;&quot;&quot;调用LLM API来生成回应。&quot;&quot;&quot;</span><br><span class="line">        print(&quot;正在调用大语言模型...&quot;)</span><br><span class="line">        try:</span><br><span class="line">            messages = [</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;system&#x27;, &#x27;content&#x27;: system_prompt&#125;,</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;user&#x27;, &#x27;content&#x27;: prompt&#125;</span><br><span class="line">            ]</span><br><span class="line">            response = self.client.chat.completions.create(</span><br><span class="line">                model=self.model,</span><br><span class="line">                messages=messages,</span><br><span class="line">                stream=False</span><br><span class="line">            )</span><br><span class="line">            answer = response.choices[0].message.content</span><br><span class="line">            print(&quot;大语言模型响应成功。&quot;)</span><br><span class="line">            return answer</span><br><span class="line">        except Exception as e:</span><br><span class="line">            print(f&quot;调用LLM API时发生错误: &#123;e&#125;&quot;)</span><br><span class="line">            return &quot;错误:调用语言模型服务时出错。&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import re</span><br><span class="line"></span><br><span class="line"># --- 1. 配置LLM客户端 ---</span><br><span class="line"># 从根目录 .env 加载配置</span><br><span class="line">load_root_env()</span><br><span class="line"></span><br><span class="line">API_KEY = os.environ.get(&quot;OPENAI_API_KEY&quot;)</span><br><span class="line">BASE_URL = os.environ.get(&quot;OPENAI_BASE_URL&quot;)</span><br><span class="line">MODEL_ID = os.environ.get(&quot;MODEL_NAME&quot;)</span><br><span class="line"></span><br><span class="line">missing_keys = [</span><br><span class="line">    key for key, value in &#123;</span><br><span class="line">        &quot;OPENAI_API_KEY&quot;: API_KEY,</span><br><span class="line">        &quot;OPENAI_BASE_URL&quot;: BASE_URL,</span><br><span class="line">        &quot;MODEL_NAME&quot;: MODEL_ID,</span><br><span class="line">        &quot;TAVILY_API_KEY&quot;: os.environ.get(&quot;TAVILY_API_KEY&quot;),</span><br><span class="line">    &#125;.items() if not value</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">if missing_keys:</span><br><span class="line">    raise ValueError(f&quot;缺少环境变量: &#123;&#x27;, &#x27;.join(missing_keys)&#125;。请检查根目录 .env 文件。&quot;)</span><br><span class="line"></span><br><span class="line">llm = OpenAICompatibleClient(</span><br><span class="line">    model=MODEL_ID,</span><br><span class="line">    api_key=API_KEY,</span><br><span class="line">    base_url=BASE_URL</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># --- 2. 初始化 ---</span><br><span class="line">user_prompt = &quot;你好，请帮我查询一下今天北京的天气，然后根据天气推荐一个合适的旅游景点。&quot;</span><br><span class="line">prompt_history = [f&quot;用户请求: &#123;user_prompt&#125;&quot;]</span><br><span class="line"></span><br><span class="line">print(f&quot;用户输入: &#123;user_prompt&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line"></span><br><span class="line"># --- 3. 运行主循环 ---</span><br><span class="line">for i in range(5): # 设置最大循环次数</span><br><span class="line">    print(f&quot;--- 循环 &#123;i+1&#125; ---\n&quot;)</span><br><span class="line">    </span><br><span class="line">    # 3.1. 构建Prompt</span><br><span class="line">    full_prompt = &quot;\n&quot;.join(prompt_history)</span><br><span class="line">    </span><br><span class="line">    # 3.2. 调用LLM进行思考</span><br><span class="line">    llm_output = llm.generate(full_prompt, system_prompt=AGENT_SYSTEM_PROMPT)</span><br><span class="line">    # 模型可能会输出多余的Thought-Action，需要截断</span><br><span class="line">    match = re.search(r&#x27;(Thought:.*?Action:.*?)(?=\n\s*(?:Thought:|Action:|Observation:)|\Z)&#x27;, llm_output, re.DOTALL)</span><br><span class="line">    if match:</span><br><span class="line">        truncated = match.group(1).strip()</span><br><span class="line">        if truncated != llm_output.strip():</span><br><span class="line">            llm_output = truncated</span><br><span class="line">            print(&quot;已截断多余的 Thought-Action 对&quot;)</span><br><span class="line">    print(f&quot;模型输出:\n&#123;llm_output&#125;\n&quot;)</span><br><span class="line">    prompt_history.append(llm_output)</span><br><span class="line">    </span><br><span class="line">    # 3.3. 解析并执行行动</span><br><span class="line">    action_match = re.search(r&quot;Action: (.*)&quot;, llm_output, re.DOTALL)</span><br><span class="line">    if not action_match:</span><br><span class="line">        observation = &quot;错误: 未能解析到 Action 字段。请确保你的回复严格遵循 &#x27;Thought: ... Action: ...&#x27; 的格式。&quot;</span><br><span class="line">        observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">        print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">        prompt_history.append(observation_str)</span><br><span class="line">        continue</span><br><span class="line">    action_str = action_match.group(1).strip()</span><br><span class="line"></span><br><span class="line">    if action_str.startswith(&quot;Finish&quot;):</span><br><span class="line">        final_answer = re.match(r&quot;Finish\[(.*)\]&quot;, action_str).group(1)</span><br><span class="line">        print(f&quot;任务完成，最终答案: &#123;final_answer&#125;&quot;)</span><br><span class="line">        break</span><br><span class="line">    </span><br><span class="line">    tool_name = re.search(r&quot;(\w+)\(&quot;, action_str).group(1)</span><br><span class="line">    args_str = re.search(r&quot;\((.*)\)&quot;, action_str).group(1)</span><br><span class="line">    kwargs = dict(re.findall(r&#x27;(\w+)=&quot;([^&quot;]*)&quot;&#x27;, args_str))</span><br><span class="line"></span><br><span class="line">    if tool_name in available_tools:</span><br><span class="line">        observation = available_tools[tool_name](**kwargs)</span><br><span class="line">    else:</span><br><span class="line">        observation = f&quot;错误:未定义的工具 &#x27;&#123;tool_name&#125;&#x27;&quot;</span><br><span class="line"></span><br><span class="line">    # 3.4. 记录观察结果</span><br><span class="line">    observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">    print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">    prompt_history.append(observation_str)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>workflow和agent的区别是什么？</p>
+<h2 id="亲手实现一个transformer"><a href="#亲手实现一个transformer" class="headerlink" title="亲手实现一个transformer"></a>亲手实现一个transformer</h2><p>自注意力机制：</p>
+<ul>
+<li><strong><font style="color:rgb(44, 62, 80);">查询 (Query, Q)</font></strong><font style="color:rgb(52, 73, 94);">：代表当前词元，它正在主动地“查询”其他词元以获取信息。</font></li>
+<li><strong><font style="color:rgb(44, 62, 80);">键 (Key, K)</font></strong><font style="color:rgb(52, 73, 94);">：代表句子中可被查询的词元“标签”或“索引”。</font></li>
+<li><strong><font style="color:rgb(44, 62, 80);">值 (Value, V)</font></strong><font style="color:rgb(52, 73, 94);">：代表词元本身所携带的“内容”或“信息”。</font></li>
+</ul>
+<p><font style="color:rgb(52, 73, 94);">这三个向量都是由原始的词嵌入向量乘以三个不同的、可学习的权重矩阵 (W^Q,W^K,W^V</font><em><font style="color:rgb(52, 73, 94);">W^Q</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^K</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^V</font></em><font style="color:rgb(52, 73, 94);">) 得到的。整个计算过程可以分为以下几步，我们可以把它想象成一次高效的开卷考试：</font></p>
+<ul>
+<li><font style="color:rgb(52, 73, 94);">准备“考题”和“资料”：对于句子中的每个词，都通过权重矩阵生成其Q,K,V</font><em><font style="color:rgb(52, 73, 94);"></font></em><font style="color:rgb(52, 73, 94);">向量。</font></li>
+<li><font style="color:rgb(52, 73, 94);">计算相关性得分：要计算词A的新表示，就用词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的</font><em><font style="color:rgb(52, 73, 94);">Q</font></em><font style="color:rgb(52, 73, 94);">向量，去和句子中所有词（包括</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">自己）的</font><em><font style="color:rgb(52, 73, 94);">K</font></em><font style="color:rgb(52, 73, 94);">向量进行点积运算。这个得分反映了其他词对于理解词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的重要性。</font></li>
+<li><font style="color:rgb(52, 73, 94);">稳定化与归一化：将得到的所有分数除以一个缩放因子</font><font style="color:#DF2A3F;">\sqrt{d_k}</font><font style="color:rgb(52, 73, 94);">（是K向量的维度），以防止梯度过小，然后用Softmax函数将分数转换成总和为1的权重，也就是归一化的过程。</font></li>
+<li><font style="color:rgb(52, 73, 94);">加权求和：将上一步得到的权重分别乘以每个词对应的V向量，然后将所有结果相加。最终得到的向量，就是词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">融合了全局上下文信息后的新表示。</font></li>
+</ul>
+<p><font style="color:rgb(52, 73, 94);"></font></p>
+<ul>
+<li><font style="color:rgb(52, 73, 94);">自注意力机制（Self-Attention）的核心思想是什么？</font></li>
+<li><font style="color:rgb(52, 73, 94);">为什么Transformer能够并行处理序列，而RNN必须串行处理？位置编码（Positional Encoding）在其中起什么作用？</font></li>
+<li><font style="color:rgb(52, 73, 94);">Decoder-Only架构与完整的Encoder-Decoder架构有什么区别？为什么现在主流的大语言模型都采用Decoder-Only架构？</font></li>
+</ul>
+<p><font style="color:rgb(52, 73, 94);">答：</font></p>
+<ol>
+<li><font style="color:rgb(52, 73, 94);">Self-Attention 的核心思想</font></li>
+</ol>
+<p><font style="color:rgb(52, 73, 94);">核心就一句话：让序列中每个 token 都能“按需”查看其他 token，并动态决定关注谁、关注多少。</font></p>
+<p><font style="color:rgb(52, 73, 94);">更形式化一点：</font></p>
+<p><font style="color:rgb(52, 73, 94);">对每个 token，都会生成 Q（query）、K（key）、V（value）。<br></font><font style="color:rgb(52, 73, 94);">当前 token 用自己的 Q 去和所有 token 的 K 做相似度，得到一组权重（attention score）。<br></font><font style="color:rgb(52, 73, 94);">用这些权重对所有 token 的 V 做加权求和，得到当前 token 的新表示。<br></font><font style="color:rgb(52, 73, 94);">这带来的好处：</font></p>
+<p><font style="color:rgb(52, 73, 94);">能建模长距离依赖（句首和句尾可以直接交互）。<br></font><font style="color:rgb(52, 73, 94);">关注模式是数据驱动、上下文相关的，不是固定窗口。<br></font><font style="color:rgb(52, 73, 94);">多头注意力（Multi-Head）可以并行学习不同关系（语法、语义、指代等）。<br></font><font style="color:rgb(52, 73, 94);">2. 为什么 Transformer 能并行，RNN 必须串行？</font></p>
+<p><font style="color:rgb(52, 73, 94);">关键在计算依赖关系：</font></p>
+<p><font style="color:rgb(52, 73, 94);">RNN：<br></font><font style="color:rgb(52, 73, 94);">h_t &#x3D; f(x_t, h_{t-1})<br></font><font style="color:rgb(52, 73, 94);">第 t 步必须等 t-1 步算完，天然时间依赖，训练和推理都难并行（尤其训练时）。<br></font><font style="color:rgb(52, 73, 94);">Transformer（自注意力）：<br></font><font style="color:rgb(52, 73, 94);">一层内所有位置的 Q&#x2F;K&#x2F;V 可以同时算。<br></font><font style="color:rgb(52, 73, 94);">注意力矩阵本质是大规模矩阵乘法（GPU&#x2F;TPU 非常擅长），所以训练可高度并行。<br></font><font style="color:rgb(52, 73, 94);">即使是 Decoder 用了因果 mask，训练时仍可把整段序列一次性喂入，mask 保证“看不到未来”，所以仍能并行算整段 loss。<br></font><font style="color:rgb(52, 73, 94);">补一句：<br></font><font style="color:rgb(52, 73, 94);">Decoder 在生成阶段仍是逐 token 自回归（因为下一个 token 依赖已生成结果），但这和 RNN 的“每层每步都串行”不是一个层面的瓶颈，且可用 KV cache 大幅优化。</font></p>
+<ol start="3">
+<li><font style="color:rgb(52, 73, 94);">Positional Encoding 的作用</font></li>
+</ol>
+<p><font style="color:rgb(52, 73, 94);">因为纯自注意力本身对输入是“集合式”的，不知道顺序。<br></font><font style="color:rgb(52, 73, 94);">位置编码就是把“第几个词”信息注入模型，让模型区分：</font></p>
+<p><font style="color:rgb(52, 73, 94);">“猫追狗” vs “狗追猫”<br></font><font style="color:rgb(52, 73, 94);">邻近关系、远距关系、相对顺序等<br></font><font style="color:rgb(52, 73, 94);">常见做法：</font></p>
+<p><font style="color:rgb(52, 73, 94);">绝对位置编码（sin&#x2F;cos 或可学习向量）<br></font><font style="color:rgb(52, 73, 94);">相对位置编码（如 RoPE、ALiBi 一类思想）<br></font><font style="color:rgb(52, 73, 94);">它的本质作用：给注意力机制补上序列结构先验。</font></p>
+<ol start="4">
+<li><font style="color:rgb(52, 73, 94);">Decoder-Only vs Encoder-Decoder 的区别</font></li>
+</ol>
+<p><font style="color:rgb(52, 73, 94);">Encoder-Decoder（完整 Transformer）</font></p>
+<p><font style="color:rgb(52, 73, 94);">Encoder：双向看输入，得到源序列表征。<br></font><font style="color:rgb(52, 73, 94);">Decoder：带因果 mask，自回归生成输出，并通过 cross-attention 读取 encoder 输出。<br></font><font style="color:rgb(52, 73, 94);">典型任务：机器翻译、摘要、问答（输入-&gt;输出映射明确）。<br></font><font style="color:rgb(52, 73, 94);">Decoder-Only</font></p>
+<p><font style="color:rgb(52, 73, 94);">只有一个自回归 decoder 堆栈（causal self-attention）。<br></font><font style="color:rgb(52, 73, 94);">把“输入+输出”都当成同一串 token，训练目标是下一 token 预测。<br></font><font style="color:rgb(52, 73, 94);">典型代表：GPT 系列。<br></font><font style="color:rgb(52, 73, 94);">5. 为什么主流大语言模型多用 Decoder-Only？</font></p>
+<p><font style="color:rgb(52, 73, 94);">主要是工程与规模化优势叠加：</font></p>
+<p><font style="color:rgb(52, 73, 94);">统一目标简单且通用<br></font><font style="color:rgb(52, 73, 94);">直接做 next-token prediction，几乎所有文本都可用作训练数据，不需要复杂标注。</font></p>
+<p><font style="color:rgb(52, 73, 94);">训练管线更简单<br></font><font style="color:rgb(52, 73, 94);">一个网络、一个损失，适配海量互联网语料最自然，扩展到万亿 token 训练更直接。</font></p>
+<p><font style="color:rgb(52, 73, 94);">生成任务适配最好<br></font><font style="color:rgb(52, 73, 94);">聊天、写作、代码补全本质是连续生成，Decoder-Only 和使用场景高度一致。</font></p>
+<p><font style="color:rgb(52, 73, 94);">in-context learning 能力强<br></font><font style="color:rgb(52, 73, 94);">把指令、示例、上下文拼在 prompt 里即可完成多任务，减少任务特定头和复杂架构需求。</font></p>
+<p><font style="color:rgb(52, 73, 94);">推理系统成熟<br></font><font style="color:rgb(52, 73, 94);">KV cache、张量并行、流水并行、量化等优化在 Decoder-Only 上生态最成熟，部署成本更可控。</font></p>
+<p><font style="color:rgb(52, 73, 94);">不是说 Encoder-Decoder 过时：</font></p>
+<p><font style="color:rgb(52, 73, 94);">在一些“输入理解很重、输出相对短”的任务上（如高质量翻译）仍可能很强。<br></font><font style="color:rgb(52, 73, 94);">但在“统一大模型 + 通用生成”范式下，Decoder-Only 的性价比和扩展性目前最占优。</font></p>
+]]></content>
+      <categories>
+        <category>默认知识库</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
 </search>
