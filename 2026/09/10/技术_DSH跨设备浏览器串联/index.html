@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="overflow-x-hidden">
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#f9fbff">
+<script>
+/* pre-paint boot: apply saved style theme (鲸蓝/素瓷) + light/dark before first paint */
+(function(){try{var s=localStorage.getItem('fa-style');if(s==='porcelain')document.documentElement.setAttribute('data-style','porcelain');if(localStorage.getItem('theme')!=='light')document.documentElement.classList.add('dark');}catch(e){}})();
+</script>
+<title>让 iPad 无感用上 Mac 里的 DSH：Caddy + launchd 局域网网关实录 | 杜鹃声</title>
+<meta name="description" content="AAAFORGE的技术博客">
+<meta name="author" content="AAAFORGE">
+<link rel="canonical" href="/2026/09/10/%E6%8A%80%E6%9C%AF_DSH%E8%B7%A8%E8%AE%BE%E5%A4%87%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%B2%E8%81%94/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="让 iPad 无感用上 Mac 里的 DSH：Caddy + launchd 局域网网关实录">
+<meta property="og:url" content="/2026/09/10/%E6%8A%80%E6%9C%AF_DSH%E8%B7%A8%E8%AE%BE%E5%A4%87%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%B2%E8%81%94/">
+<meta property="og:site_name" content="杜鹃声">
+<meta property="og:description" content="AAAFORGE的技术博客">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="google-site-verification" content="0zu5rZRmLNHkpIdu_HFLcuqEZRcmimRHxZ5oTd29M3c">
+
+
+<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+<link rel="alternate" href="/atom.xml" title="杜鹃声" type="application/rss+xml">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+
+<!-- Tailwind — precompiled at build time (was: runtime CDN JIT compiler, the top jank source) -->
+<link rel="stylesheet" href="/css/tailwind.css">
+
+<!-- Fonts — self-hosted latin (zero cross-origin in default view) -->
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/fonts/inter.css">
+<!-- CJK display/serif extras: loaded async (media=print swap) — never render-blocking -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=ZCOOL+QingKe+HuangYou&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" media="print" onload="this.media='all'">
+
+<!-- Custom CSS (theme variables + components) -->
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body class="font-sans antialiased transition-colors duration-500 overflow-x-hidden">
+
+  
+
+
+
+<div class="ambient-bg" aria-hidden="true">
+  <div class="ambient-blob ambient-blob-1"></div>
+  <div class="ambient-blob ambient-blob-2"></div>
+  <div class="ambient-grain"></div>
+</div>
+
+
+
+
+  <nav class="fixed top-0 left-0 right-0 z-50 h-[4.5rem] border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-xl transition-colors duration-300">
+  <div class="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6 lg:px-8">
+
+    <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 hover:text-accent-500 dark:hover:text-accent-400 transition-colors min-w-0">
+      <img src="/images/avatar.webp" alt="avatar" class="w-16 h-16 rounded-full ring-2 ring-zinc-200 dark:ring-zinc-700" width="64" height="64">
+      <span class="truncate">杜鹃声</span>
+      <span class="nav-date hidden xl:inline" aria-hidden="true"><span id="nav-date"></span></span>
+    </a>
+
+    <div class="hidden md:flex items-center gap-0.5">
+      
+      <a href="/" class="nav-link ">首页</a>
+      
+      <a href="/archives/" class="nav-link ">归档</a>
+      
+      <a href="/timeline/" class="nav-link ">时间轴</a>
+      
+      <a href="/categories/" class="nav-link ">分类</a>
+      
+      <a href="/tags/" class="nav-link ">标签</a>
+      
+      <a href="/about/" class="nav-link ">关于</a>
+      
+      <div class="flex items-center gap-1 ml-2 pl-2 border-l border-zinc-200 dark:border-zinc-800">
+        
+        <button onclick="toggleSearch()" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all flex items-center" aria-label="搜索">
+          <i data-lucide="search" class="w-4 h-4"></i><kbd class="nav-kbd hidden lg:inline-flex">/</kbd>
+        </button>
+        
+        
+        <div class="hidden lg:flex items-center gap-0.5 p-0.5 rounded-full border border-zinc-200 dark:border-zinc-800 ml-1" role="group" aria-label="界面风格">
+          <button class="style-chip" data-style-btn="whale" aria-label="鲸蓝瓷面" title="鲸蓝瓷面"><span class="style-dot" style="background:#4d6bfe"></span></button>
+          <button class="style-chip" data-style-btn="porcelain" aria-label="素瓷" title="素瓷"><span class="style-dot" style="background:#10a37f"></span></button>
+        </div>
+        <button data-mode-toggle class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="切换深色/浅色"><i data-mode-icon data-lucide="sun" class="w-4 h-4"></i></button>
+        
+        <button id="font-switcher" class="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all" aria-label="切换字体" title="切换字体"><i data-lucide="type" class="w-4 h-4"></i></button>
+      </div>
+    </div>
+
+    <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-zinc-500" aria-label="菜单"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+
+  <div id="nav-progress" class="nav-progress" aria-hidden="true"></div>
+
+  <div id="mobile-menu" class="md:hidden hidden border-t border-zinc-200 dark:border-zinc-800 px-4 pb-4 pt-2">
+    
+    <a href="/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">首页</a>
+    
+    <a href="/archives/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">归档</a>
+    
+    <a href="/timeline/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">时间轴</a>
+    
+    <a href="/categories/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">分类</a>
+    
+    <a href="/tags/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">标签</a>
+    
+    <a href="/about/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">关于</a>
+    
+    <div class="flex gap-2 px-4 pt-2 items-center">
+      <button onclick="toggleSearch()" class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400">搜索</button>
+      
+      <button class="style-chip-text" data-style-btn="whale" aria-pressed="false">鲸蓝</button>
+      <button class="style-chip-text" data-style-btn="porcelain" aria-pressed="false">素瓷</button>
+      <button data-mode-toggle class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400"><i data-mode-icon data-lucide="sun" class="w-4 h-4 inline"></i> 明暗</button>
+      
+    </div>
+  </div>
+</nav>
+
+
+  <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[4.5rem] pb-16 min-h-screen">
+    <div class="reading-progress"></div>
+
+
+
+<article class="max-w-6xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
+
+  <header class="text-center mb-10">
+    <h1 class="text-3xl sm:text-4xl font-bold mb-4" data-aos="fade-down">让 iPad 无感用上 Mac 里的 DSH：Caddy + launchd 局域网网关实录</h1>
+    <div class="flex justify-center items-center flex-wrap gap-4 text-sm text-zinc-400 dark:text-zinc-500" data-aos="fade-up" data-aos-delay="100">
+      <span class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026-09-10</span>
+      <span class="inline-flex items-center gap-1"><i data-lucide="folder" class="w-3.5 h-3.5"></i><a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="text-accent-500 hover:text-accent-600">学习笔记</a></span>
+      <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 7 min</span><span class="inline-flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> 2079 字</span>
+      <span id="busuanzi_container_page_pv" class="inline-flex items-center gap-1" style="display:none"><i data-lucide="eye" class="w-3.5 h-3.5"></i> 阅读 <span id="busuanzi_value_page_pv"></span> 次</span>
+      <button onclick="copyPostLink()" class="inline-flex items-center gap-1 text-sm text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 transition-colors bg-transparent border-0 cursor-pointer" aria-label="复制链接"><i data-lucide="link" class="w-3.5 h-3.5"></i> 复制链接</button>
+    </div>
+    
+  </header>
+
+  <div class="post-layout">
+
+    
+    <aside class="toc-sidebar" data-aos="fade-right" data-aos-delay="200">
+      <div class="toc-sticky">
+        <div class="toc-sidebar-title">toc</div>
+        <nav class="toc-vertical">
+          <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E4%B8%8E%E7%9B%AE%E6%A0%87"><span class="toc-number">1.</span> <span class="toc-text">背景与目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E9%80%89%E5%9E%8B%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%89%A9%E4%B8%8B%E7%9A%84%E8%B7%AF%E5%8F%AA%E6%9C%89%E3%80%8C%E6%9C%AC%E6%9C%BA%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%8D"><span class="toc-number">2.</span> <span class="toc-text">方案选型：为什么剩下的路只有「本机反向代理」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95%EF%BC%88%E8%BF%99%E9%83%A8%E5%88%86%E6%9C%80%E5%80%BC%E9%92%B1%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">踩坑实录（这部分最值钱）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E5%BD%A2%E6%80%81"><span class="toc-number">5.</span> <span class="toc-text">最终形态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9E%8B%E4%B8%80%E5%8F%A5%E8%AF%9D"><span class="toc-number">6.</span> <span class="toc-text">安全模型一句话</span></a></li></ol>
+        </nav>
+      </div>
+    </aside>
+    
+
+    <div class="post-main max-w-3xl">
+
+      <div class="article-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="article-body">
+          <blockquote>
+<p><strong>一句话</strong>：DSH 的 Web GUI 只监听 <code>127.0.0.1</code>，Safari 的跨设备接力（Handoff）同步的只是 URL，所以 iPad 上永远打不开。这篇记录我如何在不改 DSH 一行代码、不暴露公网的前提下，用 Caddy + launchd 搭出一套「Wi-Fi 白名单闸门 + HTTPS + Cookie 门禁」的局域网访问体系，以及路上踩过的全部坑。</p>
+</blockquote>
+<h2 id="背景与目标"><a href="#背景与目标" class="headerlink" title="背景与目标"></a>背景与目标</h2><p><a target="_blank" rel="noopener" href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness（DSH）</a> 的 Web GUI 默认只监听 <code>127.0.0.1:3080</code>。它跑在 Mac 上，Safari 的 Handoff &#x2F; 标签页同步功能把页面「接力」到 iPad 时，传的只是 URL——<code>127.0.0.1</code> 在 iPad 上指向 iPad 自己，自然连不上。</p>
+<p>目标很明确：</p>
+<ul>
+<li>iPad &#x2F; iPhone 在<strong>家里 Wi-Fi</strong> 下无感访问 DSH（Safari 接力可用）</li>
+<li><strong>不出公网</strong>：域名、Cloudflare Tunnel、Tailscale 全部否决</li>
+<li><strong>不改 DSH 任何代码与绑定地址</strong>（新版 dsh 出于安全直接拒绝非回环绑定，只允许 127.0.0.1）</li>
+<li>安全面最小化：只有确认过的 Wi-Fi 才开门，进门还要过令牌</li>
+</ul>
+<h2 id="方案选型：为什么剩下的路只有「本机反向代理」"><a href="#方案选型：为什么剩下的路只有「本机反向代理」" class="headerlink" title="方案选型：为什么剩下的路只有「本机反向代理」"></a>方案选型：为什么剩下的路只有「本机反向代理」</h2><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dsh web --host 0.0.0.0</code></td>
+<td>✗ 新版 dsh 直接拒绝——GUI 能跑 bash，暴露到局域网等于交出电脑</td>
+</tr>
+<tr>
+<td>Tailscale</td>
+<td>✗ 每台设备都要装客户端，国内走中继不稳</td>
+</tr>
+<tr>
+<td>Cloudflare Tunnel</td>
+<td>✗ 要买域名且入口在公网，被否决</td>
+</tr>
+<tr>
+<td><strong>Caddy 反向代理（本机）</strong></td>
+<td>✓ dsh 绑定不动，代理进程监听局域网，前面加闸门和门禁</td>
+</tr>
+</tbody></table>
+<p>架构最终长这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">iPad Safari ──HTTPS──&gt; Caddy :8443（校验门禁Cookie）</span><br><span class="line">                          │</span><br><span class="line">                          ▼</span><br><span class="line">                  dsh web 127.0.0.1:3080（绑定从未改动）</span><br><span class="line">                          ▲</span><br><span class="line">:8444（纯HTTP）：只发根证书 root.crt，无其他功能</span><br><span class="line"></span><br><span class="line">launchd 闸门（每60s + 网络切换事件）：</span><br><span class="line">  当前 Wi-Fi 在白名单 → 允许 Caddy 存活</span><br><span class="line">  陌生网络/公网/无Wi-Fi → bootout 整个 Caddy 作业</span><br></pre></td></tr></table></figure>
+
+<p>三个安全层：</p>
+<ol>
+<li><strong>Wi-Fi 白名单闸门</strong>：不在家，入口物理消失（60 秒内），全程审计日志</li>
+<li><strong>Cookie 门禁</strong>：不知道带令牌的门禁链接，一律 401</li>
+<li><strong>HTTPS</strong>：既是加密，也是解锁 Safari「安全上下文」API 的前提（后述）</li>
+</ol>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="1-装-Caddy"><a href="#1-装-Caddy" class="headerlink" title="1. 装 Caddy"></a>1. 装 Caddy</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install caddy</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Caddyfile（HTTPS-Cookie-门禁-证书分发口）"><a href="#2-Caddyfile（HTTPS-Cookie-门禁-证书分发口）" class="headerlink" title="2. Caddyfile（HTTPS + Cookie 门禁 + 证书分发口）"></a>2. Caddyfile（HTTPS + Cookie 门禁 + 证书分发口）</h3><p><code>~/.config/dsh-lan-gate/Caddyfile</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># 把 &lt;TOKEN&gt; 换成你自己的随机串（openssl rand -hex 16 之类）</span><br><span class="line">https://your-mac.local:8443 &#123;</span><br><span class="line">	tls internal</span><br><span class="line">	@gated not header Cookie *dsh_gate=&lt;TOKEN&gt;*</span><br><span class="line">	handle /gate &#123;</span><br><span class="line">		@wrongt not query t=&lt;TOKEN&gt;</span><br><span class="line">		respond @wrongt &quot;Forbidden&quot; 403</span><br><span class="line">		header Set-Cookie &quot;dsh_gate=&lt;TOKEN&gt;; Max-Age=31536000; Path=/; HttpOnly; SameSite=Lax&quot;</span><br><span class="line">		redir https://your-mac.local:8443/ 302</span><br><span class="line">	&#125;</span><br><span class="line">	handle &#123;</span><br><span class="line">		respond @gated &quot;请先访问一次门禁链接 /gate?t=&lt;令牌&gt;&quot; 401</span><br><span class="line">		reverse_proxy 127.0.0.1:3080</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"># 纯HTTP辅助口：只用于向 iPad 分发根证书</span><br><span class="line">http://your-mac.local:8444 &#123;</span><br><span class="line">	root * &quot;/Users/你的用户名/Library/Application Support/Caddy/pki/authorities/local&quot;</span><br><span class="line">	handle /root.crt &#123;</span><br><span class="line">		file_server</span><br><span class="line">	&#125;</span><br><span class="line">	handle &#123;</span><br><span class="line">		respond &quot;此端口仅用于下载 root.crt&quot; 404</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要点：</p>
+<ul>
+<li><code>tls internal</code>：Caddy 自建 CA 给 <code>your-mac.local</code> 签证书，iPad 装一次根证书即可全程无警告</li>
+<li><code>your-mac.local</code> 用你 Mac 的 Bonjour 名（终端 <code>scutil --get LocalHostName</code> 查看，加 <code>.local</code> 后缀），不随 DHCP 变 IP 而失效</li>
+<li>门禁走 <code>/gate?t=&lt;TOKEN&gt;</code> 种一年期 Cookie，之后浏览器不再要任何凭据</li>
+</ul>
+<h3 id="3-Wi-Fi-白名单闸门（launchd）"><a href="#3-Wi-Fi-白名单闸门（launchd）" class="headerlink" title="3. Wi-Fi 白名单闸门（launchd）"></a>3. Wi-Fi 白名单闸门（launchd）</h3><p>白名单文件 <code>~/.config/dsh-lan-gate/allowed-ssids.txt</code>，一行一个 Wi-Fi 名。</p>
+<p>闸门脚本 <code>gate.sh</code>（v2，核心逻辑）：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/zsh</span></span><br><span class="line"><span class="comment"># 白名单 Wi-Fi → bootstrap caddy 作业；非白名单 → bootout</span></span><br><span class="line">GATE_DIR=<span class="string">&quot;<span class="variable">$HOME</span>/.config/dsh-lan-gate&quot;</span></span><br><span class="line">ALLOWED_FILE=<span class="string">&quot;<span class="variable">$GATE_DIR</span>/allowed-ssids.txt&quot;</span></span><br><span class="line">CADDY_PLIST=<span class="string">&quot;<span class="variable">$HOME</span>/Library/LaunchAgents/com.gwen.dsh-lan-caddy.plist&quot;</span></span><br><span class="line">GATE_LOG=<span class="string">&quot;<span class="variable">$GATE_DIR</span>/gate.log&quot;</span></span><br><span class="line">LABEL=<span class="string">&quot;com.gwen.dsh-lan-caddy&quot;</span></span><br><span class="line">UID_N=$(<span class="built_in">id</span> -u)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log</span></span>() &#123; <span class="built_in">echo</span> <span class="string">&quot;<span class="subst">$(date &#x27;+%F %T&#x27;)</span> $*&quot;</span> &gt;&gt;<span class="string">&quot;<span class="variable">$GATE_LOG</span>&quot;</span>; &#125;</span><br><span class="line"></span><br><span class="line">SSID=$(ipconfig getsummary en0 2&gt;/dev/null | awk -F<span class="string">&#x27;: &#x27;</span> <span class="string">&#x27;/^ *SSID/ &#123;print $2; exit&#125;&#x27;</span>)</span><br><span class="line">[[ -z <span class="string">&quot;<span class="variable">$SSID</span>&quot;</span> ]] &amp;&amp; SSID=$(networksetup -getairportnetwork en0 2&gt;/dev/null | sed -E <span class="string">&#x27;s/.*: //&#x27;</span>)</span><br><span class="line"></span><br><span class="line">allowed=0</span><br><span class="line">[[ -n <span class="string">&quot;<span class="variable">$SSID</span>&quot;</span> ]] &amp;&amp; grep -qxF -- <span class="string">&quot;<span class="variable">$SSID</span>&quot;</span> <span class="string">&quot;<span class="variable">$ALLOWED_FILE</span>&quot;</span> 2&gt;/dev/null &amp;&amp; allowed=1</span><br><span class="line"></span><br><span class="line">RUNNING=$(pgrep -f -- <span class="string">&quot;caddy run --config <span class="variable">$GATE_DIR</span>/Caddyfile&quot;</span> 2&gt;/dev/null)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (( allowed )) &amp;&amp; [[ -z <span class="string">&quot;<span class="variable">$RUNNING</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">if</span> launchctl bootstrap gui/<span class="variable">$&#123;UID_N&#125;</span> <span class="string">&quot;<span class="variable">$CADDY_PLIST</span>&quot;</span> 2&gt;/dev/null; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">log</span> <span class="string">&quot;START ok   ssid=<span class="variable">$SSID</span> (launchd)&quot;</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    launchctl kickstart gui/<span class="variable">$&#123;UID_N&#125;</span>/<span class="variable">$&#123;LABEL&#125;</span> 2&gt;/dev/null &amp;&amp; <span class="built_in">log</span> <span class="string">&quot;START ok   ssid=<span class="variable">$SSID</span> (kickstart)&quot;</span> || <span class="built_in">log</span> <span class="string">&quot;START FAIL ssid=<span class="variable">$SSID</span>&quot;</span></span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">elif</span> (( ! allowed )) &amp;&amp; [[ -n <span class="string">&quot;<span class="variable">$RUNNING</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">  launchctl bootout gui/<span class="variable">$&#123;UID_N&#125;</span>/<span class="variable">$&#123;LABEL&#125;</span> 2&gt;&gt;<span class="string">&quot;<span class="variable">$GATE_LOG</span>&quot;</span></span><br><span class="line">  <span class="built_in">log</span> <span class="string">&quot;STOP ok    ssid=<span class="variable">$&#123;SSID:-none&#125;</span> (bootout)&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键设计：Caddy 必须是独立的 launchd 作业</strong>（<code>com.gwen.dsh-lan-caddy</code>，<code>RunAtLoad</code> + <code>KeepAlive</code>），闸门只负责 <code>bootstrap</code> &#x2F; <code>bootout</code>，绝不亲自 spawn——原因见踩坑第 3 条。</p>
+<p>Caddy 作业 <code>~/Library/LaunchAgents/com.gwen.dsh-lan-caddy.plist</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">plist</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//Apple//DTD PLIST 1.0//EN&quot;</span> <span class="string">&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">&quot;1.0&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>Label<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">string</span>&gt;</span>com.gwen.dsh-lan-caddy<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>ProgramArguments<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/opt/homebrew/bin/caddy<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>run<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>--config<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/你的用户名/.config/dsh-lan-gate/Caddyfile<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>RunAtLoad<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>KeepAlive<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardOutPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/你的用户名/.config/dsh-lan-gate/caddy.log<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardErrorPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/你的用户名/.config/dsh-lan-gate/caddy.log<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plist</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>闸门作业 <code>~/Library/LaunchAgents/com.gwen.dsh-lan-gate.plist</code>：同样格式，程序为 <code>/bin/zsh gate.sh路径</code>，加 <code>RunAtLoad</code> + <code>StartInterval 60</code> + <code>WatchPaths</code>（指向 <code>/Library/Preferences/SystemConfiguration/NetworkInterfaces.plist</code> 和 <code>preferences.plist</code>，网络切换即刻触发）。</p>
+<h3 id="4-让-DSH-的围栏认识这个域名"><a href="#4-让-DSH-的围栏认识这个域名" class="headerlink" title="4. 让 DSH 的围栏认识这个域名"></a>4. 让 DSH 的围栏认识这个域名</h3><p>dsh 的 <code>/api</code> 有「浏览器信任围栏」：Host 必须是回环，或在 <code>--trusted-host</code> 白名单里。启动命令加上（绑定地址不动）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">nohup</span> dsh web --no-open --host 127.0.0.1 --trusted-host your-mac.local --trusted-host 192.168.3.137 &amp;</span><br></pre></td></tr></table></figure>
+
+<p>注意这是<strong>两层围栏</strong>：路由层吃 <code>--trusted-host</code> 白名单；但 <code>PRIVILEGED_METHODS</code>（选目录 <code>host.pickDirectory</code>、打开路径 <code>host.openPath</code>、<code>settings.*</code>、<code>credentials.*</code> 等）在源码里硬编码为<strong>永远只认本机回环</strong>——这是 DSH 作者的安全设计，白名单也放不开。所以 iPad 上点「选择 Mac 文件夹」报 403 是预期行为，这类操作回 Mac 上做。</p>
+<h3 id="5-iPad-一次性设置（3-分钟）"><a href="#5-iPad-一次性设置（3-分钟）" class="headerlink" title="5. iPad 一次性设置（3 分钟）"></a>5. iPad 一次性设置（3 分钟）</h3><ol>
+<li>Safari 开 <code>http://your-mac.local:8444/root.crt</code> → 允许下载 → 设置 → 通用 → VPN与设备管理 → 安装</li>
+<li>设置 → 通用 → 关于本机 → <strong>证书信任设置</strong> → 打开 Caddy 根证书的完全信任（最容易漏的一步）</li>
+<li>Safari 开 <code>https://your-mac.local:8443/gate?t=&lt;TOKEN&gt;</code> → 自动跳进 DSH，Cookie 一年有效</li>
+<li>分享菜单 → 添加到主屏幕</li>
+</ol>
+<p>之后：Safari 接力 &#x2F; 标签页同步传过来的 URL 在任何苹果设备上都能直接打开，回家连上 Wi-Fi 即用。</p>
+<h2 id="踩坑实录（这部分最值钱）"><a href="#踩坑实录（这部分最值钱）" class="headerlink" title="踩坑实录（这部分最值钱）"></a>踩坑实录（这部分最值钱）</h2><h3 id="坑-1：crypto-randomUUID-is-not-a-function"><a href="#坑-1：crypto-randomUUID-is-not-a-function" class="headerlink" title="坑 1：crypto.randomUUID is not a function"></a>坑 1：<code>crypto.randomUUID is not a function</code></h3><p>纯 HTTP 不算「安全上下文」，iPad Safari 对非 HTTPS 页面禁用一批 Web API。症状是选文件夹直接弹 JS 报错。解法只有一个：上 HTTPS。这也是整个方案从「HTTP + Basic Auth」进化到「内部 CA + Cookie 门禁」的直接原因。</p>
+<h3 id="坑-2：iOS-Safari-的-Basic-Auth-反复弹登录框"><a href="#坑-2：iOS-Safari-的-Basic-Auth-反复弹登录框" class="headerlink" title="坑 2：iOS Safari 的 Basic Auth 反复弹登录框"></a>坑 2：iOS Safari 的 Basic Auth 反复弹登录框</h3><p>HTTP Basic Auth 的凭据缓存，iOS Safari 出了名地不可靠——新标签页、新连接动不动就重新要密码。换成「门禁链接种 Cookie」后一年免登录。</p>
+<h3 id="坑-3：nohup-disown-骗不过-launchd（本次最大翻车）"><a href="#坑-3：nohup-disown-骗不过-launchd（本次最大翻车）" class="headerlink" title="坑 3：nohup + disown 骗不过 launchd（本次最大翻车）"></a>坑 3：<code>nohup</code> + <code>disown</code> 骗不过 launchd（本次最大翻车）</h3><p>最初让闸门脚本用 <code>nohup caddy ... &amp; disown</code> 直接拉起 Caddy。结果 Caddy 每次活 <strong>2 秒</strong>就被 SIGTERM——<code>nohup</code> 只挡 SIGHUP，<code>disown</code> 只从 shell 任务表移除，<strong>进程仍在 launchd 作业的进程组里</strong>，脚本一退出，launchd 向整个进程组发 SIGTERM，常驻进程当场陪葬。更糟的是闸门作业随后停止触发，死了没人拉，iPad 直接「无法连接服务器」。</p>
+<p><strong>教训：launchd 作业脚本里 spawn 的任何常驻进程，必须独立成自己的 launchd 作业（KeepAlive 兜底），父脚本只做 <code>bootstrap</code>&#x2F;<code>bootout</code>。</strong> 真正脱离进程组要用 <code>setsid</code>，而 macOS 根本没有这个命令——launchd 作业化才是 macOS 上的正解。</p>
+<h3 id="坑-4：Caddy-v2-的-redir-302-不生效"><a href="#坑-4：Caddy-v2-的-redir-302-不生效" class="headerlink" title="坑 4：Caddy v2 的 redir / 302 不生效"></a>坑 4：Caddy v2 的 <code>redir / 302</code> 不生效</h3><p><code>redir / 302</code> 会被解析成「路径匹配 <code>/</code> 才重定向」，写在 <code>/gate</code> 的 handle 块里等于没写。要写完整目标：<code>redir https://your-mac.local:8443/ 302</code>。</p>
+<h3 id="坑-5：DSH-的两层围栏"><a href="#坑-5：DSH-的两层围栏" class="headerlink" title="坑 5：DSH 的两层围栏"></a>坑 5：DSH 的两层围栏</h3><p>只加 <code>--trusted-host</code> 重启后，普通 API 全通，但「选择文件夹」依旧 403——读源码才发现 <code>PRIVILEGED_METHODS</code> 硬编码 <code>isTrustedApiRequest(request, [])</code>，永远只认回环。理解并尊重它：这些方法会弹 Mac 原生对话框、能动设置和凭据，远程放行等于把主机交出去。<strong>别去改编译产物硬撬</strong>——升级即炸，还拆了别人的安全机制。</p>
+<h3 id="坑-6：别碰-dsh-web-的绑定地址"><a href="#坑-6：别碰-dsh-web-的绑定地址" class="headerlink" title="坑 6：别碰 dsh web 的绑定地址"></a>坑 6：别碰 dsh web 的绑定地址</h3><p>我一开始试图 <code>--host 0.0.0.0</code>，新版 dsh 直接拒绝（设计上防止把 RCE 暴露到局域网）。整个方案的立足点因此变成：<strong>dsh 一行参数都不改绑定，隧道在外面包</strong>。事后看这是最正确的约束。</p>
+<h2 id="最终形态"><a href="#最终形态" class="headerlink" title="最终形态"></a>最终形态</h2><ul>
+<li>iPad 点主屏幕图标 → HTTPS → Cookie 门禁 → DSH，全程无感</li>
+<li>Safari 接力 &#x2F; 标签页同步的 URL 在家里任何苹果设备上即点即开</li>
+<li>Mac 睡眠、出门、陌生 Wi-Fi：入口自动消失，回家自动恢复，<code>gate.log</code> 全程审计</li>
+<li>DSH 本体：绑定 127.0.0.1，零改动</li>
+</ul>
+<p>已知取舍：出门用不了；Mac 合盖即断；文件夹级操作（DSH 特权方法）只认 Mac 本机。安卓端因为系统不支持 <code>.local</code> 解析，要用 IP + 独立证书，暂时没做。</p>
+<h2 id="安全模型一句话"><a href="#安全模型一句话" class="headerlink" title="安全模型一句话"></a>安全模型一句话</h2><p><strong>入口只存在于你确认过的 Wi-Fi 里，进门要令牌，路上有加密，钥匙串在 launchd 手里自动管理——而 DSH 本体从头到尾只信你 Mac 的回环。</strong></p>
+
+          
+          <div class="flex flex-wrap items-center gap-2 mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+            <i data-lucide="tag" class="w-4 h-4 text-zinc-400 dark:text-zinc-500"></i>
+            <a href="/tags/DSH/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#DSH</a><a href="/tags/Caddy/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#Caddy</a><a href="/tags/launchd/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#launchd</a><a href="/tags/HomeLab/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#HomeLab</a><a href="/tags/Safari/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#Safari</a><a href="/tags/%E8%B8%A9%E5%9D%91/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#踩坑</a>
+          </div>
+          
+          
+          <div class="mt-8 p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-500 dark:text-zinc-400">
+            <p class="font-semibold text-zinc-700 dark:text-zinc-300 mb-1">copyright</p>
+            <p>copyright_text</p>
+            <p class="mt-1">本文链接：<a target="_blank" rel="noopener" href="https://afogsheep-github-io.pages.dev2026/09/10/技术_DSH跨设备浏览器串联/" class="text-accent-500">https://afogsheep-github-io.pages.dev2026/09/10/技术_DSH跨设备浏览器串联/</a></p>
+          </div>
+          
+        </div>
+      </div>
+
+    
+    <nav class="grid grid-cols-2 gap-4 mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800" data-aos="fade-up">
+      <div></div>
+      <a id="post-next" href="/2026/09/08/%E7%81%B5%E5%BC%82%E6%95%85%E4%BA%8B_%E6%A3%AE%E6%9E%97%E9%87%8C%E7%9A%84%E6%A5%BC%E6%A2%AF_%E6%90%9C%E6%95%91%E5%AE%98%E7%B3%BB%E5%88%97/" class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent-300 dark:hover:border-accent-600 transition-all text-right"><span class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-500">next <i data-lucide="arrow-right" class="w-3 h-3 inline"></i></span><span class="text-sm font-semibold">森林里的楼梯 · 搜救官系列(全五部)</span></a>
+    </nav>
+    
+
+    
+
+    </div>
+  </div>
+
+</article>
+
+  </main>
+
+  <footer class="relative z-10 border-t border-zinc-200 dark:border-zinc-800">
+  <div class="max-w-7xl mx-auto px-4 py-4 text-center">
+    
+    <div class="flex justify-center gap-6 mb-3">
+      
+      <a href="https://github.com/AFOGSHEEP" target="_blank" rel="noopener noreferrer" class="social-btn flex items-center justify-center w-10 h-10 rounded-full text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/10 transition-all" data-tooltip="GitHub" aria-label="GitHub"><i data-lucide="github" class="w-5 h-5"></i></a>
+      
+    </div>
+    
+    
+    <div class="flex justify-center gap-4 text-xs text-zinc-400 dark:text-zinc-500 mb-3">
+      <span id="busuanzi_container_site_pv" style="display:none"><i data-lucide="eye" class="w-3.5 h-3.5 inline -mt-0.5"></i> 访问 <span id="busuanzi_value_site_pv"></span> 次</span>
+      <span id="busuanzi_container_site_uv" style="display:none"><i data-lucide="users" class="w-3.5 h-3.5 inline -mt-0.5"></i> 访客 <span id="busuanzi_value_site_uv"></span> 人</span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-no-instant></script>
+    
+    <div class="footer-ornament" aria-hidden="true">❋</div>
+    <div class="text-sm text-zinc-400 dark:text-zinc-500">
+      <p>&copy; 2024 - 2026 AAAFORGE. Powered by <a href="https://hexo.io" target="_blank" class="hover:text-accent-500">Hexo</a> &amp; Fancy Avalanche.</p>
+      
+      
+    </div>
+  </div>
+</footer>
+
+  
+<div id="search-overlay" class="search-overlay" onclick="if(event.target===this)toggleSearch()">
+  <div class="search-panel" onclick="event.stopPropagation()">
+    <div class="search-input-wrap">
+      <i data-lucide="search" class="w-5 h-5 text-[var(--c-text3)]"></i>
+      <input type="text" id="search-input" placeholder="search_placeholder" autocomplete="off" oninput="performSearch(this.value)">
+      <span class="text-xs text-[var(--c-text3)] px-1.5 py-0.5 rounded border border-[var(--c-border)] bg-[var(--c-bg2)]">ESC</span>
+    </div>
+    <div id="search-results" class="search-results"><div class="text-center py-8 text-[var(--c-text3)]">search_empty</div></div>
+  </div>
+</div>
+<script data-no-instant>
+  // Search index is lazy-fetched from /search.json (generated at build time,
+  // see scripts/trimmed-search.js) — nothing search-related ships inline.
+  var __SD = null;
+  function performSearch(q) {
+    var r = document.getElementById('search-results');
+    if (!q || q.trim().length < 1) { r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]">search_empty</div>'; return; }
+    if (!__SD) {
+      r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]">加载索引…</div>';
+      fetch('/search.json')
+        .then(function (res) { return res.json(); })
+        .then(function (data) { __SD = data; performSearch(q); })
+        .catch(function () { r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]">索引加载失败</div>'; });
+      return;
+    }
+    var kw = q.toLowerCase(), hits = __SD.filter(function(i){ return i.t.toLowerCase().includes(kw)||i.e.toLowerCase().includes(kw)||i.c.toLowerCase().includes(kw); }).slice(0,15);
+    if (!hits.length) { r.innerHTML = '<div class="text-center py-8 text-[var(--c-text3)]">没有找到相关文章</div>'; return; }
+    r.innerHTML = hits.map(function(i){ var re = new RegExp('('+kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'); return '<a href="'+i.u+'" class="search-result"><div class="result-title">'+i.t.replace(re,'<mark style="background:var(--c-accent-bg);color:var(--c-accent)">$1</mark>')+'</div><div class="text-xs text-[var(--c-text3)] mt-1">'+i.d+'</div></a>'; }).join('');
+  }
+</script>
+
+
+
+  
+  <button id="back-to-top" class="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full flex items-center justify-center glass opacity-0 invisible" aria-label="回到顶部">
+    <svg class="progress-ring" viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
+      <circle class="ring-bg" cx="24" cy="24" r="20"></circle>
+      <circle class="ring-fg" cx="24" cy="24" r="20"></circle>
+    </svg>
+    <i data-lucide="arrow-up" class="btt-icon w-5 h-5"></i>
+  </button>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js" data-no-instant></script>
+  <script data-no-instant>lucide.createIcons();</script>
+
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" data-no-instant></script>
+  <script data-no-instant>AOS.init({ duration: 600, once: true, offset: 80 });</script>
+  
+
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/dracula.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" data-no-instant></script>
+  <script data-no-instant>hljs.configure({ tabReplace: '  ' }); hljs.highlightAll();</script>
+  
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/instantclick@3.1.1/instantclick.min.js" data-no-instant></script>
+  <script data-no-instant>InstantClick.init('mousedown');InstantClick.on('change',function(){lucide.createIcons();if(typeof AOS!=='undefined')AOS.refresh();if(typeof hljs!=='undefined')hljs.highlightAll();if(window.__faWidgets)window.__faWidgets();if(window.__faTheme)window.__faTheme()});</script>
+  
+
+  <script src="/js/main.js" data-no-instant></script>
+
+  <!-- Font Switcher -->
+  <script data-no-instant>
+    (function(){
+      var FONTS = ['plus-jakarta', 'inter', 'source-serif'];
+      var saved = localStorage.getItem('font-preference') || 'plus-jakarta';
+      var cur = FONTS.indexOf(saved);
+      if (cur < 0) cur = 0;
+      applyFont(FONTS[cur]);
+
+      function applyFont(name) {
+        var h = document.documentElement;
+        FONTS.forEach(function(f) { h.removeAttribute('data-font'); });
+        if (name !== 'plus-jakarta') h.setAttribute('data-font', name);
+      }
+
+      var btn = document.getElementById('font-switcher');
+      if (btn) btn.addEventListener('click', function() {
+        cur = (cur + 1) % FONTS.length;
+        var name = FONTS[cur];
+        applyFont(name);
+        localStorage.setItem('font-preference', name);
+      });
+    })();
+  </script>
+
+  
+</body>
+</html>
