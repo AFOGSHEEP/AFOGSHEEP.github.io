@@ -221,7 +221,7 @@ tag_groups:
     tags: [CTF, 网安, PwnCollege]
   - name: 阅读
     icon: book-open
-    tags: [书评, 了不起的盖茨比, 转载]
+    tags: [书评, 了不起的盖茨比, 转载, Reddit, 翻译, 恐怖, 都市传说, 搜救官系列]
   - name: 笔记
     icon: book-marked
     tags: [学习笔记]

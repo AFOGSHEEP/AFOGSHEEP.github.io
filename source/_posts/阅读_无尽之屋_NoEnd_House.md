@@ -3,7 +3,7 @@ title: 无尽之屋 · NoEnd House
 date: 2026-09-08 11:00:00
 cover: /images/stories/cover-2.jpg
 categories:
-  - 灵异故事
+  - 阅读
 tags:
   - Reddit
   - 翻译

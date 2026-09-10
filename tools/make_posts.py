@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""把 Reddit灵异故事/ 的中英对照 md 转换为 Hexo 博客文章。
+"""把 Reddit灵异故事/ 的中英对照 md 转换为 Hexo 博客文章(归入「阅读」分类)。
 规矩:系列/多部作品合并为一篇文章发布。
 """
 import pathlib, re
@@ -22,7 +22,7 @@ def standalone(src_name, dst_name, title, hhmm, tags, cover_n):
     body = "\n".join(text.split("\n")[1:]).lstrip("\n")
     fm = (f"---\ntitle: {title}\ndate: 2026-09-08 {hhmm}:00\n"
           f"cover: /images/stories/cover-{cover_n}.jpg\n"
-          "categories:\n  - 灵异故事\ntags:\n" +
+          "categories:\n  - 阅读\ntags:\n" +
           "".join(f"  - {t}\n" for t in tags) + "---\n\n")
     (DST / dst_name).write_text(fm + body, encoding="utf-8")
     print(f"OK {dst_name} (cover-{cover_n})")
@@ -56,19 +56,19 @@ def series():
             f"### 译注\n\n{notes}\n\n---\n\n")
     fm = ("---\ntitle: 森林里的楼梯 · 搜救官系列(全五部)\ndate: 2026-09-08 16:00:00\n"
           "cover: /images/stories/cover-3.jpg\n"
-          "categories:\n  - 灵异故事\ntags:\n  - Reddit\n  - 翻译\n  - 恐怖\n  - 搜救官系列\n---\n\n")
-    out = DST / "灵异故事_森林里的楼梯_搜救官系列.md"
+          "categories:\n  - 阅读\ntags:\n  - Reddit\n  - 翻译\n  - 恐怖\n  - 搜救官系列\n---\n\n")
+    out = DST / "阅读_森林里的楼梯_搜救官系列.md"
     out.write_text(fm + header + "".join(chunks), encoding="utf-8")
-    print(f"OK 灵异故事_森林里的楼梯_搜救官系列.md (全五部合并, cover-3, {len(fm+header+''.join(chunks))} chars)")
+    print(f"OK 阅读_森林里的楼梯_搜救官系列.md (全五部合并, cover-3, {len(fm+header+''.join(chunks))} chars)")
     # 删除旧的拆分版
     for i in range(1, 6):
-        p = DST / f"灵异故事_森林里的楼梯_搜救官系列Part{i}.md"
+        p = DST / f"阅读_森林里的楼梯_搜救官系列Part{i}.md"
         if p.exists():
             p.unlink(); print(f"DEL {p.name}")
 
 if __name__ == "__main__":
-    standalone("01_微笑男_The_Smiling_Man_中英对照.md", "灵异故事_微笑男.md",
+    standalone("01_微笑男_The_Smiling_Man_中英对照.md", "阅读_微笑男.md",
                "微笑男 · The Smiling Man", "10:00", ["Reddit", "翻译", "都市传说"], 1)
-    standalone("03_无尽之屋_NoEnd_House_中英对照.md", "灵异故事_无尽之屋_NoEnd_House.md",
+    standalone("03_无尽之屋_NoEnd_House_中英对照.md", "阅读_无尽之屋_NoEnd_House.md",
                "无尽之屋 · NoEnd House", "11:00", ["Reddit", "翻译", "恐怖"], 2)
     series()
