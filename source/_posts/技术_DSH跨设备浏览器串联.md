@@ -212,6 +212,10 @@ iPhone 和 iPad 步骤相同，每台设备做一次：
 
 ## 结果与限制
 
+最终效果，Safari 标题栏是门禁域名而不是 `127.0.0.1`，Cookie 放行后直接进入会话：
+
+![通过门禁域名访问 DSH 的最终效果](/images/dsh-lan-gate-result.png)
+
 生效后的状态：
 
 - 家里 Wi-Fi 下，iPhone/iPad 从主屏幕图标直接进入 DSH，无证书警告、无登录框
