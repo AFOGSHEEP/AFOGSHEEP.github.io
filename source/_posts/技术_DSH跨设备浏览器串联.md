@@ -63,10 +63,11 @@ https://your-mac.local:8443 {
 	tls internal
 	@gated not header Cookie *dsh_gate=<TOKEN>*
 	handle /gate {
+		@correctt query t=<TOKEN>
 		@wrongt not query t=<TOKEN>
+		header @correctt Set-Cookie "dsh_gate=<TOKEN>; Max-Age=31536000; Path=/; HttpOnly; SameSite=Lax"
+		redir @correctt https://your-mac.local:8443/ 302
 		respond @wrongt "Forbidden" 403
-		header Set-Cookie "dsh_gate=<TOKEN>; Max-Age=31536000; Path=/; HttpOnly; SameSite=Lax"
-		redir https://your-mac.local:8443/ 302
 	}
 	handle {
 		respond @gated "请先访问一次门禁链接 /gate?t=<令牌>" 401
@@ -209,6 +210,12 @@ iPhone 和 iPad 步骤相同，每台设备做一次：
 现象：dsh 直接拒绝启动。
 原因：新版本出于安全考虑只允许回环绑定。
 解决：维持 `127.0.0.1` 绑定，由外部反向代理提供局域网访问。这也是整个方案的前提。
+
+### 7. 任意令牌都能通过门禁（Caddy 指令顺序）
+
+现象：用 `/gate?t=任意值` 请求门禁链接，返回 302 且响应头带上了合法的 `Set-Cookie`；拿这个 Cookie 直接访问，200 进入。写在配置里的 `respond @wrongt 403` 从未执行。
+原因：Caddy 对块内指令按固定顺序执行，`header`（序位 8）和 `redir`（序位 11）都在 `respond`（序位 24）之前。原配置中 `header Set-Cookie` 和 `redir` 没有挂匹配器，对每个 `/gate` 请求都生效，后面的 403 分支是死代码。
+解决：给 `header` 和 `redir` 挂上 `@correctt`（`query t=<TOKEN>`）匹配器，`respond @wrongt 403` 兜底。每个请求恰好落入一个分支，不再依赖指令顺序。修复后错令牌返回 403 且不下发 Cookie。这个问题是在给这套配置写通用版做自动化测试时发现的，生产配置同步修掉。
 
 ## 结果与限制
 
