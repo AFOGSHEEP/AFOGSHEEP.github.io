@@ -138,7 +138,7 @@
     <div class="flex justify-center items-center flex-wrap gap-4 text-sm text-zinc-400 dark:text-zinc-500" data-aos="fade-up" data-aos-delay="100">
       <span class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026-09-10</span>
       <span class="inline-flex items-center gap-1"><i data-lucide="folder" class="w-3.5 h-3.5"></i><a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="text-accent-500 hover:text-accent-600">学习笔记</a></span>
-      <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 7 min</span><span class="inline-flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> 1806 字</span>
+      <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 7 min</span><span class="inline-flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> 1833 字</span>
       <span id="busuanzi_container_page_pv" class="inline-flex items-center gap-1" style="display:none"><i data-lucide="eye" class="w-3.5 h-3.5"></i> 阅读 <span id="busuanzi_value_page_pv"></span> 次</span>
       <button onclick="copyPostLink()" class="inline-flex items-center gap-1 text-sm text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 transition-colors bg-transparent border-0 cursor-pointer" aria-label="复制链接"><i data-lucide="link" class="w-3.5 h-3.5"></i> 复制链接</button>
     </div>
@@ -213,7 +213,9 @@
 <h3 id="4-redir-302-不生效"><a href="#4-redir-302-不生效" class="headerlink" title="4. redir / 302 不生效"></a>4. <code>redir / 302</code> 不生效</h3><p>现象：写在 <code>/gate</code> 的 <code>handle</code> 块内，重定向不触发，返回 200。<br>原因：这种写法把 <code>/</code> 解析为路径匹配条件，而不是重定向目标。<br>解决：写完整目标 <code>redir https://your-mac.local:8443/ 302</code>。</p>
 <h3 id="5-host-pickDirectory-返回-403"><a href="#5-host-pickDirectory-返回-403" class="headerlink" title="5. host.pickDirectory 返回 403"></a>5. <code>host.pickDirectory</code> 返回 403</h3><p>现象：手机端选择 Mac 文件夹时返回 403，其余功能正常。<br>原因：特权方法在源码中固定为只接受回环请求，<code>--trusted-host</code> 不影响它。<br>解决：不处理。这是 dsh 的安全设计，相关操作在 Mac 本机完成。</p>
 <h3 id="6-host-0-0-0-0-无法启动"><a href="#6-host-0-0-0-0-无法启动" class="headerlink" title="6. --host 0.0.0.0 无法启动"></a>6. <code>--host 0.0.0.0</code> 无法启动</h3><p>现象：dsh 直接拒绝启动。<br>原因：新版本出于安全考虑只允许回环绑定。<br>解决：维持 <code>127.0.0.1</code> 绑定，由外部反向代理提供局域网访问。这也是整个方案的前提。</p>
-<h2 id="结果与限制"><a href="#结果与限制" class="headerlink" title="结果与限制"></a>结果与限制</h2><p>生效后的状态：</p>
+<h2 id="结果与限制"><a href="#结果与限制" class="headerlink" title="结果与限制"></a>结果与限制</h2><p>最终效果，Safari 标题栏是门禁域名而不是 <code>127.0.0.1</code>，Cookie 放行后直接进入会话：</p>
+<p><img src="/images/dsh-lan-gate-result.png" alt="通过门禁域名访问 DSH 的最终效果"></p>
+<p>生效后的状态：</p>
 <ul>
 <li>家里 Wi-Fi 下，iPhone&#x2F;iPad 从主屏幕图标直接进入 DSH，无证书警告、无登录框</li>
 <li>Mac、iPhone、iPad 之间通过接力或 iCloud 标签页同步互相打开页面</li>
