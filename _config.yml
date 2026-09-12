@@ -28,6 +28,10 @@ code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
 
+# 让 source/_headers（Cloudflare Pages 缓存/安全头规则）原样拷贝到 public/
+include:
+  - _headers
+
 # Writing
 new_post_name: :title.md
 default_layout: post
