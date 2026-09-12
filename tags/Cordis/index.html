@@ -7,13 +7,13 @@
 /* pre-paint boot: apply saved style theme (鲸蓝/素瓷) + light/dark before first paint */
 (function(){try{var s=localStorage.getItem('fa-style');if(s==='porcelain')document.documentElement.setAttribute('data-style','porcelain');if(localStorage.getItem('theme')!=='light')document.documentElement.classList.add('dark');}catch(e){}})();
 </script>
-<title>寻找两个正序数组的中位数 | 杜鹃声</title>
+<title>杜鹃声</title>
 <meta name="description" content="AAAFORGE的技术博客">
 <meta name="author" content="AAAFORGE">
-<link rel="canonical" href="/2025/02/28/Leetcode_%E5%AF%BB%E6%89%BE%E4%B8%A4%E4%B8%AA%E6%AD%A3%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0/">
-<meta property="og:type" content="article">
-<meta property="og:title" content="寻找两个正序数组的中位数">
-<meta property="og:url" content="/2025/02/28/Leetcode_%E5%AF%BB%E6%89%BE%E4%B8%A4%E4%B8%AA%E6%AD%A3%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0/">
+<link rel="canonical" href="/tags/Cordis/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="杜鹃声">
+<meta property="og:url" content="/tags/Cordis/index.html">
 <meta property="og:site_name" content="杜鹃声">
 <meta property="og:description" content="AAAFORGE的技术博客">
 <meta property="og:locale" content="zh-CN">
@@ -74,7 +74,7 @@
       
       <a href="/categories/" class="nav-link ">分类</a>
       
-      <a href="/tags/" class="nav-link ">标签</a>
+      <a href="/tags/" class="nav-link nav-link-active">标签</a>
       
       <a href="/about/" class="nav-link ">关于</a>
       
@@ -110,7 +110,7 @@
     
     <a href="/categories/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">分类</a>
     
-    <a href="/tags/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">标签</a>
+    <a href="/tags/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-accent-500 dark:text-accent-400 bg-accent-50 dark:bg-accent-500/10">标签</a>
     
     <a href="/about/" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all text-zinc-500 dark:text-zinc-400">关于</a>
     
@@ -127,78 +127,33 @@
 
 
   <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[4.5rem] pb-16 min-h-screen">
-    <div class="reading-progress"></div>
+    <div data-aos="fade-up" class="max-w-3xl mx-auto">
+  <h1 class="text-center text-3xl font-bold mb-2">#Cordis</h1>
+  <p class="text-center text-zinc-400 dark:text-zinc-500 mb-12">1 篇文章</p>
+  <div class="space-y-4">
+<a href="/2026/09/12/%E6%8A%80%E6%9C%AF_dsh%E6%A0%B8%E5%BF%83%E5%8D%87%E7%BA%A7%E4%BA%8B%E6%95%85%E5%A4%8D%E7%9B%98/" class="post-card glass-card flex flex-col gap-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 " data-aos="fade-up" data-aos-duration="500" data-aos-delay="0">
 
+  <div class="card-cover rounded-lg bg-cover bg-center flex-1" style="background-image:url('/images/dsh-upgrade-repair-cover.jpg'); min-height:120px;"></div>
 
-
-<article class="max-w-6xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
-
-  <header class="text-center mb-10">
-    <h1 class="text-3xl sm:text-4xl font-bold mb-4" data-aos="fade-down">寻找两个正序数组的中位数</h1>
-    <div class="flex justify-center items-center flex-wrap gap-4 text-sm text-zinc-400 dark:text-zinc-500" data-aos="fade-up" data-aos-delay="100">
-      <span class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2025-02-28</span>
-      <span class="inline-flex items-center gap-1"><i data-lucide="folder" class="w-3.5 h-3.5"></i><a href="/categories/Leetcode/" class="text-accent-500 hover:text-accent-600">Leetcode</a></span>
-      <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 2 min</span><span class="inline-flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> 444 字</span>
-      <span id="busuanzi_container_page_pv" class="inline-flex items-center gap-1" style="display:none"><i data-lucide="eye" class="w-3.5 h-3.5"></i> 阅读 <span id="busuanzi_value_page_pv"></span> 次</span>
-      <button onclick="copyPostLink()" class="inline-flex items-center gap-1 text-sm text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 transition-colors bg-transparent border-0 cursor-pointer" aria-label="复制链接"><i data-lucide="link" class="w-3.5 h-3.5"></i> 复制链接</button>
-    </div>
-    
-  </header>
-
-  <div class="post-layout">
-
-    
-
-    <div class="post-main max-w-3xl">
-
-      <div class="article-card" data-aos="fade-up" data-aos-delay="300">
-        <div class="article-body">
-          <p>给定两个大小分别为 <code>m</code> 和 <code>n</code> 的正序（从小到大）数组 <code>nums1</code> 和 <code>nums2</code>。请你找出并返回这两个正序数组的 中位数 。</p>
-<p>算法的时间复杂度应该为 <code>O(log (m+n))</code> 。</p>
-<p>示例 1：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：nums1 = [1,3], nums2 = [2]</span><br><span class="line">输出：2.00000</span><br><span class="line">解释：合并数组 = [1,2,3] ，中位数 2</span><br></pre></td></tr></table></figure>
-
-<p>示例 2：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：nums1 = [1,2], nums2 = [3,4]</span><br><span class="line">输出：2.50000</span><br><span class="line">解释：合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5</span><br></pre></td></tr></table></figure>
-
-
-
-<p>思路：创建新数组合并这两个原始数组，对新数组使用快速排序，之后根据新数组长度是奇数或偶数来计算中位数。</p>
-<p>不需要快速排序，因为原本的两个数组就是有序的，只需要归并排序放入新数组即可。也就是先后判断两者大小，再递归的排序</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">findMedianSortedArrays</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;nums1, vector&lt;<span class="type">int</span>&gt; &amp;nums2)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 1. 合并两个数组</span></span><br><span class="line">  vector&lt;<span class="type">int</span>&gt; merged;</span><br><span class="line">  <span class="type">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line">  <span class="type">int</span> m = nums<span class="number">1.</span><span class="built_in">size</span>(), n = nums<span class="number">2.</span><span class="built_in">size</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 归并两个有序数组</span></span><br><span class="line">  <span class="keyword">while</span> (i &lt; m &amp;&amp; j &lt; n) &#123;</span><br><span class="line">    <span class="keyword">if</span> (nums1[i] &lt;= nums2[j]) &#123;</span><br><span class="line">      merged.<span class="built_in">push_back</span>(nums1[i]);</span><br><span class="line">      i++;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      merged.<span class="built_in">push_back</span>(nums2[j]);</span><br><span class="line">      j++;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 将剩余元素加入，某个数组已经取光而另外的还有剩</span></span><br><span class="line">  <span class="keyword">while</span> (i &lt; m) &#123;</span><br><span class="line">    merged.<span class="built_in">push_back</span>(nums1[i]);</span><br><span class="line">    i++;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> (j &lt; n) &#123;</span><br><span class="line">    merged.<span class="built_in">push_back</span>(nums2[j]);</span><br><span class="line">    j++;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 2. 计算中位数</span></span><br><span class="line">  <span class="type">int</span> total = merged.<span class="built_in">size</span>();</span><br><span class="line">  <span class="keyword">if</span> (total % <span class="number">2</span> == <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// 奇数个元素，返回中间那个</span></span><br><span class="line">    <span class="keyword">return</span> merged[total / <span class="number">2</span>];</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 偶数个元素，返回中间两个的平均值</span></span><br><span class="line">    <span class="type">int</span> mid1 = merged[total / <span class="number">2</span> - <span class="number">1</span>];</span><br><span class="line">    <span class="type">int</span> mid2 = merged[total / <span class="number">2</span>];</span><br><span class="line">    <span class="keyword">return</span> (mid1 + mid2) / <span class="number">2.0</span>; <span class="comment">// 注意：要用2.0，否则是整数除法</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>没管时间复杂度能秒</p>
-<p><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">当看到 </font><strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">“log”</font></strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);"> 的时间复杂度要求时，首先考虑</font><strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">二分查找</font></strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">或</font><strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">分治算法</font></strong><font style="color:rgb(249, 250, 251);background-color:rgb(21, 21, 23);">。</font></p>
-
-          
-          <div class="flex flex-wrap items-center gap-2 mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
-            <i data-lucide="tag" class="w-4 h-4 text-zinc-400 dark:text-zinc-500"></i>
-            <a href="/tags/Leetcode/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#Leetcode</a><a href="/tags/%E7%AE%97%E6%B3%95/" class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-accent-50 dark:bg-accent-500/15 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-500/25 transition-colors">#算法</a>
-          </div>
-          
-          
-          <div class="mt-8 p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-500 dark:text-zinc-400">
-            <p class="font-semibold text-zinc-700 dark:text-zinc-300 mb-1">copyright</p>
-            <p>copyright_text</p>
-            <p class="mt-1">本文链接：<a target="_blank" rel="noopener" href="https://afogsheep-github-io.pages.dev2025/02/28/Leetcode_寻找两个正序数组的中位数/" class="text-accent-500">https://afogsheep-github-io.pages.dev2025/02/28/Leetcode_寻找两个正序数组的中位数/</a></p>
-          </div>
-          
-        </div>
-      </div>
-
-    
-    <nav class="grid grid-cols-2 gap-4 mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800" data-aos="fade-up">
-      <a id="post-prev" href="/2025/02/28/Leetcode_%E5%9B%9B%E6%95%B0%E4%B9%8B%E5%92%8C/" class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent-300 dark:hover:border-accent-600 transition-all"><span class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-500"><i data-lucide="arrow-left" class="w-3 h-3 inline"></i> prev</span><span class="text-sm font-semibold">## 题目要点</span></a>
-      <a id="post-next" href="/2025/02/28/Leetcode_%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/" class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent-300 dark:hover:border-accent-600 transition-all text-right"><span class="text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-500">next <i data-lucide="arrow-right" class="w-3 h-3 inline"></i></span><span class="text-sm font-semibold">无重复字符的最长子串</span></a>
-    </nav>
-    
-
-    
-
-    </div>
+  
+  <div class="inline-flex items-center gap-1 text-xs font-medium uppercase tracking-wider text-accent-500 dark:text-accent-400">
+    <i data-lucide="folder" class="w-3 h-3"></i>
+    学习笔记
   </div>
+  
 
-</article>
+  <h3 class="card-title">dsh 核心升级事故复盘</h3>
+
+  
+
+  <div class="card-meta flex items-center gap-4 text-xs text-zinc-400 dark:text-zinc-500 mt-auto">
+    <span class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> 2026-09-12</span>
+    <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 5 min</span>
+  </div>
+</a>
+</div>
+  
+</div>
 
   </main>
 
@@ -280,10 +235,6 @@
   <script data-no-instant>AOS.init({ duration: 600, once: true, offset: 80 });</script>
   
 
-  
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/dracula.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" data-no-instant></script>
-  <script data-no-instant>hljs.configure({ tabReplace: '  ' }); hljs.highlightAll();</script>
   
 
   
