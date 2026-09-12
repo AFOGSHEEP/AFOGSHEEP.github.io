@@ -11,7 +11,7 @@ tags:
   - Cordis
 ---
 
-9 月 12 日，本机的 dsh（DeepSeek Harness，运行 web GUI 的 agent 宿主，监听 127.0.0.1:3080）发生连环故障：六轮报错、一次降级回退、一次误删插件、一次从会话历史恢复源码。维修在 Claude Code 会话中完成。以下按事件顺序完整记录。
+9 月 12 日，本机的 dsh（DeepSeek Harness，运行 web GUI 的 agent 宿主，监听 127.0.0.1:3080）发生连环故障：六轮报错、一次降级回退、一次误删插件、一次从会话历史恢复源码。以下按事件顺序完整记录发现问题和修复问题的全过程。
 
 总览：
 
@@ -23,16 +23,14 @@ tags:
 | dsh 自修 | 改动正确但未重启；人工重启验证通过，再次被新报错推翻 |
 | 修复三 | 重写三个插件的模块引用；被推翻 |
 | 修复四 | 禁用 file-changes；boot 层正常，对话功能仍不可用 |
-| 定位原因 | dcp 与新版事件流 API 不兼容；确定回退，机主同意 |
+| 定位原因 | dcp 与新版事件流 API 不兼容；确定回退 |
 | 回退与重建 | 降级、快照恢复、依赖重装；误删的两个插件从会话历史复原 |
 
 ## 背景
 
-dsh 的核心版本原为 0.1.1-rc.2，运行稳定。当天，dsh 在一次对话中为挂载 dsh-dcp（社区开发的确定性上下文压缩插件，要求核心版本不低于 0.1.5），自行执行核心升级：全局的 `@deepseek-ai/dsh` 替换为 `@next` 频道的 0.1.5-rc.2，profile 的 package.json 写入 dcp 依赖，pnpm 更新 node_modules。升级完成后，运行中的 web 进程未重启。
+dsh 的核心版本原为 0.1.1-rc.2，运行稳定。当天，dsh 在一次对话中为挂载 dsh-dcp（社区开发的确定性上下文压缩插件，要求核心版本不低于 0.1.5），自行执行核心升级：全局的 `@deepseek-ai/dsh` 替换为 `@next` 频道的 0.1.5-rc.2，profile 的 package.json 写入 dcp 依赖，pnpm 更新 node_modules。升级完成后，运行中的 web 进程未重启，GUI 无法打开。
 
 升级前，机器上有一份 `~/.dsh` 全量 tar 快照（82MB）。这份快照是全程唯一起作用的预防措施。
-
-机主在 Claude Code 窗口报修：dsh 的 GUI 无法打开。
 
 ## 第一轮：进程是旧的，磁盘是新的
 
@@ -60,7 +58,7 @@ tail -60 ~/.dsh/CHANGELOG.md
 
 根因：旧进程按旧逻辑读取已被 pnpm 更新为新版的 bundle 元数据，生成的 boot manifest 格式错误，前端解析失败，插件全部无法加载。`curl` 只能探测 HTTP 层，无法反映前端 JS 的状态，200 是假象。
 
-会话数据以 JSONL 持久化于 `~/.dsh/sessions`，终止进程不丢失数据。机主指定 Claude Code 执行修复：
+会话数据以 JSONL 持久化于 `~/.dsh/sessions`，终止进程不丢失数据。执行修复：
 
 ```bash
 pkill -f "dsh web"; sleep 1
@@ -73,11 +71,9 @@ nohup dsh web --no-open --host 127.0.0.1 \
 
 另发现一个问题：0.1.5 引入 auth token 机制，首次访问需通过 `/?token=xxx` 登录并写入 30 天 cookie，而 `~/.dsh/dsh-launch.sh` 中的 `open 127.0.0.1:3080` 将直接返回 401。按本机守则先备份为 `.bak-20260912-*`，再将 `dsh-launch.sh` 改为从 `/tmp/dsh-web.log` 解析 token URL 后打开。
 
-机主反馈了新的报错。
-
 ## 第二轮：/client 子路径失效
 
-报错：
+浏览器端报错：
 
 ```
 Failed to load plugins
@@ -106,7 +102,7 @@ module, and no registered package factory
 | dsh-writing-pad | 1.1.2 → 1.1.3 | 未适配（后来证明该判断有误） |
 | dsh-file-changes | github 源 | 未适配 |
 
-当时有两个方案：A，降级回 0.1.1-rc.2，一条命令恢复全部功能，放弃 dcp（推荐）；B，继续使用 @next：升级两个已适配插件，禁用三个未适配插件保住启动，后续补齐。机主选择方案 B，剩余插件的源码修改交由 dsh 执行，并要求记录改动内容备查。
+两个可选方案：A，降级回 0.1.1-rc.2，一条命令恢复全部功能，放弃 dcp（推荐）；B，继续使用 @next：升级两个已适配插件，禁用三个未适配插件保住启动，后续补齐。采用方案 B，剩余插件的源码修改交由 dsh 执行，改动内容记录备查。
 
 执行：
 
@@ -122,14 +118,14 @@ pnpm add dsh-ui-appearance@^0.1.9 dsh-better-sidebar@^0.19.1
 
 ## 简报与 dsh 自修
 
-机主要求整理一份总结发给 dsh，由其自行修复剩余三个插件。简报包含四点：
+为让 dsh 自行修复剩余三个插件，整理简报一份，内容包含四点：
 
 1. 改法：把 `require("@deepseek-ai/dsh-client-runtime/client")` 的 `/client` 后缀去掉；
 2. bundle id 坑：重新启用时 disabled 必须写 bundle id 而不是包名，写错不报错但不生效；
 3. 直接改 node_modules 会被 pnpm 重装覆盖，要用 `pnpm patch` 固化；`dsh-file-changes` 是 `github:mixin-ai/dsh-file-changes` 的 git 依赖，patch 或 fork 二选一；
 4. 完成后的重启与验证命令。
 
-dsh 按简报完成修复。机主反馈 dsh 再次出现故障。
+dsh 按简报完成修复，故障再次出现。
 
 ## 第三轮：dsh 的修复正确，但未重启
 
@@ -140,13 +136,13 @@ dsh 按简报完成修复。机主反馈 dsh 再次出现故障。
 3. 删除三个 disabled 条目；
 4. 建立 `.dsh-module-fallback/` 目录存放 mermaid 依赖，用于修复 mermaid 插件的依赖解析，与本次故障无关。
 
-改动方向正确，问题在于未重启，机主看到的仍是旧进程状态。
+改动方向正确，问题在于未重启，浏览器中呈现的仍是旧进程状态。
 
-重启后验证：manifest 中三个插件各 5 处（已加载）、旧 `/client` 残留 0、全量扫描所有插件的实际 JS（排除 `.map`）无旧子路径。本轮验证仍限于 boot manifest 层，浏览器端的实际状态需人工反馈。机主反馈了浏览器端的报错。
+重启后验证：manifest 中三个插件各 5 处（已加载）、旧 `/client` 残留 0、全量扫描所有插件的实际 JS（排除 `.map`）无旧子路径。本轮验证仍限于 boot manifest 层。
 
 ## 第四轮：runtime 模块被整体移除
 
-报错变为：
+浏览器端报错变为：
 
 ```
 failed to import loader entry 62d6fc81 (dsh-file-changes):
@@ -202,7 +198,7 @@ boot 层至此正常：dsh 可打开，可查看历史会话，但对话功能�
 
 ## 第六轮：events is not iterable，对话不可用
 
-机主反馈：每发送一条消息即弹出"本轮运行失败 events is not iterable UNKNOWN"，连续复现，无法对话。
+故障现象：每发送一条消息即弹出"本轮运行失败 events is not iterable UNKNOWN"，连续复现，无法对话。
 
 本次报错位于 turn 运行时，由前端弹出。排查路径：
 
@@ -221,7 +217,7 @@ boot 层至此正常：dsh 可打开，可查看历史会话，但对话功能�
 - dcp 未适配该核心版本；
 - 升级导致 client 模块、conversationEvents 服务与一批社区插件连锁故障。
 
-升级未产生任何可用收益，且破坏了原有环境。唯一合理的选项为降级回 0.1.1-rc.2。机主决定回退。
+升级未产生任何可用收益，且破坏了原有环境。唯一合理的选项为降级回 0.1.1-rc.2。确定执行回退。
 
 ## 回退
 
@@ -254,13 +250,11 @@ pnpm install
 
 随后发现新问题：bundles 列表中有 `dsh-theme-atelier` 与 `dsh-ui-theme-switch`，但 node_modules 中不存在这两个目录，`rm -rf node_modules` 时被连带删除。两者不在 npm 上（`npm view` 返回 404），为 9 月 2 日手动安装，tar 快照不含 node_modules，本地无备份。
 
-先将两者从 bundles 中临时移除以保证启动，dsh 恢复正常对话。随后向机主说明误删情况。恢复思路：theme-switch 的结构设计有记录（`exports.inject=["theme","slots"]`，循环切换主题），完整源码需从历史中查找。
+先将两者从 bundles 中临时移除以保证启动，dsh 恢复正常对话。恢复思路：theme-switch 的结构设计有记录（`exports.inject=["theme","slots"]`，循环切换主题），完整源码需从历史中查找。
 
 ## 从会话历史重建插件
 
-机主要求重建。
-
-先读现役插件学习结构：`dsh-icon-theme` 与 `dsh-theme-whalegirl` 为两个正常运行的主题类插件，逐一检查其 `package.json`、`lib/client.js`、`lib/index.js`、`cordis.patch.yml`，确认最小可用插件所需的文件、`exports.inject` 的声明方式、设置卡片向 `settings.plugin.item` 槽位的挂载方式。
+重建从结构学习开始：`dsh-icon-theme` 与 `dsh-theme-whalegirl` 为两个正常运行的主题类插件，逐一检查其 `package.json`、`lib/client.js`、`lib/index.js`、`cordis.patch.yml`，确认最小可用插件所需的文件、`exports.inject` 的声明方式、设置卡片向 `settings.plugin.item` 槽位的挂载方式。
 
 其次查找历史。dsh 的会话存储位于 `~/.dsh/sessions/`，其中 `--Users-gwen-.dsh-claudecode--` 目录下为此前导入的 Claude Code 会话，每个 session 为一份 zstd 压缩的 JSONL 事件流。编写脚本逐个解压并检索 `dsh-ui-theme-switch`，命中多个 session，其中 `import-4bf65167`（9 月 2 日的会话）出现次数最多，即创建这两个插件的原始会话。
 
