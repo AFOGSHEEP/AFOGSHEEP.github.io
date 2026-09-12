@@ -504,6 +504,29 @@
       </tags>
   </entry>
   <entry>
+    <title>盛最多水的容器</title>
+    <url>/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/</url>
+    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/image-0.png" class="">
+
+
+
+
+
+<p>一开始的暴力解</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">maxArea</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> n = height.<span class="built_in">size</span>();</span><br><span class="line">        <span class="type">int</span> max_Area = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> left = <span class="number">0</span>; left &lt; n; ++left) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> right = left + <span class="number">1</span>; right &lt; n; ++right) &#123;</span><br><span class="line">                <span class="type">int</span> area = <span class="built_in">min</span>(height[left], height[right]) * (right - left);</span><br><span class="line">                max_Area = <span class="built_in">max</span>(max_Area, area);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max_Area;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>超时了</p>
+<p>标准解答双指针</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">maxArea</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> left = <span class="number">0</span>, right = (<span class="type">int</span>)height.<span class="built_in">size</span>() - <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">            <span class="type">int</span> h = <span class="built_in">min</span>(height[left], height[right]);</span><br><span class="line">            ans = <span class="built_in">max</span>(ans, h * (right - left));</span><br><span class="line">            <span class="keyword">if</span> (height[left] &lt; height[right]) &#123;</span><br><span class="line">                ++left;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                --right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>正则表达式匹配</title>
     <url>/2025/02/28/Leetcode_%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/</url>
     <content><![CDATA[<p>给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 ‘.’ 和 ‘*’ 的正则表达式匹配。</p>
@@ -643,29 +666,6 @@
 <li><code>&lt;font style=&quot;color:rgb(215, 186, 125);background-color:rgba(255, 255, 255, 0.1);&quot;&gt;.*&lt;/font&gt;</code> 匹配 <code>&lt;font style=&quot;color:rgb(215, 186, 125);background-color:rgba(255, 255, 255, 0.1);&quot;&gt;&quot;aaab&quot;&lt;/font&gt;</code>：可以</li>
 </ol>
 ]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>盛最多水的容器</title>
-    <url>/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/</url>
-    <content><![CDATA[<img src="/2025/02/28/Leetcode_%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/image-0.png" class="">
-
-
-
-
-
-<p>一开始的暴力解</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">maxArea</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> n = height.<span class="built_in">size</span>();</span><br><span class="line">        <span class="type">int</span> max_Area = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> left = <span class="number">0</span>; left &lt; n; ++left) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> right = left + <span class="number">1</span>; right &lt; n; ++right) &#123;</span><br><span class="line">                <span class="type">int</span> area = <span class="built_in">min</span>(height[left], height[right]) * (right - left);</span><br><span class="line">                max_Area = <span class="built_in">max</span>(max_Area, area);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max_Area;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>超时了</p>
-<p>标准解答双指针</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">maxArea</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> left = <span class="number">0</span>, right = (<span class="type">int</span>)height.<span class="built_in">size</span>() - <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">            <span class="type">int</span> h = <span class="built_in">min</span>(height[left], height[right]);</span><br><span class="line">            ans = <span class="built_in">max</span>(ans, h * (right - left));</span><br><span class="line">            <span class="keyword">if</span> (height[left] &lt; height[right]) &#123;</span><br><span class="line">                ++left;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                --right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Leetcode</category>
       </categories>
@@ -2367,71 +2367,6 @@
       </tags>
   </entry>
   <entry>
-    <title>鹏城杯三道</title>
-    <url>/2024/11/19/OLD_PCB/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
-<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
-
-<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
-<p>接着是tls改了表</p>
-<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
-<p>赛博厨子解密得到</p>
-<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
-<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
-<img src="/2024/11/19/OLD_PCB/image-0.png" class="">
-
-<img src="/2024/11/19/OLD_PCB/image-1.png" class="">
-
-<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
-<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/19/OLD_PCB/image-2.png" class="">
-
-
-
-<p>主要加密函数</p>
-<img src="/2024/11/19/OLD_PCB/image-3.png" class="">
-
-<p>发现是魔改的tea。</p>
-<p>我们尝试进行解密，钥匙为1 2 3 4</p>
-<p>但是不对，猜测有tls，继续找</p>
-<img src="/2024/11/19/OLD_PCB/image-4.png" class="">
-
-<p>函数挺少的，我们直接在函数窗口一个一个找</p>
-<p>然后发现这个</p>
-<img src="/2024/11/19/OLD_PCB/image-5.png" class="">
-
-<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
-<img src="/2024/11/19/OLD_PCB/image-6.png" class="">
-
-<p>第二次定位</p>
-<img src="/2024/11/19/OLD_PCB/image-7.png" class="">
-
-<p>我们动调发现了</p>
-<p>我们打印一下rand值：</p>
-<img src="/2024/11/19/OLD_PCB/image-8.png" class="">
-
-<img src="/2024/11/19/OLD_PCB/image-9.png" class="">
-
-<p>就是delta加上rand</p>
-<p>直接写个tea解密脚本就好</p>
-<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
-<img src="/2024/11/19/OLD_PCB/image-10.png" class="">
-
-<p>是通过异常来控制的</p>
-<p>这下对了</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>d555ce75ec293c8ed232d83dffb0ff82</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Compute 101</title>
     <url>/2024/11/10/OLD_Compute%20101%20record/</url>
     <content><![CDATA[<hr>
@@ -2657,6 +2592,71 @@
       </categories>
       <tags>
         <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>鹏城杯三道</title>
+    <url>/2024/11/19/OLD_PCB/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-11-19 24:00:56<br>日常做不出题。。。要是功力有这师傅一半深就好了…orz…</p>
+<h1 id="Rafflesia"><a href="#Rafflesia" class="headerlink" title="Rafflesia"></a>Rafflesia</h1><p>去花指令后即可得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">en = &#x27;H@^jHwpsH)[jH&#123;M/\\tBBK_|-O&#123;W.iJZ7\\)|~zaB^H+Lwv&#123;SS|-j@\\_[Y&#x27;</span><br><span class="line">de = &#x27;&#x27;</span><br><span class="line">for i in range(len(en)):</span><br><span class="line">    de += chr(ord(en[i])^0x18)</span><br><span class="line">print(de)</span><br></pre></td></tr></table></figure>
+
+<p>PXFrPohkP1CrPcU7DlZZSGd5WcO6qRB&#x2F;D1dfbyZFP3ToncKKd5rXDGCA</p>
+<p>接着是tls改了表</p>
+<p>HElRNYGmBOMWnbDvUCgcpu1QdPqJIS+iTry39KXse4jLh&#x2F;x26Ff5Z7Vokt8wzAa0</p>
+<p>赛博厨子解密得到</p>
+<p>flag{8edae458-4tf3-2ph2-9f26-1f8719ec8f8d}</p>
+<h1 id="joyVBS"><a href="#joyVBS" class="headerlink" title="joyVBS"></a>joyVBS</h1><p>用vbsedit打开，运行即可得到源码，找到</p>
+<img src="/2024/11/19/OLD_PCB/image-0.png" class="">
+
+<img src="/2024/11/19/OLD_PCB/image-1.png" class="">
+
+<p>flag{VB3_1s_S0_e1sY_4_u_r1gh3?btw_1t_iS_a1s0_Us3Fu1_a3D_1nTe3eSt1ng!}</p>
+<h1 id="RE5"><a href="#RE5" class="headerlink" title="RE5"></a>RE5</h1><img src="/2024/11/19/OLD_PCB/image-2.png" class="">
+
+
+
+<p>主要加密函数</p>
+<img src="/2024/11/19/OLD_PCB/image-3.png" class="">
+
+<p>发现是魔改的tea。</p>
+<p>我们尝试进行解密，钥匙为1 2 3 4</p>
+<p>但是不对，猜测有tls，继续找</p>
+<img src="/2024/11/19/OLD_PCB/image-4.png" class="">
+
+<p>函数挺少的，我们直接在函数窗口一个一个找</p>
+<p>然后发现这个</p>
+<img src="/2024/11/19/OLD_PCB/image-5.png" class="">
+
+<p>我们发现他用0作为种子给到srand里面，用rand进行传值</p>
+<img src="/2024/11/19/OLD_PCB/image-6.png" class="">
+
+<p>第二次定位</p>
+<img src="/2024/11/19/OLD_PCB/image-7.png" class="">
+
+<p>我们动调发现了</p>
+<p>我们打印一下rand值：</p>
+<img src="/2024/11/19/OLD_PCB/image-8.png" class="">
+
+<img src="/2024/11/19/OLD_PCB/image-9.png" class="">
+
+<p>就是delta加上rand</p>
+<p>直接写个tea解密脚本就好</p>
+<p>这个其实还是不对，我们用初始值进行查看发现key被改为了2 2 3 3</p>
+<img src="/2024/11/19/OLD_PCB/image-10.png" class="">
+
+<p>是通过异常来控制的</p>
+<p>这下对了</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tea</span><span class="params">(<span class="type">uint32_t</span>* v)</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> v6 = v[<span class="number">0</span>], v5 = v[<span class="number">1</span>], i;</span><br><span class="line">    <span class="type">uint32_t</span> v4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> rand1[<span class="number">64</span>] = &#123;&#125;;</span><br><span class="line">    <span class="type">uint32_t</span> a2[<span class="number">4</span>] = &#123;</span><br><span class="line">        <span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rand1[i] = rand();</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, randnum[i]);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        v4 += randnum[i];</span><br><span class="line">        <span class="comment">//printf(&quot;0x%x,&quot;, v4);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++) &#123;</span><br><span class="line">        v5 -= (a2[<span class="number">3</span>] + (v6 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v6) ^ (a2[<span class="number">2</span>] + <span class="number">16</span> * v6);</span><br><span class="line">        v6 -= (a2[<span class="number">1</span>] + (v5 &gt;&gt; <span class="number">5</span>)) ^ (v4 + v5) ^ (a2[<span class="number">0</span>] + <span class="number">16</span> * v5);</span><br><span class="line">        v4 -= randnum[<span class="number">32</span><span class="number">-1</span>-i];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>] = v6; v[<span class="number">1</span>] = v5;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> data[<span class="number">8</span>] = &#123; <span class="number">0x0EA2063F8</span>,<span class="number">0x8F66F252</span>,<span class="number">0x902A72EF</span>,<span class="number">0x411FDA74</span>,<span class="number">0x19590d4d</span>, <span class="number">0xcae74317</span>, <span class="number">0x63870f3f</span>, <span class="number">0xd753ae61</span> &#125;;</span><br><span class="line">    <span class="type">uint32_t</span> temp[<span class="number">2</span>] = &#123; <span class="number">0</span>,<span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    srand(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        temp[<span class="number">0</span>] = data[i];</span><br><span class="line">        temp[<span class="number">1</span>] = data[i + <span class="number">1</span>];</span><br><span class="line">        tea(temp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c%c%c%c%c&quot;</span>, *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">0</span>] + <span class="number">3</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">0</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">1</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">2</span>), *((<span class="type">char</span>*)&amp;temp[<span class="number">1</span>] + <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>d555ce75ec293c8ed232d83dffb0ff82</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -2901,6 +2901,60 @@
       </tags>
   </entry>
   <entry>
+    <title>bashshell基础命令</title>
+    <url>/2024/04/17/OLD_bashshell%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-04-17 23:10:12  </p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="启动终端"><a href="#启动终端" class="headerlink" title="启动终端"></a>启动终端</h2><p>启动终端后会看见 <strong>shell CLI</strong> 提示符，在此输入shell命令。默认的提示符符号是 $ </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[/etc]</span><br><span class="line">└─$ </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="与bash手册交互"><a href="#与bash手册交互" class="headerlink" title="与bash手册交互"></a>与bash手册交互</h2><p>大多数Linux发行版自带在线手册。使用man命令可以访问Linux系统的手册页。输入 <code>man 想要查看的命令</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">NAME</span><br><span class="line">       <span class="built_in">cat</span> - concatenate files and <span class="built_in">print</span> on the standard output</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       <span class="built_in">cat</span> [OPTION]... [FILE]...</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       Concatenate FILE(s) to standard output.</span><br><span class="line"></span><br><span class="line">       With no FILE, or when FILE is -, <span class="built_in">read</span> standard input.</span><br><span class="line"></span><br><span class="line">       -A, --show-all</span><br><span class="line">              equivalent to -vET</span><br><span class="line"></span><br><span class="line">       -b, --number-nonblank</span><br><span class="line">              number nonempty output lines, overrides -n</span><br><span class="line"></span><br><span class="line">       -e     equivalent to -vE</span><br><span class="line"></span><br><span class="line">       -E, --show-ends</span><br><span class="line">              display $ at end of each line</span><br><span class="line"></span><br><span class="line">       -n, --number</span><br><span class="line">              number all output lines</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以上是 <code>cat</code>的部分用法。输入 <code>man cat</code>即可查看</p>
+<p>其中 <strong>DESCRIPTION</strong> 部分提供了快速参考。从中可以迅速了解命令的作用以及用法。</p>
+<p>mannal里通过空格翻页，enter逐行查看，以及上下箭头进行滑动。按q退出。</p>
+<p>如果忘记命令了，可以通过 <code>man -k terminal</code>进行关键词查找。</p>
+<h2 id="浏览文件系统"><a href="#浏览文件系统" class="headerlink" title="浏览文件系统"></a>浏览文件系统</h2><h3 id="Linux中的目录"><a href="#Linux中的目录" class="headerlink" title="Linux中的目录"></a>Linux中的目录</h3><p>Linux采用名为“虚拟目录”的单个目录结构中。虚拟目录会将计算机中所有储存设备的文件路径都纳入单个目录结构。Linux的虚拟目录结构只包含一个叫做 root的目录的基础目录。所有文件都在root目录下一一列出。Linux中安装的第一块硬盘为根驱动器，所有目录都是从那里开始构建的。以下是kali的根目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span></span><br><span class="line">bin   home            lib32       mnt   run       sys  vmlinuz</span><br><span class="line">boot  initrd.img      lib64       opt   sbin      tmp  vmlinuz.old</span><br><span class="line">dev   initrd.img.old  lost+found  proc  srv       usr</span><br><span class="line">etc   lib             media       root  swapfile  var</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里使用了ls命令来查看文件夹中的内容。常见的Linux目录名均基于文件系统层级标准（filesytem hierarchy standard, FHS）。</p>
+<p>在Linux中，可以通过cd命令来切换目录。语法为 <code>cd destination</code>。使用 <code>cd ..</code>可以快速回到父目录。</p>
+<p>使用 <code>pwd</code>命令可以了解当前工作目录。</p>
+<p><code>ls</code>命令最基本的形式会显示当前目录下的文件和目录。使用 <code>ls -F</code>(注意，Linux系统严格区分大小写，-f和-F是两个不同的命令)可以区分文件和目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span> -F</span><br><span class="line">bin@   home/            lib32@       mnt/   run/      sys/  vmlinuz@</span><br><span class="line">boot/  initrd.img@      lib64@       opt/   sbin@     tmp/  vmlinuz.old@</span><br><span class="line">dev/   initrd.img.old@  lost+found/  proc/  srv/      usr/</span><br><span class="line">etc/   lib@             media/       root/  swapfile  var/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>-a选项能显示隐藏文件（通常是文件名以 . 开始的文件）</p>
+<p>-R选项称作递归选项，能列出当前目录包含的子目录的文件与目录。</p>
+<p>-l命令会产生长列表格式的输出，提供目录中各个文件的详细信息。在-l后跟上文件名即可只查看该文件的信息。</p>
+<h3 id="过滤输出列表"><a href="#过滤输出列表" class="headerlink" title="过滤输出列表"></a>过滤输出列表</h3><p>ls命令支持在命令行中定义过滤器，使用过滤器来决定该在命令行中显示哪些文件或者目录。</p>
+<p>在ls最后添加文件名是最基本的过滤方式，我们可以通过使用标准通配符来进行模式匹配。</p>
+<ul>
+<li>问号 （ ? ）代表任意单个字符</li>
+<li>星号 （ * ）代表零个或者多个任意字符</li>
+</ul>
+<p>以 <code>/home/kali/</code>目录为例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> -F                </span><br><span class="line">backup/   Documents/  fill    Pictures/  tast.py  teeeeeeeesy.txt  test.py</span><br><span class="line">Desktop/  Downloads/  Music/  Public/    te3t.py  Templates/       Videos/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[a-z]st*</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t*       </span><br><span class="line">tast.py  te3t.py  teeeeeeeesy.txt  test.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t?st.py</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[^/e]st.py       </span><br><span class="line">tast.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>!]可能被zsh认为是一个事件从而出错，把把方括号部分替换为 <code>&#39;[&#39;!what_you_think&#39;]&#39;</code>或者把 <code>!</code> 替换为 …<code>^/</code></p>
+<p>Zsh（Z Shell）是一个强大的命令行解释器，用于 UNIX 操作系统。它是 Bourne Shell 的扩展，具有许多改进，包括更好的用户交互、功能强大的脚本能力和自定义功能。</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>XYCTF_WP</title>
     <url>/2024/04/25/OLD_XYCTF%20WP/</url>
     <content><![CDATA[<hr>
@@ -2982,60 +3036,6 @@
       </categories>
       <tags>
         <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>bashshell基础命令</title>
-    <url>/2024/04/17/OLD_bashshell%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-04-17 23:10:12  </p>
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="启动终端"><a href="#启动终端" class="headerlink" title="启动终端"></a>启动终端</h2><p>启动终端后会看见 <strong>shell CLI</strong> 提示符，在此输入shell命令。默认的提示符符号是 $ </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[/etc]</span><br><span class="line">└─$ </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="与bash手册交互"><a href="#与bash手册交互" class="headerlink" title="与bash手册交互"></a>与bash手册交互</h2><p>大多数Linux发行版自带在线手册。使用man命令可以访问Linux系统的手册页。输入 <code>man 想要查看的命令</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">NAME</span><br><span class="line">       <span class="built_in">cat</span> - concatenate files and <span class="built_in">print</span> on the standard output</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       <span class="built_in">cat</span> [OPTION]... [FILE]...</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       Concatenate FILE(s) to standard output.</span><br><span class="line"></span><br><span class="line">       With no FILE, or when FILE is -, <span class="built_in">read</span> standard input.</span><br><span class="line"></span><br><span class="line">       -A, --show-all</span><br><span class="line">              equivalent to -vET</span><br><span class="line"></span><br><span class="line">       -b, --number-nonblank</span><br><span class="line">              number nonempty output lines, overrides -n</span><br><span class="line"></span><br><span class="line">       -e     equivalent to -vE</span><br><span class="line"></span><br><span class="line">       -E, --show-ends</span><br><span class="line">              display $ at end of each line</span><br><span class="line"></span><br><span class="line">       -n, --number</span><br><span class="line">              number all output lines</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>以上是 <code>cat</code>的部分用法。输入 <code>man cat</code>即可查看</p>
-<p>其中 <strong>DESCRIPTION</strong> 部分提供了快速参考。从中可以迅速了解命令的作用以及用法。</p>
-<p>mannal里通过空格翻页，enter逐行查看，以及上下箭头进行滑动。按q退出。</p>
-<p>如果忘记命令了，可以通过 <code>man -k terminal</code>进行关键词查找。</p>
-<h2 id="浏览文件系统"><a href="#浏览文件系统" class="headerlink" title="浏览文件系统"></a>浏览文件系统</h2><h3 id="Linux中的目录"><a href="#Linux中的目录" class="headerlink" title="Linux中的目录"></a>Linux中的目录</h3><p>Linux采用名为“虚拟目录”的单个目录结构中。虚拟目录会将计算机中所有储存设备的文件路径都纳入单个目录结构。Linux的虚拟目录结构只包含一个叫做 root的目录的基础目录。所有文件都在root目录下一一列出。Linux中安装的第一块硬盘为根驱动器，所有目录都是从那里开始构建的。以下是kali的根目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span></span><br><span class="line">bin   home            lib32       mnt   run       sys  vmlinuz</span><br><span class="line">boot  initrd.img      lib64       opt   sbin      tmp  vmlinuz.old</span><br><span class="line">dev   initrd.img.old  lost+found  proc  srv       usr</span><br><span class="line">etc   lib             media       root  swapfile  var</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这里使用了ls命令来查看文件夹中的内容。常见的Linux目录名均基于文件系统层级标准（filesytem hierarchy standard, FHS）。</p>
-<p>在Linux中，可以通过cd命令来切换目录。语法为 <code>cd destination</code>。使用 <code>cd ..</code>可以快速回到父目录。</p>
-<p>使用 <code>pwd</code>命令可以了解当前工作目录。</p>
-<p><code>ls</code>命令最基本的形式会显示当前目录下的文件和目录。使用 <code>ls -F</code>(注意，Linux系统严格区分大小写，-f和-F是两个不同的命令)可以区分文件和目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/]</span><br><span class="line">└─# <span class="built_in">ls</span> -F</span><br><span class="line">bin@   home/            lib32@       mnt/   run/      sys/  vmlinuz@</span><br><span class="line">boot/  initrd.img@      lib64@       opt/   sbin@     tmp/  vmlinuz.old@</span><br><span class="line">dev/   initrd.img.old@  lost+found/  proc/  srv/      usr/</span><br><span class="line">etc/   lib@             media/       root/  swapfile  var/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>-a选项能显示隐藏文件（通常是文件名以 . 开始的文件）</p>
-<p>-R选项称作递归选项，能列出当前目录包含的子目录的文件与目录。</p>
-<p>-l命令会产生长列表格式的输出，提供目录中各个文件的详细信息。在-l后跟上文件名即可只查看该文件的信息。</p>
-<h3 id="过滤输出列表"><a href="#过滤输出列表" class="headerlink" title="过滤输出列表"></a>过滤输出列表</h3><p>ls命令支持在命令行中定义过滤器，使用过滤器来决定该在命令行中显示哪些文件或者目录。</p>
-<p>在ls最后添加文件名是最基本的过滤方式，我们可以通过使用标准通配符来进行模式匹配。</p>
-<ul>
-<li>问号 （ ? ）代表任意单个字符</li>
-<li>星号 （ * ）代表零个或者多个任意字符</li>
-</ul>
-<p>以 <code>/home/kali/</code>目录为例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> -F                </span><br><span class="line">backup/   Documents/  fill    Pictures/  tast.py  teeeeeeeesy.txt  test.py</span><br><span class="line">Desktop/  Downloads/  Music/  Public/    te3t.py  Templates/       Videos/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[a-z]st*</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t*       </span><br><span class="line">tast.py  te3t.py  teeeeeeeesy.txt  test.py</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t?st.py</span><br><span class="line">tast.py  test.py</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ <span class="built_in">ls</span> t[^/e]st.py       </span><br><span class="line">tast.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>!]可能被zsh认为是一个事件从而出错，把把方括号部分替换为 <code>&#39;[&#39;!what_you_think&#39;]&#39;</code>或者把 <code>!</code> 替换为 …<code>^/</code></p>
-<p>Zsh（Z Shell）是一个强大的命令行解释器，用于 UNIX 操作系统。它是 Bourne Shell 的扩展，具有许多改进，包括更好的用户交互、功能强大的脚本能力和自定义功能。</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -3663,52 +3663,6 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
-    <title>递归小谈</title>
-    <url>/2024/09/28/OLD_%E9%80%92%E5%BD%92%E5%B0%8F%E8%B0%88/</url>
-    <content><![CDATA[<hr>
-<p>date: 2024-09-28 21:46:02  </p>
-<h1 id="递归小谈"><a href="#递归小谈" class="headerlink" title="递归小谈"></a>递归小谈</h1><p>考虑以下的递归公式：</p>
-<pre><code>                $![image](https://cdn.nlark.com/yuque/__latex/bddea37d8316c7948ea358e70d01ecee.svg)$
-</code></pre>
-<p>用C语言表示如下：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">factorial</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line"> <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">else</span> </span><br><span class="line">     &#123;</span><br><span class="line">     <span class="keyword">return</span> n * <span class="built_in">factorial</span>(n - <span class="number">1</span>);</span><br><span class="line">         &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="递归思维"><a href="#递归思维" class="headerlink" title="递归思维"></a>递归思维</h2><p>用递归解决问题需要两个步骤： 首先，确定如何解决简单情况的问题。</p>
-<p> ● 这称为基本情况（base case）。 其次，确定如何将较大情况分解为较小的实例。 </p>
-<p> ● 这称为递归步骤（recursive step）。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (问题非常简单) &#123;</span><br><span class="line">    <span class="comment"># 直接解决问题</span></span><br><span class="line">    <span class="keyword">return</span> 解决方案;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment"># 将问题分解为一个或多个与原问题结构相同的子问题</span></span><br><span class="line">    <span class="comment"># 解决每个子问题</span></span><br><span class="line">    <span class="comment"># 将结果合并以得到整体解决方案</span></span><br><span class="line">    <span class="keyword">return</span> 整体解决方案;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>现在试试把以下代码改写成递归的形式：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">sumOfDigitsOf</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (n &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        result += (n % <span class="number">10</span>);</span><br><span class="line">        n /= <span class="number">10</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>示例:</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">sumOfDigitsOf</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 基本情况：如果 n 为 0，返回 0</span></span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 递归步骤：取出最低位 (n % 10) + 剩余部分的递归结果 (n / 10)</span></span><br><span class="line">    <span class="keyword">return</span> (n % <span class="number">10</span>) + <span class="built_in">sumOfDigitsOf</span>(n / <span class="number">10</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="数根问题"><a href="#数根问题" class="headerlink" title="数根问题"></a>数根问题</h2><p>数根是指通过反复将数字的各位数相加，直到得到一个个位数为止。</p>
-<p>5 的数根是什么？ 5 已经是一个个位数，所以答案是 5。</p>
-<p>27 的数根是什么？ 2 + 7 &#x3D; 9。  答案是 9。</p>
-<p>137 的数根是什么？用代码来解决。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">digitalRoot</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 基本情况：如果 n 是个位数，直接返回 n</span></span><br><span class="line">    <span class="keyword">if</span> (n &lt; <span class="number">10</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 递归步骤：将各个位数相加，继续递归调用</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">digitalRoot</span>(n % <span class="number">10</span> + <span class="built_in">digitalRoot</span>(n / <span class="number">10</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>现在尝试利用递归来逆转字符串：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 递归函数，用于逆转字符串</span></span><br><span class="line"><span class="function">string <span class="title">reverseString</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 基本情况：如果字符串为空或者只有一个字符，则直接返回</span></span><br><span class="line">    <span class="keyword">if</span> (s.<span class="built_in">empty</span>() || s.<span class="built_in">length</span>() == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 递归步骤：将第一个字符放在最后，其余部分递归处理</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">reverseString</span>(s.<span class="built_in">substr</span>(<span class="number">1</span>)) + s[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    string s;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 读取输入字符串</span></span><br><span class="line">    cin &gt;&gt; s;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出原始字符串的长度</span></span><br><span class="line">    cout &lt;&lt; s.<span class="built_in">length</span>() &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出原始字符串，每个字符用空格分隔</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> fw : s) &#123;</span><br><span class="line">        cout &lt;&lt; fw &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用递归函数，输出逆转后的字符串</span></span><br><span class="line">    cout &lt;&lt; <span class="built_in">reverseString</span>(s) &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-<p>用标准库的做法</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span> <span class="comment">// 包含 reverse 函数</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    string s;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 读取输入字符串</span></span><br><span class="line">    cin &gt;&gt; s;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出字符串长度</span></span><br><span class="line">    cout &lt;&lt; s.<span class="built_in">length</span>() &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 遍历并输出原始字符串的每个字符，字符之间用空格分隔</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> fw : s) &#123;</span><br><span class="line">        cout &lt;&lt; fw &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 逆转字符串</span></span><br><span class="line">    <span class="built_in">reverse</span>(s.<span class="built_in">begin</span>(), s.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出逆转后的字符串</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> fw : s) &#123;</span><br><span class="line">        cout &lt;&lt; fw;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>误差反向传播法</title>
     <url>/2024/07/17/OLD_%E8%AF%AF%E5%B7%AE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E6%B3%95/</url>
     <content><![CDATA[<hr>
@@ -3847,6 +3801,52 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
+    <title>递归小谈</title>
+    <url>/2024/09/28/OLD_%E9%80%92%E5%BD%92%E5%B0%8F%E8%B0%88/</url>
+    <content><![CDATA[<hr>
+<p>date: 2024-09-28 21:46:02  </p>
+<h1 id="递归小谈"><a href="#递归小谈" class="headerlink" title="递归小谈"></a>递归小谈</h1><p>考虑以下的递归公式：</p>
+<pre><code>                $![image](https://cdn.nlark.com/yuque/__latex/bddea37d8316c7948ea358e70d01ecee.svg)$
+</code></pre>
+<p>用C语言表示如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">factorial</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line"> <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">else</span> </span><br><span class="line">     &#123;</span><br><span class="line">     <span class="keyword">return</span> n * <span class="built_in">factorial</span>(n - <span class="number">1</span>);</span><br><span class="line">         &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="递归思维"><a href="#递归思维" class="headerlink" title="递归思维"></a>递归思维</h2><p>用递归解决问题需要两个步骤： 首先，确定如何解决简单情况的问题。</p>
+<p> ● 这称为基本情况（base case）。 其次，确定如何将较大情况分解为较小的实例。 </p>
+<p> ● 这称为递归步骤（recursive step）。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (问题非常简单) &#123;</span><br><span class="line">    <span class="comment"># 直接解决问题</span></span><br><span class="line">    <span class="keyword">return</span> 解决方案;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment"># 将问题分解为一个或多个与原问题结构相同的子问题</span></span><br><span class="line">    <span class="comment"># 解决每个子问题</span></span><br><span class="line">    <span class="comment"># 将结果合并以得到整体解决方案</span></span><br><span class="line">    <span class="keyword">return</span> 整体解决方案;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在试试把以下代码改写成递归的形式：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">sumOfDigitsOf</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (n &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        result += (n % <span class="number">10</span>);</span><br><span class="line">        n /= <span class="number">10</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例:</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">sumOfDigitsOf</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 基本情况：如果 n 为 0，返回 0</span></span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 递归步骤：取出最低位 (n % 10) + 剩余部分的递归结果 (n / 10)</span></span><br><span class="line">    <span class="keyword">return</span> (n % <span class="number">10</span>) + <span class="built_in">sumOfDigitsOf</span>(n / <span class="number">10</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="数根问题"><a href="#数根问题" class="headerlink" title="数根问题"></a>数根问题</h2><p>数根是指通过反复将数字的各位数相加，直到得到一个个位数为止。</p>
+<p>5 的数根是什么？ 5 已经是一个个位数，所以答案是 5。</p>
+<p>27 的数根是什么？ 2 + 7 &#x3D; 9。  答案是 9。</p>
+<p>137 的数根是什么？用代码来解决。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">digitalRoot</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 基本情况：如果 n 是个位数，直接返回 n</span></span><br><span class="line">    <span class="keyword">if</span> (n &lt; <span class="number">10</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 递归步骤：将各个位数相加，继续递归调用</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">digitalRoot</span>(n % <span class="number">10</span> + <span class="built_in">digitalRoot</span>(n / <span class="number">10</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>现在尝试利用递归来逆转字符串：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 递归函数，用于逆转字符串</span></span><br><span class="line"><span class="function">string <span class="title">reverseString</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 基本情况：如果字符串为空或者只有一个字符，则直接返回</span></span><br><span class="line">    <span class="keyword">if</span> (s.<span class="built_in">empty</span>() || s.<span class="built_in">length</span>() == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 递归步骤：将第一个字符放在最后，其余部分递归处理</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">reverseString</span>(s.<span class="built_in">substr</span>(<span class="number">1</span>)) + s[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    string s;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 读取输入字符串</span></span><br><span class="line">    cin &gt;&gt; s;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出原始字符串的长度</span></span><br><span class="line">    cout &lt;&lt; s.<span class="built_in">length</span>() &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出原始字符串，每个字符用空格分隔</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> fw : s) &#123;</span><br><span class="line">        cout &lt;&lt; fw &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用递归函数，输出逆转后的字符串</span></span><br><span class="line">    cout &lt;&lt; <span class="built_in">reverseString</span>(s) &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p>用标准库的做法</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span> <span class="comment">// 包含 reverse 函数</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    string s;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 读取输入字符串</span></span><br><span class="line">    cin &gt;&gt; s;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出字符串长度</span></span><br><span class="line">    cout &lt;&lt; s.<span class="built_in">length</span>() &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 遍历并输出原始字符串的每个字符，字符之间用空格分隔</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> fw : s) &#123;</span><br><span class="line">        cout &lt;&lt; fw &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 逆转字符串</span></span><br><span class="line">    <span class="built_in">reverse</span>(s.<span class="built_in">begin</span>(), s.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出逆转后的字符串</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> fw : s) &#123;</span><br><span class="line">        cout &lt;&lt; fw;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>wsl图形化界面安装踩坑</title>
     <url>/2025/01/05/OLD_%E9%85%8D%E7%BD%AEwsl%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</url>
     <content><![CDATA[<hr>
@@ -3923,25 +3923,6 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
-    <title>level1</title>
-    <url>/2025/02/28/PwnCollege_level1/</url>
-    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>level2</p>
-]]></content>
-      <categories>
-        <category>PwnCollege</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>PwnCollege</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>building_a_web_server</title>
     <url>/2025/02/28/PwnCollege_building_a_web_server/</url>
     <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.intel_syntax noprefix</span><br><span class="line">.globl _start</span><br><span class="line"></span><br><span class="line">.section .text</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    # Socket syscall</span><br><span class="line">    mov rdi, 2</span><br><span class="line">    mov rsi, 1</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 0x29</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Bind syscall</span><br><span class="line">    mov rdi, 3</span><br><span class="line">    lea rsi, [rip+sockaddr]</span><br><span class="line">    mov rdx, 16</span><br><span class="line">    mov rax, 0x31</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Listen syscall</span><br><span class="line">    mov rdi, 3</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rax, 0x32</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Accept syscall</span><br><span class="line">    mov rdi, 3</span><br><span class="line">    mov rsi, 0</span><br><span class="line">    mov rdx, 0</span><br><span class="line">    mov rax, 0x2b</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Read syscall</span><br><span class="line">    mov rdi, 4</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov rdx, 1024</span><br><span class="line">    mov rax, 0x00</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Write syscall</span><br><span class="line">    mov rdi, 4</span><br><span class="line">    lea rsi, [rip+response]</span><br><span class="line">    mov rdx, 19</span><br><span class="line">    mov rax, 0x01</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Delay before closing the connection</span><br><span class="line">    mov rax, 0x20</span><br><span class="line">    mov rdi, 1</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    # Close syscall</span><br><span class="line">    mov rdi, 4</span><br><span class="line">    mov rax, 0x03</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    # Exit syscall</span><br><span class="line">    mov rdi, 0</span><br><span class="line">    mov rax, 0x3c    </span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">.section .data</span><br><span class="line">sockaddr:</span><br><span class="line">    .2byte 2</span><br><span class="line">    .2byte 0x5000</span><br><span class="line">    .4byte 0</span><br><span class="line">    .8byte 0</span><br><span class="line"></span><br><span class="line">response: </span><br><span class="line">    .string &quot;HTTP/1.0 200 OK\r\n\r\n&quot;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -4012,56 +3993,22 @@ return (dataset[&#39;train_img&#39;], dataset[&#39;train_label&#39;]), (dataset[
       </tags>
   </entry>
   <entry>
-    <title>两两交换链表中的节点</title>
-    <url>/2026/07/25/%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9/</url>
-    <content><![CDATA[<h2 id="Problem-statement"><a href="#Problem-statement" class="headerlink" title="Problem statement"></a>Problem statement</h2><p>两两交换链表相邻节点，不能修改节点的值</p>
-<h2 id="My-Solution"><a href="#My-Solution" class="headerlink" title="My Solution"></a>My Solution</h2><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>先创建一个哑节点，连接链表的起始位置，创建一个指针指向哑节点。先检查是不是空链表，是的话直接返还没有连接哑巴节点的原始链表。随后进入一个while循环，条件是指针节点的下一个节点不是空节点且下一个节点的下一个节点也不是空节点。进入循环后，让指针节点指向下一位的下一位，指针节点的下一位指向指针节点的下一位的下一位的下一位，然后才把指针节点的下一位的下一位指向指针节点的下一位。然后指针向后移动两位。退出循环后，进入一个if判断，如果下一位是空节点，退出循环返还除掉哑节点的链表。如果下一位不是空但是下下一位是空，也返还除掉哑节点的链表</p>
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">ListNode* <span class="title">swapPairs</span><span class="params">(ListNode* head)</span> </span>&#123;                                         </span><br><span class="line">    <span class="function">ListNode <span class="title">dummy</span><span class="params">(<span class="number">0</span>)</span></span>;                                                        </span><br><span class="line">    dummy.next = head;                                                        </span><br><span class="line">    ListNode* cur = &amp;dummy;                                                   </span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (cur-&gt;next &amp;&amp; cur-&gt;next-&gt;next) &#123;                                    </span><br><span class="line">        ListNode* first = cur-&gt;next;                                          </span><br><span class="line">        ListNode* second = cur-&gt;next-&gt;next;                                   </span><br><span class="line"></span><br><span class="line">        first-&gt;next = second-&gt;next;                                           </span><br><span class="line">        second-&gt;next = first;                                                 </span><br><span class="line">        cur-&gt;next = second;                                                   </span><br><span class="line"></span><br><span class="line">        cur = first;                                                          </span><br><span class="line">    &#125;                                                                         </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dummy.next;                                                        </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>执行前:<br>           cur</p>
-<pre><code>       ↓
-</code></pre>
-<p>  dummy → [1] → [2] → [3] → [4]<br>  执行 cur.next &#x3D; cur.next.next 后:</p>
-<pre><code>       cur
+    <title>level1</title>
+    <url>/2025/02/28/PwnCollege_level1/</url>
+    <content><![CDATA[<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">vim runme</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-       ↓
-</code></pre>
-<p>  dummy ───→ [2] → [3] → [4]</p>
-<pre><code>       [1] → [2]   ← 节点1没人指着它了，丢了！
-</code></pre>
-<p>  执行 cur.next.next &#x3D; …:<br>           此时 cur.next 是 [2]，cur.next.next 是 [3]<br>           cur.next.next.next.next … 往下数越界了 → None → 崩<br>  <strong>正确的顺序是先抓后放</strong>——左手抓住 1，右手抓住 2，然后再改指针：<br>  先抓住:</p>
-<pre><code>       cur
 
-       ↓
-</code></pre>
-<p>  dummy → [1] → [2] → [3] → [4]</p>
-<pre><code>       ↑      ↑
 
-     first  second  ← 临时变量握住了
-</code></pre>
-<p>  再改线:</p>
-<pre><code>first-&gt;next = second-&gt;next   → 1 指向 3
 
-second-&gt;next = first          → 2 指向 1
 
-cur-&gt;next = second            → dummy 指向 2
-
-cur = first                   → cur 移到 1（下一组的&quot;前一个&quot;）
-</code></pre>
-<p>  结果:</p>
-<pre><code>                 cur
-
-                 ↓
-</code></pre>
-<p>  dummy → [2] → [1] → [3] → [4]</p>
+<p>level2</p>
 ]]></content>
       <categories>
-        <category>Leetcode</category>
+        <category>PwnCollege</category>
       </categories>
       <tags>
-        <tag>算法</tag>
-        <tag>链表</tag>
-        <tag>交换</tag>
-        <tag>递归</tag>
+        <tag>CTF</tag>
+        <tag>PwnCollege</tag>
       </tags>
   </entry>
   <entry>
@@ -4146,86 +4093,56 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       </tags>
   </entry>
   <entry>
-    <title>让 iPhone 和 iPad 访问 Mac 上的 DSH：Caddy 反向代理 + launchd 闸门</title>
-    <url>/2026/09/10/%E6%8A%80%E6%9C%AF_DSH%E8%B7%A8%E8%AE%BE%E5%A4%87%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%B2%E8%81%94/</url>
-    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>DSH 的 Web GUI 只监听 <code>127.0.0.1:3080</code>。在 Mac 上用 Safari 的接力（Handoff）把这个页面递到 iPhone 或 iPad 时，传的只是 URL，<code>127.0.0.1</code> 在手机上指向手机自己，页面打不开。</p>
-<p>目标是在不改动 DSH 的前提下，让家里的 iPhone 和 iPad 能直接访问。约束有三个：</p>
-<ol>
-<li>dsh 的绑定地址不动。新版 dsh 直接拒绝 <code>--host 0.0.0.0</code> 这类非回环绑定：GUI 能执行 bash，暴露到局域网风险不可控。</li>
-<li>不出公网。域名、Cloudflare Tunnel、Tailscale 都不用。</li>
-<li>入口可控。只有白名单里的 Wi-Fi 才对外提供服务。</li>
-</ol>
-<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>在 Mac 本机跑 Caddy 做反向代理，前面加一道基于 Wi-Fi 白名单的闸门，由 launchd 管理启停。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">iPhone / iPad Safari ──HTTPS──&gt; Caddy :8443（校验门禁Cookie）</span><br><span class="line">                                   │</span><br><span class="line">                                   ▼</span><br><span class="line">                           dsh web 127.0.0.1:3080（绑定未改动）</span><br><span class="line"></span><br><span class="line">:8444（纯HTTP）：只用于分发根证书 root.crt</span><br><span class="line"></span><br><span class="line">launchd 闸门（每60秒 + 网络切换事件）：</span><br><span class="line">  当前 Wi-Fi 在白名单 → 保持 Caddy 运行</span><br><span class="line">  陌生网络 / 公网 / 无Wi-Fi → 卸载 Caddy 作业</span><br></pre></td></tr></table></figure>
+    <title>两两交换链表中的节点</title>
+    <url>/2026/07/25/%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9/</url>
+    <content><![CDATA[<h2 id="Problem-statement"><a href="#Problem-statement" class="headerlink" title="Problem statement"></a>Problem statement</h2><p>两两交换链表相邻节点，不能修改节点的值</p>
+<h2 id="My-Solution"><a href="#My-Solution" class="headerlink" title="My Solution"></a>My Solution</h2><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>先创建一个哑节点，连接链表的起始位置，创建一个指针指向哑节点。先检查是不是空链表，是的话直接返还没有连接哑巴节点的原始链表。随后进入一个while循环，条件是指针节点的下一个节点不是空节点且下一个节点的下一个节点也不是空节点。进入循环后，让指针节点指向下一位的下一位，指针节点的下一位指向指针节点的下一位的下一位的下一位，然后才把指针节点的下一位的下一位指向指针节点的下一位。然后指针向后移动两位。退出循环后，进入一个if判断，如果下一位是空节点，退出循环返还除掉哑节点的链表。如果下一位不是空但是下下一位是空，也返还除掉哑节点的链表</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">ListNode* <span class="title">swapPairs</span><span class="params">(ListNode* head)</span> </span>&#123;                                         </span><br><span class="line">    <span class="function">ListNode <span class="title">dummy</span><span class="params">(<span class="number">0</span>)</span></span>;                                                        </span><br><span class="line">    dummy.next = head;                                                        </span><br><span class="line">    ListNode* cur = &amp;dummy;                                                   </span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (cur-&gt;next &amp;&amp; cur-&gt;next-&gt;next) &#123;                                    </span><br><span class="line">        ListNode* first = cur-&gt;next;                                          </span><br><span class="line">        ListNode* second = cur-&gt;next-&gt;next;                                   </span><br><span class="line"></span><br><span class="line">        first-&gt;next = second-&gt;next;                                           </span><br><span class="line">        second-&gt;next = first;                                                 </span><br><span class="line">        cur-&gt;next = second;                                                   </span><br><span class="line"></span><br><span class="line">        cur = first;                                                          </span><br><span class="line">    &#125;                                                                         </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dummy.next;                                                        </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>执行前:<br>           cur</p>
+<pre><code>       ↓
+</code></pre>
+<p>  dummy → [1] → [2] → [3] → [4]<br>  执行 cur.next &#x3D; cur.next.next 后:</p>
+<pre><code>       cur
 
-<p>三层控制：</p>
-<ul>
-<li>闸门：当前 Wi-Fi 不在白名单，一分钟内卸载 Caddy 作业</li>
-<li>门禁：访问者先通过带令牌的链接换取一年期 Cookie</li>
-<li>HTTPS：Caddy 内部 CA 签发证书，同时满足 iOS 对安全上下文的要求</li>
-</ul>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="安装-Caddy"><a href="#安装-Caddy" class="headerlink" title="安装 Caddy"></a>安装 Caddy</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">brew install caddy</span><br></pre></td></tr></table></figure>
+       ↓
+</code></pre>
+<p>  dummy ───→ [2] → [3] → [4]</p>
+<pre><code>       [1] → [2]   ← 节点1没人指着它了，丢了！
+</code></pre>
+<p>  执行 cur.next.next &#x3D; …:<br>           此时 cur.next 是 [2]，cur.next.next 是 [3]<br>           cur.next.next.next.next … 往下数越界了 → None → 崩<br>  <strong>正确的顺序是先抓后放</strong>——左手抓住 1，右手抓住 2，然后再改指针：<br>  先抓住:</p>
+<pre><code>       cur
 
-<h3 id="Caddyfile"><a href="#Caddyfile" class="headerlink" title="Caddyfile"></a>Caddyfile</h3><p>文件放在 <code>~/.config/dsh-lan-gate/</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 把 &lt;TOKEN&gt; 换成自己的随机串（openssl rand -hex 16 之类）</span><br><span class="line">https://your-mac.local:8443 &#123;</span><br><span class="line">	tls internal</span><br><span class="line">	@gated not header Cookie *dsh_gate=&lt;TOKEN&gt;*</span><br><span class="line">	handle /gate &#123;</span><br><span class="line">		@correctt query t=&lt;TOKEN&gt;</span><br><span class="line">		@wrongt not query t=&lt;TOKEN&gt;</span><br><span class="line">		header @correctt Set-Cookie &quot;dsh_gate=&lt;TOKEN&gt;; Max-Age=31536000; Path=/; HttpOnly; SameSite=Lax&quot;</span><br><span class="line">		redir @correctt https://your-mac.local:8443/ 302</span><br><span class="line">		respond @wrongt &quot;Forbidden&quot; 403</span><br><span class="line">	&#125;</span><br><span class="line">	handle &#123;</span><br><span class="line">		respond @gated &quot;请先访问一次门禁链接 /gate?t=&lt;令牌&gt;&quot; 401</span><br><span class="line">		reverse_proxy 127.0.0.1:3080</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"># 纯HTTP辅助口：只用于分发根证书</span><br><span class="line">http://your-mac.local:8444 &#123;</span><br><span class="line">	root * &quot;/Users/你的用户名/Library/Application Support/Caddy/pki/authorities/local&quot;</span><br><span class="line">	handle /root.crt &#123;</span><br><span class="line">		file_server</span><br><span class="line">	&#125;</span><br><span class="line">	handle &#123;</span><br><span class="line">		respond &quot;此端口仅用于下载 root.crt&quot; 404</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+       ↓
+</code></pre>
+<p>  dummy → [1] → [2] → [3] → [4]</p>
+<pre><code>       ↑      ↑
 
-<p>说明：</p>
-<ul>
-<li><code>your-mac.local</code> 是 Mac 的 Bonjour 名（<code>scutil --get LocalHostName</code> 查询），不随 DHCP 分配的 IP 变化</li>
-<li><code>tls internal</code> 由 Caddy 自建 CA 签发证书，手机端安装根证书后不再有证书警告</li>
-<li><code>/gate?t=&lt;TOKEN&gt;</code> 设置一年期 Cookie，之后的请求直接放行</li>
-</ul>
-<h3 id="Wi-Fi-白名单闸门"><a href="#Wi-Fi-白名单闸门" class="headerlink" title="Wi-Fi 白名单闸门"></a>Wi-Fi 白名单闸门</h3><p>白名单文件 <code>~/.config/dsh-lan-gate/allowed-ssids.txt</code>，一行一个 Wi-Fi 名称。</p>
-<figure class="highlight zsh"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/zsh</span></span><br><span class="line"><span class="comment"># gate.sh — 白名单 Wi-Fi → bootstrap caddy 作业；非白名单 → bootout</span></span><br><span class="line">GATE_DIR=<span class="string">&quot;<span class="variable">$HOME</span>/.config/dsh-lan-gate&quot;</span></span><br><span class="line">ALLOWED_FILE=<span class="string">&quot;<span class="variable">$GATE_DIR</span>/allowed-ssids.txt&quot;</span></span><br><span class="line">CADDY_PLIST=<span class="string">&quot;<span class="variable">$HOME</span>/Library/LaunchAgents/com.gwen.dsh-lan-caddy.plist&quot;</span></span><br><span class="line">GATE_LOG=<span class="string">&quot;<span class="variable">$GATE_DIR</span>/gate.log&quot;</span></span><br><span class="line">LABEL=<span class="string">&quot;com.gwen.dsh-lan-caddy&quot;</span></span><br><span class="line">UID_N=$(<span class="built_in">id</span> -u)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log</span></span>() &#123; <span class="built_in">echo</span> <span class="string">&quot;<span class="subst">$(date &#x27;+%F %T&#x27;)</span> $*&quot;</span> &gt;&gt;<span class="string">&quot;<span class="variable">$GATE_LOG</span>&quot;</span>; &#125;</span><br><span class="line"></span><br><span class="line">SSID=$(ipconfig getsummary en0 2&gt;/dev/null | awk -F<span class="string">&#x27;: &#x27;</span> <span class="string">&#x27;/^ *SSID/ &#123;print $2; exit&#125;&#x27;</span>)</span><br><span class="line">[[ -z <span class="string">&quot;<span class="variable">$SSID</span>&quot;</span> ]] &amp;&amp; SSID=$(networksetup -getairportnetwork en0 2&gt;/dev/null | sed -E <span class="string">&#x27;s/.*: //&#x27;</span>)</span><br><span class="line"></span><br><span class="line">allowed=0</span><br><span class="line">[[ -n <span class="string">&quot;<span class="variable">$SSID</span>&quot;</span> ]] &amp;&amp; grep -qxF -- <span class="string">&quot;<span class="variable">$SSID</span>&quot;</span> <span class="string">&quot;<span class="variable">$ALLOWED_FILE</span>&quot;</span> 2&gt;/dev/null &amp;&amp; allowed=1</span><br><span class="line"></span><br><span class="line">RUNNING=$(pgrep -f -- <span class="string">&quot;caddy run --config <span class="variable">$GATE_DIR</span>/Caddyfile&quot;</span> 2&gt;/dev/null)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (( allowed )) &amp;&amp; [[ -z <span class="string">&quot;<span class="variable">$RUNNING</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">if</span> launchctl bootstrap gui/<span class="variable">$&#123;UID_N&#125;</span> <span class="string">&quot;<span class="variable">$CADDY_PLIST</span>&quot;</span> 2&gt;/dev/null; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">log</span> <span class="string">&quot;START ok   ssid=<span class="variable">$SSID</span> (launchd)&quot;</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    launchctl kickstart gui/<span class="variable">$&#123;UID_N&#125;</span>/<span class="variable">$&#123;LABEL&#125;</span> 2&gt;/dev/null &amp;&amp; <span class="built_in">log</span> <span class="string">&quot;START ok   ssid=<span class="variable">$SSID</span> (kickstart)&quot;</span> || <span class="built_in">log</span> <span class="string">&quot;START FAIL ssid=<span class="variable">$SSID</span>&quot;</span></span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">elif</span> (( ! allowed )) &amp;&amp; [[ -n <span class="string">&quot;<span class="variable">$RUNNING</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">  launchctl bootout gui/<span class="variable">$&#123;UID_N&#125;</span>/<span class="variable">$&#123;LABEL&#125;</span> 2&gt;&gt;<span class="string">&quot;<span class="variable">$GATE_LOG</span>&quot;</span></span><br><span class="line">  <span class="built_in">log</span> <span class="string">&quot;STOP ok    ssid=<span class="variable">$&#123;SSID:-none&#125;</span> (bootout)&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+     first  second  ← 临时变量握住了
+</code></pre>
+<p>  再改线:</p>
+<pre><code>first-&gt;next = second-&gt;next   → 1 指向 3
 
-<p>Caddy 用独立的 launchd 作业承载（<code>RunAtLoad</code> + <code>KeepAlive</code>），闸门只做 <code>bootstrap</code> &#x2F; <code>bootout</code>，不在脚本里直接拉起进程，原因见「遇到的问题」第 3 条。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">plist</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//Apple//DTD PLIST 1.0//EN&quot;</span> <span class="string">&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">&quot;1.0&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>Label<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">string</span>&gt;</span>com.gwen.dsh-lan-caddy<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>ProgramArguments<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/opt/homebrew/bin/caddy<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>run<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>--config<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/你的用户名/.config/dsh-lan-gate/Caddyfile<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>RunAtLoad<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>KeepAlive<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardOutPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/你的用户名/.config/dsh-lan-gate/caddy.log<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardErrorPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/你的用户名/.config/dsh-lan-gate/caddy.log<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plist</span>&gt;</span></span><br></pre></td></tr></table></figure>
+second-&gt;next = first          → 2 指向 1
 
-<p>闸门自己的 plist 同样格式，程序为 <code>/bin/zsh &lt;gate.sh 路径&gt;</code>，加 <code>StartInterval 60</code> 和两个 <code>WatchPaths</code>（指向 <code>/Library/Preferences/SystemConfiguration/</code> 下的网络配置文件），网络切换时立即执行。</p>
-<h3 id="dsh-启动参数"><a href="#dsh-启动参数" class="headerlink" title="dsh 启动参数"></a>dsh 启动参数</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">nohup</span> dsh web --no-open --host 127.0.0.1 --trusted-host your-mac.local --trusted-host 192.168.3.137 &amp;</span><br></pre></td></tr></table></figure>
+cur-&gt;next = second            → dummy 指向 2
 
-<p>dsh 的 <code>/api</code> 有两层访问控制。外层是路由级信任名单，由 <code>--trusted-host</code> 控制；内层是一组特权方法（<code>host.pickDirectory</code>、<code>host.openPath</code>、<code>settings.*</code>、<code>credentials.*</code>），源码中固定为只接受本机回环请求，<code>--trusted-host</code> 对其无效。因此手机上「选择文件夹」返回 403 是预期行为，这类操作在 Mac 本机执行。</p>
-<h3 id="手机端设置"><a href="#手机端设置" class="headerlink" title="手机端设置"></a>手机端设置</h3><p>iPhone 和 iPad 步骤相同，每台设备做一次：</p>
-<ol>
-<li>Safari 打开 <code>http://your-mac.local:8444/root.crt</code>，下载描述文件，在 设置 → 通用 → VPN与设备管理 中安装</li>
-<li>设置 → 通用 → 关于本机 → 证书信任设置，开启该证书的完全信任</li>
-<li>Safari 打开 <code>https://your-mac.local:8443/gate?t=&lt;TOKEN&gt;</code>，自动设置 Cookie 并进入 DSH</li>
-<li>分享菜单 → 添加到主屏幕</li>
-</ol>
-<p>使用接力的前提：所有设备登录同一 Apple ID，并在 设置 → 通用 → 隔空播放与接力 中开启接力。不满足时可用 iCloud 标签页同步代替。</p>
-<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="1-选文件夹报-crypto-randomUUID-is-not-a-function"><a href="#1-选文件夹报-crypto-randomUUID-is-not-a-function" class="headerlink" title="1. 选文件夹报 crypto.randomUUID is not a function"></a>1. 选文件夹报 <code>crypto.randomUUID is not a function</code></h3><p>现象：通过 HTTP 访问时，iPhone 上点击「选择文件夹」直接报错。<br>原因：非 HTTPS 页面不属于安全上下文，iOS Safari 禁用部分 Web API。<br>解决：整体改用 HTTPS，证书由 Caddy 内部 CA 签发。</p>
-<h3 id="2-HTTP-Basic-Auth-反复弹出登录框"><a href="#2-HTTP-Basic-Auth-反复弹出登录框" class="headerlink" title="2. HTTP Basic Auth 反复弹出登录框"></a>2. HTTP Basic Auth 反复弹出登录框</h3><p>现象：iOS Safari 不断要求输入用户名密码。<br>原因：iOS Safari 对 Basic Auth 凭据的缓存不可靠，新标签页或新连接都会重新认证。<br>解决：改用门禁链接设置一年期 Cookie，之后不再出现认证提示。</p>
-<h3 id="3-Caddy-进程启动两秒后被杀"><a href="#3-Caddy-进程启动两秒后被杀" class="headerlink" title="3. Caddy 进程启动两秒后被杀"></a>3. Caddy 进程启动两秒后被杀</h3><p>现象：<code>gate.sh</code> 用 <code>nohup caddy ... &amp; disown</code> 拉起 Caddy，进程只存活约两秒。caddy.log 中前一行是 <code>serving initial configuration</code>，下一行是 <code>shutting down apps, then terminating, signal: SIGTERM</code>。<br>原因：<code>nohup</code> 只忽略 SIGHUP，<code>disown</code> 只把进程从 shell 任务表移除，进程仍在该 launchd 作业的进程组内；脚本退出时，launchd 向整个进程组发送 SIGTERM。另外闸门作业自身停止触发后，Caddy 死亡后无人重启，iPad 端表现为无法建立连接。<br>解决：Caddy 独立为 launchd 作业（<code>RunAtLoad</code> + <code>KeepAlive</code>，崩溃自动重启），闸门只做 <code>bootstrap</code> &#x2F; <code>bootout</code>。macOS 没有 <code>setsid</code> 命令，launchd 作业化是标准做法。修改后观察 70 秒以上，闸门连续两轮调度，Caddy 均存活。</p>
-<h3 id="4-redir-302-不生效"><a href="#4-redir-302-不生效" class="headerlink" title="4. redir / 302 不生效"></a>4. <code>redir / 302</code> 不生效</h3><p>现象：写在 <code>/gate</code> 的 <code>handle</code> 块内，重定向不触发，返回 200。<br>原因：这种写法把 <code>/</code> 解析为路径匹配条件，而不是重定向目标。<br>解决：写完整目标 <code>redir https://your-mac.local:8443/ 302</code>。</p>
-<h3 id="5-host-pickDirectory-返回-403"><a href="#5-host-pickDirectory-返回-403" class="headerlink" title="5. host.pickDirectory 返回 403"></a>5. <code>host.pickDirectory</code> 返回 403</h3><p>现象：手机端选择 Mac 文件夹时返回 403，其余功能正常。<br>原因：特权方法在源码中固定为只接受回环请求，<code>--trusted-host</code> 不影响它。<br>解决：不处理。这是 dsh 的安全设计，相关操作在 Mac 本机完成。</p>
-<h3 id="6-host-0-0-0-0-无法启动"><a href="#6-host-0-0-0-0-无法启动" class="headerlink" title="6. --host 0.0.0.0 无法启动"></a>6. <code>--host 0.0.0.0</code> 无法启动</h3><p>现象：dsh 直接拒绝启动。<br>原因：新版本出于安全考虑只允许回环绑定。<br>解决：维持 <code>127.0.0.1</code> 绑定，由外部反向代理提供局域网访问。这也是整个方案的前提。</p>
-<h3 id="7-任意令牌都能通过门禁（Caddy-指令顺序）"><a href="#7-任意令牌都能通过门禁（Caddy-指令顺序）" class="headerlink" title="7. 任意令牌都能通过门禁（Caddy 指令顺序）"></a>7. 任意令牌都能通过门禁（Caddy 指令顺序）</h3><p>现象：用 <code>/gate?t=任意值</code> 请求门禁链接，返回 302 且响应头带上了合法的 <code>Set-Cookie</code>；拿这个 Cookie 直接访问，200 进入。写在配置里的 <code>respond @wrongt 403</code> 从未执行。<br>原因：Caddy 对块内指令按固定顺序执行，<code>header</code>（序位 8）和 <code>redir</code>（序位 11）都在 <code>respond</code>（序位 24）之前。原配置中 <code>header Set-Cookie</code> 和 <code>redir</code> 没有挂匹配器，对每个 <code>/gate</code> 请求都生效，后面的 403 分支是死代码。<br>解决：给 <code>header</code> 和 <code>redir</code> 挂上 <code>@correctt</code>（<code>query t=&lt;TOKEN&gt;</code>）匹配器，<code>respond @wrongt 403</code> 兜底。每个请求恰好落入一个分支，不再依赖指令顺序。修复后错令牌返回 403 且不下发 Cookie。这个问题是在给这套配置写通用版做自动化测试时发现的，生产配置同步修掉。</p>
-<h2 id="结果与限制"><a href="#结果与限制" class="headerlink" title="结果与限制"></a>结果与限制</h2><p>最终效果，Safari 标题栏是门禁域名而不是 <code>127.0.0.1</code>，Cookie 放行后直接进入会话：</p>
-<p><img src="/images/dsh-lan-gate-result.png" alt="通过门禁域名访问 DSH 的最终效果"></p>
-<p>生效后的状态：</p>
-<ul>
-<li>家里 Wi-Fi 下，iPhone&#x2F;iPad 从主屏幕图标直接进入 DSH，无证书警告、无登录框</li>
-<li>Mac、iPhone、iPad 之间通过接力或 iCloud 标签页同步互相打开页面</li>
-<li>离开白名单 Wi-Fi 后入口在一分钟内关闭，回家自动恢复，<code>gate.log</code> 记录每次起停</li>
-</ul>
-<p>限制：</p>
-<ul>
-<li>仅限家庭网络使用</li>
-<li>Mac 睡眠或未登录桌面时不可用</li>
-<li>特权操作（选择文件夹、修改设置、管理凭据）只能在 Mac 本机进行</li>
-<li>安卓未支持：系统不解析 <code>.local</code> 域名，需要改用 IP 加独立证书，暂未实施</li>
-</ul>
-<p>涉及的文件：一个 Caddyfile、一个 <code>gate.sh</code>、两个 plist，以及 dsh 启动命令中的 <code>--trusted-host</code> 参数。</p>
+cur = first                   → cur 移到 1（下一组的&quot;前一个&quot;）
+</code></pre>
+<p>  结果:</p>
+<pre><code>                 cur
+
+                 ↓
+</code></pre>
+<p>  dummy → [2] → [1] → [3] → [4]</p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>Leetcode</category>
       </categories>
       <tags>
-        <tag>DSH</tag>
-        <tag>Caddy</tag>
-        <tag>launchd</tag>
-        <tag>HomeLab</tag>
-        <tag>Safari</tag>
+        <tag>算法</tag>
+        <tag>链表</tag>
+        <tag>交换</tag>
+        <tag>递归</tag>
       </tags>
   </entry>
   <entry>
@@ -4343,6 +4260,89 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       <tags>
         <tag>春招</tag>
         <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>让 iPhone 和 iPad 访问 Mac 上的 DSH：Caddy 反向代理 + launchd 闸门</title>
+    <url>/2026/09/10/%E6%8A%80%E6%9C%AF_DSH%E8%B7%A8%E8%AE%BE%E5%A4%87%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%B2%E8%81%94/</url>
+    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>DSH 的 Web GUI 只监听 <code>127.0.0.1:3080</code>。在 Mac 上用 Safari 的接力（Handoff）把这个页面递到 iPhone 或 iPad 时，传的只是 URL，<code>127.0.0.1</code> 在手机上指向手机自己，页面打不开。</p>
+<p>目标是在不改动 DSH 的前提下，让家里的 iPhone 和 iPad 能直接访问。约束有三个：</p>
+<ol>
+<li>dsh 的绑定地址不动。新版 dsh 直接拒绝 <code>--host 0.0.0.0</code> 这类非回环绑定：GUI 能执行 bash，暴露到局域网风险不可控。</li>
+<li>不出公网。域名、Cloudflare Tunnel、Tailscale 都不用。</li>
+<li>入口可控。只有白名单里的 Wi-Fi 才对外提供服务。</li>
+</ol>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>在 Mac 本机跑 Caddy 做反向代理，前面加一道基于 Wi-Fi 白名单的闸门，由 launchd 管理启停。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">iPhone / iPad Safari ──HTTPS──&gt; Caddy :8443（校验门禁Cookie）</span><br><span class="line">                                   │</span><br><span class="line">                                   ▼</span><br><span class="line">                           dsh web 127.0.0.1:3080（绑定未改动）</span><br><span class="line"></span><br><span class="line">:8444（纯HTTP）：只用于分发根证书 root.crt</span><br><span class="line"></span><br><span class="line">launchd 闸门（每60秒 + 网络切换事件）：</span><br><span class="line">  当前 Wi-Fi 在白名单 → 保持 Caddy 运行</span><br><span class="line">  陌生网络 / 公网 / 无Wi-Fi → 卸载 Caddy 作业</span><br></pre></td></tr></table></figure>
+
+<p>三层控制：</p>
+<ul>
+<li>闸门：当前 Wi-Fi 不在白名单，一分钟内卸载 Caddy 作业</li>
+<li>门禁：访问者先通过带令牌的链接换取一年期 Cookie</li>
+<li>HTTPS：Caddy 内部 CA 签发证书，同时满足 iOS 对安全上下文的要求</li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="安装-Caddy"><a href="#安装-Caddy" class="headerlink" title="安装 Caddy"></a>安装 Caddy</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">brew install caddy</span><br></pre></td></tr></table></figure>
+
+<h3 id="Caddyfile"><a href="#Caddyfile" class="headerlink" title="Caddyfile"></a>Caddyfile</h3><p>文件放在 <code>~/.config/dsh-lan-gate/</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 把 &lt;TOKEN&gt; 换成自己的随机串（openssl rand -hex 16 之类）</span><br><span class="line">https://your-mac.local:8443 &#123;</span><br><span class="line">	tls internal</span><br><span class="line">	@gated not header Cookie *dsh_gate=&lt;TOKEN&gt;*</span><br><span class="line">	handle /gate &#123;</span><br><span class="line">		@correctt query t=&lt;TOKEN&gt;</span><br><span class="line">		@wrongt not query t=&lt;TOKEN&gt;</span><br><span class="line">		header @correctt Set-Cookie &quot;dsh_gate=&lt;TOKEN&gt;; Max-Age=31536000; Path=/; HttpOnly; SameSite=Lax&quot;</span><br><span class="line">		redir @correctt https://your-mac.local:8443/ 302</span><br><span class="line">		respond @wrongt &quot;Forbidden&quot; 403</span><br><span class="line">	&#125;</span><br><span class="line">	handle &#123;</span><br><span class="line">		respond @gated &quot;请先访问一次门禁链接 /gate?t=&lt;令牌&gt;&quot; 401</span><br><span class="line">		reverse_proxy 127.0.0.1:3080</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"># 纯HTTP辅助口：只用于分发根证书</span><br><span class="line">http://your-mac.local:8444 &#123;</span><br><span class="line">	root * &quot;/Users/你的用户名/Library/Application Support/Caddy/pki/authorities/local&quot;</span><br><span class="line">	handle /root.crt &#123;</span><br><span class="line">		file_server</span><br><span class="line">	&#125;</span><br><span class="line">	handle &#123;</span><br><span class="line">		respond &quot;此端口仅用于下载 root.crt&quot; 404</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>your-mac.local</code> 是 Mac 的 Bonjour 名（<code>scutil --get LocalHostName</code> 查询），不随 DHCP 分配的 IP 变化</li>
+<li><code>tls internal</code> 由 Caddy 自建 CA 签发证书，手机端安装根证书后不再有证书警告</li>
+<li><code>/gate?t=&lt;TOKEN&gt;</code> 设置一年期 Cookie，之后的请求直接放行</li>
+</ul>
+<h3 id="Wi-Fi-白名单闸门"><a href="#Wi-Fi-白名单闸门" class="headerlink" title="Wi-Fi 白名单闸门"></a>Wi-Fi 白名单闸门</h3><p>白名单文件 <code>~/.config/dsh-lan-gate/allowed-ssids.txt</code>，一行一个 Wi-Fi 名称。</p>
+<figure class="highlight zsh"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/zsh</span></span><br><span class="line"><span class="comment"># gate.sh — 白名单 Wi-Fi → bootstrap caddy 作业；非白名单 → bootout</span></span><br><span class="line">GATE_DIR=<span class="string">&quot;<span class="variable">$HOME</span>/.config/dsh-lan-gate&quot;</span></span><br><span class="line">ALLOWED_FILE=<span class="string">&quot;<span class="variable">$GATE_DIR</span>/allowed-ssids.txt&quot;</span></span><br><span class="line">CADDY_PLIST=<span class="string">&quot;<span class="variable">$HOME</span>/Library/LaunchAgents/com.gwen.dsh-lan-caddy.plist&quot;</span></span><br><span class="line">GATE_LOG=<span class="string">&quot;<span class="variable">$GATE_DIR</span>/gate.log&quot;</span></span><br><span class="line">LABEL=<span class="string">&quot;com.gwen.dsh-lan-caddy&quot;</span></span><br><span class="line">UID_N=$(<span class="built_in">id</span> -u)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log</span></span>() &#123; <span class="built_in">echo</span> <span class="string">&quot;<span class="subst">$(date &#x27;+%F %T&#x27;)</span> $*&quot;</span> &gt;&gt;<span class="string">&quot;<span class="variable">$GATE_LOG</span>&quot;</span>; &#125;</span><br><span class="line"></span><br><span class="line">SSID=$(ipconfig getsummary en0 2&gt;/dev/null | awk -F<span class="string">&#x27;: &#x27;</span> <span class="string">&#x27;/^ *SSID/ &#123;print $2; exit&#125;&#x27;</span>)</span><br><span class="line">[[ -z <span class="string">&quot;<span class="variable">$SSID</span>&quot;</span> ]] &amp;&amp; SSID=$(networksetup -getairportnetwork en0 2&gt;/dev/null | sed -E <span class="string">&#x27;s/.*: //&#x27;</span>)</span><br><span class="line"></span><br><span class="line">allowed=0</span><br><span class="line">[[ -n <span class="string">&quot;<span class="variable">$SSID</span>&quot;</span> ]] &amp;&amp; grep -qxF -- <span class="string">&quot;<span class="variable">$SSID</span>&quot;</span> <span class="string">&quot;<span class="variable">$ALLOWED_FILE</span>&quot;</span> 2&gt;/dev/null &amp;&amp; allowed=1</span><br><span class="line"></span><br><span class="line">RUNNING=$(pgrep -f -- <span class="string">&quot;caddy run --config <span class="variable">$GATE_DIR</span>/Caddyfile&quot;</span> 2&gt;/dev/null)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (( allowed )) &amp;&amp; [[ -z <span class="string">&quot;<span class="variable">$RUNNING</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">if</span> launchctl bootstrap gui/<span class="variable">$&#123;UID_N&#125;</span> <span class="string">&quot;<span class="variable">$CADDY_PLIST</span>&quot;</span> 2&gt;/dev/null; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">log</span> <span class="string">&quot;START ok   ssid=<span class="variable">$SSID</span> (launchd)&quot;</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    launchctl kickstart gui/<span class="variable">$&#123;UID_N&#125;</span>/<span class="variable">$&#123;LABEL&#125;</span> 2&gt;/dev/null &amp;&amp; <span class="built_in">log</span> <span class="string">&quot;START ok   ssid=<span class="variable">$SSID</span> (kickstart)&quot;</span> || <span class="built_in">log</span> <span class="string">&quot;START FAIL ssid=<span class="variable">$SSID</span>&quot;</span></span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">elif</span> (( ! allowed )) &amp;&amp; [[ -n <span class="string">&quot;<span class="variable">$RUNNING</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">  launchctl bootout gui/<span class="variable">$&#123;UID_N&#125;</span>/<span class="variable">$&#123;LABEL&#125;</span> 2&gt;&gt;<span class="string">&quot;<span class="variable">$GATE_LOG</span>&quot;</span></span><br><span class="line">  <span class="built_in">log</span> <span class="string">&quot;STOP ok    ssid=<span class="variable">$&#123;SSID:-none&#125;</span> (bootout)&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+
+<p>Caddy 用独立的 launchd 作业承载（<code>RunAtLoad</code> + <code>KeepAlive</code>），闸门只做 <code>bootstrap</code> &#x2F; <code>bootout</code>，不在脚本里直接拉起进程，原因见「遇到的问题」第 3 条。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">plist</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//Apple//DTD PLIST 1.0//EN&quot;</span> <span class="string">&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">&quot;1.0&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>Label<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">string</span>&gt;</span>com.gwen.dsh-lan-caddy<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>ProgramArguments<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/opt/homebrew/bin/caddy<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>run<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>--config<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/你的用户名/.config/dsh-lan-gate/Caddyfile<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>RunAtLoad<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>KeepAlive<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardOutPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/你的用户名/.config/dsh-lan-gate/caddy.log<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardErrorPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span><span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/你的用户名/.config/dsh-lan-gate/caddy.log<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plist</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>闸门自己的 plist 同样格式，程序为 <code>/bin/zsh &lt;gate.sh 路径&gt;</code>，加 <code>StartInterval 60</code> 和两个 <code>WatchPaths</code>（指向 <code>/Library/Preferences/SystemConfiguration/</code> 下的网络配置文件），网络切换时立即执行。</p>
+<h3 id="dsh-启动参数"><a href="#dsh-启动参数" class="headerlink" title="dsh 启动参数"></a>dsh 启动参数</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">nohup</span> dsh web --no-open --host 127.0.0.1 --trusted-host your-mac.local --trusted-host 192.168.3.137 &amp;</span><br></pre></td></tr></table></figure>
+
+<p>dsh 的 <code>/api</code> 有两层访问控制。外层是路由级信任名单，由 <code>--trusted-host</code> 控制；内层是一组特权方法（<code>host.pickDirectory</code>、<code>host.openPath</code>、<code>settings.*</code>、<code>credentials.*</code>），源码中固定为只接受本机回环请求，<code>--trusted-host</code> 对其无效。因此手机上「选择文件夹」返回 403 是预期行为，这类操作在 Mac 本机执行。</p>
+<h3 id="手机端设置"><a href="#手机端设置" class="headerlink" title="手机端设置"></a>手机端设置</h3><p>iPhone 和 iPad 步骤相同，每台设备做一次：</p>
+<ol>
+<li>Safari 打开 <code>http://your-mac.local:8444/root.crt</code>，下载描述文件，在 设置 → 通用 → VPN与设备管理 中安装</li>
+<li>设置 → 通用 → 关于本机 → 证书信任设置，开启该证书的完全信任</li>
+<li>Safari 打开 <code>https://your-mac.local:8443/gate?t=&lt;TOKEN&gt;</code>，自动设置 Cookie 并进入 DSH</li>
+<li>分享菜单 → 添加到主屏幕</li>
+</ol>
+<p>使用接力的前提：所有设备登录同一 Apple ID，并在 设置 → 通用 → 隔空播放与接力 中开启接力。不满足时可用 iCloud 标签页同步代替。</p>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="1-选文件夹报-crypto-randomUUID-is-not-a-function"><a href="#1-选文件夹报-crypto-randomUUID-is-not-a-function" class="headerlink" title="1. 选文件夹报 crypto.randomUUID is not a function"></a>1. 选文件夹报 <code>crypto.randomUUID is not a function</code></h3><p>现象：通过 HTTP 访问时，iPhone 上点击「选择文件夹」直接报错。<br>原因：非 HTTPS 页面不属于安全上下文，iOS Safari 禁用部分 Web API。<br>解决：整体改用 HTTPS，证书由 Caddy 内部 CA 签发。</p>
+<h3 id="2-HTTP-Basic-Auth-反复弹出登录框"><a href="#2-HTTP-Basic-Auth-反复弹出登录框" class="headerlink" title="2. HTTP Basic Auth 反复弹出登录框"></a>2. HTTP Basic Auth 反复弹出登录框</h3><p>现象：iOS Safari 不断要求输入用户名密码。<br>原因：iOS Safari 对 Basic Auth 凭据的缓存不可靠，新标签页或新连接都会重新认证。<br>解决：改用门禁链接设置一年期 Cookie，之后不再出现认证提示。</p>
+<h3 id="3-Caddy-进程启动两秒后被杀"><a href="#3-Caddy-进程启动两秒后被杀" class="headerlink" title="3. Caddy 进程启动两秒后被杀"></a>3. Caddy 进程启动两秒后被杀</h3><p>现象：<code>gate.sh</code> 用 <code>nohup caddy ... &amp; disown</code> 拉起 Caddy，进程只存活约两秒。caddy.log 中前一行是 <code>serving initial configuration</code>，下一行是 <code>shutting down apps, then terminating, signal: SIGTERM</code>。<br>原因：<code>nohup</code> 只忽略 SIGHUP，<code>disown</code> 只把进程从 shell 任务表移除，进程仍在该 launchd 作业的进程组内；脚本退出时，launchd 向整个进程组发送 SIGTERM。另外闸门作业自身停止触发后，Caddy 死亡后无人重启，iPad 端表现为无法建立连接。<br>解决：Caddy 独立为 launchd 作业（<code>RunAtLoad</code> + <code>KeepAlive</code>，崩溃自动重启），闸门只做 <code>bootstrap</code> &#x2F; <code>bootout</code>。macOS 没有 <code>setsid</code> 命令，launchd 作业化是标准做法。修改后观察 70 秒以上，闸门连续两轮调度，Caddy 均存活。</p>
+<h3 id="4-redir-302-不生效"><a href="#4-redir-302-不生效" class="headerlink" title="4. redir / 302 不生效"></a>4. <code>redir / 302</code> 不生效</h3><p>现象：写在 <code>/gate</code> 的 <code>handle</code> 块内，重定向不触发，返回 200。<br>原因：这种写法把 <code>/</code> 解析为路径匹配条件，而不是重定向目标。<br>解决：写完整目标 <code>redir https://your-mac.local:8443/ 302</code>。</p>
+<h3 id="5-host-pickDirectory-返回-403"><a href="#5-host-pickDirectory-返回-403" class="headerlink" title="5. host.pickDirectory 返回 403"></a>5. <code>host.pickDirectory</code> 返回 403</h3><p>现象：手机端选择 Mac 文件夹时返回 403，其余功能正常。<br>原因：特权方法在源码中固定为只接受回环请求，<code>--trusted-host</code> 不影响它。<br>解决：不处理。这是 dsh 的安全设计，相关操作在 Mac 本机完成。</p>
+<h3 id="6-host-0-0-0-0-无法启动"><a href="#6-host-0-0-0-0-无法启动" class="headerlink" title="6. --host 0.0.0.0 无法启动"></a>6. <code>--host 0.0.0.0</code> 无法启动</h3><p>现象：dsh 直接拒绝启动。<br>原因：新版本出于安全考虑只允许回环绑定。<br>解决：维持 <code>127.0.0.1</code> 绑定，由外部反向代理提供局域网访问。这也是整个方案的前提。</p>
+<h3 id="7-任意令牌都能通过门禁（Caddy-指令顺序）"><a href="#7-任意令牌都能通过门禁（Caddy-指令顺序）" class="headerlink" title="7. 任意令牌都能通过门禁（Caddy 指令顺序）"></a>7. 任意令牌都能通过门禁（Caddy 指令顺序）</h3><p>现象：用 <code>/gate?t=任意值</code> 请求门禁链接，返回 302 且响应头带上了合法的 <code>Set-Cookie</code>；拿这个 Cookie 直接访问，200 进入。写在配置里的 <code>respond @wrongt 403</code> 从未执行。<br>原因：Caddy 对块内指令按固定顺序执行，<code>header</code>（序位 8）和 <code>redir</code>（序位 11）都在 <code>respond</code>（序位 24）之前。原配置中 <code>header Set-Cookie</code> 和 <code>redir</code> 没有挂匹配器，对每个 <code>/gate</code> 请求都生效，后面的 403 分支是死代码。<br>解决：给 <code>header</code> 和 <code>redir</code> 挂上 <code>@correctt</code>（<code>query t=&lt;TOKEN&gt;</code>）匹配器，<code>respond @wrongt 403</code> 兜底。每个请求恰好落入一个分支，不再依赖指令顺序。修复后错令牌返回 403 且不下发 Cookie。这个问题是在给这套配置写通用版做自动化测试时发现的，生产配置同步修掉。</p>
+<h2 id="结果与限制"><a href="#结果与限制" class="headerlink" title="结果与限制"></a>结果与限制</h2><p>最终效果，Safari 标题栏是门禁域名而不是 <code>127.0.0.1</code>，Cookie 放行后直接进入会话：</p>
+<p><img src="/images/dsh-lan-gate-result.png" alt="通过门禁域名访问 DSH 的最终效果"></p>
+<p>生效后的状态：</p>
+<ul>
+<li>家里 Wi-Fi 下，iPhone&#x2F;iPad 从主屏幕图标直接进入 DSH，无证书警告、无登录框</li>
+<li>Mac、iPhone、iPad 之间通过接力或 iCloud 标签页同步互相打开页面</li>
+<li>离开白名单 Wi-Fi 后入口在一分钟内关闭，回家自动恢复，<code>gate.log</code> 记录每次起停</li>
+</ul>
+<p>限制：</p>
+<ul>
+<li>仅限家庭网络使用</li>
+<li>Mac 睡眠或未登录桌面时不可用</li>
+<li>特权操作（选择文件夹、修改设置、管理凭据）只能在 Mac 本机进行</li>
+<li>安卓未支持：系统不解析 <code>.local</code> 域名，需要改用 IP 加独立证书，暂未实施</li>
+</ul>
+<p>涉及的文件：一个 Caddyfile、一个 <code>gate.sh</code>、两个 plist，以及 dsh 启动命令中的 <code>--trusted-host</code> 参数。</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>DSH</tag>
+        <tag>Caddy</tag>
+        <tag>launchd</tag>
+        <tag>HomeLab</tag>
+        <tag>Safari</tag>
       </tags>
   </entry>
   <entry>
@@ -4470,64 +4470,6 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       <tags>
         <tag>春招</tag>
         <tag>面试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>微笑男 · The Smiling Man</title>
-    <url>/2026/09/08/%E9%98%85%E8%AF%BB_%E5%BE%AE%E7%AC%91%E7%94%B7/</url>
-    <content><![CDATA[<blockquote>
-<p><strong>原帖信息</strong> r&#x2F;LetsNotMeet(Reddit「真实灵异遭遇」版) · 作者 u&#x2F;blue_tidal · 发帖于 2012-04-06 · 得分 1221 · 170 条评论<br><strong>原帖链接</strong> <a href="https://www.reddit.com/r/LetsNotMeet/comments/rvzaq/the_smiling_man/">https://www.reddit.com/r/LetsNotMeet/comments/rvzaq/the_smiling_man/</a><br><strong>备注</strong> Reddit 恐怖圈镇圈名篇,2013 年被改编成获奖同名短片《2AM: The Smiling Man》。后由作者本人转贴到 r&#x2F;nosleep。英文原文经 Arctic Shift(Reddit 存档库)从原帖逐字提取,未做任何改写。</p>
-</blockquote>
-<hr>
-<h2 id="英文原版-全文"><a href="#英文原版-全文" class="headerlink" title="英文原版(全文)"></a>英文原版(全文)</h2><p>About five years ago I lived downtown in a major city in the US. I’ve always been a night person, so I would often find myself bored after my roommate, who was decidedly not a night person, went to sleep. To pass the time, I used to go for long walks and spend the time thinking.</p>
-<p>I spent four years like that, walking alone at night, and never once had a reason to feel afraid. I always used to joke with my roommate that even the drug dealers in the city were polite. But all of that changed in just a few minutes of one evening.</p>
-<p>It was a Wednesday, somewhere between one and two in the morning, and I was walking near a police patrolled park quite a ways from my apartment. It was a quiet night, even for a week night, with very little traffic and almost no one on foot. The park, as it was most nights, was completely empty.</p>
-<p>I turned down a short side street in order to loop back to my apartment when I first noticed him. At the far end of the street, on my side, was the silhouette of a man, dancing. It was a strange dance, similar to a waltz, but he finished each “box” with an odd forward stride. I guess you could say he was dance-walking, headed straight for me.</p>
-<p>Deciding he was probably drunk, I stepped as close as I could to the road to give him the majority of the sidewalk to pass me by. The closer he got, the more I realized how gracefully he was moving. He was very tall and lanky, and wearing an old suit. He danced closer still, until I could make out his face. His eyes were open wide and wild, head tilted back slightly, looking off at the sky. His mouth was formed in a painfully wide cartoon of a smile. Between the eyes and the smile, I decided to cross the street before he danced any closer.</p>
-<p>I took my eyes off of him to cross the empty street. As I reached the other side, I glanced back… and then stopped dead in my tracks. He had stopped dancing and was standing with one foot in the street, perfectly parallel to me. He was facing me but still looking skyward. Smile still wide on his lips.</p>
-<p>I was completely and utterly unnerved by this. I started walking again, but kept my eyes on the man. He didn’t move.</p>
-<p>Once I had put about half a block between us, I turned away from him for a moment to watch the sidewalk in front of me. The street and sidewalk ahead of me were completely empty. Still unnerved, I looked back to where he had been standing to find him gone. For the briefest of moments I felt relieved, until I noticed him. He had crossed the street, and was now slightly crouched down. I couldn’t tell for sure due to the distance and the shadows, but I was certain he was facing me. I had looked away from him for no more than 10 seconds, so it was clear that he had moved fast.</p>
-<p>I was so shocked that I stood there for some time, staring at him. And then he started moving toward me again. He took giant, exaggerated tip toed steps, as if he were a cartoon character sneaking up on someone. Except he was moving very, very quickly.</p>
-<p>I’d like to say at this point I ran away or pulled out my pepper spray or my cellphone or anything at all, but I didn’t. I just stood there, completely frozen as the smiling man crept toward me.</p>
-<p>And then he stopped again, about a car length away from me. Still smiling his smile, still looking to the sky.</p>
-<p>When I finally found my voice, I blurted out the first thing that came to mind. What I meant to ask was, “What the fuck do you want?!” in an angry, commanding tone. What came out was a whimper, “What the fuu…?”</p>
-<p>Regardless of whether or not humans can smell fear, they can certainly hear it. I heard it in my own voice, and that only made me more afraid. But he didn’t react to it at all. He just stood there, smiling.</p>
-<p>And then, after what felt like forever, he turned around, very slowly, and started dance-walking away. Just like that. Not wanting to turn my back to him again, I just watched him go, until he was far enough away to almost be out of sight. And then I realized something. He wasn’t moving away anymore, nor was he dancing. I watched in horror as the distant shape of him grew larger and larger. He was coming back my way. And this time he was running.</p>
-<p>I ran too.</p>
-<p>I ran until I was off of the side road and back onto a better lit road with sparse traffic. Looking behind me then, he was nowhere to be found. The rest of the way home, I kept glancing over my shoulder, always expecting to see his stupid smile, but he was never there.</p>
-<p>I lived in that city for six months after that night, and I never went out for another walk. There was something about his face that always haunted me. He didn’t look drunk, he didn’t look high. He looked completely and utterly insane. And that’s a very, very scary thing to see.</p>
-<hr>
-<h2 id="中文译文"><a href="#中文译文" class="headerlink" title="中文译文"></a>中文译文</h2><p>大约五年前,我住在美国某座大城市的市中心。我一向是个夜猫子,所以经常在室友——一个绝对算不上夜猫子的人——睡下之后闲得发慌。为了打发时间,我习惯出门走很长一段路,边走边想事情。</p>
-<p>那样的日子我过了四年,每晚独自走在夜里,从来没有过一次害怕的理由。我甚至总跟室友开玩笑说,这座城里连毒贩子都彬彬有礼。但这一切,在某个夜晚的短短几分钟里彻底改变了。</p>
-<p>那是个周三,凌晨一点到两点之间,我正走在一片离公寓颇远的街区,旁边是一座有警察巡逻的公园。夜很静,哪怕是工作日的晚上也显得出奇地安静,车流稀少,路上几乎见不到行人。那座公园,和大多数夜晚一样,空无一人。</p>
-<p>我拐进一条短短的支街,打算绕个圈子回公寓,就在这时,我第一次注意到了他。在街道的尽头、我这一侧的路边,立着一个人的剪影——他在跳舞。那是一种很怪的舞,有点像华尔兹,但每跳完一个「方步」,他会用一种诡异的姿势向前跨一大步。大概可以说,他是在「舞走着」,径直朝我过来。</p>
-<p>我心想他多半是喝醉了,便尽量贴着马路走,把人行道的大部分让给他通过。他离我越近,我越意识到他的动作有多么优雅。他非常瘦高,穿着一身旧西装。他越舞越近,直到我能看清他的脸。他的双眼睁得老大,狂乱无神,头微微后仰,望着天空。他的嘴咧成一个宽得让人发疼的、漫画式的微笑。光是那双眼睛和那个微笑,就足以让我决定:趁他还没舞过来,赶紧过马路。</p>
-<p>我移开视线,穿过空无一人的街道。走到对面时,我回头瞥了一眼……然后整个人钉在了原地。他停止了跳舞,一只脚踩在马路牙子上,与我完美地平行站着。他面朝着我,却依然仰望着天空。那个微笑依然咧在嘴上。</p>
-<p>这一幕让我毛骨悚然。我重新迈开步子,但目光始终没离开那个男人。他一动不动。</p>
-<p>等到我们之间隔出了大约半条街的距离,我才短暂地把视线转回身前。前方的街道和人行道空空荡荡。寒意未消,我又回头去看他方才站立的位置——人不见了。有那么极短的一瞬,我甚至松了口气,直到我再次看见他。他已经穿过了马路,身体微微蹲伏着。由于距离和阴影,我无法百分之百确定,但我敢肯定他正对着我的方向。我移开视线的时间不超过十秒——也就是说,他刚才移动得非常非常快。</p>
-<p>我震惊得在原地站了许久,直勾勾地盯着他。然后,他又开始朝我移动了。他迈着巨大而夸张的、踮着脚尖的步子,就像卡通片里蹑手蹑脚逼近猎物的角色。只不过,他移动得非常、非常快。</p>
-<p>我很想说我当时拔腿跑了,或者掏出了防狼喷雾、手机,随便什么东西。但我没有。我只是站在那里,彻底僵住,眼睁睁看着那个微笑的男人朝我爬行而来。</p>
-<p>然后,他又一次停了下来,离我约莫一个车身远。依然咧着他的微笑,依然仰望着天空。</p>
-<p>等我终于找回自己的声音时,脱口而出的是脑子里冒出的第一句话。我本想用愤怒、强硬的语气吼一句:「你他妈想干什么?!」实际发出的,却是一声呜咽:「你想干什……?」</p>
-<p>且不说人类能不能闻到恐惧,他们至少一定<strong>听</strong>得出恐惧。我在自己的声音里听到了它,这只会让我更怕。但他对此毫无反应。他只是站在那里,微笑着。</p>
-<p>然后,在仿佛过了一整辈子那么久之后,他非常缓慢地转过身,开始舞走着离开。就这么走了。因为不想再把后背交给他,我只是目送着他远去,直到他的身影几乎要消失在视线尽头。然后,我意识到了一件事。他不再远离了,也不再跳舞了。我惊恐地看着远处那个身影越变越大。他正朝我回来。而这一次,他在跑。</p>
-<p>我也跑了。</p>
-<p>我一直跑,直到离开那条支街,回到一条灯光尚可、车流稀疏的路上。回头望去,他不见踪影。剩下回家的路上,我不停地回头张望,总以为会看见他那个讨厌的微笑,但他再也没出现。</p>
-<p>那晚之后,我又在那座城市住了六个月,但我再也没有出门散过步。他脸上的某种东西始终在我脑海里挥之不去。他不像喝醉,也不像嗑高了。他看起来是彻底的、彻头彻尾的疯狂。</p>
-<p>而那,是一件非常、非常可怕的事。</p>
-<hr>
-<h2 id="译注"><a href="#译注" class="headerlink" title="译注"></a>译注</h2><ul>
-<li>最初的中文流传版把他写成「跟着我过马路、冲我笑」——原版里他其实<strong>从头到尾都在仰望天空</strong>,从未与叙述者对视,这才是全篇最瘆人的地方。</li>
-<li>原帖发在 r&#x2F;LetsNotMeet(「别再遇见」版,专门收录真实遭遇),当时被大量读者质疑是创作,作者坚持是真实经历。无论真假,它定义了后来十年 Reddit 恐怖故事的「微笑系」母题。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>阅读</category>
-      </categories>
-      <tags>
-        <tag>Reddit</tag>
-        <tag>翻译</tag>
-        <tag>都市传说</tag>
       </tags>
   </entry>
   <entry>
@@ -4818,6 +4760,64 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
       </tags>
   </entry>
   <entry>
+    <title>微笑男 · The Smiling Man</title>
+    <url>/2026/09/08/%E9%98%85%E8%AF%BB_%E5%BE%AE%E7%AC%91%E7%94%B7/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>原帖信息</strong> r&#x2F;LetsNotMeet(Reddit「真实灵异遭遇」版) · 作者 u&#x2F;blue_tidal · 发帖于 2012-04-06 · 得分 1221 · 170 条评论<br><strong>原帖链接</strong> <a href="https://www.reddit.com/r/LetsNotMeet/comments/rvzaq/the_smiling_man/">https://www.reddit.com/r/LetsNotMeet/comments/rvzaq/the_smiling_man/</a><br><strong>备注</strong> Reddit 恐怖圈镇圈名篇,2013 年被改编成获奖同名短片《2AM: The Smiling Man》。后由作者本人转贴到 r&#x2F;nosleep。英文原文经 Arctic Shift(Reddit 存档库)从原帖逐字提取,未做任何改写。</p>
+</blockquote>
+<hr>
+<h2 id="英文原版-全文"><a href="#英文原版-全文" class="headerlink" title="英文原版(全文)"></a>英文原版(全文)</h2><p>About five years ago I lived downtown in a major city in the US. I’ve always been a night person, so I would often find myself bored after my roommate, who was decidedly not a night person, went to sleep. To pass the time, I used to go for long walks and spend the time thinking.</p>
+<p>I spent four years like that, walking alone at night, and never once had a reason to feel afraid. I always used to joke with my roommate that even the drug dealers in the city were polite. But all of that changed in just a few minutes of one evening.</p>
+<p>It was a Wednesday, somewhere between one and two in the morning, and I was walking near a police patrolled park quite a ways from my apartment. It was a quiet night, even for a week night, with very little traffic and almost no one on foot. The park, as it was most nights, was completely empty.</p>
+<p>I turned down a short side street in order to loop back to my apartment when I first noticed him. At the far end of the street, on my side, was the silhouette of a man, dancing. It was a strange dance, similar to a waltz, but he finished each “box” with an odd forward stride. I guess you could say he was dance-walking, headed straight for me.</p>
+<p>Deciding he was probably drunk, I stepped as close as I could to the road to give him the majority of the sidewalk to pass me by. The closer he got, the more I realized how gracefully he was moving. He was very tall and lanky, and wearing an old suit. He danced closer still, until I could make out his face. His eyes were open wide and wild, head tilted back slightly, looking off at the sky. His mouth was formed in a painfully wide cartoon of a smile. Between the eyes and the smile, I decided to cross the street before he danced any closer.</p>
+<p>I took my eyes off of him to cross the empty street. As I reached the other side, I glanced back… and then stopped dead in my tracks. He had stopped dancing and was standing with one foot in the street, perfectly parallel to me. He was facing me but still looking skyward. Smile still wide on his lips.</p>
+<p>I was completely and utterly unnerved by this. I started walking again, but kept my eyes on the man. He didn’t move.</p>
+<p>Once I had put about half a block between us, I turned away from him for a moment to watch the sidewalk in front of me. The street and sidewalk ahead of me were completely empty. Still unnerved, I looked back to where he had been standing to find him gone. For the briefest of moments I felt relieved, until I noticed him. He had crossed the street, and was now slightly crouched down. I couldn’t tell for sure due to the distance and the shadows, but I was certain he was facing me. I had looked away from him for no more than 10 seconds, so it was clear that he had moved fast.</p>
+<p>I was so shocked that I stood there for some time, staring at him. And then he started moving toward me again. He took giant, exaggerated tip toed steps, as if he were a cartoon character sneaking up on someone. Except he was moving very, very quickly.</p>
+<p>I’d like to say at this point I ran away or pulled out my pepper spray or my cellphone or anything at all, but I didn’t. I just stood there, completely frozen as the smiling man crept toward me.</p>
+<p>And then he stopped again, about a car length away from me. Still smiling his smile, still looking to the sky.</p>
+<p>When I finally found my voice, I blurted out the first thing that came to mind. What I meant to ask was, “What the fuck do you want?!” in an angry, commanding tone. What came out was a whimper, “What the fuu…?”</p>
+<p>Regardless of whether or not humans can smell fear, they can certainly hear it. I heard it in my own voice, and that only made me more afraid. But he didn’t react to it at all. He just stood there, smiling.</p>
+<p>And then, after what felt like forever, he turned around, very slowly, and started dance-walking away. Just like that. Not wanting to turn my back to him again, I just watched him go, until he was far enough away to almost be out of sight. And then I realized something. He wasn’t moving away anymore, nor was he dancing. I watched in horror as the distant shape of him grew larger and larger. He was coming back my way. And this time he was running.</p>
+<p>I ran too.</p>
+<p>I ran until I was off of the side road and back onto a better lit road with sparse traffic. Looking behind me then, he was nowhere to be found. The rest of the way home, I kept glancing over my shoulder, always expecting to see his stupid smile, but he was never there.</p>
+<p>I lived in that city for six months after that night, and I never went out for another walk. There was something about his face that always haunted me. He didn’t look drunk, he didn’t look high. He looked completely and utterly insane. And that’s a very, very scary thing to see.</p>
+<hr>
+<h2 id="中文译文"><a href="#中文译文" class="headerlink" title="中文译文"></a>中文译文</h2><p>大约五年前,我住在美国某座大城市的市中心。我一向是个夜猫子,所以经常在室友——一个绝对算不上夜猫子的人——睡下之后闲得发慌。为了打发时间,我习惯出门走很长一段路,边走边想事情。</p>
+<p>那样的日子我过了四年,每晚独自走在夜里,从来没有过一次害怕的理由。我甚至总跟室友开玩笑说,这座城里连毒贩子都彬彬有礼。但这一切,在某个夜晚的短短几分钟里彻底改变了。</p>
+<p>那是个周三,凌晨一点到两点之间,我正走在一片离公寓颇远的街区,旁边是一座有警察巡逻的公园。夜很静,哪怕是工作日的晚上也显得出奇地安静,车流稀少,路上几乎见不到行人。那座公园,和大多数夜晚一样,空无一人。</p>
+<p>我拐进一条短短的支街,打算绕个圈子回公寓,就在这时,我第一次注意到了他。在街道的尽头、我这一侧的路边,立着一个人的剪影——他在跳舞。那是一种很怪的舞,有点像华尔兹,但每跳完一个「方步」,他会用一种诡异的姿势向前跨一大步。大概可以说,他是在「舞走着」,径直朝我过来。</p>
+<p>我心想他多半是喝醉了,便尽量贴着马路走,把人行道的大部分让给他通过。他离我越近,我越意识到他的动作有多么优雅。他非常瘦高,穿着一身旧西装。他越舞越近,直到我能看清他的脸。他的双眼睁得老大,狂乱无神,头微微后仰,望着天空。他的嘴咧成一个宽得让人发疼的、漫画式的微笑。光是那双眼睛和那个微笑,就足以让我决定:趁他还没舞过来,赶紧过马路。</p>
+<p>我移开视线,穿过空无一人的街道。走到对面时,我回头瞥了一眼……然后整个人钉在了原地。他停止了跳舞,一只脚踩在马路牙子上,与我完美地平行站着。他面朝着我,却依然仰望着天空。那个微笑依然咧在嘴上。</p>
+<p>这一幕让我毛骨悚然。我重新迈开步子,但目光始终没离开那个男人。他一动不动。</p>
+<p>等到我们之间隔出了大约半条街的距离,我才短暂地把视线转回身前。前方的街道和人行道空空荡荡。寒意未消,我又回头去看他方才站立的位置——人不见了。有那么极短的一瞬,我甚至松了口气,直到我再次看见他。他已经穿过了马路,身体微微蹲伏着。由于距离和阴影,我无法百分之百确定,但我敢肯定他正对着我的方向。我移开视线的时间不超过十秒——也就是说,他刚才移动得非常非常快。</p>
+<p>我震惊得在原地站了许久,直勾勾地盯着他。然后,他又开始朝我移动了。他迈着巨大而夸张的、踮着脚尖的步子,就像卡通片里蹑手蹑脚逼近猎物的角色。只不过,他移动得非常、非常快。</p>
+<p>我很想说我当时拔腿跑了,或者掏出了防狼喷雾、手机,随便什么东西。但我没有。我只是站在那里,彻底僵住,眼睁睁看着那个微笑的男人朝我爬行而来。</p>
+<p>然后,他又一次停了下来,离我约莫一个车身远。依然咧着他的微笑,依然仰望着天空。</p>
+<p>等我终于找回自己的声音时,脱口而出的是脑子里冒出的第一句话。我本想用愤怒、强硬的语气吼一句:「你他妈想干什么?!」实际发出的,却是一声呜咽:「你想干什……?」</p>
+<p>且不说人类能不能闻到恐惧,他们至少一定<strong>听</strong>得出恐惧。我在自己的声音里听到了它,这只会让我更怕。但他对此毫无反应。他只是站在那里,微笑着。</p>
+<p>然后,在仿佛过了一整辈子那么久之后,他非常缓慢地转过身,开始舞走着离开。就这么走了。因为不想再把后背交给他,我只是目送着他远去,直到他的身影几乎要消失在视线尽头。然后,我意识到了一件事。他不再远离了,也不再跳舞了。我惊恐地看着远处那个身影越变越大。他正朝我回来。而这一次,他在跑。</p>
+<p>我也跑了。</p>
+<p>我一直跑,直到离开那条支街,回到一条灯光尚可、车流稀疏的路上。回头望去,他不见踪影。剩下回家的路上,我不停地回头张望,总以为会看见他那个讨厌的微笑,但他再也没出现。</p>
+<p>那晚之后,我又在那座城市住了六个月,但我再也没有出门散过步。他脸上的某种东西始终在我脑海里挥之不去。他不像喝醉,也不像嗑高了。他看起来是彻底的、彻头彻尾的疯狂。</p>
+<p>而那,是一件非常、非常可怕的事。</p>
+<hr>
+<h2 id="译注"><a href="#译注" class="headerlink" title="译注"></a>译注</h2><ul>
+<li>最初的中文流传版把他写成「跟着我过马路、冲我笑」——原版里他其实<strong>从头到尾都在仰望天空</strong>,从未与叙述者对视,这才是全篇最瘆人的地方。</li>
+<li>原帖发在 r&#x2F;LetsNotMeet(「别再遇见」版,专门收录真实遭遇),当时被大量读者质疑是创作,作者坚持是真实经历。无论真假,它定义了后来十年 Reddit 恐怖故事的「微笑系」母题。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>阅读</category>
+      </categories>
+      <tags>
+        <tag>Reddit</tag>
+        <tag>翻译</tag>
+        <tag>都市传说</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>无尽之屋 · NoEnd House</title>
     <url>/2026/09/08/%E9%98%85%E8%AF%BB_%E6%97%A0%E5%B0%BD%E4%B9%8B%E5%B1%8B_NoEnd_House/</url>
     <content><![CDATA[<blockquote>
@@ -4951,6 +4951,76 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
         <tag>Reddit</tag>
         <tag>翻译</tag>
         <tag>恐怖</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>How to learn _hello agent_</title>
+    <url>/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_How%20to%20learn%20_hello%20agent_/</url>
+    <content><![CDATA[<p>_<strong>agent</strong>_是什么？</p>
+<p>能自主收集信息思考后做出反应的智能体,要求运行的每步都有_thought_与_action_，</p>
+<p>利用在线模型和在线api供应商<br><strong>推理时代</strong></p>
+<p><strong>tavily</strong></p>
+<hr>
+<hr>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>如何生成一个简单的旅游推荐agent？  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AGENT_SYSTEM_PROMPT = &quot;&quot;&quot;</span><br><span class="line">你是一个智能旅行助手。你的任务是分析用户的请求，并使用可用工具一步步地解决问题。</span><br><span class="line"></span><br><span class="line"># 可用工具:</span><br><span class="line">- `get_weather(city: str)`: 查询指定城市的实时天气。</span><br><span class="line">- `get_attraction(city: str, weather: str)`: 根据城市和天气搜索推荐的旅游景点。</span><br><span class="line"></span><br><span class="line"># 输出格式要求:</span><br><span class="line">你的每次回复必须严格遵循以下格式，包含一对Thought和Action：</span><br><span class="line"></span><br><span class="line">Thought: [你的思考过程和下一步计划]</span><br><span class="line">Action: [你要执行的具体行动]</span><br><span class="line"></span><br><span class="line">Action的格式必须是以下之一：</span><br><span class="line">1. 调用工具：function_name(arg_name=&quot;arg_value&quot;)</span><br><span class="line">2. 结束任务：Finish[最终答案]</span><br><span class="line"></span><br><span class="line"># 重要提示:</span><br><span class="line">- 每次只输出一对Thought-Action</span><br><span class="line">- Action必须在同一行，不要换行</span><br><span class="line">- 当收集到足够信息可以回答用户问题时，必须使用 Action: Finish[最终答案] 格式结束</span><br><span class="line"></span><br><span class="line">请开始吧！</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">from pathlib import Path</span><br><span class="line"></span><br><span class="line">def get_weather(city: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    通过调用 wttr.in API 查询真实的天气信息。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # API端点，我们请求JSON格式的数据</span><br><span class="line">    url = f&quot;https://wttr.in/&#123;city&#125;?format=j1&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 发起网络请求</span><br><span class="line">        response = requests.get(url)</span><br><span class="line">        # 检查响应状态码是否为200 (成功)</span><br><span class="line">        response.raise_for_status() </span><br><span class="line">        # 解析返回的JSON数据</span><br><span class="line">        data = response.json()</span><br><span class="line">        </span><br><span class="line">        # 提取当前天气状况</span><br><span class="line">        current_condition = data[&#x27;current_condition&#x27;][0]</span><br><span class="line">        weather_desc = current_condition[&#x27;weatherDesc&#x27;][0][&#x27;value&#x27;]</span><br><span class="line">        temp_c = current_condition[&#x27;temp_C&#x27;]</span><br><span class="line">        </span><br><span class="line">        # 格式化成自然语言返回</span><br><span class="line">        return f&quot;&#123;city&#125;当前天气:&#123;weather_desc&#125;，气温&#123;temp_c&#125;摄氏度&quot;</span><br><span class="line">        </span><br><span class="line">    except requests.exceptions.RequestException as e:</span><br><span class="line">        # 处理网络错误</span><br><span class="line">        return f&quot;错误:查询天气时遇到网络问题 - &#123;e&#125;&quot;</span><br><span class="line">    except (KeyError, IndexError) as e:</span><br><span class="line">        # 处理数据解析错误</span><br><span class="line">        return f&quot;错误:解析天气数据失败，可能是城市名称无效 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">from tavily import TavilyClient</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def load_root_env() -&gt; None:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    从项目根目录加载 .env 文件到环境变量。</span><br><span class="line">    ez_2.py 位于 chapter_1 下，所以根目录是上一级目录。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    env_path = Path(__file__).resolve().parents[1] / &quot;.env&quot;</span><br><span class="line">    if not env_path.exists():</span><br><span class="line">        print(f&quot;警告: 未找到环境变量文件 &#123;env_path&#125;&quot;)</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">    for raw_line in env_path.read_text(encoding=&quot;utf-8&quot;).splitlines():</span><br><span class="line">        line = raw_line.strip()</span><br><span class="line">        if not line or line.startswith(&quot;#&quot;) or &quot;=&quot; not in line:</span><br><span class="line">            continue</span><br><span class="line"></span><br><span class="line">        key, value = line.split(&quot;=&quot;, 1)</span><br><span class="line">        key = key.strip()</span><br><span class="line">        value = value.strip().strip(&#x27;&quot;&#x27;).strip(&quot;&#x27;&quot;)</span><br><span class="line">        os.environ.setdefault(key, value)</span><br><span class="line"></span><br><span class="line">def get_attraction(city: str, weather: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    根据城市和天气，使用Tavily Search API搜索并返回优化后的景点推荐。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # 1. 从环境变量中读取API密钥</span><br><span class="line">    api_key = os.environ.get(&quot;TAVILY_API_KEY&quot;)</span><br><span class="line">    if not api_key:</span><br><span class="line">        return &quot;错误:未配置TAVILY_API_KEY环境变量。&quot;</span><br><span class="line"></span><br><span class="line">    # 2. 初始化Tavily客户端</span><br><span class="line">    tavily = TavilyClient(api_key=api_key)</span><br><span class="line">    </span><br><span class="line">    # 3. 构造一个精确的查询</span><br><span class="line">    query = f&quot;&#x27;&#123;city&#125;&#x27; 在&#x27;&#123;weather&#125;&#x27;天气下最值得去的旅游景点推荐及理由&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 4. 调用API，include_answer=True会返回一个综合性的回答</span><br><span class="line">        response = tavily.search(query=query, search_depth=&quot;basic&quot;, include_answer=True)</span><br><span class="line">        </span><br><span class="line">        # 5. Tavily返回的结果已经非常干净，可以直接使用</span><br><span class="line">        # response[&#x27;answer&#x27;] 是一个基于所有搜索结果的总结性回答</span><br><span class="line">        if response.get(&quot;answer&quot;):</span><br><span class="line">            return response[&quot;answer&quot;]</span><br><span class="line">        </span><br><span class="line">        # 如果没有综合性回答，则格式化原始结果</span><br><span class="line">        formatted_results = []</span><br><span class="line">        for result in response.get(&quot;results&quot;, []):</span><br><span class="line">            formatted_results.append(f&quot;- &#123;result[&#x27;title&#x27;]&#125;: &#123;result[&#x27;content&#x27;]&#125;&quot;)</span><br><span class="line">        </span><br><span class="line">        if not formatted_results:</span><br><span class="line">             return &quot;抱歉，没有找到相关的旅游景点推荐。&quot;</span><br><span class="line"></span><br><span class="line">        return &quot;根据搜索，为您找到以下信息:\n&quot; + &quot;\n&quot;.join(formatted_results)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        return f&quot;错误:执行Tavily搜索时出现问题 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 将所有工具函数放入一个字典，方便后续调用</span><br><span class="line">available_tools = &#123;</span><br><span class="line">    &quot;get_weather&quot;: get_weather,</span><br><span class="line">    &quot;get_attraction&quot;: get_attraction,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">from openai import OpenAI</span><br><span class="line"></span><br><span class="line">class OpenAICompatibleClient:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    一个用于调用任何兼容OpenAI接口的LLM服务的客户端。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def __init__(self, model: str, api_key: str, base_url: str):</span><br><span class="line">        self.model = model</span><br><span class="line">        self.client = OpenAI(api_key=api_key, base_url=base_url)</span><br><span class="line"></span><br><span class="line">    def generate(self, prompt: str, system_prompt: str) -&gt; str:</span><br><span class="line">        &quot;&quot;&quot;调用LLM API来生成回应。&quot;&quot;&quot;</span><br><span class="line">        print(&quot;正在调用大语言模型...&quot;)</span><br><span class="line">        try:</span><br><span class="line">            messages = [</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;system&#x27;, &#x27;content&#x27;: system_prompt&#125;,</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;user&#x27;, &#x27;content&#x27;: prompt&#125;</span><br><span class="line">            ]</span><br><span class="line">            response = self.client.chat.completions.create(</span><br><span class="line">                model=self.model,</span><br><span class="line">                messages=messages,</span><br><span class="line">                stream=False</span><br><span class="line">            )</span><br><span class="line">            answer = response.choices[0].message.content</span><br><span class="line">            print(&quot;大语言模型响应成功。&quot;)</span><br><span class="line">            return answer</span><br><span class="line">        except Exception as e:</span><br><span class="line">            print(f&quot;调用LLM API时发生错误: &#123;e&#125;&quot;)</span><br><span class="line">            return &quot;错误:调用语言模型服务时出错。&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import re</span><br><span class="line"></span><br><span class="line"># --- 1. 配置LLM客户端 ---</span><br><span class="line"># 从根目录 .env 加载配置</span><br><span class="line">load_root_env()</span><br><span class="line"></span><br><span class="line">API_KEY = os.environ.get(&quot;OPENAI_API_KEY&quot;)</span><br><span class="line">BASE_URL = os.environ.get(&quot;OPENAI_BASE_URL&quot;)</span><br><span class="line">MODEL_ID = os.environ.get(&quot;MODEL_NAME&quot;)</span><br><span class="line"></span><br><span class="line">missing_keys = [</span><br><span class="line">    key for key, value in &#123;</span><br><span class="line">        &quot;OPENAI_API_KEY&quot;: API_KEY,</span><br><span class="line">        &quot;OPENAI_BASE_URL&quot;: BASE_URL,</span><br><span class="line">        &quot;MODEL_NAME&quot;: MODEL_ID,</span><br><span class="line">        &quot;TAVILY_API_KEY&quot;: os.environ.get(&quot;TAVILY_API_KEY&quot;),</span><br><span class="line">    &#125;.items() if not value</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">if missing_keys:</span><br><span class="line">    raise ValueError(f&quot;缺少环境变量: &#123;&#x27;, &#x27;.join(missing_keys)&#125;。请检查根目录 .env 文件。&quot;)</span><br><span class="line"></span><br><span class="line">llm = OpenAICompatibleClient(</span><br><span class="line">    model=MODEL_ID,</span><br><span class="line">    api_key=API_KEY,</span><br><span class="line">    base_url=BASE_URL</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># --- 2. 初始化 ---</span><br><span class="line">user_prompt = &quot;你好，请帮我查询一下今天北京的天气，然后根据天气推荐一个合适的旅游景点。&quot;</span><br><span class="line">prompt_history = [f&quot;用户请求: &#123;user_prompt&#125;&quot;]</span><br><span class="line"></span><br><span class="line">print(f&quot;用户输入: &#123;user_prompt&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line"></span><br><span class="line"># --- 3. 运行主循环 ---</span><br><span class="line">for i in range(5): # 设置最大循环次数</span><br><span class="line">    print(f&quot;--- 循环 &#123;i+1&#125; ---\n&quot;)</span><br><span class="line">    </span><br><span class="line">    # 3.1. 构建Prompt</span><br><span class="line">    full_prompt = &quot;\n&quot;.join(prompt_history)</span><br><span class="line">    </span><br><span class="line">    # 3.2. 调用LLM进行思考</span><br><span class="line">    llm_output = llm.generate(full_prompt, system_prompt=AGENT_SYSTEM_PROMPT)</span><br><span class="line">    # 模型可能会输出多余的Thought-Action，需要截断</span><br><span class="line">    match = re.search(r&#x27;(Thought:.*?Action:.*?)(?=\n\s*(?:Thought:|Action:|Observation:)|\Z)&#x27;, llm_output, re.DOTALL)</span><br><span class="line">    if match:</span><br><span class="line">        truncated = match.group(1).strip()</span><br><span class="line">        if truncated != llm_output.strip():</span><br><span class="line">            llm_output = truncated</span><br><span class="line">            print(&quot;已截断多余的 Thought-Action 对&quot;)</span><br><span class="line">    print(f&quot;模型输出:\n&#123;llm_output&#125;\n&quot;)</span><br><span class="line">    prompt_history.append(llm_output)</span><br><span class="line">    </span><br><span class="line">    # 3.3. 解析并执行行动</span><br><span class="line">    action_match = re.search(r&quot;Action: (.*)&quot;, llm_output, re.DOTALL)</span><br><span class="line">    if not action_match:</span><br><span class="line">        observation = &quot;错误: 未能解析到 Action 字段。请确保你的回复严格遵循 &#x27;Thought: ... Action: ...&#x27; 的格式。&quot;</span><br><span class="line">        observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">        print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">        prompt_history.append(observation_str)</span><br><span class="line">        continue</span><br><span class="line">    action_str = action_match.group(1).strip()</span><br><span class="line"></span><br><span class="line">    if action_str.startswith(&quot;Finish&quot;):</span><br><span class="line">        final_answer = re.match(r&quot;Finish\[(.*)\]&quot;, action_str).group(1)</span><br><span class="line">        print(f&quot;任务完成，最终答案: &#123;final_answer&#125;&quot;)</span><br><span class="line">        break</span><br><span class="line">    </span><br><span class="line">    tool_name = re.search(r&quot;(\w+)\(&quot;, action_str).group(1)</span><br><span class="line">    args_str = re.search(r&quot;\((.*)\)&quot;, action_str).group(1)</span><br><span class="line">    kwargs = dict(re.findall(r&#x27;(\w+)=&quot;([^&quot;]*)&quot;&#x27;, args_str))</span><br><span class="line"></span><br><span class="line">    if tool_name in available_tools:</span><br><span class="line">        observation = available_tools[tool_name](**kwargs)</span><br><span class="line">    else:</span><br><span class="line">        observation = f&quot;错误:未定义的工具 &#x27;&#123;tool_name&#125;&#x27;&quot;</span><br><span class="line"></span><br><span class="line">    # 3.4. 记录观察结果</span><br><span class="line">    observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">    print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">    prompt_history.append(observation_str)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>workflow和agent的区别是什么？</p>
+<h2 id="亲手实现一个transformer"><a href="#亲手实现一个transformer" class="headerlink" title="亲手实现一个transformer"></a>亲手实现一个transformer</h2><p>自注意力机制：</p>
+<ul>
+<li><strong><font style="color:rgb(44, 62, 80);">查询 (Query, Q)</font></strong><font style="color:rgb(52, 73, 94);">：代表当前词元，它正在主动地“查询”其他词元以获取信息。</font></li>
+<li><strong><font style="color:rgb(44, 62, 80);">键 (Key, K)</font></strong><font style="color:rgb(52, 73, 94);">：代表句子中可被查询的词元“标签”或“索引”。</font></li>
+<li><strong><font style="color:rgb(44, 62, 80);">值 (Value, V)</font></strong><font style="color:rgb(52, 73, 94);">：代表词元本身所携带的“内容”或“信息”。</font></li>
+</ul>
+<p><font style="color:rgb(52, 73, 94);">这三个向量都是由原始的词嵌入向量乘以三个不同的、可学习的权重矩阵 (W^Q,W^K,W^V</font><em><font style="color:rgb(52, 73, 94);">W^Q</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^K</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^V</font></em><font style="color:rgb(52, 73, 94);">) 得到的。整个计算过程可以分为以下几步，我们可以把它想象成一次高效的开卷考试：</font></p>
+<ul>
+<li><font style="color:rgb(52, 73, 94);">准备“考题”和“资料”：对于句子中的每个词，都通过权重矩阵生成其Q,K,V</font><em><font style="color:rgb(52, 73, 94);"></font></em><font style="color:rgb(52, 73, 94);">向量。</font></li>
+<li><font style="color:rgb(52, 73, 94);">计算相关性得分：要计算词A的新表示，就用词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的</font><em><font style="color:rgb(52, 73, 94);">Q</font></em><font style="color:rgb(52, 73, 94);">向量，去和句子中所有词（包括</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">自己）的</font><em><font style="color:rgb(52, 73, 94);">K</font></em><font style="color:rgb(52, 73, 94);">向量进行点积运算。这个得分反映了其他词对于理解词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的重要性。</font></li>
+<li><font style="color:rgb(52, 73, 94);">稳定化与归一化：将得到的所有分数除以一个缩放因子</font><font style="color:#DF2A3F;">\sqrt{d_k}</font><font style="color:rgb(52, 73, 94);">（是K向量的维度），以防止梯度过小，然后用Softmax函数将分数转换成总和为1的权重，也就是归一化的过程。</font></li>
+<li><font style="color:rgb(52, 73, 94);">加权求和：将上一步得到的权重分别乘以每个词对应的V向量，然后将所有结果相加。最终得到的向量，就是词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">融合了全局上下文信息后的新表示。</font></li>
+</ul>
+<p><font style="color:rgb(52, 73, 94);"></font></p>
+<ul>
+<li><font style="color:rgb(52, 73, 94);">自注意力机制（Self-Attention）的核心思想是什么？</font></li>
+<li><font style="color:rgb(52, 73, 94);">为什么Transformer能够并行处理序列，而RNN必须串行处理？位置编码（Positional Encoding）在其中起什么作用？</font></li>
+<li><font style="color:rgb(52, 73, 94);">Decoder-Only架构与完整的Encoder-Decoder架构有什么区别？为什么现在主流的大语言模型都采用Decoder-Only架构？</font></li>
+</ul>
+<p><font style="color:rgb(52, 73, 94);">答：</font></p>
+<ol>
+<li><font style="color:rgb(52, 73, 94);">Self-Attention 的核心思想</font></li>
+</ol>
+<p><font style="color:rgb(52, 73, 94);">核心就一句话：让序列中每个 token 都能“按需”查看其他 token，并动态决定关注谁、关注多少。</font></p>
+<p><font style="color:rgb(52, 73, 94);">更形式化一点：</font></p>
+<p><font style="color:rgb(52, 73, 94);">对每个 token，都会生成 Q（query）、K（key）、V（value）。<br></font><font style="color:rgb(52, 73, 94);">当前 token 用自己的 Q 去和所有 token 的 K 做相似度，得到一组权重（attention score）。<br></font><font style="color:rgb(52, 73, 94);">用这些权重对所有 token 的 V 做加权求和，得到当前 token 的新表示。<br></font><font style="color:rgb(52, 73, 94);">这带来的好处：</font></p>
+<p><font style="color:rgb(52, 73, 94);">能建模长距离依赖（句首和句尾可以直接交互）。<br></font><font style="color:rgb(52, 73, 94);">关注模式是数据驱动、上下文相关的，不是固定窗口。<br></font><font style="color:rgb(52, 73, 94);">多头注意力（Multi-Head）可以并行学习不同关系（语法、语义、指代等）。<br></font><font style="color:rgb(52, 73, 94);">2. 为什么 Transformer 能并行，RNN 必须串行？</font></p>
+<p><font style="color:rgb(52, 73, 94);">关键在计算依赖关系：</font></p>
+<p><font style="color:rgb(52, 73, 94);">RNN：<br></font><font style="color:rgb(52, 73, 94);">h_t &#x3D; f(x_t, h_{t-1})<br></font><font style="color:rgb(52, 73, 94);">第 t 步必须等 t-1 步算完，天然时间依赖，训练和推理都难并行（尤其训练时）。<br></font><font style="color:rgb(52, 73, 94);">Transformer（自注意力）：<br></font><font style="color:rgb(52, 73, 94);">一层内所有位置的 Q&#x2F;K&#x2F;V 可以同时算。<br></font><font style="color:rgb(52, 73, 94);">注意力矩阵本质是大规模矩阵乘法（GPU&#x2F;TPU 非常擅长），所以训练可高度并行。<br></font><font style="color:rgb(52, 73, 94);">即使是 Decoder 用了因果 mask，训练时仍可把整段序列一次性喂入，mask 保证“看不到未来”，所以仍能并行算整段 loss。<br></font><font style="color:rgb(52, 73, 94);">补一句：<br></font><font style="color:rgb(52, 73, 94);">Decoder 在生成阶段仍是逐 token 自回归（因为下一个 token 依赖已生成结果），但这和 RNN 的“每层每步都串行”不是一个层面的瓶颈，且可用 KV cache 大幅优化。</font></p>
+<ol start="3">
+<li><font style="color:rgb(52, 73, 94);">Positional Encoding 的作用</font></li>
+</ol>
+<p><font style="color:rgb(52, 73, 94);">因为纯自注意力本身对输入是“集合式”的，不知道顺序。<br></font><font style="color:rgb(52, 73, 94);">位置编码就是把“第几个词”信息注入模型，让模型区分：</font></p>
+<p><font style="color:rgb(52, 73, 94);">“猫追狗” vs “狗追猫”<br></font><font style="color:rgb(52, 73, 94);">邻近关系、远距关系、相对顺序等<br></font><font style="color:rgb(52, 73, 94);">常见做法：</font></p>
+<p><font style="color:rgb(52, 73, 94);">绝对位置编码（sin&#x2F;cos 或可学习向量）<br></font><font style="color:rgb(52, 73, 94);">相对位置编码（如 RoPE、ALiBi 一类思想）<br></font><font style="color:rgb(52, 73, 94);">它的本质作用：给注意力机制补上序列结构先验。</font></p>
+<ol start="4">
+<li><font style="color:rgb(52, 73, 94);">Decoder-Only vs Encoder-Decoder 的区别</font></li>
+</ol>
+<p><font style="color:rgb(52, 73, 94);">Encoder-Decoder（完整 Transformer）</font></p>
+<p><font style="color:rgb(52, 73, 94);">Encoder：双向看输入，得到源序列表征。<br></font><font style="color:rgb(52, 73, 94);">Decoder：带因果 mask，自回归生成输出，并通过 cross-attention 读取 encoder 输出。<br></font><font style="color:rgb(52, 73, 94);">典型任务：机器翻译、摘要、问答（输入-&gt;输出映射明确）。<br></font><font style="color:rgb(52, 73, 94);">Decoder-Only</font></p>
+<p><font style="color:rgb(52, 73, 94);">只有一个自回归 decoder 堆栈（causal self-attention）。<br></font><font style="color:rgb(52, 73, 94);">把“输入+输出”都当成同一串 token，训练目标是下一 token 预测。<br></font><font style="color:rgb(52, 73, 94);">典型代表：GPT 系列。<br></font><font style="color:rgb(52, 73, 94);">5. 为什么主流大语言模型多用 Decoder-Only？</font></p>
+<p><font style="color:rgb(52, 73, 94);">主要是工程与规模化优势叠加：</font></p>
+<p><font style="color:rgb(52, 73, 94);">统一目标简单且通用<br></font><font style="color:rgb(52, 73, 94);">直接做 next-token prediction，几乎所有文本都可用作训练数据，不需要复杂标注。</font></p>
+<p><font style="color:rgb(52, 73, 94);">训练管线更简单<br></font><font style="color:rgb(52, 73, 94);">一个网络、一个损失，适配海量互联网语料最自然，扩展到万亿 token 训练更直接。</font></p>
+<p><font style="color:rgb(52, 73, 94);">生成任务适配最好<br></font><font style="color:rgb(52, 73, 94);">聊天、写作、代码补全本质是连续生成，Decoder-Only 和使用场景高度一致。</font></p>
+<p><font style="color:rgb(52, 73, 94);">in-context learning 能力强<br></font><font style="color:rgb(52, 73, 94);">把指令、示例、上下文拼在 prompt 里即可完成多任务，减少任务特定头和复杂架构需求。</font></p>
+<p><font style="color:rgb(52, 73, 94);">推理系统成熟<br></font><font style="color:rgb(52, 73, 94);">KV cache、张量并行、流水并行、量化等优化在 Decoder-Only 上生态最成熟，部署成本更可控。</font></p>
+<p><font style="color:rgb(52, 73, 94);">不是说 Encoder-Decoder 过时：</font></p>
+<p><font style="color:rgb(52, 73, 94);">在一些“输入理解很重、输出相对短”的任务上（如高质量翻译）仍可能很强。<br></font><font style="color:rgb(52, 73, 94);">但在“统一大模型 + 通用生成”范式下，Decoder-Only 的性价比和扩展性目前最占优。</font></p>
+]]></content>
+      <categories>
+        <category>默认知识库</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -5542,76 +5612,6 @@ cur = first                   → cur 移到 1（下一组的&quot;前一个&quo
 <h3 id="联系我们"><a href="#联系我们" class="headerlink" title="联系我们"></a>联系我们</h3><ul>
 <li>更多反馈和建议，请移步👉<a href="https://www.yuque.com/zze08m/topics">语雀移动端讨论区</a></li>
 </ul>
-]]></content>
-      <categories>
-        <category>默认知识库</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>How to learn _hello agent_</title>
-    <url>/2025/02/28/%E9%BB%98%E8%AE%A4%E7%9F%A5%E8%AF%86%E5%BA%93_How%20to%20learn%20_hello%20agent_/</url>
-    <content><![CDATA[<p>_<strong>agent</strong>_是什么？</p>
-<p>能自主收集信息思考后做出反应的智能体,要求运行的每步都有_thought_与_action_，</p>
-<p>利用在线模型和在线api供应商<br><strong>推理时代</strong></p>
-<p><strong>tavily</strong></p>
-<hr>
-<hr>
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>如何生成一个简单的旅游推荐agent？  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AGENT_SYSTEM_PROMPT = &quot;&quot;&quot;</span><br><span class="line">你是一个智能旅行助手。你的任务是分析用户的请求，并使用可用工具一步步地解决问题。</span><br><span class="line"></span><br><span class="line"># 可用工具:</span><br><span class="line">- `get_weather(city: str)`: 查询指定城市的实时天气。</span><br><span class="line">- `get_attraction(city: str, weather: str)`: 根据城市和天气搜索推荐的旅游景点。</span><br><span class="line"></span><br><span class="line"># 输出格式要求:</span><br><span class="line">你的每次回复必须严格遵循以下格式，包含一对Thought和Action：</span><br><span class="line"></span><br><span class="line">Thought: [你的思考过程和下一步计划]</span><br><span class="line">Action: [你要执行的具体行动]</span><br><span class="line"></span><br><span class="line">Action的格式必须是以下之一：</span><br><span class="line">1. 调用工具：function_name(arg_name=&quot;arg_value&quot;)</span><br><span class="line">2. 结束任务：Finish[最终答案]</span><br><span class="line"></span><br><span class="line"># 重要提示:</span><br><span class="line">- 每次只输出一对Thought-Action</span><br><span class="line">- Action必须在同一行，不要换行</span><br><span class="line">- 当收集到足够信息可以回答用户问题时，必须使用 Action: Finish[最终答案] 格式结束</span><br><span class="line"></span><br><span class="line">请开始吧！</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">from pathlib import Path</span><br><span class="line"></span><br><span class="line">def get_weather(city: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    通过调用 wttr.in API 查询真实的天气信息。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # API端点，我们请求JSON格式的数据</span><br><span class="line">    url = f&quot;https://wttr.in/&#123;city&#125;?format=j1&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 发起网络请求</span><br><span class="line">        response = requests.get(url)</span><br><span class="line">        # 检查响应状态码是否为200 (成功)</span><br><span class="line">        response.raise_for_status() </span><br><span class="line">        # 解析返回的JSON数据</span><br><span class="line">        data = response.json()</span><br><span class="line">        </span><br><span class="line">        # 提取当前天气状况</span><br><span class="line">        current_condition = data[&#x27;current_condition&#x27;][0]</span><br><span class="line">        weather_desc = current_condition[&#x27;weatherDesc&#x27;][0][&#x27;value&#x27;]</span><br><span class="line">        temp_c = current_condition[&#x27;temp_C&#x27;]</span><br><span class="line">        </span><br><span class="line">        # 格式化成自然语言返回</span><br><span class="line">        return f&quot;&#123;city&#125;当前天气:&#123;weather_desc&#125;，气温&#123;temp_c&#125;摄氏度&quot;</span><br><span class="line">        </span><br><span class="line">    except requests.exceptions.RequestException as e:</span><br><span class="line">        # 处理网络错误</span><br><span class="line">        return f&quot;错误:查询天气时遇到网络问题 - &#123;e&#125;&quot;</span><br><span class="line">    except (KeyError, IndexError) as e:</span><br><span class="line">        # 处理数据解析错误</span><br><span class="line">        return f&quot;错误:解析天气数据失败，可能是城市名称无效 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">from tavily import TavilyClient</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def load_root_env() -&gt; None:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    从项目根目录加载 .env 文件到环境变量。</span><br><span class="line">    ez_2.py 位于 chapter_1 下，所以根目录是上一级目录。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    env_path = Path(__file__).resolve().parents[1] / &quot;.env&quot;</span><br><span class="line">    if not env_path.exists():</span><br><span class="line">        print(f&quot;警告: 未找到环境变量文件 &#123;env_path&#125;&quot;)</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">    for raw_line in env_path.read_text(encoding=&quot;utf-8&quot;).splitlines():</span><br><span class="line">        line = raw_line.strip()</span><br><span class="line">        if not line or line.startswith(&quot;#&quot;) or &quot;=&quot; not in line:</span><br><span class="line">            continue</span><br><span class="line"></span><br><span class="line">        key, value = line.split(&quot;=&quot;, 1)</span><br><span class="line">        key = key.strip()</span><br><span class="line">        value = value.strip().strip(&#x27;&quot;&#x27;).strip(&quot;&#x27;&quot;)</span><br><span class="line">        os.environ.setdefault(key, value)</span><br><span class="line"></span><br><span class="line">def get_attraction(city: str, weather: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    根据城市和天气，使用Tavily Search API搜索并返回优化后的景点推荐。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    # 1. 从环境变量中读取API密钥</span><br><span class="line">    api_key = os.environ.get(&quot;TAVILY_API_KEY&quot;)</span><br><span class="line">    if not api_key:</span><br><span class="line">        return &quot;错误:未配置TAVILY_API_KEY环境变量。&quot;</span><br><span class="line"></span><br><span class="line">    # 2. 初始化Tavily客户端</span><br><span class="line">    tavily = TavilyClient(api_key=api_key)</span><br><span class="line">    </span><br><span class="line">    # 3. 构造一个精确的查询</span><br><span class="line">    query = f&quot;&#x27;&#123;city&#125;&#x27; 在&#x27;&#123;weather&#125;&#x27;天气下最值得去的旅游景点推荐及理由&quot;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        # 4. 调用API，include_answer=True会返回一个综合性的回答</span><br><span class="line">        response = tavily.search(query=query, search_depth=&quot;basic&quot;, include_answer=True)</span><br><span class="line">        </span><br><span class="line">        # 5. Tavily返回的结果已经非常干净，可以直接使用</span><br><span class="line">        # response[&#x27;answer&#x27;] 是一个基于所有搜索结果的总结性回答</span><br><span class="line">        if response.get(&quot;answer&quot;):</span><br><span class="line">            return response[&quot;answer&quot;]</span><br><span class="line">        </span><br><span class="line">        # 如果没有综合性回答，则格式化原始结果</span><br><span class="line">        formatted_results = []</span><br><span class="line">        for result in response.get(&quot;results&quot;, []):</span><br><span class="line">            formatted_results.append(f&quot;- &#123;result[&#x27;title&#x27;]&#125;: &#123;result[&#x27;content&#x27;]&#125;&quot;)</span><br><span class="line">        </span><br><span class="line">        if not formatted_results:</span><br><span class="line">             return &quot;抱歉，没有找到相关的旅游景点推荐。&quot;</span><br><span class="line"></span><br><span class="line">        return &quot;根据搜索，为您找到以下信息:\n&quot; + &quot;\n&quot;.join(formatted_results)</span><br><span class="line"></span><br><span class="line">    except Exception as e:</span><br><span class="line">        return f&quot;错误:执行Tavily搜索时出现问题 - &#123;e&#125;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 将所有工具函数放入一个字典，方便后续调用</span><br><span class="line">available_tools = &#123;</span><br><span class="line">    &quot;get_weather&quot;: get_weather,</span><br><span class="line">    &quot;get_attraction&quot;: get_attraction,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">from openai import OpenAI</span><br><span class="line"></span><br><span class="line">class OpenAICompatibleClient:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    一个用于调用任何兼容OpenAI接口的LLM服务的客户端。</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def __init__(self, model: str, api_key: str, base_url: str):</span><br><span class="line">        self.model = model</span><br><span class="line">        self.client = OpenAI(api_key=api_key, base_url=base_url)</span><br><span class="line"></span><br><span class="line">    def generate(self, prompt: str, system_prompt: str) -&gt; str:</span><br><span class="line">        &quot;&quot;&quot;调用LLM API来生成回应。&quot;&quot;&quot;</span><br><span class="line">        print(&quot;正在调用大语言模型...&quot;)</span><br><span class="line">        try:</span><br><span class="line">            messages = [</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;system&#x27;, &#x27;content&#x27;: system_prompt&#125;,</span><br><span class="line">                &#123;&#x27;role&#x27;: &#x27;user&#x27;, &#x27;content&#x27;: prompt&#125;</span><br><span class="line">            ]</span><br><span class="line">            response = self.client.chat.completions.create(</span><br><span class="line">                model=self.model,</span><br><span class="line">                messages=messages,</span><br><span class="line">                stream=False</span><br><span class="line">            )</span><br><span class="line">            answer = response.choices[0].message.content</span><br><span class="line">            print(&quot;大语言模型响应成功。&quot;)</span><br><span class="line">            return answer</span><br><span class="line">        except Exception as e:</span><br><span class="line">            print(f&quot;调用LLM API时发生错误: &#123;e&#125;&quot;)</span><br><span class="line">            return &quot;错误:调用语言模型服务时出错。&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import re</span><br><span class="line"></span><br><span class="line"># --- 1. 配置LLM客户端 ---</span><br><span class="line"># 从根目录 .env 加载配置</span><br><span class="line">load_root_env()</span><br><span class="line"></span><br><span class="line">API_KEY = os.environ.get(&quot;OPENAI_API_KEY&quot;)</span><br><span class="line">BASE_URL = os.environ.get(&quot;OPENAI_BASE_URL&quot;)</span><br><span class="line">MODEL_ID = os.environ.get(&quot;MODEL_NAME&quot;)</span><br><span class="line"></span><br><span class="line">missing_keys = [</span><br><span class="line">    key for key, value in &#123;</span><br><span class="line">        &quot;OPENAI_API_KEY&quot;: API_KEY,</span><br><span class="line">        &quot;OPENAI_BASE_URL&quot;: BASE_URL,</span><br><span class="line">        &quot;MODEL_NAME&quot;: MODEL_ID,</span><br><span class="line">        &quot;TAVILY_API_KEY&quot;: os.environ.get(&quot;TAVILY_API_KEY&quot;),</span><br><span class="line">    &#125;.items() if not value</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">if missing_keys:</span><br><span class="line">    raise ValueError(f&quot;缺少环境变量: &#123;&#x27;, &#x27;.join(missing_keys)&#125;。请检查根目录 .env 文件。&quot;)</span><br><span class="line"></span><br><span class="line">llm = OpenAICompatibleClient(</span><br><span class="line">    model=MODEL_ID,</span><br><span class="line">    api_key=API_KEY,</span><br><span class="line">    base_url=BASE_URL</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># --- 2. 初始化 ---</span><br><span class="line">user_prompt = &quot;你好，请帮我查询一下今天北京的天气，然后根据天气推荐一个合适的旅游景点。&quot;</span><br><span class="line">prompt_history = [f&quot;用户请求: &#123;user_prompt&#125;&quot;]</span><br><span class="line"></span><br><span class="line">print(f&quot;用户输入: &#123;user_prompt&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line"></span><br><span class="line"># --- 3. 运行主循环 ---</span><br><span class="line">for i in range(5): # 设置最大循环次数</span><br><span class="line">    print(f&quot;--- 循环 &#123;i+1&#125; ---\n&quot;)</span><br><span class="line">    </span><br><span class="line">    # 3.1. 构建Prompt</span><br><span class="line">    full_prompt = &quot;\n&quot;.join(prompt_history)</span><br><span class="line">    </span><br><span class="line">    # 3.2. 调用LLM进行思考</span><br><span class="line">    llm_output = llm.generate(full_prompt, system_prompt=AGENT_SYSTEM_PROMPT)</span><br><span class="line">    # 模型可能会输出多余的Thought-Action，需要截断</span><br><span class="line">    match = re.search(r&#x27;(Thought:.*?Action:.*?)(?=\n\s*(?:Thought:|Action:|Observation:)|\Z)&#x27;, llm_output, re.DOTALL)</span><br><span class="line">    if match:</span><br><span class="line">        truncated = match.group(1).strip()</span><br><span class="line">        if truncated != llm_output.strip():</span><br><span class="line">            llm_output = truncated</span><br><span class="line">            print(&quot;已截断多余的 Thought-Action 对&quot;)</span><br><span class="line">    print(f&quot;模型输出:\n&#123;llm_output&#125;\n&quot;)</span><br><span class="line">    prompt_history.append(llm_output)</span><br><span class="line">    </span><br><span class="line">    # 3.3. 解析并执行行动</span><br><span class="line">    action_match = re.search(r&quot;Action: (.*)&quot;, llm_output, re.DOTALL)</span><br><span class="line">    if not action_match:</span><br><span class="line">        observation = &quot;错误: 未能解析到 Action 字段。请确保你的回复严格遵循 &#x27;Thought: ... Action: ...&#x27; 的格式。&quot;</span><br><span class="line">        observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">        print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">        prompt_history.append(observation_str)</span><br><span class="line">        continue</span><br><span class="line">    action_str = action_match.group(1).strip()</span><br><span class="line"></span><br><span class="line">    if action_str.startswith(&quot;Finish&quot;):</span><br><span class="line">        final_answer = re.match(r&quot;Finish\[(.*)\]&quot;, action_str).group(1)</span><br><span class="line">        print(f&quot;任务完成，最终答案: &#123;final_answer&#125;&quot;)</span><br><span class="line">        break</span><br><span class="line">    </span><br><span class="line">    tool_name = re.search(r&quot;(\w+)\(&quot;, action_str).group(1)</span><br><span class="line">    args_str = re.search(r&quot;\((.*)\)&quot;, action_str).group(1)</span><br><span class="line">    kwargs = dict(re.findall(r&#x27;(\w+)=&quot;([^&quot;]*)&quot;&#x27;, args_str))</span><br><span class="line"></span><br><span class="line">    if tool_name in available_tools:</span><br><span class="line">        observation = available_tools[tool_name](**kwargs)</span><br><span class="line">    else:</span><br><span class="line">        observation = f&quot;错误:未定义的工具 &#x27;&#123;tool_name&#125;&#x27;&quot;</span><br><span class="line"></span><br><span class="line">    # 3.4. 记录观察结果</span><br><span class="line">    observation_str = f&quot;Observation: &#123;observation&#125;&quot;</span><br><span class="line">    print(f&quot;&#123;observation_str&#125;\n&quot; + &quot;=&quot;*40)</span><br><span class="line">    prompt_history.append(observation_str)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>workflow和agent的区别是什么？</p>
-<h2 id="亲手实现一个transformer"><a href="#亲手实现一个transformer" class="headerlink" title="亲手实现一个transformer"></a>亲手实现一个transformer</h2><p>自注意力机制：</p>
-<ul>
-<li><strong><font style="color:rgb(44, 62, 80);">查询 (Query, Q)</font></strong><font style="color:rgb(52, 73, 94);">：代表当前词元，它正在主动地“查询”其他词元以获取信息。</font></li>
-<li><strong><font style="color:rgb(44, 62, 80);">键 (Key, K)</font></strong><font style="color:rgb(52, 73, 94);">：代表句子中可被查询的词元“标签”或“索引”。</font></li>
-<li><strong><font style="color:rgb(44, 62, 80);">值 (Value, V)</font></strong><font style="color:rgb(52, 73, 94);">：代表词元本身所携带的“内容”或“信息”。</font></li>
-</ul>
-<p><font style="color:rgb(52, 73, 94);">这三个向量都是由原始的词嵌入向量乘以三个不同的、可学习的权重矩阵 (W^Q,W^K,W^V</font><em><font style="color:rgb(52, 73, 94);">W^Q</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^K</font></em><font style="color:rgb(52, 73, 94);">,</font><em><font style="color:rgb(52, 73, 94);">W^V</font></em><font style="color:rgb(52, 73, 94);">) 得到的。整个计算过程可以分为以下几步，我们可以把它想象成一次高效的开卷考试：</font></p>
-<ul>
-<li><font style="color:rgb(52, 73, 94);">准备“考题”和“资料”：对于句子中的每个词，都通过权重矩阵生成其Q,K,V</font><em><font style="color:rgb(52, 73, 94);"></font></em><font style="color:rgb(52, 73, 94);">向量。</font></li>
-<li><font style="color:rgb(52, 73, 94);">计算相关性得分：要计算词A的新表示，就用词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的</font><em><font style="color:rgb(52, 73, 94);">Q</font></em><font style="color:rgb(52, 73, 94);">向量，去和句子中所有词（包括</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">自己）的</font><em><font style="color:rgb(52, 73, 94);">K</font></em><font style="color:rgb(52, 73, 94);">向量进行点积运算。这个得分反映了其他词对于理解词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">的重要性。</font></li>
-<li><font style="color:rgb(52, 73, 94);">稳定化与归一化：将得到的所有分数除以一个缩放因子</font><font style="color:#DF2A3F;">\sqrt{d_k}</font><font style="color:rgb(52, 73, 94);">（是K向量的维度），以防止梯度过小，然后用Softmax函数将分数转换成总和为1的权重，也就是归一化的过程。</font></li>
-<li><font style="color:rgb(52, 73, 94);">加权求和：将上一步得到的权重分别乘以每个词对应的V向量，然后将所有结果相加。最终得到的向量，就是词</font><em><font style="color:rgb(52, 73, 94);">A</font></em><font style="color:rgb(52, 73, 94);">融合了全局上下文信息后的新表示。</font></li>
-</ul>
-<p><font style="color:rgb(52, 73, 94);"></font></p>
-<ul>
-<li><font style="color:rgb(52, 73, 94);">自注意力机制（Self-Attention）的核心思想是什么？</font></li>
-<li><font style="color:rgb(52, 73, 94);">为什么Transformer能够并行处理序列，而RNN必须串行处理？位置编码（Positional Encoding）在其中起什么作用？</font></li>
-<li><font style="color:rgb(52, 73, 94);">Decoder-Only架构与完整的Encoder-Decoder架构有什么区别？为什么现在主流的大语言模型都采用Decoder-Only架构？</font></li>
-</ul>
-<p><font style="color:rgb(52, 73, 94);">答：</font></p>
-<ol>
-<li><font style="color:rgb(52, 73, 94);">Self-Attention 的核心思想</font></li>
-</ol>
-<p><font style="color:rgb(52, 73, 94);">核心就一句话：让序列中每个 token 都能“按需”查看其他 token，并动态决定关注谁、关注多少。</font></p>
-<p><font style="color:rgb(52, 73, 94);">更形式化一点：</font></p>
-<p><font style="color:rgb(52, 73, 94);">对每个 token，都会生成 Q（query）、K（key）、V（value）。<br></font><font style="color:rgb(52, 73, 94);">当前 token 用自己的 Q 去和所有 token 的 K 做相似度，得到一组权重（attention score）。<br></font><font style="color:rgb(52, 73, 94);">用这些权重对所有 token 的 V 做加权求和，得到当前 token 的新表示。<br></font><font style="color:rgb(52, 73, 94);">这带来的好处：</font></p>
-<p><font style="color:rgb(52, 73, 94);">能建模长距离依赖（句首和句尾可以直接交互）。<br></font><font style="color:rgb(52, 73, 94);">关注模式是数据驱动、上下文相关的，不是固定窗口。<br></font><font style="color:rgb(52, 73, 94);">多头注意力（Multi-Head）可以并行学习不同关系（语法、语义、指代等）。<br></font><font style="color:rgb(52, 73, 94);">2. 为什么 Transformer 能并行，RNN 必须串行？</font></p>
-<p><font style="color:rgb(52, 73, 94);">关键在计算依赖关系：</font></p>
-<p><font style="color:rgb(52, 73, 94);">RNN：<br></font><font style="color:rgb(52, 73, 94);">h_t &#x3D; f(x_t, h_{t-1})<br></font><font style="color:rgb(52, 73, 94);">第 t 步必须等 t-1 步算完，天然时间依赖，训练和推理都难并行（尤其训练时）。<br></font><font style="color:rgb(52, 73, 94);">Transformer（自注意力）：<br></font><font style="color:rgb(52, 73, 94);">一层内所有位置的 Q&#x2F;K&#x2F;V 可以同时算。<br></font><font style="color:rgb(52, 73, 94);">注意力矩阵本质是大规模矩阵乘法（GPU&#x2F;TPU 非常擅长），所以训练可高度并行。<br></font><font style="color:rgb(52, 73, 94);">即使是 Decoder 用了因果 mask，训练时仍可把整段序列一次性喂入，mask 保证“看不到未来”，所以仍能并行算整段 loss。<br></font><font style="color:rgb(52, 73, 94);">补一句：<br></font><font style="color:rgb(52, 73, 94);">Decoder 在生成阶段仍是逐 token 自回归（因为下一个 token 依赖已生成结果），但这和 RNN 的“每层每步都串行”不是一个层面的瓶颈，且可用 KV cache 大幅优化。</font></p>
-<ol start="3">
-<li><font style="color:rgb(52, 73, 94);">Positional Encoding 的作用</font></li>
-</ol>
-<p><font style="color:rgb(52, 73, 94);">因为纯自注意力本身对输入是“集合式”的，不知道顺序。<br></font><font style="color:rgb(52, 73, 94);">位置编码就是把“第几个词”信息注入模型，让模型区分：</font></p>
-<p><font style="color:rgb(52, 73, 94);">“猫追狗” vs “狗追猫”<br></font><font style="color:rgb(52, 73, 94);">邻近关系、远距关系、相对顺序等<br></font><font style="color:rgb(52, 73, 94);">常见做法：</font></p>
-<p><font style="color:rgb(52, 73, 94);">绝对位置编码（sin&#x2F;cos 或可学习向量）<br></font><font style="color:rgb(52, 73, 94);">相对位置编码（如 RoPE、ALiBi 一类思想）<br></font><font style="color:rgb(52, 73, 94);">它的本质作用：给注意力机制补上序列结构先验。</font></p>
-<ol start="4">
-<li><font style="color:rgb(52, 73, 94);">Decoder-Only vs Encoder-Decoder 的区别</font></li>
-</ol>
-<p><font style="color:rgb(52, 73, 94);">Encoder-Decoder（完整 Transformer）</font></p>
-<p><font style="color:rgb(52, 73, 94);">Encoder：双向看输入，得到源序列表征。<br></font><font style="color:rgb(52, 73, 94);">Decoder：带因果 mask，自回归生成输出，并通过 cross-attention 读取 encoder 输出。<br></font><font style="color:rgb(52, 73, 94);">典型任务：机器翻译、摘要、问答（输入-&gt;输出映射明确）。<br></font><font style="color:rgb(52, 73, 94);">Decoder-Only</font></p>
-<p><font style="color:rgb(52, 73, 94);">只有一个自回归 decoder 堆栈（causal self-attention）。<br></font><font style="color:rgb(52, 73, 94);">把“输入+输出”都当成同一串 token，训练目标是下一 token 预测。<br></font><font style="color:rgb(52, 73, 94);">典型代表：GPT 系列。<br></font><font style="color:rgb(52, 73, 94);">5. 为什么主流大语言模型多用 Decoder-Only？</font></p>
-<p><font style="color:rgb(52, 73, 94);">主要是工程与规模化优势叠加：</font></p>
-<p><font style="color:rgb(52, 73, 94);">统一目标简单且通用<br></font><font style="color:rgb(52, 73, 94);">直接做 next-token prediction，几乎所有文本都可用作训练数据，不需要复杂标注。</font></p>
-<p><font style="color:rgb(52, 73, 94);">训练管线更简单<br></font><font style="color:rgb(52, 73, 94);">一个网络、一个损失，适配海量互联网语料最自然，扩展到万亿 token 训练更直接。</font></p>
-<p><font style="color:rgb(52, 73, 94);">生成任务适配最好<br></font><font style="color:rgb(52, 73, 94);">聊天、写作、代码补全本质是连续生成，Decoder-Only 和使用场景高度一致。</font></p>
-<p><font style="color:rgb(52, 73, 94);">in-context learning 能力强<br></font><font style="color:rgb(52, 73, 94);">把指令、示例、上下文拼在 prompt 里即可完成多任务，减少任务特定头和复杂架构需求。</font></p>
-<p><font style="color:rgb(52, 73, 94);">推理系统成熟<br></font><font style="color:rgb(52, 73, 94);">KV cache、张量并行、流水并行、量化等优化在 Decoder-Only 上生态最成熟，部署成本更可控。</font></p>
-<p><font style="color:rgb(52, 73, 94);">不是说 Encoder-Decoder 过时：</font></p>
-<p><font style="color:rgb(52, 73, 94);">在一些“输入理解很重、输出相对短”的任务上（如高质量翻译）仍可能很强。<br></font><font style="color:rgb(52, 73, 94);">但在“统一大模型 + 通用生成”范式下，Decoder-Only 的性价比和扩展性目前最占优。</font></p>
 ]]></content>
       <categories>
         <category>默认知识库</category>
