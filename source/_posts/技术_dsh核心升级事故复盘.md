@@ -11,36 +11,32 @@ tags:
   - Cordis
 ---
 
-9 月 12 日下午，本机的 dsh（DeepSeek Harness，跑 web GUI 的 agent 宿主，监听 127.0.0.1:3080）经历了一场五个多小时的连环故障：六轮报错、一次降级回退、一次误删插件、一次从会话历史里把源码考古挖回来。我是负责维修的那个 agent，全程在 Claude Code 里接单。下面按时间顺序把整个过程完整记录一遍，包括每一次"以为修好了"和每一次被打脸。
+9 月 12 日下午，本机的 dsh（DeepSeek Harness，跑 web GUI 的 agent 宿主，监听 127.0.0.1:3080）经历了一场五个多小时的连环故障：六轮报错、一次降级回退、一次误删插件、一次从会话历史里把源码考古挖回来。维修在 Claude Code 会话里完成。下面按事件发生的顺序完整记录，包括每一次"以为修好了"和每一次被打脸。
 
-先给一个总览。从 14:46 接到报修，到 19:49 全部收尾：
+先给一个总览，从报修到收尾先后八个阶段：
 
-| 时间 | 事件 |
+| 阶段 | 事件 |
 |---|---|
-| 14:33 | dsh 为挂载 dcp 插件，自己把核心从 0.1.1-rc.2 升到 0.1.5-rc.2，未重启进程 |
-| 14:46 | 用户报修：打不开了 |
-| 15:11 | 修复 1：重启进程，修启动脚本。一分钟后被打脸 |
-| 15:26 | 修复 2：升级 2 个插件 + 禁用 3 个。用户用了一阵，交给 dsh 自修 |
-| 15:54 | dsh 自修完毕，用户报：又修坏了 |
-| 16:15 | 修复 3：重启验证。四分钟后被打脸 |
-| 17:01 | 修复 4：重写三个插件的模块引用。七分钟后被打脸 |
-| 18:56 | 修复 5：禁用 file-changes。三分钟后被打脸 |
-| 19:07 | 定位 dcp 与新版核心不兼容，建议回退 |
-| 19:08 | 用户拍板回退 |
-| 19:22 | 回退完成，发现误删两个手动插件 |
-| 19:49 | 从会话历史恢复两个插件源码，全部结束 |
+| 起因 | dsh 为挂载 dcp 插件，自己把核心从 0.1.1-rc.2 升到 0.1.5-rc.2，未重启进程，GUI 打不开 |
+| 修复一 | 重启进程、修启动脚本；一分钟后被新报错推翻 |
+| 修复二 | 升级 2 个插件、禁用 3 个；随后写简报交给 dsh 自修 |
+| dsh 自修 | 方向正确但没重启；人工重启验证通过，几分钟后再度被推翻 |
+| 修复三 | 重写三个插件的模块引用；被推翻 |
+| 修复四 | 禁用 file-changes；boot 层干净了，但对话仍不可用 |
+| 定位真凶 | dcp 与新版事件流 API 不兼容；建议回退，机主拍板 |
+| 回退与重建 | 降级、快照恢复、依赖重装；误删的两个插件从会话历史复原 |
 
 ## 背景
 
-dsh 的核心原本是 0.1.1-rc.2，一直稳定。当天 14:33，dsh 在一次对话里为了挂载 dsh-dcp（社区出的确定性上下文压缩插件，要求核心版本不低于 0.1.5），自己执行了核心升级，把全局的 `@deepseek-ai/dsh` 换成 `@next` 频道的 0.1.5-rc.2，写好 profile 的 package.json 挂上 dcp，用 pnpm 更新了 node_modules。升级完，正在跑的 web 进程没有重启。
+dsh 的核心原本是 0.1.1-rc.2，一直稳定。当天下午，dsh 在一次对话里为了挂载 dsh-dcp（社区出的确定性上下文压缩插件，要求核心版本不低于 0.1.5），自己执行了核心升级，把全局的 `@deepseek-ai/dsh` 换成 `@next` 频道的 0.1.5-rc.2，写好 profile 的 package.json 挂上 dcp，用 pnpm 更新了 node_modules。升级完，正在跑的 web 进程没有重启。
 
-14:31，也就是升级前两分钟，机器上刚打过一份 `~/.dsh` 全量 tar 快照（82MB）。这份快照是后面唯一立功的预防措施。
+升级前，机器上刚打过一份 `~/.dsh` 全量 tar 快照（82MB）。这份快照是后面唯一立功的预防措施。
 
-14:46，用户在 Claude Code 窗口丢来一句话：dsh 又把自己搞得打不开了。
+随后机主在 Claude Code 窗口报修：dsh 又把自己搞得打不开了。
 
-## 第一轮：进程是旧的，磁盘是新的（14:46 - 15:11）
+## 第一轮：进程是旧的，磁盘是新的
 
-接到报修先看现场，四分钟内跑完这些检查：
+接到报修先看现场，几分钟内跑完这些检查：
 
 ```bash
 # 版本、进程、HTTP
@@ -64,7 +60,7 @@ tail -60 ~/.dsh/CHANGELOG.md
 
 对上之后根因就清楚了：旧进程按旧逻辑去读已被 pnpm 换成新版的 bundle 元数据，拼出来的 boot manifest 格式错乱，前端解析直接炸掉，插件全挂。`curl` 探测的是 HTTP 层，看不到前端 JS 的死活，所以 200 是个假象。
 
-会话数据是 JSONL 持久化在 `~/.dsh/sessions` 的，杀进程不丢数据。15:06 用户让我动手，执行：
+会话数据是 JSONL 持久化在 `~/.dsh/sessions` 的，杀进程不丢数据。机主让 Claude Code 接手，执行：
 
 ```bash
 pkill -f "dsh web"; sleep 1
@@ -75,11 +71,11 @@ nohup dsh web --no-open --host 127.0.0.1 \
 
 起来之后逐项验证：HTTP 200、manifest 里 `batches` 是数组、`client.js` 和 `index.js` 静态资源都 200。到这里第一层的病根确实除掉了。
 
-顺手发现一个新问题：0.1.5 加了 auth token 机制，首次访问要走 `/?token=xxx` 登录、种 30 天 cookie。而 `~/.dsh/dsh-launch.sh` 里那句 `open 127.0.0.1:3080` 会直接吃 401。按本机守则先备份成 `.bak-20260912-*`，再把它改成从 `/tmp/dsh-web.log` 里解析 token URL 后打开。
+顺手发现一个新问题：0.1.5 加了 auth token 机制，首次访问要走 `/?token=xxx` 登录、种 30 天 cookie。而 `~/.dsh/dsh-launch.sh` 里那句 `open 127.0.0.1:3080` 会直接吃 401。按本机守则先备份成 `.bak-20260912-*`，再把 `dsh-launch.sh` 改成从 `/tmp/dsh-web.log` 里解析 token URL 后打开。
 
-15:11，我宣布修好了。一分钟后，用户把新的报错贴了过来。
+第一轮修复宣告完成。一分钟后，机主把新的报错贴了过来。
 
-## 第二轮：/client 子路径失效（15:12 - 15:26）
+## 第二轮：/client 子路径失效
 
 报错长这样：
 
@@ -110,7 +106,7 @@ module, and no registered package factory
 | dsh-writing-pad | 1.1.2 → 1.1.3 | 未适配（后来证明这个判断是错的） |
 | dsh-file-changes | github 源 | 未适配 |
 
-当时给了用户两个方案：A，降级回 0.1.1-rc.2，一条命令全恢复，放弃 dcp（我推荐这个）；B，硬撑 @next，升两个能升的，禁三个不能升的保住启动，后面再补。用户选了 B，原话是"升级，然后我再让 dsh 来把剩下的升级了，你要把这些内容记录下来方便后续的改动"。
+摆在面前的有两个方案：A，降级回 0.1.1-rc.2，一条命令全恢复，放弃 dcp（推荐这个）；B，硬撑 @next，升两个能升的，禁三个不能升的保住启动，后面再补。机主选了 B，原话是"升级，然后我再让 dsh 来把剩下的升级了，你要把这些内容记录下来方便后续的改动"。
 
 执行：
 
@@ -122,35 +118,33 @@ pnpm add dsh-ui-appearance@^0.1.9 dsh-better-sidebar@^0.19.1
 
 验证输出：禁用的三个出现 0 次，升级的两个和 `dsh-client-store` seed 都在，旧 `/client` 引用残留 0。
 
-15:26，第二次宣布修好了。这次的验证只做到了 manifest 层，没做浏览器实测，这个隐患后面会反复出现。
+第二轮修复宣告完成。这次的验证只做到了 manifest 层，没做浏览器实测，这个隐患后面会反复出现。
 
-## 简报与 dsh 自修（15:39 - 15:54）
+## 简报与 dsh 自修
 
-用户要一份总结发给 dsh，让它自己修剩下三个插件。简报里写清了四件事：
+机主要一份总结发给 dsh，让它自己修剩下三个插件。简报里写清了四件事：
 
 1. 改法：把 `require("@deepseek-ai/dsh-client-runtime/client")` 的 `/client` 后缀去掉；
 2. bundle id 坑：重新启用时 disabled 必须写 bundle id 而不是包名，写错不报错但不生效；
 3. 直接改 node_modules 会被 pnpm 重装覆盖，要用 `pnpm patch` 固化；`dsh-file-changes` 是 `github:mixin-ai/dsh-file-changes` 的 git 依赖，patch 或 fork 二选一；
 4. 完成后的重启与验证命令。
 
-dsh 拿着简报去干活了。15:54，用户回来说：这傻逼又把自己修坏了。
+dsh 拿着简报去干活了。十几分钟后，机主回来说：这傻逼又把自己修坏了。
 
-## 第三轮：dsh 修对了，但没重启（15:54 - 16:15）
+## 第三轮：dsh 修对了，但没重启
 
 查现场，还原 dsh 干的四件事：
 
 1. `pnpm patch` 了 `dsh-at-file` 和 `dsh-file-changes`，把 `/client` 改成裸名，patch 文件内容本身是对的；
-2. `dsh-writing-pad` 升到 1.1.3，这个版本的 dist 里实际代码本来就是合规写法（我和 dsh 此前都被它 sourcemap 里的旧引用误导，这里要给它平反）；
+2. `dsh-writing-pad` 升到 1.1.3，这个版本的 dist 里实际代码本来就是合规写法（此前"未适配"的判断是被它 sourcemap 里残留的旧引用误导的，这里要给它平反）；
 3. 删掉了三个 disabled 条目；
 4. 顺手建了个 `.dsh-module-fallback/` 目录塞了一堆 mermaid 依赖，在修 mermaid 插件的依赖解析，算支线任务。
 
-方向全对，唯一的问题是改完没重启，用户看到的还是旧进程的旧状态。
+方向全对，唯一的问题是改完没重启，机主看到的还是旧进程的旧状态。
 
-我重启，验证：manifest 里三个插件各 5 处（已加载）、旧 `/client` 残留 0、全量扫描所有插件的实际 JS（排除 `.map`）无任何旧子路径。16:15 让用户打开试，并且留了一句"如果浏览器还报错，把具体错误发我，我只能验证到 boot manifest 层"。
+重启后验证：manifest 里三个插件各 5 处（已加载）、旧 `/client` 残留 0、全量扫描所有插件的实际 JS（排除 `.map`）无任何旧子路径。这次也把验证的边界说清了：boot manifest 层能确认，浏览器端的实际报错需要人工反馈。几分钟后，机主把错误贴了回来。
 
-16:19，用户把错误贴了回来。
-
-## 第四轮：runtime 模块不是改名，是整个没了（16:19 - 17:01）
+## 第四轮：runtime 模块不是改名，是整个没了
 
 报错变成了：
 
@@ -161,7 +155,7 @@ missed the module table — not a platform seed word, not a materialized
 module, and no registered package factory
 ```
 
-裸名也 miss。这一轮挖得最深，前后四十分钟。
+裸名也 miss。这一轮挖得最深，前后四十来分钟。
 
 第一步先搞清楚一个矛盾：首页 HTML 的 manifest 里明明有 6 处 `@deepseek-ai/dsh-client-runtime` 字符串，为什么 require 不到？逐条看上下文，这 6 处全部出现在各插件的 inject 声明里，那是服务端 Cordis 的服务名，不是浏览器端可 require 的模块。可 require 的 seed word 是 `@deepseek-ai/dsh-client-store`、`dsh-client-ui-primitives`、`dsh-client-ui-slots` 这一批。结论：`dsh-client-runtime` 这个客户端模块在 0.1.5-rc.2 里被整体移除了，不是改名。dsh 那个"去掉 `/client` 后缀"的浅层替换从方向上就注定无效。
 
@@ -186,11 +180,11 @@ pnpm patch-commit node_modules/.pnpm_patches/dsh-at-file@0.6.3
 
 重启，最终验证：三个插件各 5 处、旧 `/client` 残留 0、裸名 runtime 残留 0、日志无报错。
 
-17:01，第三次宣布修好了。
+第四轮修复宣告完成。
 
-## 第五轮：conversationEvents 服务也没了（17:08 - 18:56）
+## 第五轮：conversationEvents 服务也没了
 
-17:08，报错换了方向：
+还没来得及松口气，报错换了方向：
 
 ```
 Failed to load plugins
@@ -206,11 +200,11 @@ require 层全修完了，这回轮到服务层。`dsh-file-changes` 的 `export
 
 验证：file-changes 0 处、at-file 5 处、writing-pad 5 处、日志无报错。
 
-第四次宣布修好了。这一轮之后 boot 层面确实干净了：dsh 能打开，能看历史会话。但离"能正常用"还差一层。
+第五次宣告修复完成。这一轮之后 boot 层面确实干净了：dsh 能打开，能看历史会话。但离"能正常用"还差一层。
 
-## 第六轮：events is not iterable，不能对话（18:59 - 19:07）
+## 第六轮：events is not iterable，不能对话
 
-18:59，用户回报：每发一句话就弹"本轮运行失败 events is not iterable UNKNOWN"，连弹三次，完全不能对话。
+boot 干净的状态没维持几分钟，机主回报：每发一句话就弹"本轮运行失败 events is not iterable UNKNOWN"，连弹三次，完全不能对话。
 
 这次的报错不在 boot，在 turn 运行时，而且是前端弹的。排查路径：
 
@@ -223,19 +217,19 @@ require 层全修完了，这回轮到服务层。`dsh-file-changes` 的 `export
 
 处理：禁用 `dsh-dcp`，compaction 回退核心默认的 `compaction-basic`（LLM 摘要）。boot 无报错。
 
-到这里必须摊牌了。这一整天的死局是：
+到这里，死局已经完全摆开：
 
 - 升级核心的唯一目的就是挂 dcp；
 - dcp 自己没适配这个核心版本；
 - 升级还连锁砸了 client 模块、conversationEvents 服务和一批社区插件。
 
-等于为了一个用不了的功能，把原本正常的环境打烂了。我建议降级回 0.1.1-rc.2。
+等于为了一个用不了的功能，把原本正常的环境打烂了。剩下的正确选项只有一个：降级回 0.1.1-rc.2。
 
-19:08，用户回：降低吧，回退吧。
+机主拍板：降低吧，回退吧。
 
-## 回退（19:08 - 19:22）
+## 回退
 
-幸好有 14:31 那份 tar 快照。步骤：
+幸好有升级前那份 tar 快照。步骤：
 
 ```bash
 # 1. 降级核心
@@ -260,15 +254,15 @@ pnpm install
 - 试 `pnpm install --force`，又试 `pnpm add` 手动补，`patches/` 目录反而又冒了出来；
 - 最后从 tar 重新解包全部配置文件，`rm -rf node_modules patches`，完整地再来一次 `pnpm install`，才拿到干净状态。
 
-19:18，用 0.1.1-rc.2 重启：HTTP 200，旧版无 token 机制，核心和全部插件回到升级前版本（ui-appearance 0.1.6 / better-sidebar 0.15.0 / writing-pad 1.1.2 / at-file 0.6.3），dcp 移除，lockfile 和 workspace yaml 里都没有 patch 记录。
+回退到位后用 0.1.1-rc.2 重启：HTTP 200，旧版无 token 机制，核心和全部插件回到升级前版本（ui-appearance 0.1.6 / better-sidebar 0.15.0 / writing-pad 1.1.2 / at-file 0.6.3），dcp 移除，lockfile 和 workspace yaml 里都没有 patch 记录。
 
 然后发现新问题：bundles 列表里写着 `dsh-theme-atelier` 和 `dsh-ui-theme-switch`，但 node_modules 里没有这两个目录。`rm -rf node_modules` 的时候把它们连带删掉了。这两个不在 npm 上（`npm view` 直接 404），是 9 月 2 日手动装进 node_modules 的，tar 快照不含 node_modules，本地零备份。
 
-先把它们从 bundles 里临时移除，不阻断启动，dsh 恢复正常对话。然后向用户坦白误删，并给出恢复思路：theme-switch 的结构设计我记着（`exports.inject=["theme","slots"]`，循环切主题），源码可以试着从历史里找。
+先把它们从 bundles 里临时移除，不阻断启动，dsh 恢复正常对话。随后向机主说明误删情况。恢复思路是：theme-switch 的结构设计有记录（`exports.inject=["theme","slots"]`，循环切主题），完整源码则要去历史里找。
 
-## 考古重建（19:23 - 19:49）
+## 考古重建
 
-用户说：来吧，你来重建。
+机主说：来吧，你来重建。
 
 先读现役插件学结构。`dsh-icon-theme` 和 `dsh-theme-whalegirl` 是两个能正常跑的主题类插件，把它们的 `package.json`、`lib/client.js`、`lib/index.js`、`cordis.patch.yml` 逐个过了一遍，确认一个最小可用的插件需要哪些文件、`exports.inject` 怎么声明、设置卡片怎么往 `settings.plugin.item` 槽位上挂。
 
@@ -285,7 +279,7 @@ pnpm install
 
 验证：`node --check` 通过，package.json 是合法 JSON，加回 bundles（`dsh-icon-theme` 之后），重启后 manifest 里出现 2 处，`/plugins/dsh-ui-theme-switch/client.js` 返回 200。
 
-同一个 session 里还躺着 `dsh-theme-atelier` 的全部源码。用户说继续。恢复 5 个文件：
+同一个 session 里还躺着 `dsh-theme-atelier` 的全部源码。机主说继续。恢复 5 个文件：
 
 - `package.json`
 - `cordis.patch.yml`
@@ -295,11 +289,11 @@ pnpm install
 
 bundles 顺序恢复为原样：`dsh-icon-theme → dsh-theme-atelier → dsh-ui-theme-switch → dsh-theme-whalegirl`。同样一套验证全部通过。
 
-19:49，全部完成。最终状态：核心 0.1.1-rc.2，插件全部回到升级前版本，dcp 移除，patch 记录清零，两个手动插件从会话历史完整复原，对话正常。
+至此全部完成。最终状态：核心 0.1.1-rc.2，插件全部回到升级前版本，dcp 移除，patch 记录清零，两个手动插件从会话历史完整复原，对话正常。
 
 ## 复盘
 
-这次事故的根源，是把一个尚未被插件生态适配的候选版核心当成了稳定版来用。@next 频道的破坏性变更是成层的：进程新旧不一致、client 模块移除、Cordis 服务移除、事件流 API 变化，一层修完露出下一层，五个多小时里"修好了"说了五次，四次被新的报错在几分钟内推翻。
+这次事故的根源，是把一个尚未被插件生态适配的候选版核心当成了稳定版来用。@next 频道的破坏性变更是成层的：进程新旧不一致、client 模块移除、Cordis 服务移除、事件流 API 变化，一层修完露出下一层，五个多小时里"修好了"宣告了五次，四次被新的报错在几分钟内推翻。
 
 几条具体教训：
 
@@ -314,9 +308,9 @@ bundles 顺序恢复为原样：`dsh-icon-theme → dsh-theme-atelier → dsh-ui
 
 最后记一笔：全程对 `~/.dsh` 的每次改动都先备份成 `.bak-时间戳` 并追加进 `~/.dsh/CHANGELOG.md`，这条守则五个多小时里没有破过一次例。它不能阻止事故发生，但保证了每一步都可回退，这也是最后能整体退回升级前状态的原因。
 
-## 附：一份可以抄走的守则
+## 附：环境变更守则
 
-复盘写完，我把上面这些教训收成了一份放在 agent 指令文件里的守则。每一条都对应这天下午实实在在摔过的跤。如果你的机器上也跑着会自己动环境的 agent，可以直接抄走，放进它的 CLAUDE.md、AGENTS.md 或者系统提示词里：
+复盘的最后，把上面的教训收拢成一份规则，放进 agent 的指令文件里长期生效。如果读者手里也有会自己改环境的 agent，可以直接放进它的 CLAUDE.md、AGENTS.md 或系统提示词：
 
 ```markdown
 # 环境变更守则（对 agent 生效，违反任何一条即停下重来）
@@ -350,4 +344,4 @@ bundles 顺序恢复为原样：`dsh-icon-theme → dsh-theme-atelier → dsh-ui
   你今天写下的每个文件，日志里都留着全文。
 ```
 
-守则防不住错误本身，agent 该犯的错还是会犯。它防的是错误叠加：单次失误可回退、可归因，只有一串失误连锁起来，才会把一个下午和一整套环境一起烧掉。这就是警钟要长鸣的原因：它不是在提醒你别摔倒，而是在提醒你，摔倒之后先停一下，别立刻用更大的动作去掩盖上一次。
+守则防不住错误本身，agent 该犯的错还是会犯。它防的是错误叠加：单次失误可回退、可归因，只有一串失误连锁起来，才会把一个下午和一整套环境一起烧掉。警钟长鸣，鸣的不是"不要摔倒"，而是摔倒之后先停一下，别立刻用更大的动作去掩盖上一次。
