@@ -138,7 +138,7 @@
     <div class="flex justify-center items-center flex-wrap gap-4 text-sm text-zinc-400 dark:text-zinc-500" data-aos="fade-up" data-aos-delay="100">
       <span class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> 2026-09-12</span>
       <span class="inline-flex items-center gap-1"><i data-lucide="folder" class="w-3.5 h-3.5"></i><a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="text-accent-500 hover:text-accent-600">学习笔记</a></span>
-      <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 17 min</span><span class="inline-flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> 4869 字</span>
+      <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 16 min</span><span class="inline-flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> 4786 字</span>
       <span id="busuanzi_container_page_pv" class="inline-flex items-center gap-1" style="display:none"><i data-lucide="eye" class="w-3.5 h-3.5"></i> 阅读 <span id="busuanzi_value_page_pv"></span> 次</span>
       <button onclick="copyPostLink()" class="inline-flex items-center gap-1 text-sm text-zinc-400 dark:text-zinc-500 hover:text-accent-500 dark:hover:text-accent-400 transition-colors bg-transparent border-0 cursor-pointer" aria-label="复制链接"><i data-lucide="link" class="w-3.5 h-3.5"></i> 复制链接</button>
     </div>
@@ -162,7 +162,7 @@
 
       <div class="article-card" data-aos="fade-up" data-aos-delay="300">
         <div class="article-body">
-          <p>9 月 12 日，本机的 dsh（DeepSeek Harness，运行 web GUI 的 agent 宿主，监听 127.0.0.1:3080）发生连环故障：六轮报错、一次降级回退、一次误删插件、一次从会话历史恢复源码。维修在 Claude Code 会话中完成。以下按事件顺序完整记录。</p>
+          <p>9 月 12 日，本机的 dsh（DeepSeek Harness，运行 web GUI 的 agent 宿主，监听 127.0.0.1:3080）发生连环故障：六轮报错、一次降级回退、一次误删插件、一次从会话历史恢复源码。以下按事件顺序完整记录发现问题和修复问题的全过程。</p>
 <p>总览：</p>
 <table>
 <thead>
@@ -197,16 +197,15 @@
 </tr>
 <tr>
 <td>定位原因</td>
-<td>dcp 与新版事件流 API 不兼容；确定回退，机主同意</td>
+<td>dcp 与新版事件流 API 不兼容；确定回退</td>
 </tr>
 <tr>
 <td>回退与重建</td>
 <td>降级、快照恢复、依赖重装；误删的两个插件从会话历史复原</td>
 </tr>
 </tbody></table>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>dsh 的核心版本原为 0.1.1-rc.2，运行稳定。当天，dsh 在一次对话中为挂载 dsh-dcp（社区开发的确定性上下文压缩插件，要求核心版本不低于 0.1.5），自行执行核心升级：全局的 <code>@deepseek-ai/dsh</code> 替换为 <code>@next</code> 频道的 0.1.5-rc.2，profile 的 package.json 写入 dcp 依赖，pnpm 更新 node_modules。升级完成后，运行中的 web 进程未重启。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>dsh 的核心版本原为 0.1.1-rc.2，运行稳定。当天，dsh 在一次对话中为挂载 dsh-dcp（社区开发的确定性上下文压缩插件，要求核心版本不低于 0.1.5），自行执行核心升级：全局的 <code>@deepseek-ai/dsh</code> 替换为 <code>@next</code> 频道的 0.1.5-rc.2，profile 的 package.json 写入 dcp 依赖，pnpm 更新 node_modules。升级完成后，运行中的 web 进程未重启，GUI 无法打开。</p>
 <p>升级前，机器上有一份 <code>~/.dsh</code> 全量 tar 快照（82MB）。这份快照是全程唯一起作用的预防措施。</p>
-<p>机主在 Claude Code 窗口报修：dsh 的 GUI 无法打开。</p>
 <h2 id="第一轮：进程是旧的，磁盘是新的"><a href="#第一轮：进程是旧的，磁盘是新的" class="headerlink" title="第一轮：进程是旧的，磁盘是新的"></a>第一轮：进程是旧的，磁盘是新的</h2><p>现场检查：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 版本、进程、HTTP</span></span><br><span class="line">dsh --version          <span class="comment"># 0.1.5-rc.2</span></span><br><span class="line">ps aux | grep <span class="string">&quot;[d]sh&quot;</span>  <span class="comment"># web 进程 PID 70415，9 月 11 日启动</span></span><br><span class="line">curl -s -o /dev/null -w <span class="string">&quot;%&#123;http_code&#125;&quot;</span> http://127.0.0.1:3080   <span class="comment"># 200</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置树</span></span><br><span class="line">dsh --profile web --dump-config   <span class="comment"># exit=0，配置本身没坏</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># profile 现状</span></span><br><span class="line"><span class="built_in">cat</span> ~/.dsh/profiles/web/package.json</span><br><span class="line"><span class="built_in">tail</span> -60 ~/.dsh/CHANGELOG.md</span><br></pre></td></tr></table></figure>
 
@@ -217,13 +216,12 @@
 <li>浏览器端报错为 <code>boot manifest batches must be an array</code>。</li>
 </ol>
 <p>根因：旧进程按旧逻辑读取已被 pnpm 更新为新版的 bundle 元数据，生成的 boot manifest 格式错误，前端解析失败，插件全部无法加载。<code>curl</code> 只能探测 HTTP 层，无法反映前端 JS 的状态，200 是假象。</p>
-<p>会话数据以 JSONL 持久化于 <code>~/.dsh/sessions</code>，终止进程不丢失数据。机主指定 Claude Code 执行修复：</p>
+<p>会话数据以 JSONL 持久化于 <code>~/.dsh/sessions</code>，终止进程不丢失数据。执行修复：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pkill -f <span class="string">&quot;dsh web&quot;</span>; <span class="built_in">sleep</span> 1</span><br><span class="line"><span class="built_in">nohup</span> dsh web --no-open --host 127.0.0.1 \</span><br><span class="line">  --trusted-host gwendemacbook-air.local --trusted-host 192.168.3.137 \</span><br><span class="line">  &gt;/tmp/dsh-web.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
 
 <p>重启后逐项验证：HTTP 200、manifest 中 <code>batches</code> 为数组、<code>client.js</code> 与 <code>index.js</code> 静态资源均返回 200。第一层故障消除。</p>
 <p>另发现一个问题：0.1.5 引入 auth token 机制，首次访问需通过 <code>/?token=xxx</code> 登录并写入 30 天 cookie，而 <code>~/.dsh/dsh-launch.sh</code> 中的 <code>open 127.0.0.1:3080</code> 将直接返回 401。按本机守则先备份为 <code>.bak-20260912-*</code>，再将 <code>dsh-launch.sh</code> 改为从 <code>/tmp/dsh-web.log</code> 解析 token URL 后打开。</p>
-<p>机主反馈了新的报错。</p>
-<h2 id="第二轮：-client-子路径失效"><a href="#第二轮：-client-子路径失效" class="headerlink" title="第二轮：&#x2F;client 子路径失效"></a>第二轮：&#x2F;client 子路径失效</h2><p>报错：</p>
+<h2 id="第二轮：-client-子路径失效"><a href="#第二轮：-client-子路径失效" class="headerlink" title="第二轮：&#x2F;client 子路径失效"></a>第二轮：&#x2F;client 子路径失效</h2><p>浏览器端报错：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Failed to load plugins</span><br><span class="line">failed to import loader entry f8bfe431 (dsh-ui-appearance):</span><br><span class="line">client-modules: require(&quot;@deepseek-ai/dsh-client-runtime/client&quot;)</span><br><span class="line">missed the module table — not a platform seed word, not a materialized</span><br><span class="line">module, and no registered package factory</span><br></pre></td></tr></table></figure>
 
 <p>本次故障与进程无关：0.1.5-rc.2 重构了 client 模块系统，旧插件编译产物中 <code>require(&quot;@deepseek-ai/dsh-client-runtime/client&quot;)</code> 这种带 <code>/client</code> 子路径（无 <code>.js</code>）的写法全部失效。</p>
@@ -269,21 +267,21 @@
 <td>未适配</td>
 </tr>
 </tbody></table>
-<p>当时有两个方案：A，降级回 0.1.1-rc.2，一条命令恢复全部功能，放弃 dcp（推荐）；B，继续使用 @next：升级两个已适配插件，禁用三个未适配插件保住启动，后续补齐。机主选择方案 B，剩余插件的源码修改交由 dsh 执行，并要求记录改动内容备查。</p>
+<p>两个可选方案：A，降级回 0.1.1-rc.2，一条命令恢复全部功能，放弃 dcp（推荐）；B，继续使用 @next：升级两个已适配插件，禁用三个未适配插件保住启动，后续补齐。采用方案 B，剩余插件的源码修改交由 dsh 执行，改动内容记录备查。</p>
 <p>执行：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pnpm add dsh-ui-appearance@^0.1.9 dsh-better-sidebar@^0.19.1</span><br></pre></td></tr></table></figure>
 
 <p>随后在 <code>cordis.patch.yml</code> 中禁用其余三个插件。此步骤出现一个问题：disabled 条目按包名书写（<code>dsh-writing-pad</code>、<code>dsh-file-changes</code>），重启后 manifest 中三个插件仍然存在，禁用未生效。原因为 bundle id 与包名不一致：<code>dsh-writing-pad</code> 的 id 是 <code>writing-pad</code>，<code>dsh-file-changes</code> 的 id 是 <code>file-changes</code>，均无 <code>dsh-</code> 前缀。经 <code>dsh --profile web --dump-config</code> 核对真实 id 后改写，重启，三个插件在 manifest 中清零。</p>
 <p>验证结果：禁用的三个插件出现 0 次，升级的两个插件与 <code>dsh-client-store</code> seed 均存在，旧 <code>/client</code> 引用残留 0。</p>
 <p>本轮验证仅到达 manifest 层，未做浏览器实测，该缺陷在后续轮次反复出现。</p>
-<h2 id="简报与-dsh-自修"><a href="#简报与-dsh-自修" class="headerlink" title="简报与 dsh 自修"></a>简报与 dsh 自修</h2><p>机主要求整理一份总结发给 dsh，由其自行修复剩余三个插件。简报包含四点：</p>
+<h2 id="简报与-dsh-自修"><a href="#简报与-dsh-自修" class="headerlink" title="简报与 dsh 自修"></a>简报与 dsh 自修</h2><p>为让 dsh 自行修复剩余三个插件，整理简报一份，内容包含四点：</p>
 <ol>
 <li>改法：把 <code>require(&quot;@deepseek-ai/dsh-client-runtime/client&quot;)</code> 的 <code>/client</code> 后缀去掉；</li>
 <li>bundle id 坑：重新启用时 disabled 必须写 bundle id 而不是包名，写错不报错但不生效；</li>
 <li>直接改 node_modules 会被 pnpm 重装覆盖，要用 <code>pnpm patch</code> 固化；<code>dsh-file-changes</code> 是 <code>github:mixin-ai/dsh-file-changes</code> 的 git 依赖，patch 或 fork 二选一；</li>
 <li>完成后的重启与验证命令。</li>
 </ol>
-<p>dsh 按简报完成修复。机主反馈 dsh 再次出现故障。</p>
+<p>dsh 按简报完成修复，故障再次出现。</p>
 <h2 id="第三轮：dsh-的修复正确，但未重启"><a href="#第三轮：dsh-的修复正确，但未重启" class="headerlink" title="第三轮：dsh 的修复正确，但未重启"></a>第三轮：dsh 的修复正确，但未重启</h2><p>检查现场，还原 dsh 的四项改动：</p>
 <ol>
 <li><code>pnpm patch</code> 了 <code>dsh-at-file</code> 与 <code>dsh-file-changes</code>，将 <code>/client</code> 改为裸名，patch 文件内容正确；</li>
@@ -291,9 +289,9 @@
 <li>删除三个 disabled 条目；</li>
 <li>建立 <code>.dsh-module-fallback/</code> 目录存放 mermaid 依赖，用于修复 mermaid 插件的依赖解析，与本次故障无关。</li>
 </ol>
-<p>改动方向正确，问题在于未重启，机主看到的仍是旧进程状态。</p>
-<p>重启后验证：manifest 中三个插件各 5 处（已加载）、旧 <code>/client</code> 残留 0、全量扫描所有插件的实际 JS（排除 <code>.map</code>）无旧子路径。本轮验证仍限于 boot manifest 层，浏览器端的实际状态需人工反馈。机主反馈了浏览器端的报错。</p>
-<h2 id="第四轮：runtime-模块被整体移除"><a href="#第四轮：runtime-模块被整体移除" class="headerlink" title="第四轮：runtime 模块被整体移除"></a>第四轮：runtime 模块被整体移除</h2><p>报错变为：</p>
+<p>改动方向正确，问题在于未重启，浏览器中呈现的仍是旧进程状态。</p>
+<p>重启后验证：manifest 中三个插件各 5 处（已加载）、旧 <code>/client</code> 残留 0、全量扫描所有插件的实际 JS（排除 <code>.map</code>）无旧子路径。本轮验证仍限于 boot manifest 层。</p>
+<h2 id="第四轮：runtime-模块被整体移除"><a href="#第四轮：runtime-模块被整体移除" class="headerlink" title="第四轮：runtime 模块被整体移除"></a>第四轮：runtime 模块被整体移除</h2><p>浏览器端报错变为：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">failed to import loader entry 62d6fc81 (dsh-file-changes):</span><br><span class="line">client-modules: require(&quot;@deepseek-ai/dsh-client-runtime&quot;)</span><br><span class="line">missed the module table — not a platform seed word, not a materialized</span><br><span class="line">module, and no registered package factory</span><br></pre></td></tr></table></figure>
 
 <p>裸名同样 miss。本轮排查最深入。</p>
@@ -318,7 +316,7 @@
 <p>处理：再次禁用 <code>file-changes</code>。该插件提供”文件变更展示”功能，非核心，彻底修复需等待上游适配新版事件系统。备份 patch.yml、修改、YAML 校验、重启。</p>
 <p>验证：file-changes 0 处、at-file 5 处、writing-pad 5 处、日志无报错。</p>
 <p>boot 层至此正常：dsh 可打开，可查看历史会话，但对话功能仍不可用。</p>
-<h2 id="第六轮：events-is-not-iterable，对话不可用"><a href="#第六轮：events-is-not-iterable，对话不可用" class="headerlink" title="第六轮：events is not iterable，对话不可用"></a>第六轮：events is not iterable，对话不可用</h2><p>机主反馈：每发送一条消息即弹出”本轮运行失败 events is not iterable UNKNOWN”，连续复现，无法对话。</p>
+<h2 id="第六轮：events-is-not-iterable，对话不可用"><a href="#第六轮：events-is-not-iterable，对话不可用" class="headerlink" title="第六轮：events is not iterable，对话不可用"></a>第六轮：events is not iterable，对话不可用</h2><p>故障现象：每发送一条消息即弹出”本轮运行失败 events is not iterable UNKNOWN”，连续复现，无法对话。</p>
 <p>本次报错位于 turn 运行时，由前端弹出。排查路径：</p>
 <ol>
 <li><code>/tmp/dsh-web.log</code> 中无对应错误，服务端日志正常；</li>
@@ -334,7 +332,7 @@
 <li>dcp 未适配该核心版本；</li>
 <li>升级导致 client 模块、conversationEvents 服务与一批社区插件连锁故障。</li>
 </ul>
-<p>升级未产生任何可用收益，且破坏了原有环境。唯一合理的选项为降级回 0.1.1-rc.2。机主决定回退。</p>
+<p>升级未产生任何可用收益，且破坏了原有环境。唯一合理的选项为降级回 0.1.1-rc.2。确定执行回退。</p>
 <h2 id="回退"><a href="#回退" class="headerlink" title="回退"></a>回退</h2><p>回退依据升级前的 tar 快照。步骤：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 降级核心</span></span><br><span class="line">npm i -g @deepseek-ai/dsh@0.1.1-rc.2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 从快照恢复 profile 配置</span></span><br><span class="line">tar -xzf ~/.dsh-upgrade-backup-20260912-143149.tar.gz -C ~/.dsh \</span><br><span class="line">  profiles/web/package.json \</span><br><span class="line">  profiles/web/pnpm-lock.yaml \</span><br><span class="line">  profiles/web/cordis.patch.yml \</span><br><span class="line">  profiles/web/cordis.yml \</span><br><span class="line">  dsh-launch.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 重装依赖</span></span><br><span class="line">pnpm install</span><br></pre></td></tr></table></figure>
 
@@ -347,9 +345,8 @@
 </ul>
 <p>回退完成后以 0.1.1-rc.2 重启：HTTP 200，旧版无 token 机制，核心与全部插件回到升级前版本（ui-appearance 0.1.6 &#x2F; better-sidebar 0.15.0 &#x2F; writing-pad 1.1.2 &#x2F; at-file 0.6.3），dcp 移除，lockfile 与 workspace yaml 中无 patch 记录。</p>
 <p>随后发现新问题：bundles 列表中有 <code>dsh-theme-atelier</code> 与 <code>dsh-ui-theme-switch</code>，但 node_modules 中不存在这两个目录，<code>rm -rf node_modules</code> 时被连带删除。两者不在 npm 上（<code>npm view</code> 返回 404），为 9 月 2 日手动安装，tar 快照不含 node_modules，本地无备份。</p>
-<p>先将两者从 bundles 中临时移除以保证启动，dsh 恢复正常对话。随后向机主说明误删情况。恢复思路：theme-switch 的结构设计有记录（<code>exports.inject=[&quot;theme&quot;,&quot;slots&quot;]</code>，循环切换主题），完整源码需从历史中查找。</p>
-<h2 id="从会话历史重建插件"><a href="#从会话历史重建插件" class="headerlink" title="从会话历史重建插件"></a>从会话历史重建插件</h2><p>机主要求重建。</p>
-<p>先读现役插件学习结构：<code>dsh-icon-theme</code> 与 <code>dsh-theme-whalegirl</code> 为两个正常运行的主题类插件，逐一检查其 <code>package.json</code>、<code>lib/client.js</code>、<code>lib/index.js</code>、<code>cordis.patch.yml</code>，确认最小可用插件所需的文件、<code>exports.inject</code> 的声明方式、设置卡片向 <code>settings.plugin.item</code> 槽位的挂载方式。</p>
+<p>先将两者从 bundles 中临时移除以保证启动，dsh 恢复正常对话。恢复思路：theme-switch 的结构设计有记录（<code>exports.inject=[&quot;theme&quot;,&quot;slots&quot;]</code>，循环切换主题），完整源码需从历史中查找。</p>
+<h2 id="从会话历史重建插件"><a href="#从会话历史重建插件" class="headerlink" title="从会话历史重建插件"></a>从会话历史重建插件</h2><p>重建从结构学习开始：<code>dsh-icon-theme</code> 与 <code>dsh-theme-whalegirl</code> 为两个正常运行的主题类插件，逐一检查其 <code>package.json</code>、<code>lib/client.js</code>、<code>lib/index.js</code>、<code>cordis.patch.yml</code>，确认最小可用插件所需的文件、<code>exports.inject</code> 的声明方式、设置卡片向 <code>settings.plugin.item</code> 槽位的挂载方式。</p>
 <p>其次查找历史。dsh 的会话存储位于 <code>~/.dsh/sessions/</code>，其中 <code>--Users-gwen-.dsh-claudecode--</code> 目录下为此前导入的 Claude Code 会话，每个 session 为一份 zstd 压缩的 JSONL 事件流。编写脚本逐个解压并检索 <code>dsh-ui-theme-switch</code>，命中多个 session，其中 <code>import-4bf65167</code>（9 月 2 日的会话）出现次数最多，即创建这两个插件的原始会话。</p>
 <p>接下来从 JSONL 中提取源码。agent 写文件通过 write 工具调用完成，事件中含 <code>file_path</code> 与 <code>content</code> 字段；同一文件可能被多次写入，需取最后一次写入的 content 作为最终版本。提取脚本经过多轮迭代达到稳定：先是字段名不匹配，继而是命中格式问题，再是同名文件分布在多个 session 中需要去重排序。最终得到完整文件清单。</p>
 <p><code>dsh-ui-theme-switch</code>，恢复 4 个文件：</p>
