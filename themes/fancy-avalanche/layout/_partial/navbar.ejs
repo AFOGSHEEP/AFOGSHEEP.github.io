@@ -1,11 +1,73 @@
 <nav class="fixed top-0 left-0 right-0 z-50 h-[4.5rem] border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-xl transition-colors duration-300">
   <div class="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6 lg:px-8">
 
-    <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 hover:text-accent-500 dark:hover:text-accent-400 transition-colors min-w-0">
-      <% if (theme.images && theme.images.avatar && theme.images.avatar.url) { %><img src="<%= theme.images.avatar.url %>" alt="avatar" class="w-16 h-16 rounded-full ring-2 ring-zinc-200 dark:ring-zinc-700" width="64" height="64"><% } %>
-      <span class="truncate"><%= config.title %></span>
+    <div class="flex items-center gap-3 min-w-0">
+      <% if (theme.images && theme.images.avatar && theme.images.avatar.url) { %>
+      <div class="nav-avatar-wrap">
+        <button id="nav-avatar-btn" class="nav-avatar-btn" aria-label="站长名片" aria-expanded="false" aria-haspopup="dialog">
+          <img src="<%= theme.images.avatar.url %>" alt="avatar" class="nav-avatar-img" width="64" height="64">
+        </button>
+        <div id="avatar-pop-card" class="avatar-pop-card" role="dialog" aria-label="站长名片">
+          <div class="avatar-pop-head">
+            <div class="avatar-pop-meta">
+              <div class="avatar-pop-name"><%= config.title %></div>
+              <div class="avatar-pop-sub"><%= config.description %></div>
+            </div>
+          </div>
+          <div class="avatar-pop-stats">
+            <% var fa_earliest = 0; site.posts.each(function (p) { if (p.date) { var t = p.date.valueOf(); if (!fa_earliest || t < fa_earliest) fa_earliest = t; } }); var fa_days = fa_earliest ? Math.max(1, Math.floor((Date.now() - fa_earliest) / 86400000)) : 0; %>
+            <span>文章 <b><%= site.posts.length %></b></span>
+            <span class="avatar-pop-dot">·</span>
+            <span>已运行 <b><%= fa_days %></b> 天</span>
+            <span class="avatar-pop-dot">·</span>
+            <span>标签 <b><%= site.tags.length %></b></span>
+          </div>
+          <% if (config.subtitle) { %><div class="avatar-pop-quote">「<%= config.subtitle %>」</div><% } %>
+          <% var fa_map = {}; site.posts.each(function (p) { if (p.date) { var k = p.date.format('YYYY-MM-DD'); fa_map[k] = (fa_map[k] || 0) + 1; } }); %>
+          <% var fa_max = 0; for (var mk in fa_map) { if (fa_map[mk] > fa_max) fa_max = fa_map[mk]; } %>
+          <% var fa_today = new Date(); fa_today.setHours(12, 0, 0, 0); var fa_start = new Date(fa_today); fa_start.setDate(fa_start.getDate() - 20 * 7 + 1); fa_start.setDate(fa_start.getDate() - (fa_start.getDay() + 6) % 7); %>
+          <div class="avatar-pop-heat">
+            <div class="avatar-pop-recent-title">发文热力 · 近 20 周</div>
+            <div class="avatar-pop-heat-grid">
+              <% for (var dt = new Date(fa_start); dt <= fa_today; dt.setDate(dt.getDate() + 7)) { %>
+              <div class="avatar-pop-heat-col">
+                <% for (var d = 0; d < 7; d++) { var cd = new Date(dt); cd.setDate(dt.getDate() + d); if (cd > fa_today) { %><span class="avatar-pop-cell"></span><% } else { var ck = cd.getFullYear() + '-' + ('0' + (cd.getMonth() + 1)).slice(-2) + '-' + ('0' + cd.getDate()).slice(-2); var cc = fa_map[ck] || 0; var cl = cc === 0 ? 0 : Math.min(4, Math.ceil(cc / Math.max(fa_max, 1) * 4)); %>
+                <span class="avatar-pop-cell h<%= cl %>" title="<%= ck %> · <%= cc %> 篇"></span><% } } %>
+              </div>
+              <% } %>
+            </div>
+          </div>
+          <% if (theme.avatar_card && theme.avatar_card.pinned && theme.avatar_card.pinned.length) { %>
+          <div class="avatar-pop-recent">
+            <div class="avatar-pop-recent-title">精选文章</div>
+            <% theme.avatar_card.pinned.forEach(function (p) { %>
+            <a class="avatar-pop-post" href="<%= url_for(p.url) %>"><span class="avatar-pop-post-title"><%= p.title %></span><i data-lucide="star" class="avatar-pop-pin"></i></a>
+            <% }) %>
+          </div>
+          <% } %>
+          <div class="avatar-pop-visit">
+            <i data-lucide="activity" class="avatar-pop-ico"></i>
+            <span>本站访问 <b id="busuanzi_value_site_pv">…</b> 次 · 访客 <b id="busuanzi_value_site_uv">…</b> 人</span>
+          </div>
+          <div id="avatar-pop-secrets" class="avatar-pop-secrets" aria-label="已发现的秘密"></div>
+          <% var fa_pool = site.posts.toArray().map(function (p) { return p.path; }); %>
+          <div class="avatar-pop-actions">
+            <a class="avatar-pop-link avatar-pop-link-primary" href="/"><i data-lucide="home" class="avatar-pop-ico"></i><span>回首页</span></a>
+            <% if (fa_pool.length > 1) { %>
+            <button class="avatar-pop-link" onclick="randomPost(this)" title="随机读一篇" data-pool='<%- JSON.stringify(fa_pool) %>'><i data-lucide="shuffle" class="avatar-pop-ico"></i><span>随便看看</span></button>
+            <% } %>
+            <% var fa_ico = { github: 'github', email: 'mail', twitter: 'twitter', zhihu: 'message-circle', weibo: 'at-sign', rss: 'rss', bilibili: 'tv', telegram: 'send' }; %>
+            <% if (theme.social) { for (var sk in theme.social) { if (theme.social[sk]) { %>
+            <a class="avatar-pop-link" href="<%= theme.social[sk] %>"<%= sk === 'email' ? '' : ' target="_blank" rel="noopener"' %> title="<%= sk %>"><i data-lucide="<%= fa_ico[sk] || 'link' %>" class="avatar-pop-ico"></i><span><%= sk %></span></a>
+            <% } } } %>
+            <button class="avatar-pop-link" onclick="copyEmail('q2420844892@163.com')" title="复制邮箱"><i data-lucide="copy" class="avatar-pop-ico"></i><span>复制邮箱</span></button>
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <a href="/" id="nav-site-title" class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 hover:text-accent-500 dark:hover:text-accent-400 transition-colors truncate"><%= config.title %></a>
       <span class="nav-date hidden xl:inline" aria-hidden="true"><span id="nav-date"></span></span>
-    </a>
+    </div>
 
     <div class="hidden md:flex items-center gap-0.5">
       <% if (theme.navbar.menu) { for (var key in theme.navbar.menu) { var path = theme.navbar.menu[key]; var isActive = (page.path === path) || (path !== '/' && page.path && page.path.indexOf(path.replace(/\//g,'')) === 0); %>

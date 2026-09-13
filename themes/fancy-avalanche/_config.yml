@@ -105,7 +105,18 @@ comment:
 # ---------- 社交链接 ----------
 social:
   github: https://github.com/AFOGSHEEP
-  # email: mailto:xxx@xxx.com
+  email: mailto:q2420844892@163.com
+
+# ---------- 头像名片卡 ----------
+avatar_card:
+  # 精选文章（作者置顶的得意之作，展示在头像名片卡里；留空则隐藏该区块）
+  pinned:
+    - title: dsh 核心升级事故复盘
+      url: /2026/09/12/技术_dsh核心升级事故复盘/
+    - title: 森林里的楼梯 · 搜救官系列
+      url: /2026/09/08/阅读_森林里的楼梯_搜救官系列/
+    - title: 删除排序数组中的重复项 · LeetCode
+      url: /2026/08/09/Leetcode_删除排序数组中的重复项/
   # twitter: https://twitter.com/xxx
   # zhihu: https://zhihu.com/people/xxx
   # rss: /atom.xml

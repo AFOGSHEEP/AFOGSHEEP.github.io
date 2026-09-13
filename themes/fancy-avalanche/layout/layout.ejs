@@ -41,7 +41,7 @@
 
   <% if (theme.effects && theme.effects.pjax) { %>
   <script src="<%= theme.cdn.instantclick %>" data-no-instant></script>
-  <script data-no-instant>InstantClick.init('mousedown');InstantClick.on('change',function(){lucide.createIcons();if(typeof AOS!=='undefined')AOS.refresh();if(typeof hljs!=='undefined')hljs.highlightAll();if(window.__faWidgets)window.__faWidgets();if(window.__faTheme)window.__faTheme()});</script>
+  <script data-no-instant>InstantClick.init('mousedown');InstantClick.on('change',function(){lucide.createIcons();if(typeof AOS!=='undefined')AOS.refresh();if(typeof hljs!=='undefined')hljs.highlightAll();if(window.__faWidgets)window.__faWidgets();if(window.__faTheme)window.__faTheme();if(window.__faAvatar)window.__faAvatar()});</script>
   <% } %>
 
   <script src="/js/main.js" data-no-instant></script>
