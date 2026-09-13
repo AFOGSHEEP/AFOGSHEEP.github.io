@@ -32,6 +32,97 @@
     }
   };
 
+  window.copyEmail = function (addr) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(addr).then(
+        function () { showToast('邮箱已复制：' + addr); },
+        function () { showToast('复制失败，请手动选择'); }
+      );
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = addr;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); showToast('邮箱已复制：' + addr); }
+      catch (e) { showToast('复制失败，请手动选择'); }
+      document.body.removeChild(ta);
+    }
+  };
+
+  window.randomPost = function (btn) {
+    var pool = [];
+    try { pool = JSON.parse(btn.getAttribute('data-pool') || '[]'); } catch (e) {}
+    // secret: wanderer — read 3 random posts
+    try {
+      var w = (parseInt(localStorage.getItem('fa-random') || '0', 10) || 0) + 1;
+      localStorage.setItem('fa-random', String(w));
+      if (w >= 3) window.__faSecretFound('wander');
+    } catch (e) {}
+    if (!pool.length) return;
+    window.location.href = pool[Math.floor(Math.random() * pool.length)];
+  };
+
+  // ---- Avatar card secrets (collectible easter eggs, Josh Comeau style) ----
+  var FA_SECRETS = [
+    { id: 'first', name: '初次见面' },
+    { id: 'night', name: '夜深了' },
+    { id: 'combo', name: '手速惊人' },
+    { id: 'key', name: '键盘侠' },
+    { id: 'fur', name: '顺了顺毛' },
+    { id: 'wander', name: '随缘读者' },
+    { id: 'regular', name: '老朋友' }
+  ];
+  var faSecretStore = function () {
+    try { return JSON.parse(localStorage.getItem('fa-secrets') || '{}'); } catch (e) { return {}; }
+  };
+  window.__faSecretFound = function (id) {
+    var store = faSecretStore();
+    if (store[id]) return;
+    var meta = null;
+    for (var i = 0; i < FA_SECRETS.length; i++) if (FA_SECRETS[i].id === id) meta = FA_SECRETS[i];
+    if (!meta) return;
+    store[id] = true;
+    try { localStorage.setItem('fa-secrets', JSON.stringify(store)); } catch (e) {}
+    var n = 0; for (var k in store) n++;
+    showToast('✦ 发现秘密「' + meta.name + '」 ' + n + '/' + FA_SECRETS.length);
+    window.__faSecretRender();
+    if (n >= FA_SECRETS.length) {
+      showToast('🎉 你找齐了全部七个秘密！');
+      window.__faConfetti(document.getElementById('nav-avatar-btn'));
+    }
+  };
+  window.__faSecretRender = function () {
+    var box = document.getElementById('avatar-pop-secrets');
+    if (!box) return;
+    var store = faSecretStore();
+    var n = 0;
+    var html = FA_SECRETS.map(function (s) {
+      var f = !!store[s.id];
+      if (f) n++;
+      return '<span class="secret-dot' + (f ? ' on' : '') + '" title="' + (f ? s.name : '？？？') + '"></span>';
+    }).join('') + '<span class="secret-count">秘密 ' + n + '/' + FA_SECRETS.length + '</span>';
+    box.innerHTML = html;
+  };
+  // minimal gold confetti burst
+  window.__faConfetti = function (originEl) {
+    var r = originEl ? originEl.getBoundingClientRect() : { left: innerWidth / 2 - 20, top: 60, width: 40, height: 40 };
+    var colors = ['#D4A853', '#E9C97F', '#B88D35', '#F4E9D4', '#FEFBF7'];
+    for (var i = 0; i < 90; i++) {
+      var c = document.createElement('i');
+      c.className = 'fa-confetti';
+      c.style.left = (r.left + r.width / 2 + (Math.random() * 50 - 25)) + 'px';
+      c.style.top = (r.top + r.height / 2) + 'px';
+      c.style.background = colors[i % colors.length];
+      c.style.setProperty('--fx', (Math.random() * 280 - 140) + 'px');
+      c.style.setProperty('--fr', (Math.random() * 720 - 360) + 'deg');
+      c.style.animationDelay = (Math.random() * 0.15) + 's';
+      document.body.appendChild(c);
+      (function (el) { setTimeout(function () { el.remove(); }, 2600); })(c);
+    }
+  };
+
   document.addEventListener('DOMContentLoaded', function () {
 
     // Toast container
@@ -320,6 +411,112 @@
         update();
       }
     };
+    // Navbar avatar — hover zoom (pure CSS) + click-to-open profile card.
+    // Shared open/close helper so pjax-swapped DOM stays consistent.
+    window.__faAvatarSet = function (open) {
+      var btn = document.getElementById('nav-avatar-btn');
+      var card = document.getElementById('avatar-pop-card');
+      var title = document.getElementById('nav-site-title');
+      if (card) card.classList.toggle('open', open);
+      if (btn) {
+        btn.classList.toggle('active', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      // Yield room to the enlarged avatar so it never covers the site title.
+      if (title) title.classList.toggle('avatar-yield', open);
+      // Lazy-load busuanzi visit counter on first open only.
+      if (open && !window.__faBusuanzi) {
+        window.__faBusuanzi = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js';
+        document.body.appendChild(s);
+      }
+      // Secrets: first open / night owl / regular visitor + render dots
+      if (open) {
+        var opens = 0;
+        try {
+          opens = (parseInt(localStorage.getItem('fa-card-opens') || '0', 10) || 0) + 1;
+          localStorage.setItem('fa-card-opens', String(opens));
+        } catch (e) { opens = 1; }
+        window.__faSecretFound('first');
+        var h = new Date().getHours();
+        if (h < 5) window.__faSecretFound('night');
+        if (opens >= 10) window.__faSecretFound('regular');
+        window.__faSecretRender();
+      }
+    };
+    window.__faAvatar = function () {
+      var btn = document.getElementById('nav-avatar-btn');
+      var card = document.getElementById('avatar-pop-card');
+      if (!btn || !card || btn.dataset.faBound) return;
+      btn.dataset.faBound = '1';
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Secret: combo — 5 clicks within 30s
+        btn._clicks = (btn._clicks || []).filter(function (t) { return Date.now() - t < 30000; });
+        btn._clicks.push(Date.now());
+        if (btn._clicks.length >= 5) {
+          btn._clicks = [];
+          window.__faConfetti(btn);
+          window.__faSecretFound('combo');
+        }
+        window.__faAvatarSet(!card.classList.contains('open'));
+      });
+      // Secret: fur — rest the cursor on the avatar for 3 seconds
+      btn.addEventListener('pointerenter', function () {
+        clearTimeout(btn._furTimer);
+        btn._furTimer = setTimeout(function () { window.__faSecretFound('fur'); }, 3000);
+      });
+      btn.addEventListener('pointerleave', function () { clearTimeout(btn._furTimer); });
+      card.addEventListener('click', function (e) { e.stopPropagation(); });
+    };
+    // Document-level dismiss (outside click / ESC) — bound once, resolves
+    // the current card at event time so pjax-swapped DOM stays correct.
+    if (!window.__faAvatarDismiss) {
+      window.__faAvatarDismiss = true;
+      var dismiss = function () { window.__faAvatarSet(false); };
+      document.addEventListener('click', dismiss);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { dismiss(); return; }
+        // Secret: keyboard — press "A" to toggle the card
+        if (e.key === 'a' || e.key === 'A') {
+          var t = e.target;
+          if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+          var c = document.getElementById('avatar-pop-card');
+          if (!c) return;
+          window.__faSecretFound('key');
+          window.__faAvatarSet(!c.classList.contains('open'));
+        }
+      });
+      // "Fur-stroke" halo — the gold ring leans toward the nearby cursor
+      // (simplified homage to Josh Comeau's rainbow header).
+      var furRAF = null;
+      document.addEventListener('mousemove', function (e) {
+        if (furRAF) return;
+        furRAF = requestAnimationFrame(function () {
+          furRAF = null;
+          var b = document.getElementById('nav-avatar-btn');
+          if (!b || b.classList.contains('active')) return;
+          var r = b.getBoundingClientRect();
+          var dx = e.clientX - (r.left + r.width / 2);
+          var dy = e.clientY - (r.top + r.height / 2);
+          var d = Math.sqrt(dx * dx + dy * dy);
+          var range = 200;
+          if (d > range || d < 1) {
+            b.style.setProperty('--fur-x', '0');
+            b.style.setProperty('--fur-y', '0');
+            return;
+          }
+          var f = 1 - d / range;
+          b.style.setProperty('--fur-x', (dx / d * f).toFixed(3));
+          b.style.setProperty('--fur-y', (dy / d * f).toFixed(3));
+        });
+      }, { passive: true });
+    }
+    window.__faAvatar();
+
     window.__faWidgets();
 
   });
