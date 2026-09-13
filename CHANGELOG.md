@@ -1,5 +1,9 @@
 # 博客修改日志
 
+## 2026-09-13
+- **头像名片卡上线**：悬停放大+顺毛光环、点击弹出 Anthropic 暖金名片卡（统计/签名句/20周热力图/精选文章/不蒜子访问计数/回首页·随便看看·Github·Email·复制邮箱）、七个秘密收集系统+金色彩带、`A` 键快捷键。设计文档见 `docs/头像名片卡.md`
+- 邮箱 q2420844892@163.com 加入社交链接；主题配置新增 `avatar_card.pinned` 精选文章列表
+
 ## 2026-07-26
 - **Anthropic 审美重设计**：暖金色 accent (#D4A853)、奶油底色 (#FEFBF7)、Plus Jakarta Sans 字体、多层柔和阴影、Bento Grid 布局、Unsplash 背景轮播、暗色模式、font switcher 三档切换
 - 新文章：LeetCode 24 - 两两交换链表中的节点
