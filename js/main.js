@@ -424,14 +424,9 @@
       }
       // Yield room to the enlarged avatar so it never covers the site title.
       if (title) title.classList.toggle('avatar-yield', open);
-      // Lazy-load busuanzi visit counter on first open only.
-      if (open && !window.__faBusuanzi) {
-        window.__faBusuanzi = true;
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js';
-        document.body.appendChild(s);
-      }
+      // Visit counter (Vercount) is loaded by the footer on every page since
+      // 2026-09-13; the old busuanzi lazy-load was removed — it double-injected
+      // on card open and busuanzi was flaky/inaccurate on Safari.
       // Secrets: first open / night owl / regular visitor + render dots
       if (open) {
         var opens = 0;
