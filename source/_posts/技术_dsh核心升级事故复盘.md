@@ -69,7 +69,29 @@ nohup dsh web --no-open --host 127.0.0.1 \
 
 重启后逐项验证：HTTP 200、manifest 中 `batches` 为数组、`client.js` 与 `index.js` 静态资源均返回 200。第一层故障消除。
 
-另发现一个问题：0.1.5 引入 auth token 机制，首次访问需通过 `/?token=xxx` 登录并写入 30 天 cookie，而 `~/.dsh/dsh-launch.sh` 中的 `open 127.0.0.1:3080` 将直接返回 401。按本机守则先备份为 `.bak-20260912-*`，再将 `dsh-launch.sh` 改为从 `/tmp/dsh-web.log` 解析 token URL 后打开。
+另发现一个问题：0.1.5 引入 auth token 机制，首次访问需通过 `/?token=xxx` 登录并写入 30 天 cookie，而 `~/.dsh/dsh-launch.sh` 中的 `open 127.0.0.1:3080` 将直接返回 401。按本机守则先备份为 `.bak-20260912-*`，再做修改：
+
+```bash
+# 修改前
+open "$HOST_URL"
+
+# 修改后：从启动日志解析一次性 token URL 再打开
+TOKEN_URL=$(grep -o 'http://127.0.0.1:3080/?token=[A-Za-z0-9_-]*' /tmp/dsh-web.log 2>/dev/null | tail -1)
+if [ -n "$TOKEN_URL" ]; then
+  open "$TOKEN_URL"
+else
+  open "$HOST_URL"
+fi
+```
+
+命令行层面的验证方式（后续各轮反复使用）：
+
+```bash
+# 从日志取 token → 带 cookie 落地首页 HTML
+TOKEN_URL=$(grep -oE 'http://127.0.0.1:3080/\?token=[A-Za-z0-9_-]+' /tmp/dsh-web.log | tail -1)
+curl -s -L -c /tmp/dsh-cookie.txt -o /tmp/dsh-home.html "$TOKEN_URL"
+# 302 跳转 + 种 cookie + 200，HTML 里即包含 boot manifest
+```
 
 ## 第二轮：/client 子路径失效
 
@@ -92,6 +114,20 @@ module, and no registered package factory
 - `npm pack` 拉取 `dsh-ui-appearance@0.1.9`、`dsh-better-sidebar@0.19.1`、`dsh-at-file@0.6.3`、`dsh-writing-pad@1.1.3` 四个最新包解开对照，确认上游适配情况；
 - 解析首页 HTML 里的 boot manifest，确认新版认可的模块名的实际形式。
 
+其中第二步的扫描脚本：
+
+```bash
+cd ~/.dsh/profiles/web/node_modules
+for d in dsh-* @aiwayds/* @baconbao/* @liustack/*; do
+  [ -d "$d" ] || continue
+  # 带 /client"（无 .js）的引用——会崩
+  bad=$(grep -rhoE '@deepseek-ai/dsh-client-[a-z-]+/client"' "$d" 2>/dev/null | sort -u)
+  # 裸名或 /client.js——兼容
+  ok=$(grep -rhoE '@deepseek-ai/dsh-client-[a-z-]+(/client\.js)?"' "$d" 2>/dev/null | sort -u)
+  [ -n "$bad" ] && { echo "[BAD] $d"; echo "$bad"; }
+done
+```
+
 结论是五个插件受影响：
 
 | 插件 | 当前 → 最新 | 上游状态 |
@@ -111,6 +147,25 @@ pnpm add dsh-ui-appearance@^0.1.9 dsh-better-sidebar@^0.19.1
 ```
 
 随后在 `cordis.patch.yml` 中禁用其余三个插件。此步骤出现一个问题：disabled 条目按包名书写（`dsh-writing-pad`、`dsh-file-changes`），重启后 manifest 中三个插件仍然存在，禁用未生效。原因为 bundle id 与包名不一致：`dsh-writing-pad` 的 id 是 `writing-pad`，`dsh-file-changes` 的 id 是 `file-changes`，均无 `dsh-` 前缀。经 `dsh --profile web --dump-config` 核对真实 id 后改写，重启，三个插件在 manifest 中清零。
+
+重启后的标准验证流程：
+
+```bash
+# 等待就绪并取 token
+for i in {1..40}; do
+  tok=$(grep -oE 'token=[A-Za-z0-9_-]+' /tmp/dsh-web.log 2>/dev/null | tail -1)
+  [ -n "$tok" ] && break
+  sleep 0.5
+done
+curl -s -L -c /tmp/dsh-cookie.txt -o /tmp/dsh-home5.html "http://127.0.0.1:3080/?$tok"
+
+# 数 boot manifest 里各插件出现次数（禁用的应为 0，在载的应 >0）
+for p in dsh-at-file dsh-writing-pad dsh-file-changes; do
+  echo "$p: $(grep -o "$p" /tmp/dsh-home5.html | wc -l | tr -d ' ') 处"
+done
+# 旧 /client 子路径残留（应为 0）
+grep -oE '@deepseek-ai/dsh-client-[a-z-]+/client"' /tmp/dsh-home5.html | sort -u
+```
 
 验证结果：禁用的三个插件出现 0 次，升级的两个插件与 `dsh-client-store` seed 均存在，旧 `/client` 引用残留 0。
 
@@ -138,7 +193,19 @@ dsh 按简报完成修复，故障再次出现。
 
 改动方向正确，问题在于未重启，浏览器中呈现的仍是旧进程状态。
 
-重启后验证：manifest 中三个插件各 5 处（已加载）、旧 `/client` 残留 0、全量扫描所有插件的实际 JS（排除 `.map`）无旧子路径。本轮验证仍限于 boot manifest 层。
+重启后验证。manifest 层之外，这次加了一层全量 JS 扫描（排除 `.map`，sourcemap 中的旧引用不影响运行但会干扰判断）：
+
+```bash
+cd ~/.dsh/profiles/web/node_modules
+for d in dsh-* @aiwayds/* @baconbao/* @liustack/*; do
+  [ -d "$d" ] || continue
+  bad=$(grep -rhoE '@deepseek-ai/dsh-client-[a-z-]+/client"' "$d" --include='*.js' 2>/dev/null | sort -u)
+  [ -n "$bad" ] && echo "[BAD] $d: $bad"
+done
+# 输出为空：无任何插件的实际 JS 中残留旧 /client 子路径
+```
+
+manifest 中三个插件各 5 处（已加载）。本轮验证仍限于 boot manifest 与静态扫描层。
 
 ## 第四轮：runtime 模块被整体移除
 
@@ -157,11 +224,54 @@ module, and no registered package factory
 
 第二步逐插件检查实际使用的 runtime API，直接读源码：
 
-- `dsh-at-file/lib/client.js`：只用了 `createSnapshotStore`。查新版核心，该 API 移入 `dsh-client-store`。改 require 目标即可。
-- `dsh-file-changes/lib/client.js`：用了 `isAppendSurfaceEvent` 和 `resolveWorkspacePath`，新版无客户端侧替代。解法是把这两个函数的实现从新版核心源码中取出，内联进插件。
+```bash
+# 每个插件到底用了 runtime 的哪些导出
+grep -oE 'import_client\.[a-zA-Z]+' dsh-at-file/lib/client.js | sort -u
+# → import_client.createSnapshotStore
+grep -oE 'runtime_client\.[a-zA-Z]+' dsh-file-changes/lib/client.js | sort -u
+# → runtime_client.isAppendSurfaceEvent / runtime_client.resolveWorkspacePath
+```
+
+结论与处理：
+
+- `dsh-at-file/lib/client.js`：只用了 `createSnapshotStore`。查新版核心，该 API 移入 `dsh-client-store`。改 require 目标即可，整处改动只有一行：
+
+```diff
+- var import_client = require("@deepseek-ai/dsh-client-runtime");
++ var import_client = require("@deepseek-ai/dsh-client-store");
+```
+
+- `dsh-file-changes/lib/client.js`：用了 `isAppendSurfaceEvent` 和 `resolveWorkspacePath`，新版无客户端侧替代。解法是把这两个函数的实现从新版核心源码中取出，内联进插件，用一个 IIFE 替换原来的 require：
+
+```js
+// 修改前
+let runtime_client = require("@deepseek-ai/dsh-client-runtime");
+
+// 修改后：实现取自新版核心 dsh-session 与 dsh-util-workspace-path 的源码
+let runtime_client = (() => {
+    const SURFACE_EVENT_TYPES = new Set(["system/message", "user/message",
+        "assistant/message", "tool/result"]);
+    const isWindowsStylePath = (value) =>
+        /^[A-Za-z]:[/\\]/.test(value) || value.startsWith("\\\\");
+    const isAbsoluteWorkspacePath = (path) =>
+        path.startsWith("/") || isWindowsStylePath(path);
+    return {
+        isAppendSurfaceEvent(event) {
+            return SURFACE_EVENT_TYPES.has(event.type) && event.surfaceOp === "append";
+        },
+        resolveWorkspacePath(cwd, path) {
+            if (isAbsoluteWorkspacePath(path)) return path;
+            if (cwd === void 0 || cwd === "") return path;
+            const separator = isWindowsStylePath(cwd) && cwd.includes("\\") ? "\\" : "/";
+            return `${cwd.replace(/[/\\]+$/, "")}${separator}${path.replace(/^[/\\]+/, "")}`;
+        }
+    };
+})();
+```
+
 - `dsh-writing-pad`：1.1.3 本来就只 require `ui-primitives`，无需改动。
 
-内联的两个函数，实现分别位于核心的 `dsh-session/lib/index.js`（`isAppendSurfaceEvent`，含 `SURFACE_EVENT_TYPES` 判断）与 `dsh-util-workspace-path/lib/index.js`（`resolveWorkspacePath`，含 Windows 风格路径分支），逐行确认语义后移入插件。
+内联函数的实现分别位于核心的 `dsh-session/lib/index.js`（`isAppendSurfaceEvent`，含 `SURFACE_EVENT_TYPES` 判断）与 `dsh-util-workspace-path/lib/index.js`（`resolveWorkspacePath`，含 Windows 风格路径分支），逐行确认语义后移入插件。
 
 修复方式：先直接修改 node_modules 验证方向，重启确认可加载后，用 `pnpm patch` 固化（否则下次 `pnpm install` 会被覆盖）：
 
@@ -172,7 +282,15 @@ pnpm patch dsh-at-file@0.6.3
 pnpm patch-commit node_modules/.pnpm_patches/dsh-at-file@0.6.3
 ```
 
-期间清理了一次 `.pnpm_patches` 的残留状态（含上次 dsh 操作留下的 `state.json`）。`dsh-file-changes` 为 github tarball 源，流程相同，临时目录名为一整串 codeload URL，在其中完成两个函数的内联后 patch-commit。
+期间清理了一次 `.pnpm_patches` 的残留状态（含上次 dsh 操作留下的 `state.json`）。patch 目录内的修改以 sed 完成后提交：
+
+```bash
+TMP="node_modules/.pnpm_patches/dsh-at-file@0.6.3"
+sed -i '' 's|require("@deepseek-ai/dsh-client-runtime")|require("@deepseek-ai/dsh-client-store")|g' "$TMP/lib/client.js"
+pnpm patch-commit "$TMP"
+```
+
+`dsh-file-changes` 为 github tarball 源，流程相同，只是临时目录名为一整串 codeload URL，在其中完成两个函数的内联后 patch-commit。最终 `patches/` 下生成 `dsh-at-file@0.6.3.patch` 与 `dsh-file-changes@0.1.0.patch`，`pnpm-lock.yaml` 与 `pnpm-workspace.yaml` 写入 `patchedDependencies` 记录。
 
 重启，最终验证：三个插件各 5 处、旧 `/client` 残留 0、裸名 runtime 残留 0、日志无报错。
 
@@ -186,7 +304,28 @@ web boot: 1 entry did not activate
 dsh-file-changes: pending (waiting for service: conversationEvents)
 ```
 
-require 层全部修复，故障转移到服务层。`dsh-file-changes` 的 `exports.inject` 声明了 `conversationEvents` 这个 Cordis 短服务，插件通过 `ctx.conversationEvents.register(fileChangesDefinition)` 注册文件变更事件定义。源码中 `fileChangesDefinition` 位于 113 行，`kind: "fileChanges"`，含 `match/start/update/render` 生命周期钩子，344 行调用 register。0.1.5-rc.2 将该事件系统整体重构，短服务不存在，插件永久处于 pending。
+require 层全部修复，故障转移到服务层。`dsh-file-changes` 的 `exports.inject` 声明了 `conversationEvents` 这个 Cordis 短服务，插件通过 `ctx.conversationEvents.register(fileChangesDefinition)` 注册文件变更事件定义。定义本体位于源码 113 行：
+
+```js
+const fileChangesDefinition = {
+    kind: "fileChanges",
+    match: (event) => {
+        if (event.type === "turn/start") return { id: String(event.data.turn), role: "start" };
+        if (event.type === "tool/call") return { id: String(event.data.turn), role: "update" };
+        if (event.type === "tool/result" && runtime_client.isAppendSurfaceEvent(event)) {
+            return { id: String(event.data.turn), role: "update" };
+        }
+        return null;
+    },
+    start: (_context, match) => { /* 记录 turn 与 calls 状态 */ },
+    update: (context, match) => { /* 累积 tool/call 与 tool/result，收集文件变更 */ },
+    // ...
+};
+// 344 行
+ctx.conversationEvents.register(fileChangesDefinition);
+```
+
+0.1.5-rc.2 将该事件系统整体重构，`conversationEvents` 服务不存在，插件永久处于 pending。
 
 对照确认波及范围：`dsh-at-file` 的 inject 为 `["inputTriggers", "sessions", "connection", "remote", "slots", "locale"]`，`dsh-writing-pad` 为 `["slots", "layout", "remote", "locale"]`，这些服务在新版中均存在，因此仅 `file-changes` 无法激活。
 
@@ -200,12 +339,29 @@ boot 层至此正常：dsh 可打开，可查看历史会话，但对话功能�
 
 故障现象：每发送一条消息即弹出"本轮运行失败 events is not iterable UNKNOWN"，连续复现，无法对话。
 
-本次报错位于 turn 运行时，由前端弹出。排查路径：
+本次报错位于 turn 运行时，由前端弹出。服务端日志无对应错误，排查转入会话存储。dsh 的 session 日志为 zstd 压缩的 JSONL 事件流，解压检索：
 
-1. `/tmp/dsh-web.log` 中无对应错误，服务端日志正常；
-2. 在 `~/.dsh/sessions/--Users-gwen-kaoyan--/` 下找到最新 session 目录，`zstd -dc` 解开 `session.v3.jsonl.zstd`，找到 turn 20 到 23 连续复现的 `turn/end` 报错 `{message: "events is not iterable", code: "UNKNOWN"}`；
-3. 排查该 session 中唯一影响 turn 生命周期的组件：`@aiwayds/dsh-dcp`。检查其 `lib/index.js`、`lib/setup.js`、`lib/summarizer.js`，确认它 override 了核心 `BasicCompactionEngine.summarize(input)` 并订阅 `session/event`；
-4. dcp 的 README 标注：verified against dsh 0.1.2-alpha.3。
+```bash
+S=~/.dsh/sessions/--Users-gwen-kaoyan--/session-3857b294-d67a-469a-a8cf-c9f0b4727a1f
+zstd -dc "$S/session.v3.jsonl.zstd" | grep -a -B2 -A2 'not iterable' | tail -30
+```
+
+命中 turn 20 到 23 连续复现的 `turn/end` 失败记录：
+
+```json
+{ "type": "turn/end", "error": { "message": "events is not iterable", "code": "UNKNOWN" } }
+```
+
+继续排查该 session 中唯一影响 turn 生命周期的组件 `@aiwayds/dsh-dcp`：
+
+```bash
+DCP=~/.dsh/profiles/web/node_modules/@aiwayds/dsh-dcp
+grep -n 'summarize\|events\|for (\|\.map(' "$DCP/lib/index.js" | head
+# 确认 override 点
+sed -n '548,620p' "$DCP/lib/summarizer.js"   # summarizeDeterministically 函数体
+```
+
+确认它 override 了核心 `BasicCompactionEngine.summarize(input)` 并订阅 `session/event`。再看 dcp 的 README，标注为 verified against dsh 0.1.2-alpha.3。
 
 核心版本为 0.1.5-rc.2，与 dcp 验证版本间隔三个版本。新版事件流 API 变更，dcp 的 summarize 接收的 `input.events` 不再可迭代，每轮 turn 开始即失败。
 
@@ -256,9 +412,53 @@ pnpm install
 
 重建从结构学习开始：`dsh-icon-theme` 与 `dsh-theme-whalegirl` 为两个正常运行的主题类插件，逐一检查其 `package.json`、`lib/client.js`、`lib/index.js`、`cordis.patch.yml`，确认最小可用插件所需的文件、`exports.inject` 的声明方式、设置卡片向 `settings.plugin.item` 槽位的挂载方式。
 
-其次查找历史。dsh 的会话存储位于 `~/.dsh/sessions/`，其中 `--Users-gwen-.dsh-claudecode--` 目录下为此前导入的 Claude Code 会话，每个 session 为一份 zstd 压缩的 JSONL 事件流。编写脚本逐个解压并检索 `dsh-ui-theme-switch`，命中多个 session，其中 `import-4bf65167`（9 月 2 日的会话）出现次数最多，即创建这两个插件的原始会话。
+其次查找历史。dsh 的会话存储位于 `~/.dsh/sessions/`，其中 `--Users-gwen-.dsh-claudecode--` 目录下为此前导入的 Claude Code 会话，每个 session 为一份 zstd 压缩的 JSONL 事件流。逐个解压检索插件名：
 
-接下来从 JSONL 中提取源码。agent 写文件通过 write 工具调用完成，事件中含 `file_path` 与 `content` 字段；同一文件可能被多次写入，需取最后一次写入的 content 作为最终版本。提取脚本经过多轮迭代达到稳定：先是字段名不匹配，继而是命中格式问题，再是同名文件分布在多个 session 中需要去重排序。最终得到完整文件清单。
+```bash
+for f in ~/.dsh/sessions/--Users-gwen-.dsh-claudecode--/*/session*.zstd; do
+  [ -f "$f" ] || continue
+  zstd -dc "$f" 2>/dev/null | grep -q 'dsh-ui-theme-switch' && echo "HIT: $f"
+done
+```
+
+命中多个 session，其中 `import-4bf65167`（9 月 2 日的会话）出现次数最多，即创建这两个插件的原始会话。
+
+接下来从 JSONL 中提取源码。agent 写文件通过 write 工具调用完成，事件中含 `file_path` 与 `content` 字段；同一文件可能被多次写入，需取最后一次写入的 content 作为最终版本。提取脚本经过多轮迭代达到稳定（先是字段名不匹配，继而是命中格式问题，再是同名文件分布在多个 session 中需要去重排序），最终版本的核心逻辑：
+
+```python
+import sys, json, subprocess
+path = sys.argv[1]
+data = subprocess.run(['zstd', '-dc', path],
+                      capture_output=True).stdout.decode('utf-8', 'ignore')
+writes = []
+for line in data.splitlines():
+    try:
+        obj = json.loads(line)
+    except Exception:
+        continue
+    def walk(o):                      # JSONL 事件可能深层嵌套，递归找工具调用
+        if isinstance(o, dict):
+            if o.get('name') in ('write', 'Write') and isinstance(o.get('arguments'), str):
+                try:
+                    a = json.loads(o['arguments'])
+                except Exception:
+                    return
+                fp = a.get('file_path') or a.get('path') or ''
+                if fp and a.get('content'):
+                    writes.append((fp, a['content']))
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    walk(obj)
+
+# 同一文件取最后一次写入 = 最终版
+clients = [c for fp, c in writes if fp.endswith('dsh-ui-theme-switch/lib/client.js')]
+open('/tmp/theme-switch-client.js', 'w').write(clients[-1])
+```
+
+由该脚本得到完整文件清单。
 
 `dsh-ui-theme-switch`，恢复 4 个文件：
 
