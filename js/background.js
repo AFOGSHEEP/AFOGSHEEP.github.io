@@ -155,8 +155,18 @@
   // CSS vars (--fa-dust-*) so both styles × light/dark work with a 500ms
   // crossfade. Degrades itself on slow frames; reduced-motion → static CSS.
   if (cfg.type === 'dust') {
+    // re-read config on every bind: page profile (reading vs full) travels in #bg-config
+    function readCfg() {
+      var el = document.getElementById('bg-config');
+      if (!el) return cfg;
+      try { var c = JSON.parse(el.textContent); return c && c.type === 'dust' ? c : cfg; } catch (e) { return cfg; }
+    }
+
     window.__faDust = function () {
-      if (window.__faDustLive) window.__faDustLive.stop();
+      var cfgNow = readCfg();
+      // PJAX rebinding: the canvas element was swapped but motes/loop live on —
+      // retarget density/speed/fps in place instead of a hard reseed.
+      if (window.__faDustLive) { window.__faDustLive.retarget(cfgNow); return; }
       var canvas = document.getElementById('bg-dust');
       if (!canvas) return;
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -167,17 +177,19 @@
       try { saveData = navigator.connection && navigator.connection.saveData; } catch (e) {}
       var lowPower = (navigator.hardwareConcurrency || 8) <= 4 || !!saveData;
 
-      var density = cfg.density || 90;
-      var baseSpeed = cfg.speed || 6;
-      var accentRatio = typeof cfg.accent === 'number' ? cfg.accent : 0.1;
-      var mouseOn = cfg.mouse !== false;
+      var density = cfgNow.density || 90;
+      var baseSpeed = cfgNow.speed || 6;
+      var accentRatio = typeof cfgNow.accent === 'number' ? cfgNow.accent : 0.1;
+      var mouseOn = cfgNow.mouse !== false;
 
-      var target = density * (isMobile ? 0.45 : 1) * (lowPower ? 0.6 : 1);
-      if (isMobile) target = Math.min(target, 40);
+      var baseTarget = density * (isMobile ? 0.45 : 1) * (lowPower ? 0.6 : 1);
+      if (isMobile) baseTarget = Math.min(baseTarget, 40);
       var DPR = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
 
-      var w = 0, h = 0, raf = 0, running = false, last = 0;
+      var w = 0, h = 0, raf = 0, running = false, last = 0, lastDraw = 0;
       var motes = [];
+      // page profile state — reading (post) pages run sparser, slower, fps-capped
+      var desiredCount = baseTarget, targetSpeedScale = 1, fpsCap = 0, speedScale = 1;
       var mouse = { x: null, y: null, tx: null, ty: null, R: 110 };
       var scrollDrift = 0, lastScroll = window.scrollY;
       var degrade = 0;
@@ -224,7 +236,21 @@
       }
       function seedMotes() {
         motes = [];
-        for (var i = 0; i < Math.round(target); i++) motes.push(makeMote());
+        for (var i = 0; i < Math.round(desiredCount); i++) motes.push(makeMote());
+      }
+      // switch page profile; excess motes fade out on staggered lifespans (~1s crossfade,
+      // never a hard pop), missing motes fade back in through the natural 3s env
+      function applyPageProfile(c) {
+        var reading = !!c.reading;
+        desiredCount = reading ? Math.min(baseTarget, c.post_density || 35) : baseTarget;
+        targetSpeedScale = reading ? (typeof c.post_speed === 'number' ? c.post_speed : 0.4) : 1;
+        fpsCap = reading ? (c.post_fps || 30) : 0;
+        var want = Math.round(desiredCount);
+        var excess = motes.length - want;
+        for (var i = 0; i < excess; i++) {
+          var m = motes[(Math.random() * motes.length) | 0];
+          m.lifespan = Math.min(m.lifespan, m.life + 0.5 + Math.random() * 3);
+        }
       }
       function resize() {
         w = window.innerWidth;
@@ -244,6 +270,12 @@
 
       function frame(now) {
         if (!running) return;
+        // reading pages: cap at ~30fps — half the frames, calmer feel, battery win
+        if (fpsCap && lastDraw && now - lastDraw < 1000 / fpsCap - 1) {
+          raf = requestAnimationFrame(frame);
+          return;
+        }
+        lastDraw = now;
         var dt = Math.min((now - last) / 1000, 0.05);
         last = now;
 
@@ -259,6 +291,7 @@
         }
 
         lerpPalette(dt);
+        speedScale += (targetSpeedScale - speedScale) * Math.min(1, dt);
 
         if (mouseOn && mouse.tx !== null) {
           if (mouse.x === null) { mouse.x = mouse.tx; mouse.y = mouse.ty; }
@@ -275,14 +308,19 @@
         for (var i = 0; i < motes.length; i++) {
           var p = motes[i];
           p.life += dt;
-          if (p.life >= p.lifespan) { motes[i] = makeMote(); continue; }
+          if (p.life >= p.lifespan) {
+            // retire instead of respawn while above the page's desired density
+            if (motes.length > Math.round(desiredCount)) { motes.splice(i, 1); i--; continue; }
+            motes[i] = makeMote();
+            continue;
+          }
 
           var env = 1;
           if (p.life < 3) env = p.life / 3;
           else if (p.life > p.lifespan - 3) env = Math.max(0, (p.lifespan - p.life) / 3);
 
           var breath = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(now / 1000 * Math.PI * 2 / p.breathPeriod + p.phi));
-          var s = p.spd * breath;
+          var s = p.spd * breath * speedScale;
           var ang = flowAngle(p.x, p.y, now / 1000, p.seed);
           var vx = Math.cos(ang) * s;
           var vy = Math.sin(ang) * s - (p.layer === 2 ? 0.35 : 0.15);
@@ -329,6 +367,12 @@
           }
         }
 
+        // grow back gradually (fade-in env makes new motes appear softly);
+        // never regrow past an auto-degrade verdict
+        if (degrade === 0 && motes.length < Math.round(desiredCount) && Math.random() < dt * 6) {
+          motes.push(makeMote());
+        }
+
         raf = requestAnimationFrame(frame);
       }
 
@@ -373,7 +417,16 @@
       window.__faDustLive = {
         mouse: mouse,
         readPalette: readPalette,
-        onResize: function () { resize(); seedMotes(); },
+        onResize: function () { resize(); },
+        retarget: function (c) {
+          var el = document.getElementById('bg-dust');
+          if (!el) return;
+          canvas = el;
+          ctx = canvas.getContext('2d');
+          resize();
+          applyPageProfile(c || readCfg());
+          if (!running && !document.hidden) start();
+        },
         start: start,
         stop: stop
       };
@@ -381,6 +434,7 @@
       resize();
       readPalette();
       pal = { r1: palT.r1, g1: palT.g1, b1: palT.b1, r2: palT.r2, g2: palT.g2, b2: palT.b2, a: palT.a };
+      applyPageProfile(cfgNow);
       seedMotes();
       start();
     };
