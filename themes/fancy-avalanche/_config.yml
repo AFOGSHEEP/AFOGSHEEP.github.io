@@ -142,6 +142,10 @@ background:
     speed: 6           # 基础漂移 px/s（呼吸包络 0.3~1.0 倍调制）
     accent: 0.1        # 陶土色粒子占比
     mouse: true        # 鼠标流场偏转（柔和分流，非放大镜）
+    # 阅读画像：文章页（post）密度更低、流场更慢、帧率封顶 —— 文字是主角
+    post_density: 35   # 文章页粒子上限
+    post_speed: 0.4    # 文章页流场速度系数
+    post_fps: 30       # 文章页帧率上限（更沉、更省电）
   # 单张背景图（type=image 时生效）
   image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80'
   # 背景轮播图（type=slideshow 时生效，可任意增减）
