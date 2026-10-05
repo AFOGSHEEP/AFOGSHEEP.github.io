@@ -41,7 +41,7 @@
 
   <% if (theme.effects && theme.effects.pjax) { %>
   <script src="<%= theme.cdn.instantclick %>" data-no-instant></script>
-  <script data-no-instant>InstantClick.init('mousedown');InstantClick.on('change',function(){lucide.createIcons();if(typeof AOS!=='undefined')AOS.refresh();if(typeof hljs!=='undefined')hljs.highlightAll();if(window.__faWidgets)window.__faWidgets();if(window.__faTheme)window.__faTheme();if(window.__faAvatar)window.__faAvatar()});</script>
+  <script data-no-instant>InstantClick.init('mousedown');InstantClick.on('change',function(){lucide.createIcons();if(typeof AOS!=='undefined')AOS.refresh();if(typeof hljs!=='undefined')hljs.highlightAll();if(window.__faWidgets)window.__faWidgets();if(window.__faTheme)window.__faTheme();if(window.__faAvatar)window.__faAvatar();if(window.__faDust)window.__faDust()});</script>
   <% } %>
 
   <script src="/js/main.js" data-no-instant></script>
@@ -71,7 +71,7 @@
     })();
   </script>
 
-  <% var bgType = (theme.background && theme.background.type) || 'gradient'; if (bgType === 'canvas' || bgType === 'three') { %>
+  <% var bgType = (theme.background && theme.background.type) || 'gradient'; if (bgType === 'canvas' || bgType === 'three' || bgType === 'dust') { %>
   <script src="/js/background.js" data-no-instant></script>
   <% } %>
 </body>

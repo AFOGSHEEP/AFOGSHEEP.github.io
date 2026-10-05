@@ -82,6 +82,18 @@
 })();
 </script>
 
+<% } else if (bgType === 'dust') { %>
+<%# 纸上尘光: ambient mesh + terracotta lumen + breathing dust motes (canvas) %>
+<div class="ambient-bg" aria-hidden="true">
+  <div class="ambient-blob ambient-blob-1"></div>
+  <div class="ambient-blob ambient-blob-2"></div>
+  <div class="ambient-blob ambient-blob-3"></div>
+  <div class="ambient-lumen"></div>
+  <div class="ambient-grain"></div>
+</div>
+<canvas id="bg-dust" aria-hidden="true"></canvas>
+<script id="bg-config" type="application/json" data-no-instant>{ "type":"dust","density":<%= (bg.dust||{}).density||90 %>,"speed":<%= (bg.dust||{}).speed||6 %>,"accent":<%= (bg.dust||{}).accent!==undefined?(bg.dust||{}).accent:0.1 %>,"mouse":<%= (bg.dust||{}).mouse!==false %> }</script>
+
 <% } else if (bgType === 'gradient') { %>
 <div class="fixed inset-0 -z-[1] pointer-events-none" style="background: <%= bg.gradient || 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' %>;"></div>
 <% } else if (bgType === 'canvas') { %>
