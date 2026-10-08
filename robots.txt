@@ -1,3 +1,53 @@
+# robots.txt — 杜鹃声 (afogsheep.github.io)
+# 分层策略：
+#   1. AI 训练/检索爬虫 —— 明确全站拒绝（守规矩的自己走）
+#   2. 蜜罐路径 —— 对所有爬虫声明禁止；谁进来了，谁就是无视 robots 的恶意爬虫
+# 注意：robots.txt 只是君子协定，真正进来吃毒饵的是无视它那批 —— 这正是设计目标。
+
+# ===== AI 训练 / RAG / AI 搜索爬虫：全站拒绝 =====
+User-agent: GPTBot
+Disallow: /
+User-agent: OAI-SearchBot
+Disallow: /
+User-agent: ChatGPT-User
+Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+User-agent: Claude-Web
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+User-agent: Bytespider
+Disallow: /
+User-agent: PerplexityBot
+Disallow: /
+User-agent: Perplexity-User
+Disallow: /
+User-agent: Amazonbot
+Disallow: /
+User-agent: Applebot-Extended
+Disallow: /
+User-agent: meta-externalagent
+Disallow: /
+User-agent: FacebookBot
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: Diffbot
+Disallow: /
+User-agent: ImagesiftBot
+Disallow: /
+User-agent: YouBot
+Disallow: /
+
+# ===== 蜜罐区：只有无视 robots 的爬虫和扫库工具会进来 =====
 User-agent: *
-Allow: /
+Disallow: /tarpit/
+Disallow: /wp-admin/
+Disallow: /admin/
+Disallow: /backup/
+Disallow: /phpinfo.html
+
 Sitemap: https://afogsheep.github.io/sitemap.xml
