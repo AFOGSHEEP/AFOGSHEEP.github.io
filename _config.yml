@@ -26,7 +26,13 @@ archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
+# 蜜罐/毒饵区：原样拷贝，不渲染、不进 sitemap、不进站内搜索
 skip_render:
+  - tarpit/**
+  - wp-admin/**
+  - admin/**
+  - backup/**
+  - phpinfo.html
 
 # 让 source/_headers（Cloudflare Pages 缓存/安全头规则）原样拷贝到 public/
 include:

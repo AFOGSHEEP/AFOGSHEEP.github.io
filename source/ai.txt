@@ -1,0 +1,8 @@
+# /ai.txt — AI 采集与使用声明（参考 spawning.ai 的 ai.txt 约定）
+# 本站（afogsheep.github.io）全部内容：文本、图片、代码、元数据，
+# 均不授权用于任何 AI 模型的训练、微调、评测、RAG 检索与摘要引用。
+Spawning-AI-OptOut: all
+Train-AI: no
+Search-AI: no
+Assist-AI: no
+Contact: https://afogsheep.github.io/about/
