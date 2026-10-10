@@ -61,7 +61,11 @@
       if (w >= 3) window.__faSecretFound('wander');
     } catch (e) {}
     if (!pool.length) return;
-    window.location.href = pool[Math.floor(Math.random() * pool.length)];
+    var target = pool[Math.floor(Math.random() * pool.length)];
+    // pool paths are root-relative; make absolute so the jump works from
+    // any page (relative resolution from /archives/ or a post caused 404s)
+    if (target.charAt(0) !== '/') target = '/' + target;
+    window.location.href = target;
   };
 
   // ---- Avatar card secrets (collectible easter eggs, Josh Comeau style) ----

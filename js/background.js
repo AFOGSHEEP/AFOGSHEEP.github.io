@@ -81,6 +81,7 @@
       'uniform float u_time;',
       'uniform vec2 u_res;',
       'uniform float u_vel;',
+      'uniform float u_phase;',
       'uniform sampler2D u_palA;',
       'uniform sampler2D u_palB;',
       'uniform float u_mix;',
@@ -109,9 +110,11 @@
       '  mat2 rot = mat2(cos(ra), -sin(ra), sin(ra), cos(ra));',
       '  p = rot * p;',
       '  float disp = clamp(abs(u_vel), 0.0, 2.0);',
-      '  p *= 1.0 + disp * 0.16;',                  // 频率整体升高 → 大团雾撕成细絮
-      '  p.y /= 1.0 + disp * 0.30;',                // 沿滚动轴拉伸 → 动感拖影
-      '  p.x *= 1.0 + disp * 0.10;',
+      // 冲散后新烟雾从别处漂来: 相位随累计滚动量增长, 把噪声域推向全新的区域
+      '  p += vec2(sin(u_phase * 0.6), cos(u_phase * 0.47)) * (0.35 + u_phase * 0.22);',
+      '  p *= 1.0 + disp * 0.28;',                  // 频率整体升高 → 大团雾撕成细絮
+      '  p.y /= 1.0 + disp * 0.42;',                // 沿滚动轴拉伸 → 动感拖影
+      '  p.x *= 1.0 + disp * 0.16;',
       // 恒速曲线滑行: 速度大小恒定(永不减速=永不停滞, 不反向=无回弹),
       // 方向以 0.05 rad/s 缓慢旋转(≈2分钟绕一圈, 无固定轴=不刻意), 外加缓慢的长期偏移
       '  vec2 drift = vec2(sin(u_time * 0.025), -cos(u_time * 0.025)) * 3.2 + vec2(u_time * 0.006, -u_time * 0.004);',
@@ -119,7 +122,7 @@
       // pattern dissolves where it stands and the eye reads shimmer, not drift
       '  vec2 q = vec2(fbm(p + drift * 0.9 + vec2(0.0, t * 0.10)),',
       '                fbm(p + vec2(5.2, 1.3) + vec2(drift.y, drift.x) * 0.6 - vec2(t * 0.06, 0.0)));',
-      '  float n = fbm(p + (1.75 + disp * 0.85) * q + drift * 1.6);', // warp boosts with scroll — the smoke churns',
+      '  float n = fbm(p + (1.75 + disp * 1.15) * q + drift * 1.6);', // warp boosts with scroll — the smoke churns',
       '  n = smoothstep(0.14, 0.94, n);',
       // staged lighting: soft key glow at the top-right corner,
       // counter fill lower-left, edge occlusion vignette (遮蔽光)
@@ -219,7 +222,7 @@
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
       var u = {};
-      ['u_time', 'u_res', 'u_mix', 'u_vel'].forEach(function (n) {
+      ['u_time', 'u_res', 'u_mix', 'u_vel', 'u_phase'].forEach(function (n) {
         u[n] = gl.getUniformLocation(prog, n);
       });
       gl.uniform1i(gl.getUniformLocation(prog, 'u_palA'), 0);
@@ -290,6 +293,7 @@
     // a background that chases the pointer reads as deliberate, and the
     // glide-back on mouseout read as elastic rebound)
     var scrollVel = 0, tScrollVel = 0;    // px/ms normalized (~1 = brisk scroll)
+    var smokePhase = 0;                   // cumulative scroll — drives new-smoke drift-in
     var lastScrollY = null, lastScrollT = 0;
 
     function drawGL(t) {
@@ -297,6 +301,7 @@
       gl.uniform1f(uni.u_time, t);
       gl.uniform2f(uni.u_res, glW, glH);
       gl.uniform1f(uni.u_vel, scrollVel);
+      gl.uniform1f(uni.u_phase, smokePhase);
       gl.uniform1f(uni.u_mix, palMix);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
@@ -316,6 +321,9 @@
 
     function frame(ts) {
       raf = requestAnimationFrame(frame);
+      // asymmetric response: puffs build fast (吹散瞬间), fade out slowly (消隐)
+      var rate = Math.abs(tScrollVel) > Math.abs(scrollVel) ? 8 : 1.3;
+      smokePhase += Math.abs(scrollVel) * dt * 0.9;
       var scrolling = Math.abs(scrollVel) > 0.06;
       // scroll-coupled motion must run at full rAF or it reads as stutter —
       // the fps cap only applies at rest; scrolling earns the full frame rate
@@ -342,7 +350,7 @@
       var dt = Math.min(0.05, gap / 1000);
       tNow += dt;
 
-      scrollVel += (tScrollVel - scrollVel) * Math.min(1, dt * 3.5);
+      scrollVel += (tScrollVel - scrollVel) * Math.min(1, dt * rate);
       tScrollVel *= Math.exp(-dt * 1.1);   // no scroll events → velocity decays slowly, the smoke re-gathers gently
 
       if (palMix < 1) palMix = Math.min(1, palMix + dt / 0.7);
@@ -403,7 +411,7 @@
 
     window.__faAmbientEngine = {
       info: function () {
-        return { running: raf !== null, W: glW, H: glH, tier: tier, mobile: isMobile, vel: Math.round(scrollVel * 100) / 100, errs: loopErrs.slice(0, 3) };
+        return { running: raf !== null, W: glW, H: glH, tier: tier, mobile: isMobile, vel: Math.round(scrollVel * 100) / 100, phase: Math.round(smokePhase * 10) / 10, errs: loopErrs.slice(0, 3) };
       },
       destroy: function () {
         stop();
