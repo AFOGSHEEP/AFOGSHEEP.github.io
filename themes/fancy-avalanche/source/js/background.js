@@ -81,7 +81,6 @@
       'uniform float u_time;',
       'uniform vec2 u_res;',
       'uniform vec2 u_par;',
-      'uniform float u_scroll;',
       'uniform float u_vel;',
       'uniform sampler2D u_palA;',
       'uniform sampler2D u_palB;',
@@ -104,12 +103,15 @@
       '  vec2 asp = vec2(u_res.x / u_res.y, 1.0);',
       '  vec2 p = uv * asp * 2.1;',                       // medium frequency → interwoven fields
       '  p += u_par * 0.20;',
-      '  p.y += u_scroll * 0.30 + u_vel * 0.45;',   // position + velocity lean
-      '  p.x -= u_vel * 0.12;',                     // diagonal shear adds depth
       '  float t = u_time * 0.045;',
+      // 冲散: 滚动是吹过烟雾的风 — 速度越快/越频繁, 烟雾被打得越碎越开
+      '  float disp = clamp(abs(u_vel), 0.0, 2.0);',
+      '  p *= 1.0 + disp * 0.16;',                  // 频率整体升高 → 大团雾撕成细絮
+      '  p.y /= 1.0 + disp * 0.30;',                // 沿滚动轴拉伸 → 动感拖影
+      '  p.x *= 1.0 + disp * 0.10;',
       '  vec2 q = vec2(fbm(p + vec2(0.0, t * 0.85)),',
       '                fbm(p + vec2(5.2, 1.3) - vec2(t * 0.55, 0.0)));',
-      '  float n = fbm(p + 1.75 * q + vec2(t * 0.32, -t * 0.22));', // strong warp smears boundaries',
+      '  float n = fbm(p + (1.75 + disp * 0.85) * q + vec2(t * 0.32, -t * 0.22));', // warp boosts with scroll — the smoke churns',
       '  n = smoothstep(0.14, 0.94, n);',
       // staged lighting: soft key glow at the top-right corner,
       // counter fill lower-left, edge occlusion vignette (遮蔽光)
@@ -120,7 +122,7 @@
       '  float n2 = n * (0.72 + 0.28 * lp) + 0.05 * lp2 * n + 0.24 * key * key;',
       '  n2 *= (0.80 + 0.20 * vig);',
       '  float l = clamp(0.20 + 0.80 * n2, 0.0, 1.0);',
-      '  l += clamp(abs(u_vel) * 0.5, 0.0, 1.0) * 0.05;',  // scroll-speed lift
+      '  l += clamp(abs(u_vel) * 0.5, 0.0, 1.0) * 0.05;',  // dispersed smoke reads lighter
       // ivory key glow: blend the corner toward the ramp's ivory PEAK (1.0) —
       // anything less lands in the clay band and reads as a peach oval
       '  l = mix(l, 1.0, 0.9 * smoothstep(0.5, 1.0, key));',
@@ -209,7 +211,7 @@
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
       var u = {};
-      ['u_time', 'u_res', 'u_par', 'u_scroll', 'u_mix', 'u_vel'].forEach(function (n) {
+      ['u_time', 'u_res', 'u_par', 'u_mix', 'u_vel'].forEach(function (n) {
         u[n] = gl.getUniformLocation(prog, n);
       });
       gl.uniform1i(gl.getUniformLocation(prog, 'u_palA'), 0);
@@ -278,7 +280,6 @@
 
     // eased parallax (-1..1) + normalized scroll/scroll-velocity feed the shader
     var par = { x: 0, y: 0, cx: 0, cy: 0 };
-    var scrollN = 0, tScrollN = 0;
     var scrollVel = 0, tScrollVel = 0;    // px/s normalized (~1 = brisk scroll)
     var lastScrollY = null, lastScrollT = 0;
 
@@ -287,7 +288,6 @@
       gl.uniform1f(uni.u_time, t);
       gl.uniform2f(uni.u_res, glW, glH);
       gl.uniform2f(uni.u_par, par.x, par.y);
-      gl.uniform1f(uni.u_scroll, scrollN);
       gl.uniform1f(uni.u_vel, scrollVel);
       gl.uniform1f(uni.u_mix, palMix);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -336,7 +336,6 @@
 
       par.x += (par.cx - par.x) * Math.min(1, dt * 3.2);
       par.y += (par.cy - par.y) * Math.min(1, dt * 3.2);
-      scrollN += (tScrollN - scrollN) * Math.min(1, dt * 4);
       scrollVel += (tScrollVel - scrollVel) * Math.min(1, dt * 6);
       tScrollVel *= Math.exp(-dt * 2.5);   // no scroll events → velocity target decays to 0
 
@@ -379,7 +378,6 @@
       }
       lastScrollY = y;
       lastScrollT = now;
-      tScrollN = Math.min(3, y / Math.max(1, window.innerHeight));
     }
     function onVisibility() { if (document.hidden) stop(); else start(); }
 
