@@ -1,10 +1,18 @@
-<%# Background — ambient (default, pure CSS) | slideshow with auto-rotate + manual controls %>
-<% var bg = theme.background || {}; var bgType = bg.type || 'ambient'; %>
+<%# Background — ambient (default: Anthropic-style flowing gradient + live particle motes) | slideshow with auto-rotate + manual controls %>
+<% var bg = (typeof get_background_config === 'function' ? get_background_config(page) : null) || theme.background || {}; var bgType = bg.type || 'ambient'; %>
 
 <% if (bgType === 'ambient') { %>
-<div class="ambient-bg" aria-hidden="true">
-  <div class="ambient-blob ambient-blob-1"></div>
-  <div class="ambient-blob ambient-blob-2"></div>
+<% var abg = bg.ambient || {}; var flow = abg.flow !== false; %>
+<div class="ambient-bg<%= flow ? '' : ' ambient-static' %>" aria-hidden="true">
+  <div class="ambient-blob ab-1"></div>
+  <div class="ambient-blob ab-2"></div>
+  <div class="ambient-blob ab-3"></div>
+  <div class="ambient-blob ab-4"></div>
+  <div class="ambient-blob ab-5"></div>
+  <% if (flow) { %>
+  <canvas id="ambient-gl" class="ambient-gl"></canvas>
+  <script id="ambient-cfg" type="application/json">{ "flow": <%= flow %>, "interactive": <%= abg.interactive !== false %> }</script>
+  <% } %>
   <div class="ambient-grain"></div>
 </div>
 

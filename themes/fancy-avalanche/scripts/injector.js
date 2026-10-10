@@ -6,14 +6,8 @@
   var components = theme.components || {};
   var effects = theme.effects || {};
 
-  // Register background script
-  hexo.extend.injector.register('body_end', function () {
-    var bg = theme.background || {};
-    if (bg.type === 'canvas' || bg.type === 'three') {
-      return '<script src="/js/background.js"></script>';
-    }
-    return '';
-  });
+  // background.js is included by layout.ejs (page-aware: honors
+  // per-page/category background overrides), no body_end injection needed.
 
   // Inject custom CSS from theme config
   if (theme.custom && theme.custom.css && theme.custom.css.length > 0) {

@@ -85,18 +85,21 @@ post:
 
 # ---------- 评论系统 ----------
 comment:
-  enable: false
+  enable: true
   # Giscus 配置
   giscus:
     repo: AFOGSHEEP/AFOGSHEEP.github.io
-    repo_id: ''   # 在 https://giscus.app 获取
+    repo_id: 'R_testdummy'   # 在 https://giscus.app 获取
     category: Announcements
-    category_id: ''
+    category_id: 'DIC_testdummy'
     mapping: pathname
     strict: 0
     reactions: 1
     input_position: bottom
     lang: zh-CN
+    # 毛玻璃定制主题（明/暗），跟随站内明暗切换；留空则用 giscus 内置主题
+    theme_light: /css/giscus-fa-light.css
+    theme_dark: /css/giscus-fa-dark.css
   # 邮件通知 (新评论时发送)
   email_notify:
     enable: true
@@ -133,9 +136,14 @@ images:
 # ---------- 背景系统 ----------
 background:
   # 全局默认背景类型
+  # ambient：Anthropic 风格暖色晕染（WebGL 流动暖色 + 光照层次 + 全站磨砂过渡边，本站当前默认）
   # dust：纸上尘光 —— 暖调渐层 + 陶土光晕 + 呼吸浮尘粒子（Anthropic 暖极简，颜色自动跟随双风格×明暗）
-  # ambient：纯 CSS 暖调渐层环境光（零网络请求、零 JS）
-  type: dust  # dust | ambient | slideshow | image | static | gradient | canvas | three
+  # ambient（旧）：纯 CSS 暖调渐层环境光（零网络请求、零 JS）
+  type: ambient  # ambient | dust | slideshow | image | static | gradient | canvas | three
+  # ambient 模式细化配置
+  ambient:
+    flow: true           # WebGL 暖色晕染(中频噪声+强域扭曲交织, 无大面积色滩 + 右上象牙主光/边缘遮蔽;false = 冻结单帧,无 WebGL 时自动回退 CSS 光斑)
+    interactive: true    # 鼠标视差交互
   # 尘埃粒子配置（type=dust 时生效）
   dust:
     density: 90        # 桌面粒子目标数（移动端自动 ≈45% 且 ≤40）

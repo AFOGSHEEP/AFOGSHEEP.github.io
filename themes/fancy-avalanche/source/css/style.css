@@ -14,7 +14,9 @@
   --fa-gold-deep: 184 141 53;
   --fa-rgb-600: 65 102 213;
   --fa-rgb-700: 52 80 174;
-  --fa-page: #f9fbff;
+  /* neutrals carry a warm (yellow-brown) undertone — Anthropic-style:
+     they sit on the parchment ambient without a cool-blue clash */
+  --fa-page: #f7f5ef;
   --fa-page-dark: #15171e;
   --fa-ink: #29303c;
   --fa-ink-2: #e7eaf2;
@@ -22,12 +24,12 @@
   --fa-text-dark: #d6dae4;
   --fa-muted: #667085;
   --fa-muted-dark: #8a91a0;
-  --fa-border: #e2e7f1;
+  --fa-border: #e5e3d9;
   --fa-border-dark: #2b3140;
-  --fa-code-bg: #eef2fb;
+  --fa-code-bg: #eff0e8;
   --fa-code-bg-dark: #262b36;
   --fa-pre-bg: #1e2330;
-  --fa-tint-1: #f3f6fd;
+  --fa-tint-1: #f4f3ea;
   --fa-glass-rgb: 255 255 255;
   --fa-surf-dark-rgb: 27 30 38;
   --fa-hero-a: #4d6bfe;
@@ -45,7 +47,7 @@
   --fa-dust-2: 217 119 87;
   --fa-dust-alpha: 0.16;
   --fa-lumen: 204 120 92;
-  --fa-theme-color: #f9fbff;
+  --fa-theme-color: #f7f5ef;
 }
 html[data-style="porcelain"] {
   --fa-rgb-50: 233 246 241;
@@ -1149,19 +1151,67 @@ footer {
 }
 
 /* ============================================================
-   Ambient background — pure CSS mesh gradient (Stripe/Linear style)
-   3-4 same-lightness color points over a solid anchor, each fading
-   out at 55-60% so layers melt into each other; two slow-drifting
-   pools add life; paper grain adds texture. Per-style via vars.
-   Zero network requests, zero JS, transform-only animation.
+   Ambient background — Anthropic-style warm paper light.
+   Layer stack (bottom → top): warm paper base · WebGL parchment
+   light (background.js, tonal breathing + staged lighting) ·
+   paper grain. The five CSS blobs are the no-WebGL FALLBACK only
+   (hidden once .gl-on): near-neutral warm washes, never colored
+   pools — colored blobs read as stains and were removed.
    ============================================================ */
+:root {
+  /* 鲸蓝 light — warm parchment, clay/sand/sage whisper pools (fallback blobs) */
+  --fa-ab-base: #f0ebdf;
+  --fa-ab-1: rgba(217, 119, 87, 0.14);
+  --fa-ab-2: rgba(198, 158, 118, 0.15);
+  --fa-ab-3: rgba(146, 161, 138, 0.12);
+  --fa-ab-4: rgba(116, 134, 170, 0.13);
+  --fa-ab-5: rgba(255, 250, 236, 0.50);
+  /* frosted-rim kit — tuned per theme so the frost reads on every mode */
+  --fa-frost-bg: rgba(255, 255, 255, 0.30);
+  --fa-frost-glow: rgba(255, 255, 255, 0.22);
+}
+html[data-style="porcelain"] {
+  /* 素瓷 light — near-monochrome warm mist, sage + clay barely whispering */
+  --fa-ab-base: #f4f3ec;
+  --fa-ab-1: rgba(154, 148, 134, 0.14);
+  --fa-ab-2: rgba(198, 154, 133, 0.11);
+  --fa-ab-3: rgba(156, 175, 155, 0.11);
+  --fa-ab-4: rgba(122, 118, 108, 0.10);
+  --fa-ab-5: rgba(255, 253, 246, 0.48);
+  --fa-frost-bg: rgba(255, 254, 250, 0.28);
+  --fa-frost-glow: rgba(255, 254, 250, 0.20);
+}
+.dark {
+  /* 鲸蓝 dark — warm ink, ember glow + indigo whisper (no white glow) */
+  --fa-ab-base: #191a1e;
+  --fa-ab-1: rgba(217, 119, 87, 0.12);
+  --fa-ab-2: rgba(146, 124, 171, 0.09);
+  --fa-ab-3: rgba(118, 146, 130, 0.07);
+  --fa-ab-4: rgba(96, 112, 168, 0.11);
+  --fa-ab-5: rgba(255, 232, 205, 0.040);
+  /* dark frost: denser glass + a faint neutral edge light to read on ink */
+  --fa-frost-bg: rgba(27, 30, 38, 0.55);
+  --fa-frost-glow: rgba(255, 255, 255, 0.07);
+}
+.dark[data-style="porcelain"] {
+  /* 素瓷 dark — charcoal, faint warm gray breath */
+  --fa-ab-base: #1c1c1a;
+  --fa-ab-1: rgba(198, 154, 133, 0.08);
+  --fa-ab-2: rgba(170, 166, 156, 0.07);
+  --fa-ab-3: rgba(128, 150, 136, 0.06);
+  --fa-ab-4: rgba(142, 138, 130, 0.05);
+  --fa-ab-5: rgba(255, 240, 220, 0.032);
+  --fa-frost-bg: rgba(36, 36, 36, 0.55);
+  --fa-frost-glow: rgba(255, 255, 255, 0.06);
+}
+
 .ambient-bg {
   position: fixed;
   inset: 0;
   z-index: -2;
   overflow: hidden;
   pointer-events: none;
-  background: var(--fa-mesh);
+  background: var(--fa-ab-base);
 }
 
 .ambient-blob {
@@ -1169,25 +1219,105 @@ footer {
   border-radius: 50%;
   will-change: transform;
 }
-.ambient-blob-1 {
-  width: 58vmax; height: 58vmax;
-  top: -24vmax; right: -16vmax;
-  background: radial-gradient(circle at center, var(--fa-blob-1) 0%, transparent 62%);
-  animation: ambient-drift-1 90s ease-in-out infinite alternate;
+/* five pools, each on its own very slow orbit — periods share no
+   common divisor so the blend never visibly repeats */
+.ab-1 {
+  width: 64vmax; height: 64vmax;
+  top: -28vmax; left: -16vmax;
+  background: radial-gradient(circle at center, var(--fa-ab-1) 0%, transparent 66%);
+  animation: ab-drift-1 79s ease-in-out infinite alternate;
 }
-.ambient-blob-2 {
-  width: 50vmax; height: 50vmax;
-  bottom: -22vmax; left: -16vmax;
-  background: radial-gradient(circle at center, var(--fa-blob-2) 0%, transparent 62%);
-  animation: ambient-drift-2 120s ease-in-out infinite alternate;
+.ab-2 {
+  width: 56vmax; height: 56vmax;
+  bottom: -26vmax; right: -14vmax;
+  background: radial-gradient(circle at center, var(--fa-ab-2) 0%, transparent 66%);
+  animation: ab-drift-2 103s ease-in-out infinite alternate;
 }
-@keyframes ambient-drift-1 {
+.ab-3 {
+  width: 48vmax; height: 48vmax;
+  top: 24%; left: 30%;
+  background: radial-gradient(circle at center, var(--fa-ab-3) 0%, transparent 64%);
+  animation: ab-drift-3 127s ease-in-out infinite alternate;
+}
+.ab-4 {
+  width: 52vmax; height: 52vmax;
+  bottom: 4%; left: -20vmax;
+  background: radial-gradient(circle at center, var(--fa-ab-4) 0%, transparent 64%);
+  animation: ab-drift-4 89s ease-in-out infinite alternate;
+}
+.ab-5 {
+  width: 42vmax; height: 42vmax;
+  top: -16vmax; right: 4%;
+  background: radial-gradient(circle at center, var(--fa-ab-5) 0%, transparent 62%);
+  animation: ab-drift-5 113s ease-in-out infinite alternate;
+}
+@keyframes ab-drift-1 {
   from { transform: translate3d(0, 0, 0) scale(1); }
-  to   { transform: translate3d(-8vmax, 6vmax, 0) scale(1.1); }
+  to   { transform: translate3d(10vmax, 7vmax, 0) scale(1.16); }
 }
-@keyframes ambient-drift-2 {
-  from { transform: translate3d(0, 0, 0) scale(1.05); }
-  to   { transform: translate3d(7vmax, -5vmax, 0) scale(1); }
+@keyframes ab-drift-2 {
+  from { transform: translate3d(0, 0, 0) scale(1.08); }
+  to   { transform: translate3d(-9vmax, -6vmax, 0) scale(1); }
+}
+@keyframes ab-drift-3 {
+  from { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
+  50%  { opacity: 0.55; }
+  to   { transform: translate3d(12vmax, -9vmax, 0) scale(1.12); opacity: 1; }
+}
+@keyframes ab-drift-4 {
+  from { transform: translate3d(0, 0, 0) scale(1.1); }
+  to   { transform: translate3d(11vmax, -7vmax, 0) scale(0.96); }
+}
+@keyframes ab-drift-5 {
+  from { transform: translate3d(0, 0, 0) scale(1); opacity: 0.8; }
+  to   { transform: translate3d(-8vmax, 10vmax, 0) scale(1.15); opacity: 1; }
+}
+/* config: flow=false freezes the pools (base gradient still shows) */
+.ambient-static .ambient-blob { animation: none; }
+
+/* WebGL flowing gradient (background.js) — covers the fallback blobs;
+   engine adds .gl-on to retire them once the shader is live */
+.ambient-gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.gl-on .ambient-gl { display: block; }
+.gl-on .ambient-blob { display: none; }
+
+/* ============================================================
+   Frosted-glass transition rim — every box that touches the
+   ambient background (hero banner, post/timeline/category cards,
+   article panel, TOC, prev/next nav; the terminal card is the
+   deliberate exception) melts into it via a blurred glass band
+   feathered outward by a soft glow. Kit vars are tuned per theme
+   mode (--fa-frost-bg / --fa-frost-glow) so the frost reads on
+   all four 鲸蓝/素瓷 × light/dark combinations. Disabled under
+   640px where per-card backdrop-filter gets expensive.
+   ============================================================ */
+.hero-banner, .glass-card, .article-card, .toc-container { position: relative; }
+@media (min-width: 640px) {
+  .hero-banner::before,
+  .glass-card::before,
+  .article-card::before,
+  .toc-container::before {
+    content: '';
+    position: absolute;
+    inset: -15px;
+    z-index: -1;
+    border-radius: 28px;
+    background: var(--fa-frost-bg);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    box-shadow: 0 0 22px 8px var(--fa-frost-glow);
+    pointer-events: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  .glass-card:hover::before {
+    box-shadow: 0 0 30px 12px var(--fa-frost-glow);
+  }
 }
 
 /* fine paper grain — static, tiny SVG, alpha baked in */
@@ -1195,7 +1325,7 @@ footer {
   position: absolute;
   inset: 0;
   opacity: 0.5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.42 0 0 0 0 0.36 0 0 0 0 0.26 0 0 0 0.025 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.42 0 0 0 0 0.36 0 0 0 0 0.26 0 0 0 0.025 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'%3E%3C/svg%3E");
   background-size: 160px 160px;
 }
 .dark .ambient-grain { opacity: 0.35; }

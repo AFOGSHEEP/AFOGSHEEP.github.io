@@ -71,7 +71,7 @@
     })();
   </script>
 
-  <% var bgType = (theme.background && theme.background.type) || 'gradient'; if (bgType === 'canvas' || bgType === 'three' || bgType === 'dust') { %>
+  <% var bgCfg = (typeof get_background_config === 'function' ? get_background_config(page) : null) || theme.background || {}; var bgType = bgCfg.type || 'ambient'; var abg = bgCfg.ambient || {}; if (bgType === 'canvas' || bgType === 'three' || bgType === 'dust' || (bgType === 'ambient' && abg.flow !== false)) { %>
   <script src="/js/background.js" data-no-instant></script>
   <% } %>
 </body>
