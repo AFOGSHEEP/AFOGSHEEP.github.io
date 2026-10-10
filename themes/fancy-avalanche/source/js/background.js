@@ -103,15 +103,18 @@
       '  vec2 asp = vec2(u_res.x / u_res.y, 1.0);',
       '  vec2 p = uv * asp * 2.1;',                       // medium frequency → interwoven fields
       '  p += u_par * 0.20;',
-      '  float t = u_time * 0.045;',
+      '  float t = u_time * 0.10;',
       // 冲散: 滚动是吹过烟雾的风 — 速度越快/越频繁, 烟雾被打得越碎越开
       '  float disp = clamp(abs(u_vel), 0.0, 2.0);',
       '  p *= 1.0 + disp * 0.16;',                  // 频率整体升高 → 大团雾撕成细絮
       '  p.y /= 1.0 + disp * 0.30;',                // 沿滚动轴拉伸 → 动感拖影
       '  p.x *= 1.0 + disp * 0.10;',
-      '  vec2 q = vec2(fbm(p + vec2(0.0, t * 0.85)),',
-      '                fbm(p + vec2(5.2, 1.3) - vec2(t * 0.55, 0.0)));',
-      '  float n = fbm(p + (1.75 + disp * 0.85) * q + vec2(t * 0.32, -t * 0.22));', // warp boosts with scroll — the smoke churns',
+      // 有机漫游: 两个不可通约正弦叠加 → 方向持续缓变(不固定轴=不刻意, 平滑转向=无回弹),
+      // 外加极小线性分量避免纯振荡感
+      '  vec2 drift = vec2(sin(t * 0.9), sin(t * 0.63 + 1.7)) * 0.85 + vec2(t * 0.02, -t * 0.013);',
+      '  vec2 q = vec2(fbm(p + drift * 0.7 + vec2(0.0, t * 0.35)),',
+      '                fbm(p + vec2(5.2, 1.3) + vec2(drift.y, drift.x) * 0.5 - vec2(t * 0.22, 0.0)));',
+      '  float n = fbm(p + (1.75 + disp * 0.85) * q + drift * 1.35);', // warp boosts with scroll — the smoke churns',
       '  n = smoothstep(0.14, 0.94, n);',
       // staged lighting: soft key glow at the top-right corner,
       // counter fill lower-left, edge occlusion vignette (遮蔽光)
@@ -334,10 +337,10 @@
       var dt = Math.min(0.05, gap / 1000);
       tNow += dt;
 
-      par.x += (par.cx - par.x) * Math.min(1, dt * 3.2);
-      par.y += (par.cy - par.y) * Math.min(1, dt * 3.2);
+      par.x += (par.cx - par.x) * Math.min(1, dt * 2.4);
+      par.y += (par.cy - par.y) * Math.min(1, dt * 2.4);
       scrollVel += (tScrollVel - scrollVel) * Math.min(1, dt * 6);
-      tScrollVel *= Math.exp(-dt * 2.5);   // no scroll events → velocity target decays to 0
+      tScrollVel *= Math.exp(-dt * 1.6);   // no scroll events → velocity decays slowly, the smoke re-gathers gently
 
       if (palMix < 1) palMix = Math.min(1, palMix + dt / 0.7);
       try {
