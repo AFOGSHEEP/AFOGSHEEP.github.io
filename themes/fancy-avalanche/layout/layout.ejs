@@ -46,10 +46,11 @@
 
   <script src="/js/main.js" data-no-instant></script>
 
-  <!-- Font Switcher -->
+  <!-- Font Switcher (desktop navbar icon + mobile drawer pill share it) -->
   <script data-no-instant>
     (function(){
       var FONTS = ['plus-jakarta', 'inter', 'source-serif'];
+      var LABELS = { 'plus-jakarta': 'Jakarta Sans', 'inter': 'Inter', 'source-serif': 'Source Serif · 思源宋' };
       var saved = localStorage.getItem('font-preference') || 'plus-jakarta';
       var cur = FONTS.indexOf(saved);
       if (cur < 0) cur = 0;
@@ -61,12 +62,23 @@
         if (name !== 'plus-jakarta') h.setAttribute('data-font', name);
       }
 
-      var btn = document.getElementById('font-switcher');
-      if (btn) btn.addEventListener('click', function() {
-        cur = (cur + 1) % FONTS.length;
-        var name = FONTS[cur];
-        applyFont(name);
-        localStorage.setItem('font-preference', name);
+      function toast(msg) {
+        var t = document.createElement('div');
+        t.textContent = msg;
+        t.style.cssText = 'position:fixed;left:50%;bottom:5.5rem;transform:translateX(-50%);z-index:9999;padding:.5rem 1.1rem;border-radius:999px;background:rgba(30,32,40,.88);color:#fff;font-size:.82rem;pointer-events:none;transition:opacity .3s ease;backdrop-filter:blur(8px)';
+        document.body.appendChild(t);
+        setTimeout(function(){ t.style.opacity = '0'; }, 950);
+        setTimeout(function(){ t.remove(); }, 1300);
+      }
+
+      document.querySelectorAll('[data-font-switch]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          cur = (cur + 1) % FONTS.length;
+          var name = FONTS[cur];
+          applyFont(name);
+          try { localStorage.setItem('font-preference', name); } catch (e) {}
+          toast('字体 · ' + (LABELS[name] || name));
+        });
       });
     })();
   </script>
