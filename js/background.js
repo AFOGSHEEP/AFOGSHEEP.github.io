@@ -36,21 +36,20 @@
     cfg.flow = cfg.flow !== false;
 
     /* ---------- palette ramps (lightness 0 → 1), per mode ----------
-       The warm Anthropic palette is back (shadow tan → parchment →
-       sand → apricot → clay → ivory heart). Puddles are avoided in
-       the FIELD, not the palette: higher noise frequency + stronger
-       domain warp weave the hues into flowing interlocked washes
-       instead of a few large discrete pools. */
+       鲸蓝 = blue family (misty blue paper / deep-sea night ink),
+       素瓷 = warm near-mono paper. Each style keeps its own identity
+       while the field stays Anthropic-soft; medium frequency + strong
+       warp weave hues into flowing washes, never large discrete pools. */
     var RAMPS = {
       'whale-light': [
-        [0.00, '#e3dac6'], [0.20, '#f0e9d8'], [0.40, '#eed9b6'],
-        [0.60, '#eacb9f'], [0.76, '#e5b088'], [0.90, '#dd9468'],
-        [1.00, '#f8efdd']
+        [0.00, '#e4e3df'], [0.20, '#eeeee9'], [0.40, '#e9ecf1'],
+        [0.60, '#dfe6f1'], [0.76, '#d2dcee'], [0.90, '#c2d2ea'],
+        [1.00, '#f6f8fb']
       ],
       'whale-dark': [
-        [0.00, '#111113'], [0.24, '#191a20'], [0.46, '#241f2a'],
-        [0.66, '#372830'], [0.82, '#523231'], [0.93, '#6d3f36'],
-        [1.00, '#8a4f3d']
+        [0.00, '#101116'], [0.24, '#14151d'], [0.46, '#1a1c28'],
+        [0.66, '#222638'], [0.82, '#2c3350'], [0.93, '#374266'],
+        [1.00, '#4d5f96']
       ],
       'porcelain-light': [
         [0.00, '#e6e5dc'], [0.28, '#f3f2ea'], [0.52, '#eceada'],
