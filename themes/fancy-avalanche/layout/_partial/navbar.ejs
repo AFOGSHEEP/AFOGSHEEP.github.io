@@ -50,7 +50,7 @@
             <span>本站访问 <b id="busuanzi_value_site_pv">…</b> 次 · 访客 <b id="busuanzi_value_site_uv">…</b> 人</span>
           </div>
           <div id="avatar-pop-secrets" class="avatar-pop-secrets" aria-label="已发现的秘密"></div>
-          <% var fa_pool = site.posts.toArray().map(function (p) { return p.path; }); %>
+          <% var fa_pool = site.posts.toArray().map(function (p) { return url_for(p.path); }); %>
           <div class="avatar-pop-actions">
             <a class="avatar-pop-link avatar-pop-link-primary" href="/"><i data-lucide="home" class="avatar-pop-ico"></i><span>回首页</span></a>
             <% if (fa_pool.length > 1) { %>
