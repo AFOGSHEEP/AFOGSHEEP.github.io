@@ -60,11 +60,7 @@
     </nav>
     <% } %>
 
-    <% if (theme.comment && theme.comment.enable && theme.comment.giscus) { %>
-    <div class="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800" data-aos="fade-up">
-      <% var g = theme.comment.giscus; %><script src="https://giscus.app/client.js" data-repo="<%= g.repo %>" data-repo-id="<%= g.repo_id %>" data-category="<%= g.category %>" data-category-id="<%= g.category_id %>" data-mapping="<%= g.mapping %>" data-strict="<%= g.strict %>" data-reactions-enabled="<%= g.reactions %>" data-emit-metadata="0" data-input-position="<%= g.input_position %>" data-theme="preferred_color_scheme" data-lang="<%= g.lang %>" crossorigin="anonymous" async data-no-instant></script>
-    </div>
-    <% } %>
+    <%- partial('_partial/comments') %>
 
     </div>
   </div>

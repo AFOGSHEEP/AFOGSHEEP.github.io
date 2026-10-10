@@ -1,0 +1,47 @@
+<% if (theme.comment && theme.comment.enable && theme.comment.giscus && theme.comment.giscus.repo && theme.comment.giscus.repo_id) { %>
+<div class="article-card mt-12" id="comments" data-aos="fade-up">
+  <div class="flex items-center gap-2 text-sm uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+    <i data-lucide="message-circle" class="w-4 h-4"></i> 评论
+  </div>
+  <div id="giscus-container" class="mt-4"></div>
+  <script data-fa-giscus-init>
+    (function () {
+      var g = <%- JSON.stringify(theme.comment.giscus) %>;
+      function giscusTheme(t) {
+        if (!t) return null;
+        // 站内路径需要转成绝对 URL（iframe 内相对路径会解析到 giscus.app）
+        return t.charAt(0) === '/' ? '<%= config.url %>' + t : t;
+      }
+      window.__faGiscusThemes = {
+        light: giscusTheme(g.theme_light) || 'light',
+        dark: giscusTheme(g.theme_dark) || 'transparent_dark'
+      };
+      var s = document.createElement('script');
+      s.src = 'https://giscus.app/client.js';
+      s.setAttribute('data-repo', g.repo);
+      s.setAttribute('data-repo-id', g.repo_id);
+      s.setAttribute('data-category', g.category);
+      s.setAttribute('data-category-id', g.category_id);
+      s.setAttribute('data-mapping', g.mapping || 'pathname');
+      s.setAttribute('data-strict', g.strict || '0');
+      s.setAttribute('data-reactions-enabled', g.reactions == null ? '1' : String(g.reactions));
+      s.setAttribute('data-emit-metadata', '0');
+      s.setAttribute('data-input-position', g.input_position || 'bottom');
+      s.setAttribute('data-theme', document.documentElement.classList.contains('dark')
+        ? window.__faGiscusThemes.dark : window.__faGiscusThemes.light);
+      s.setAttribute('data-lang', g.lang || 'zh-CN');
+      s.crossOrigin = 'anonymous';
+      s.async = true;
+      document.getElementById('giscus-container').appendChild(s);
+
+      window.__faGiscusSync = function () {
+        var iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe || !window.__faGiscusThemes) return;
+        var t = document.documentElement.classList.contains('dark')
+          ? window.__faGiscusThemes.dark : window.__faGiscusThemes.light;
+        iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: t } } }, 'https://giscus.app');
+      };
+    })();
+  </script>
+</div>
+<% } %>
