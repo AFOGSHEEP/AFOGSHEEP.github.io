@@ -95,17 +95,23 @@
 
   <div id="nav-progress" class="nav-progress" aria-hidden="true"></div>
 
-  <div id="mobile-menu" class="mobile-menu md:hidden hidden border-t border-zinc-200 dark:border-zinc-800 px-4 pb-4 pt-2">
-    <% if (theme.navbar.menu) { for (var key in theme.navbar.menu) { var path = theme.navbar.menu[key]; var isActive = (page.path === path) || (path !== '/' && page.path && page.path.indexOf(path.replace(/\//g,'')) === 0); %>
-    <a href="<%= path %>" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all <%= isActive ? 'text-accent-500 dark:text-accent-400 bg-accent-50 dark:bg-accent-500/10' : 'text-zinc-500 dark:text-zinc-400' %>"><%= key %></a>
-    <% }} %>
-    <div class="flex gap-2 px-4 pt-2 items-center">
-      <% if (theme.search && theme.search.enable) { %><button onclick="toggleSearch()" class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400">搜索</button><% } %>
-      <% if (theme.color_scheme && theme.color_scheme.toggle) { %>
-      <button class="style-chip-text" data-style-btn="whale" aria-pressed="false">鲸蓝</button>
-      <button class="style-chip-text" data-style-btn="porcelain" aria-pressed="false">素瓷</button>
-      <button data-mode-toggle class="p-2 rounded-lg text-sm text-zinc-500 dark:text-zinc-400"><i data-mode-icon data-lucide="sun" class="w-4 h-4 inline"></i> 明暗</button>
-      <% } %>
+  <div id="mobile-menu" class="mobile-menu md:hidden" aria-hidden="true">
+    <div class="mobile-menu-inner">
+      <div class="mm-label">导航</div>
+      <div class="mm-row">
+        <% if (theme.navbar.menu) { for (var key in theme.navbar.menu) { var path = theme.navbar.menu[key]; var isActive = (page.path === path) || (path !== '/' && page.path && page.path.indexOf(path.replace(/\//g,'')) === 0); %>
+        <a href="<%= path %>" class="mm-btn <%= isActive ? 'mm-btn-active' : '' %>"><%= key %></a>
+        <% }} %>
+        <% if (theme.search && theme.search.enable) { %>
+        <button class="mm-btn" onclick="toggleSearch()"><i data-lucide="search" class="w-3.5 h-3.5"></i>搜索</button>
+        <% } %>
+      </div>
+      <div class="mm-label">外观</div>
+      <div class="mm-row">
+        <button class="mm-btn mm-chip-whale" data-style-btn="whale" aria-pressed="false"><span class="mm-dot" style="background:#4d6bfe"></span>鲸蓝</button>
+        <button class="mm-btn mm-chip-porcelain" data-style-btn="porcelain" aria-pressed="false"><span class="mm-dot" style="background:#10a37f"></span>素瓷</button>
+        <button class="mm-btn" data-mode-toggle><i data-mode-icon data-lucide="sun" class="w-3.5 h-3.5"></i>明暗</button>
+      </div>
     </div>
   </div>
 </nav>

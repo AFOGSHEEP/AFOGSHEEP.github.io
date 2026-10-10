@@ -1462,19 +1462,131 @@ html[data-style="porcelain"] {
   z-index: 51;
 }
 
-/* mobile dropdown menu — the nav bar itself is height-capped at 4.5rem,
-   so the expanded panel must carry its own glass background or the menu
-   items float over the page content with nothing behind them */
+/* ============================================================
+   Mobile drawer menu — Anthropic-style.
+   Glass panel that unfolds (grid-rows 0fr→1fr, gentle expo ease),
+   buttons grouped by TYPE into horizontal rows (导航 / 外观),
+   every pill carries its own border + theme-harmonized fill:
+   neutral tints from --fa-* vars, identity fills for the whale /
+   porcelain chips, accent fill for the active nav item. Pills rise
+   in with a soft stagger on open; closing reverses with no delay.
+   ============================================================ */
 .mobile-menu {
-  background: rgba(var(--fa-glass-rgb) / 0.86);
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(var(--fa-glass-rgb) / 0.88);
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border-top: 1px solid var(--fa-border);
   border-radius: 0 0 18px 18px;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.10);
+  transition: grid-template-rows 0.42s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.30s ease;
 }
+.mobile-menu.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-menu-inner { overflow: hidden; padding: 0.2rem 1rem 1.05rem; }
 .dark .mobile-menu {
   background: rgba(var(--fa-surf-dark-rgb) / 0.92);
+  border-top-color: var(--fa-border-dark);
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.40);
+}
+
+/* tiny editorial section labels */
+.mm-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--fa-muted);
+  padding: 0.6rem 0.9rem 0.4rem;
+}
+
+/* one type per row, pills wrap when crowded */
+.mm-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 0.3rem 0.45rem;
+}
+
+/* pill buttons — bordered, each with its own themed fill */
+.mm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--fa-border);
+  background: var(--fa-tint-1);
+  color: var(--fa-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.18s ease;
+}
+.mm-btn:active { transform: scale(0.96); }
+.mm-btn svg { width: 0.9rem; height: 0.9rem; }
+/* dark: --fa-tint-1 is light-only — swap to a dark glass tint so the
+   light-mode text color (which flips bright in dark) stays readable */
+.dark .mm-btn { background: rgba(255, 255, 255, 0.07); }
+
+/* active nav pill — accent identity */
+.mm-btn-active {
+  border-color: rgba(var(--fa-rgb-500) / 0.45);
+  background: rgba(var(--fa-rgb-500) / 0.12);
+  color: rgb(var(--fa-rgb-600));
+}
+.dark .mm-btn-active { color: rgb(var(--fa-rgb-300)); }
+
+/* style chips carry their own identity fill, harmonized by alpha */
+.mm-chip-whale {
+  border-color: rgba(77, 107, 254, 0.35);
+  background: rgba(77, 107, 254, 0.10);
+}
+.mm-chip-whale[aria-pressed="true"] {
+  border-color: rgba(77, 107, 254, 0.65);
+  background: rgba(77, 107, 254, 0.20);
+}
+.mm-chip-porcelain {
+  border-color: rgba(16, 163, 127, 0.35);
+  background: rgba(16, 163, 127, 0.10);
+}
+.mm-chip-porcelain[aria-pressed="true"] {
+  border-color: rgba(16, 163, 127, 0.65);
+  background: rgba(16, 163, 127, 0.20);
+}
+.mm-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; flex: none; }
+
+/* staged reveal — rise + fade with a 35ms stagger; instant on close */
+.mm-row > * {
+  opacity: 0;
+  transform: translateY(-7px);
+  transition: opacity 0.30s ease, transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mobile-menu.open .mm-row > * { opacity: 1; transform: none; }
+.mobile-menu.open .mm-row > *:nth-child(1) { transition-delay: 0.06s; }
+.mobile-menu.open .mm-row > *:nth-child(2) { transition-delay: 0.095s; }
+.mobile-menu.open .mm-row > *:nth-child(3) { transition-delay: 0.13s; }
+.mobile-menu.open .mm-row > *:nth-child(4) { transition-delay: 0.165s; }
+.mobile-menu.open .mm-row > *:nth-child(5) { transition-delay: 0.20s; }
+.mobile-menu.open .mm-row > *:nth-child(6) { transition-delay: 0.235s; }
+.mobile-menu.open .mm-row > *:nth-child(7) { transition-delay: 0.27s; }
+.mobile-menu.open .mm-row > *:nth-child(8) { transition-delay: 0.30s; }
+.mobile-menu.open .mm-label { opacity: 1; transform: none; }
+.mm-label {
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity 0.3s ease, transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mobile-menu.open .mm-label:nth-of-type(1) { transition-delay: 0.02s; }
+.mobile-menu.open .mm-label:nth-of-type(2) { transition-delay: 0.19s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu, .mm-row > *, .mm-label { transition: none; }
 }
 
 /* style-theme chips (鲸蓝 / 素瓷) */
