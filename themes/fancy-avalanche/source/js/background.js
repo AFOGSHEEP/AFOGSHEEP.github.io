@@ -95,7 +95,7 @@
       'float fbm(vec2 p){',
       '  float v = 0.0, a = 0.5;',
       '  mat2 m = mat2(0.8, 0.6, -0.6, 0.8);',
-      '  for (int i = 0; i < 3; i++){ v += a * noise(p); p = m * p * 2.03 + vec2(3.7, 9.1); a *= 0.5; }',
+      '  for (int i = 0; i < __OCTAVES__; i++){ v += a * noise(p); p = m * p * 2.03 + vec2(3.7, 9.1); a *= 0.5; }',
       '  return v;',
       '}',
       'void main(){',
@@ -157,36 +157,9 @@
           || glCanvas.getContext('experimental-webgl');
         if (!gl) return false;
 
-        function sh(type, src) {
-          var s = gl.createShader(type);
-          gl.shaderSource(s, src);
-          gl.compileShader(s);
-          if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-            throw new Error(gl.getShaderInfoLog(s) || 'shader compile failed');
-          }
-          return s;
-        }
-        var prog = gl.createProgram();
-        gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
-        gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
-        gl.linkProgram(prog);
-        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-          throw new Error(gl.getProgramInfoLog(prog) || 'link failed');
-        }
-        gl.useProgram(prog);
-
         var buf = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buf);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-        var loc = gl.getAttribLocation(prog, 'a');
-        gl.enableVertexAttribArray(loc);
-        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-
-        ['u_time', 'u_res', 'u_par', 'u_scroll', 'u_mix'].forEach(function (n) {
-          uni[n] = gl.getUniformLocation(prog, n);
-        });
-        gl.uniform1i(gl.getUniformLocation(prog, 'u_palA'), 0);
-        gl.uniform1i(gl.getUniformLocation(prog, 'u_palB'), 1);
 
         var ramp = RAMPS[mode()] || RAMPS['whale-light'];
         palTexA = makeTex(rampTexture(ramp), 0);
@@ -197,6 +170,50 @@
         gl = null;
         return false;
       }
+    }
+
+    /* program cache keyed by octave count — the governor can switch
+       tiers without recompiling what it has already built */
+    var progCache = {};
+    function buildProgram(octaves) {
+      if (!gl) return;
+      if (progCache[octaves]) {
+        gl.useProgram(progCache[octaves].prog);
+        uni = progCache[octaves].uni;
+        return;
+      }
+      var frag = FRAG.replace('__OCTAVES__', String(octaves));
+      function sh(type, src) {
+        var s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+          throw new Error(gl.getShaderInfoLog(s) || 'shader compile failed');
+        }
+        return s;
+      }
+      var prog = gl.createProgram();
+      gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
+      gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, frag));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        throw new Error(gl.getProgramInfoLog(prog) || 'link failed');
+      }
+      gl.useProgram(prog);
+
+      var loc = gl.getAttribLocation(prog, 'a');
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+      var u = {};
+      ['u_time', 'u_res', 'u_par', 'u_scroll', 'u_mix'].forEach(function (n) {
+        u[n] = gl.getUniformLocation(prog, n);
+      });
+      gl.uniform1i(gl.getUniformLocation(prog, 'u_palA'), 0);
+      gl.uniform1i(gl.getUniformLocation(prog, 'u_palB'), 1);
+
+      progCache[octaves] = { prog: prog, uni: u };
+      uni = u;
     }
 
     // retint: new ramp slides into slot B while A holds the old one
@@ -222,20 +239,38 @@
       palMix = 0;
     }
 
+    /* ================= quality tiers & device routing =================
+       Two-tier plan: phones get the low-power preset unconditionally,
+       desktops start high. A runtime governor then watches real frame
+       gaps and steps the tier up/down — so a weak laptop GPU, a phone
+       in power-save mode, or a desktop with 40 tabs open all settle at
+       the highest tier their machine can actually sustain. */
+    var isMobile = window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+    var TIERS = [
+      // tier 0 — low power (phone default / adaptive floor)
+      { scale: 0.28, fps: 30, octaves: 3 },
+      // tier 1 — balanced
+      { scale: 0.45, fps: 48, octaves: 3 },
+      // tier 2 — full (desktop default)
+      { scale: 0.75, fps: 0, octaves: 4 }   // fps 0 = uncapped (vsync)
+    ];
+    var tier = isMobile ? 0 : 2;
+
     var glW = 0, glH = 0;
-    var isMobileUA = window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-    function resizeGL() {
-      if (!gl) return;
-      // phones render the gradient at 0.3x CSS pixels — the field is so
-      // soft that upscaling is invisible, and it's the single biggest
-      // frame-time win on mobile GPUs (≈11x fewer fragment invocations
-      // than native retina). degraded (adaptive) bottoms out at 0.18x.
-      var s = degraded ? 0.18 : (isMobileUA ? 0.3 : 0.5 * Math.min(window.devicePixelRatio || 1, 1.5));
-      glW = Math.max(2, Math.round(window.innerWidth * s));
-      glH = Math.max(2, Math.round(window.innerHeight * s));
-      glCanvas.width = glW;
-      glCanvas.height = glH;
-      gl.viewport(0, 0, glW, glH);
+    function applyTier() {
+      var t = TIERS[tier];
+      if (gl) {
+        var s = t.scale * Math.min(window.devicePixelRatio || 1, 1.5);
+        glW = Math.max(2, Math.round(window.innerWidth * s));
+        glH = Math.max(2, Math.round(window.innerHeight * s));
+        glCanvas.width = glW;
+        glCanvas.height = glH;
+        gl.viewport(0, 0, glW, glH);
+      }
+      // octave count lives in the shader as a uniform-baked loop bound —
+      // cheapest path is two compiled programs; rebuild only on change
+      buildProgram(t.octaves);
     }
 
     // eased parallax (-1..1) + normalized scroll feed the shader
@@ -252,26 +287,40 @@
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
-    /* ================= loop ================= */
+    /* ================= loop + load governor =================
+       The governor measures the real gap between rendered frames.
+       Sustained gaps > tier budget +25ms mean the GPU can't keep up
+       → drop one tier (max every 3s, floor tier 0). Sustained gaps
+       comfortably inside the budget while a cheaper tier runs → step
+       back up (no earlier than 10s at the current tier, so flapping
+       is impossible). Mobile never auto-promotes above tier 0: the
+       low-power plan there is a feature, not a punishment. */
     var raf = null, tNow = 0, resizeTimer = null;
     var loopErrs = [];
-    var FRAME_MIN = isMobileUA ? 1000 / 30 : 0; // cap mobile at 30fps — the field
-                                                // drifts so slowly that 30fps and
-                                                // 60fps look identical, but the GPU
-                                                // load halves
     var lastDraw = 0;
-    var slowFrames = 0, degraded = false;
+    var slowFrames = 0, fastFrames = 0, lastSwitch = 0;
 
     function frame(ts) {
       raf = requestAnimationFrame(frame);
-      if (FRAME_MIN && ts - lastDraw < FRAME_MIN) return;
+      var budget = 1000 / (TIERS[tier].fps || 60);
+      if (TIERS[tier].fps && ts - lastDraw < budget) return;
       var gap = lastDraw ? ts - lastDraw : 16;
       lastDraw = ts;
 
-      // adaptive fallback: if frames still arrive slowly after the cap,
-      // drop render resolution another notch (one-time, bottoming at 0.18x)
-      if (gap > 55) { if (++slowFrames > 24 && !degraded) { degraded = true; resizeGL(); } }
-      else slowFrames = 0;
+      /* ---- load governor ---- */
+      if (ts - lastSwitch > 3000) {
+        if (gap > budget + 25) {
+          if (++slowFrames >= 10 && tier > 0) {
+            tier--; applyTier(); lastSwitch = ts; slowFrames = 0; fastFrames = 0;
+          }
+        } else slowFrames = 0;
+
+        if (tier < (isMobile ? 0 : 2) && ts - lastSwitch > 10000) {
+          if (gap < budget * 0.8) {
+            if (++fastFrames >= 40) { tier++; applyTier(); lastSwitch = ts; fastFrames = 0; slowFrames = 0; }
+          } else fastFrames = 0;
+        }
+      }
 
       var dt = Math.min(0.05, gap / 1000);
       tNow += dt;
@@ -296,7 +345,7 @@
     }
 
     function fullResize() {
-      resizeGL();
+      applyTier();
       if (reduced || !cfg.flow) drawGL(12.0); // static frame for reduced-motion / frozen flow
     }
 
@@ -325,7 +374,7 @@
     // boot
     if (initGL()) {
       bgEl.classList.add('gl-on');       // CSS blobs are the fallback only
-      resizeGL();
+      applyTier();                       // picks tier by device + builds program + sizes canvas
       drawGL(12.0);                      // paint immediately — never a black frame
     }
     onScroll();
@@ -337,7 +386,7 @@
 
     window.__faAmbientEngine = {
       info: function () {
-        return { running: raf !== null, W: glW, H: glH, errs: loopErrs.slice(0, 3) };
+        return { running: raf !== null, W: glW, H: glH, tier: tier, mobile: isMobile, errs: loopErrs.slice(0, 3) };
       },
       destroy: function () {
         stop();
