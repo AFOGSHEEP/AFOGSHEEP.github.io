@@ -80,7 +80,6 @@
       'precision highp float;',
       'uniform float u_time;',
       'uniform vec2 u_res;',
-      'uniform vec2 u_par;',
       'uniform float u_vel;',
       'uniform sampler2D u_palA;',
       'uniform sampler2D u_palB;',
@@ -102,19 +101,25 @@
       '  vec2 uv = gl_FragCoord.xy / u_res;',
       '  vec2 asp = vec2(u_res.x / u_res.y, 1.0);',
       '  vec2 p = uv * asp * 2.1;',                       // medium frequency → interwoven fields
-      '  p += u_par * 0.20;',
-      '  float t = u_time * 0.10;',
+      '  float t = u_time * 0.16;',
+      // slow global rotation — the whole field turns like smoke in a draft,
+      // so motion has no fixed axis to read as deliberate glide
+      '  float ra = t * 0.05;',
       // 冲散: 滚动是吹过烟雾的风 — 速度越快/越频繁, 烟雾被打得越碎越开
+      '  mat2 rot = mat2(cos(ra), -sin(ra), sin(ra), cos(ra));',
+      '  p = rot * p;',
       '  float disp = clamp(abs(u_vel), 0.0, 2.0);',
       '  p *= 1.0 + disp * 0.16;',                  // 频率整体升高 → 大团雾撕成细絮
       '  p.y /= 1.0 + disp * 0.30;',                // 沿滚动轴拉伸 → 动感拖影
       '  p.x *= 1.0 + disp * 0.10;',
-      // 有机漫游: 两个不可通约正弦叠加 → 方向持续缓变(不固定轴=不刻意, 平滑转向=无回弹),
-      // 外加极小线性分量避免纯振荡感
-      '  vec2 drift = vec2(sin(t * 0.9), sin(t * 0.63 + 1.7)) * 0.85 + vec2(t * 0.02, -t * 0.013);',
-      '  vec2 q = vec2(fbm(p + drift * 0.7 + vec2(0.0, t * 0.35)),',
-      '                fbm(p + vec2(5.2, 1.3) + vec2(drift.y, drift.x) * 0.5 - vec2(t * 0.22, 0.0)));',
-      '  float n = fbm(p + (1.75 + disp * 0.85) * q + drift * 1.35);', // warp boosts with scroll — the smoke churns',
+      // 恒速曲线滑行: 速度大小恒定(永不减速=永不停滞, 不反向=无回弹),
+      // 方向以 0.05 rad/s 缓慢旋转(≈2分钟绕一圈, 无固定轴=不刻意), 外加缓慢的长期偏移
+      '  vec2 drift = vec2(sin(u_time * 0.025), -cos(u_time * 0.025)) * 3.2 + vec2(u_time * 0.006, -u_time * 0.004);',
+      // coherent glide must DOMINATE in-place morph — when the two are equal the
+      // pattern dissolves where it stands and the eye reads shimmer, not drift
+      '  vec2 q = vec2(fbm(p + drift * 0.9 + vec2(0.0, t * 0.10)),',
+      '                fbm(p + vec2(5.2, 1.3) + vec2(drift.y, drift.x) * 0.6 - vec2(t * 0.06, 0.0)));',
+      '  float n = fbm(p + (1.75 + disp * 0.85) * q + drift * 1.6);', // warp boosts with scroll — the smoke churns',
       '  n = smoothstep(0.14, 0.94, n);',
       // staged lighting: soft key glow at the top-right corner,
       // counter fill lower-left, edge occlusion vignette (遮蔽光)
@@ -214,7 +219,7 @@
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
       var u = {};
-      ['u_time', 'u_res', 'u_par', 'u_mix', 'u_vel'].forEach(function (n) {
+      ['u_time', 'u_res', 'u_mix', 'u_vel'].forEach(function (n) {
         u[n] = gl.getUniformLocation(prog, n);
       });
       gl.uniform1i(gl.getUniformLocation(prog, 'u_palA'), 0);
@@ -281,16 +286,16 @@
       buildProgram(t.octaves);
     }
 
-    // eased parallax (-1..1) + normalized scroll/scroll-velocity feed the shader
-    var par = { x: 0, y: 0, cx: 0, cy: 0 };
-    var scrollVel = 0, tScrollVel = 0;    // px/s normalized (~1 = brisk scroll)
+    // normalized scroll velocity feeds the shader (no cursor parallax —
+    // a background that chases the pointer reads as deliberate, and the
+    // glide-back on mouseout read as elastic rebound)
+    var scrollVel = 0, tScrollVel = 0;    // px/ms normalized (~1 = brisk scroll)
     var lastScrollY = null, lastScrollT = 0;
 
     function drawGL(t) {
       if (!gl) return;
       gl.uniform1f(uni.u_time, t);
       gl.uniform2f(uni.u_res, glW, glH);
-      gl.uniform2f(uni.u_par, par.x, par.y);
       gl.uniform1f(uni.u_vel, scrollVel);
       gl.uniform1f(uni.u_mix, palMix);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -337,10 +342,8 @@
       var dt = Math.min(0.05, gap / 1000);
       tNow += dt;
 
-      par.x += (par.cx - par.x) * Math.min(1, dt * 2.4);
-      par.y += (par.cy - par.y) * Math.min(1, dt * 2.4);
-      scrollVel += (tScrollVel - scrollVel) * Math.min(1, dt * 6);
-      tScrollVel *= Math.exp(-dt * 1.6);   // no scroll events → velocity decays slowly, the smoke re-gathers gently
+      scrollVel += (tScrollVel - scrollVel) * Math.min(1, dt * 3.5);
+      tScrollVel *= Math.exp(-dt * 1.1);   // no scroll events → velocity decays slowly, the smoke re-gathers gently
 
       if (palMix < 1) palMix = Math.min(1, palMix + dt / 0.7);
       try {
@@ -366,12 +369,6 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(fullResize, 180);
     }
-    function onMove(e) {
-      if (!cfg.interactive) return;
-      par.cx = (e.clientX / window.innerWidth) * 2 - 1;
-      par.cy = (e.clientY / window.innerHeight) * 2 - 1;
-    }
-    function onLeave() { par.cx = 0; par.cy = 0; }
     function onScroll() {
       var y = window.scrollY;
       var now = performance.now();
@@ -389,8 +386,6 @@
 
     window.addEventListener('resize', onResize);
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('mousemove', onMove, { passive: true });
-    window.addEventListener('mouseout', onLeave);
     document.addEventListener('visibilitychange', onVisibility);
 
     // boot
@@ -416,9 +411,7 @@
         styleObserver.disconnect();
         window.removeEventListener('resize', onResize);
         window.removeEventListener('scroll', onScroll);
-        window.removeEventListener('mousemove', onMove);
-        window.removeEventListener('mouseout', onLeave);
-        document.removeEventListener('visibilitychange', onVisibility);
+            document.removeEventListener('visibilitychange', onVisibility);
         if (gl) {
           try {
             gl.deleteTexture(palTexA);
