@@ -95,7 +95,7 @@
 
   <div id="nav-progress" class="nav-progress" aria-hidden="true"></div>
 
-  <div id="mobile-menu" class="md:hidden hidden border-t border-zinc-200 dark:border-zinc-800 px-4 pb-4 pt-2">
+  <div id="mobile-menu" class="mobile-menu md:hidden hidden border-t border-zinc-200 dark:border-zinc-800 px-4 pb-4 pt-2">
     <% if (theme.navbar.menu) { for (var key in theme.navbar.menu) { var path = theme.navbar.menu[key]; var isActive = (page.path === path) || (path !== '/' && page.path && page.path.indexOf(path.replace(/\//g,'')) === 0); %>
     <a href="<%= path %>" class="block px-4 py-3 rounded-lg text-sm font-medium transition-all <%= isActive ? 'text-accent-500 dark:text-accent-400 bg-accent-50 dark:bg-accent-500/10' : 'text-zinc-500 dark:text-zinc-400' %>"><%= key %></a>
     <% }} %>
