@@ -132,15 +132,18 @@
       document.body.appendChild(toast);
     }
 
-    // Mobile menu
+    // Mobile menu — glass drawer unfolds with staged pill reveal (CSS)
     var menuBtn = document.getElementById('mobile-menu-btn');
     var mobileMenu = document.getElementById('mobile-menu');
     if (menuBtn && mobileMenu) {
+      menuBtn.setAttribute('aria-expanded', 'false');
       menuBtn.addEventListener('click', function () {
-        var open = !mobileMenu.classList.contains('hidden');
-        mobileMenu.classList.toggle('hidden', open);
+        var open = !mobileMenu.classList.contains('open');
+        mobileMenu.classList.toggle('open', open);
+        mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+        menuBtn.setAttribute('aria-expanded', String(open));
         var icon = menuBtn.querySelector('[data-lucide]');
-        if (icon) icon.setAttribute('data-lucide', open ? 'menu' : 'x');
+        if (icon) icon.setAttribute('data-lucide', open ? 'x' : 'menu');
         if (typeof lucide !== 'undefined') lucide.createIcons();
       });
     }
