@@ -82,6 +82,7 @@
       'uniform vec2 u_res;',
       'uniform vec2 u_par;',
       'uniform float u_scroll;',
+      'uniform float u_vel;',
       'uniform sampler2D u_palA;',
       'uniform sampler2D u_palB;',
       'uniform float u_mix;',
@@ -103,7 +104,8 @@
       '  vec2 asp = vec2(u_res.x / u_res.y, 1.0);',
       '  vec2 p = uv * asp * 2.1;',                       // medium frequency → interwoven fields
       '  p += u_par * 0.20;',
-      '  p.y += u_scroll * 0.30;',
+      '  p.y += u_scroll * 0.30 + u_vel * 0.45;',   // position + velocity lean
+      '  p.x -= u_vel * 0.12;',                     // diagonal shear adds depth
       '  float t = u_time * 0.045;',
       '  vec2 q = vec2(fbm(p + vec2(0.0, t * 0.85)),',
       '                fbm(p + vec2(5.2, 1.3) - vec2(t * 0.55, 0.0)));',
@@ -118,6 +120,7 @@
       '  float n2 = n * (0.72 + 0.28 * lp) + 0.05 * lp2 * n + 0.24 * key * key;',
       '  n2 *= (0.80 + 0.20 * vig);',
       '  float l = clamp(0.20 + 0.80 * n2, 0.0, 1.0);',
+      '  l += clamp(abs(u_vel) * 0.5, 0.0, 1.0) * 0.05;',  // scroll-speed lift
       // ivory key glow: blend the corner toward the ramp's ivory PEAK (1.0) —
       // anything less lands in the clay band and reads as a peach oval
       '  l = mix(l, 1.0, 0.9 * smoothstep(0.5, 1.0, key));',
@@ -206,7 +209,7 @@
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
       var u = {};
-      ['u_time', 'u_res', 'u_par', 'u_scroll', 'u_mix'].forEach(function (n) {
+      ['u_time', 'u_res', 'u_par', 'u_scroll', 'u_mix', 'u_vel'].forEach(function (n) {
         u[n] = gl.getUniformLocation(prog, n);
       });
       gl.uniform1i(gl.getUniformLocation(prog, 'u_palA'), 0);
@@ -273,9 +276,11 @@
       buildProgram(t.octaves);
     }
 
-    // eased parallax (-1..1) + normalized scroll feed the shader
+    // eased parallax (-1..1) + normalized scroll/scroll-velocity feed the shader
     var par = { x: 0, y: 0, cx: 0, cy: 0 };
     var scrollN = 0, tScrollN = 0;
+    var scrollVel = 0, tScrollVel = 0;    // px/s normalized (~1 = brisk scroll)
+    var lastScrollY = null, lastScrollT = 0;
 
     function drawGL(t) {
       if (!gl) return;
@@ -283,6 +288,7 @@
       gl.uniform2f(uni.u_res, glW, glH);
       gl.uniform2f(uni.u_par, par.x, par.y);
       gl.uniform1f(uni.u_scroll, scrollN);
+      gl.uniform1f(uni.u_vel, scrollVel);
       gl.uniform1f(uni.u_mix, palMix);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
@@ -302,8 +308,11 @@
 
     function frame(ts) {
       raf = requestAnimationFrame(frame);
+      var scrolling = Math.abs(scrollVel) > 0.06;
+      // scroll-coupled motion must run at full rAF or it reads as stutter —
+      // the fps cap only applies at rest; scrolling earns the full frame rate
+      if (TIERS[tier].fps && !scrolling && ts - lastDraw < 1000 / TIERS[tier].fps) return;
       var budget = 1000 / (TIERS[tier].fps || 60);
-      if (TIERS[tier].fps && ts - lastDraw < budget) return;
       var gap = lastDraw ? ts - lastDraw : 16;
       lastDraw = ts;
 
@@ -328,6 +337,8 @@
       par.x += (par.cx - par.x) * Math.min(1, dt * 3.2);
       par.y += (par.cy - par.y) * Math.min(1, dt * 3.2);
       scrollN += (tScrollN - scrollN) * Math.min(1, dt * 4);
+      scrollVel += (tScrollVel - scrollVel) * Math.min(1, dt * 6);
+      tScrollVel *= Math.exp(-dt * 2.5);   // no scroll events → velocity target decays to 0
 
       if (palMix < 1) palMix = Math.min(1, palMix + dt / 0.7);
       try {
@@ -359,7 +370,17 @@
       par.cy = (e.clientY / window.innerHeight) * 2 - 1;
     }
     function onLeave() { par.cx = 0; par.cy = 0; }
-    function onScroll() { tScrollN = Math.min(3, window.scrollY / Math.max(1, window.innerHeight)); }
+    function onScroll() {
+      var y = window.scrollY;
+      var now = performance.now();
+      if (lastScrollY !== null) {
+        var dts = Math.max(8, now - lastScrollT);
+        tScrollVel = Math.max(-2.5, Math.min(2.5, (y - lastScrollY) / dts));  // px/ms → ~1 = brisk
+      }
+      lastScrollY = y;
+      lastScrollT = now;
+      tScrollN = Math.min(3, y / Math.max(1, window.innerHeight));
+    }
     function onVisibility() { if (document.hidden) stop(); else start(); }
 
     var styleObserver = new MutationObserver(function () { retintGL(); });
@@ -386,7 +407,7 @@
 
     window.__faAmbientEngine = {
       info: function () {
-        return { running: raf !== null, W: glW, H: glH, tier: tier, mobile: isMobile, errs: loopErrs.slice(0, 3) };
+        return { running: raf !== null, W: glW, H: glH, tier: tier, mobile: isMobile, vel: Math.round(scrollVel * 100) / 100, errs: loopErrs.slice(0, 3) };
       },
       destroy: function () {
         stop();
