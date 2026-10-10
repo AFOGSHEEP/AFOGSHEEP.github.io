@@ -1462,6 +1462,21 @@ html[data-style="porcelain"] {
   z-index: 51;
 }
 
+/* mobile dropdown menu — the nav bar itself is height-capped at 4.5rem,
+   so the expanded panel must carry its own glass background or the menu
+   items float over the page content with nothing behind them */
+.mobile-menu {
+  background: rgba(var(--fa-glass-rgb) / 0.86);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.10);
+}
+.dark .mobile-menu {
+  background: rgba(var(--fa-surf-dark-rgb) / 0.92);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.40);
+}
+
 /* style-theme chips (鲸蓝 / 素瓷) */
 .style-chip {
   display: inline-flex;

@@ -95,7 +95,7 @@
       'float fbm(vec2 p){',
       '  float v = 0.0, a = 0.5;',
       '  mat2 m = mat2(0.8, 0.6, -0.6, 0.8);',
-      '  for (int i = 0; i < 4; i++){ v += a * noise(p); p = m * p * 2.03 + vec2(3.7, 9.1); a *= 0.5; }',
+      '  for (int i = 0; i < 3; i++){ v += a * noise(p); p = m * p * 2.03 + vec2(3.7, 9.1); a *= 0.5; }',
       '  return v;',
       '}',
       'void main(){',
@@ -107,7 +107,7 @@
       '  float t = u_time * 0.045;',
       '  vec2 q = vec2(fbm(p + vec2(0.0, t * 0.85)),',
       '                fbm(p + vec2(5.2, 1.3) - vec2(t * 0.55, 0.0)));',
-      '  float n = fbm(p + 1.75 * q + vec2(t * 0.32, -t * 0.22));', // strong warp smears boundaries
+      '  float n = fbm(p + 1.75 * q + vec2(t * 0.32, -t * 0.22));', // strong warp smears boundaries',
       '  n = smoothstep(0.14, 0.94, n);',
       // staged lighting: soft key glow at the top-right corner,
       // counter fill lower-left, edge occlusion vignette (遮蔽光)
@@ -223,9 +223,14 @@
     }
 
     var glW = 0, glH = 0;
+    var isMobileUA = window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
     function resizeGL() {
       if (!gl) return;
-      var s = 0.5 * Math.min(window.devicePixelRatio || 1, 1.5); // gradients upscale invisibly
+      // phones render the gradient at 0.3x CSS pixels — the field is so
+      // soft that upscaling is invisible, and it's the single biggest
+      // frame-time win on mobile GPUs (≈11x fewer fragment invocations
+      // than native retina). degraded (adaptive) bottoms out at 0.18x.
+      var s = degraded ? 0.18 : (isMobileUA ? 0.3 : 0.5 * Math.min(window.devicePixelRatio || 1, 1.5));
       glW = Math.max(2, Math.round(window.innerWidth * s));
       glH = Math.max(2, Math.round(window.innerHeight * s));
       glCanvas.width = glW;
@@ -248,15 +253,27 @@
     }
 
     /* ================= loop ================= */
-    var raf = null, last = 0, tNow = 0, resizeTimer = null;
+    var raf = null, tNow = 0, resizeTimer = null;
     var loopErrs = [];
+    var FRAME_MIN = isMobileUA ? 1000 / 30 : 0; // cap mobile at 30fps — the field
+                                                // drifts so slowly that 30fps and
+                                                // 60fps look identical, but the GPU
+                                                // load halves
+    var lastDraw = 0;
+    var slowFrames = 0, degraded = false;
 
     function frame(ts) {
       raf = requestAnimationFrame(frame);
-      var dt = (ts - last) / 1000;
-      last = ts;
-      if (!dt || dt < 0) dt = 0.016;
-      dt = Math.min(0.05, dt);
+      if (FRAME_MIN && ts - lastDraw < FRAME_MIN) return;
+      var gap = lastDraw ? ts - lastDraw : 16;
+      lastDraw = ts;
+
+      // adaptive fallback: if frames still arrive slowly after the cap,
+      // drop render resolution another notch (one-time, bottoming at 0.18x)
+      if (gap > 55) { if (++slowFrames > 24 && !degraded) { degraded = true; resizeGL(); } }
+      else slowFrames = 0;
+
+      var dt = Math.min(0.05, gap / 1000);
       tNow += dt;
 
       par.x += (par.cx - par.x) * Math.min(1, dt * 3.2);
@@ -271,7 +288,7 @@
 
     function start() {
       if (raf !== null || document.hidden || reduced) return;
-      last = performance.now();
+      lastDraw = 0;
       raf = requestAnimationFrame(frame);
     }
     function stop() {
