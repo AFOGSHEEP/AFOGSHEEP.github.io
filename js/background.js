@@ -2,6 +2,347 @@
 (function () {
   'use strict';
 
+  /* ============================================================
+     Ambient engine v5 — Anthropic-style warm parchment light.
+     A WebGL shader breathes LIGHTNESS over the paper: low-frequency
+     domain-warped FBM drives a tonal (near-neutral) ramp, plus
+     staged lighting — soft key glow top-right, counter fill
+     lower-left, edge occlusion. No colored blobs, no particles;
+     the gradient is felt more than seen, like light moving across
+     paper. Palettes swap per 鲸蓝/素瓷 × light/dark via a gradient
+     texture (crossfade on flip). CSS blobs remain as the no-WebGL
+     fallback; prefers-reduced-motion renders one static frame.
+     ============================================================ */
+  (function ambientEngine() {
+    // pjax (InstantClick) re-runs this file on every navigation —
+    // tear down the previous instance before binding to the new DOM
+    if (window.__faAmbientEngine) {
+      try { window.__faAmbientEngine.destroy(); } catch (e) {}
+      window.__faAmbientEngine = null;
+    }
+
+    var bgEl = document.querySelector('.ambient-bg');
+    var glCanvas = document.getElementById('ambient-gl');
+    if (!bgEl || !glCanvas) return;
+
+    var root = document.documentElement;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var cfg = { flow: true, interactive: true };
+    try {
+      var cfgEl = document.getElementById('ambient-cfg');
+      if (cfgEl) cfg = JSON.parse(cfgEl.textContent);
+    } catch (e) {}
+    cfg.flow = cfg.flow !== false;
+
+    /* ---------- palette ramps (lightness 0 → 1), per mode ----------
+       The warm Anthropic palette is back (shadow tan → parchment →
+       sand → apricot → clay → ivory heart). Puddles are avoided in
+       the FIELD, not the palette: higher noise frequency + stronger
+       domain warp weave the hues into flowing interlocked washes
+       instead of a few large discrete pools. */
+    var RAMPS = {
+      'whale-light': [
+        [0.00, '#e3dac6'], [0.20, '#f0e9d8'], [0.40, '#eed9b6'],
+        [0.60, '#eacb9f'], [0.76, '#e5b088'], [0.90, '#dd9468'],
+        [1.00, '#f8efdd']
+      ],
+      'whale-dark': [
+        [0.00, '#111113'], [0.24, '#191a20'], [0.46, '#241f2a'],
+        [0.66, '#372830'], [0.82, '#523231'], [0.93, '#6d3f36'],
+        [1.00, '#8a4f3d']
+      ],
+      'porcelain-light': [
+        [0.00, '#e6e5dc'], [0.28, '#f3f2ea'], [0.52, '#eceada'],
+        [0.74, '#e9e9d9'], [0.90, '#e7e6cf'], [1.00, '#faf7ec']
+      ],
+      'porcelain-dark': [
+        [0.00, '#141413'], [0.32, '#1c1c1a'], [0.58, '#27251f'],
+        [0.82, '#363126'], [0.94, '#453c2c'], [1.00, '#5a4b33']
+      ]
+    };
+
+    function mode() {
+      var style = root.getAttribute('data-style') === 'porcelain' ? 'porcelain' : 'whale';
+      return style + '-' + (root.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    /* ================= WebGL parchment light ================= */
+    var gl = null, uni = {}, palTexA = null, palTexB = null;
+    var palMix = 1; // 0 → fully A, 1 → fully B (new palette lands in B)
+
+    var VERT =
+      'attribute vec2 a;' +
+      'void main(){ gl_Position = vec4(a, 0.0, 1.0); }';
+
+    // 4-octave fbm, MEDIUM frequency + STRONG domain warp: hues marble
+    // into interlocking flowing washes — color everywhere, puddles nowhere
+    var FRAG = [
+      'precision highp float;',
+      'uniform float u_time;',
+      'uniform vec2 u_res;',
+      'uniform vec2 u_par;',
+      'uniform float u_scroll;',
+      'uniform sampler2D u_palA;',
+      'uniform sampler2D u_palB;',
+      'uniform float u_mix;',
+      'float hash(vec2 p){ p = fract(p * vec2(234.34, 435.345)); p += dot(p, p + 34.23); return fract(p.x * p.y); }',
+      'float noise(vec2 p){',
+      '  vec2 i = floor(p), f = fract(p);',
+      '  vec2 u = f * f * (3.0 - 2.0 * f);',
+      '  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),',
+      '             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);',
+      '}',
+      'float fbm(vec2 p){',
+      '  float v = 0.0, a = 0.5;',
+      '  mat2 m = mat2(0.8, 0.6, -0.6, 0.8);',
+      '  for (int i = 0; i < 4; i++){ v += a * noise(p); p = m * p * 2.03 + vec2(3.7, 9.1); a *= 0.5; }',
+      '  return v;',
+      '}',
+      'void main(){',
+      '  vec2 uv = gl_FragCoord.xy / u_res;',
+      '  vec2 asp = vec2(u_res.x / u_res.y, 1.0);',
+      '  vec2 p = uv * asp * 2.1;',                       // medium frequency → interwoven fields
+      '  p += u_par * 0.20;',
+      '  p.y += u_scroll * 0.30;',
+      '  float t = u_time * 0.045;',
+      '  vec2 q = vec2(fbm(p + vec2(0.0, t * 0.85)),',
+      '                fbm(p + vec2(5.2, 1.3) - vec2(t * 0.55, 0.0)));',
+      '  float n = fbm(p + 1.75 * q + vec2(t * 0.32, -t * 0.22));', // strong warp smears boundaries
+      '  n = smoothstep(0.14, 0.94, n);',
+      // staged lighting: soft key glow at the top-right corner,
+      // counter fill lower-left, edge occlusion vignette (遮蔽光)
+      '  float key = clamp(1.0 - length((uv - vec2(0.92, 0.88)) * asp * 0.85), 0.0, 1.0);',
+      '  float lp  = clamp(1.0 - 0.38 * length((uv - vec2(0.80, 0.84)) * asp * 1.15), 0.0, 1.0);',
+      '  float lp2 = clamp(1.0 - 0.55 * length((uv - vec2(0.14, 0.16)) * asp * 1.60), 0.0, 1.0);',
+      '  float vig = clamp(1.0 - 0.38 * pow(length((uv - 0.5) * vec2(1.35, 1.10)), 2.0), 0.0, 1.0);',
+      '  float n2 = n * (0.72 + 0.28 * lp) + 0.05 * lp2 * n + 0.24 * key * key;',
+      '  n2 *= (0.80 + 0.20 * vig);',
+      '  float l = clamp(0.20 + 0.80 * n2, 0.0, 1.0);',
+      // ivory key glow: blend the corner toward the ramp's ivory PEAK (1.0) —
+      // anything less lands in the clay band and reads as a peach oval
+      '  l = mix(l, 1.0, 0.9 * smoothstep(0.5, 1.0, key));',
+      '  vec3 cA = texture2D(u_palA, vec2(l, 0.5)).rgb;',
+      '  vec3 cB = texture2D(u_palB, vec2(l, 0.5)).rgb;',
+      '  gl_FragColor = vec4(mix(cA, cB, u_mix), 1.0);',
+      '}'
+    ].join('\n');
+
+    function rampTexture(ramp) {
+      var c = document.createElement('canvas');
+      c.width = 256; c.height = 1;
+      var x = c.getContext('2d');
+      var g = x.createLinearGradient(0, 0, 256, 0);
+      ramp.forEach(function (s) { g.addColorStop(s[0], s[1]); });
+      x.fillStyle = g;
+      x.fillRect(0, 0, 256, 1);
+      return c;
+    }
+
+    function makeTex(srcCanvas, unit) {
+      var tex = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, srcCanvas);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      return tex;
+    }
+
+    function initGL() {
+      try {
+        gl = glCanvas.getContext('webgl', { antialias: false, alpha: false, depth: false, stencil: false, powerPreference: 'low-power' })
+          || glCanvas.getContext('experimental-webgl');
+        if (!gl) return false;
+
+        function sh(type, src) {
+          var s = gl.createShader(type);
+          gl.shaderSource(s, src);
+          gl.compileShader(s);
+          if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+            throw new Error(gl.getShaderInfoLog(s) || 'shader compile failed');
+          }
+          return s;
+        }
+        var prog = gl.createProgram();
+        gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
+        gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+          throw new Error(gl.getProgramInfoLog(prog) || 'link failed');
+        }
+        gl.useProgram(prog);
+
+        var buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        var loc = gl.getAttribLocation(prog, 'a');
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+        ['u_time', 'u_res', 'u_par', 'u_scroll', 'u_mix'].forEach(function (n) {
+          uni[n] = gl.getUniformLocation(prog, n);
+        });
+        gl.uniform1i(gl.getUniformLocation(prog, 'u_palA'), 0);
+        gl.uniform1i(gl.getUniformLocation(prog, 'u_palB'), 1);
+
+        var ramp = RAMPS[mode()] || RAMPS['whale-light'];
+        palTexA = makeTex(rampTexture(ramp), 0);
+        palTexB = makeTex(rampTexture(ramp), 1);
+        palMix = 1;
+        return true;
+      } catch (e) {
+        gl = null;
+        return false;
+      }
+    }
+
+    // retint: new ramp slides into slot B while A holds the old one
+    function retintGL() {
+      if (!gl) return;
+      var ramp = rampTexture(RAMPS[mode()] || RAMPS['whale-light']);
+      if (reduced || !cfg.flow) { // no anim loop running — swap instantly on both slots
+        gl.deleteTexture(palTexA);
+        gl.deleteTexture(palTexB);
+        palTexA = makeTex(ramp, 0);
+        palTexB = makeTex(ramp, 1);
+        palMix = 1;
+        drawGL(tNow || 12.0);
+        return;
+      }
+      gl.deleteTexture(palTexA);
+      palTexA = palTexB;
+      palTexB = makeTex(ramp, 1);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, palTexA);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, palTexB);
+      palMix = 0;
+    }
+
+    var glW = 0, glH = 0;
+    function resizeGL() {
+      if (!gl) return;
+      var s = 0.5 * Math.min(window.devicePixelRatio || 1, 1.5); // gradients upscale invisibly
+      glW = Math.max(2, Math.round(window.innerWidth * s));
+      glH = Math.max(2, Math.round(window.innerHeight * s));
+      glCanvas.width = glW;
+      glCanvas.height = glH;
+      gl.viewport(0, 0, glW, glH);
+    }
+
+    // eased parallax (-1..1) + normalized scroll feed the shader
+    var par = { x: 0, y: 0, cx: 0, cy: 0 };
+    var scrollN = 0, tScrollN = 0;
+
+    function drawGL(t) {
+      if (!gl) return;
+      gl.uniform1f(uni.u_time, t);
+      gl.uniform2f(uni.u_res, glW, glH);
+      gl.uniform2f(uni.u_par, par.x, par.y);
+      gl.uniform1f(uni.u_scroll, scrollN);
+      gl.uniform1f(uni.u_mix, palMix);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    /* ================= loop ================= */
+    var raf = null, last = 0, tNow = 0, resizeTimer = null;
+    var loopErrs = [];
+
+    function frame(ts) {
+      raf = requestAnimationFrame(frame);
+      var dt = (ts - last) / 1000;
+      last = ts;
+      if (!dt || dt < 0) dt = 0.016;
+      dt = Math.min(0.05, dt);
+      tNow += dt;
+
+      par.x += (par.cx - par.x) * Math.min(1, dt * 3.2);
+      par.y += (par.cy - par.y) * Math.min(1, dt * 3.2);
+      scrollN += (tScrollN - scrollN) * Math.min(1, dt * 4);
+
+      if (palMix < 1) palMix = Math.min(1, palMix + dt / 0.7);
+      try {
+        if (cfg.flow) drawGL(tNow);
+      } catch (e) { if (loopErrs.length < 5) loopErrs.push(String(e && e.message)); }
+    }
+
+    function start() {
+      if (raf !== null || document.hidden || reduced) return;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    }
+    function stop() {
+      if (raf !== null) { cancelAnimationFrame(raf); raf = null; }
+    }
+
+    function fullResize() {
+      resizeGL();
+      if (reduced || !cfg.flow) drawGL(12.0); // static frame for reduced-motion / frozen flow
+    }
+
+    function onResize() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(fullResize, 180);
+    }
+    function onMove(e) {
+      if (!cfg.interactive) return;
+      par.cx = (e.clientX / window.innerWidth) * 2 - 1;
+      par.cy = (e.clientY / window.innerHeight) * 2 - 1;
+    }
+    function onLeave() { par.cx = 0; par.cy = 0; }
+    function onScroll() { tScrollN = Math.min(3, window.scrollY / Math.max(1, window.innerHeight)); }
+    function onVisibility() { if (document.hidden) stop(); else start(); }
+
+    var styleObserver = new MutationObserver(function () { retintGL(); });
+    styleObserver.observe(root, { attributes: true, attributeFilter: ['class', 'data-style'] });
+
+    window.addEventListener('resize', onResize);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('mouseout', onLeave);
+    document.addEventListener('visibilitychange', onVisibility);
+
+    // boot
+    if (initGL()) {
+      bgEl.classList.add('gl-on');       // CSS blobs are the fallback only
+      resizeGL();
+      drawGL(12.0);                      // paint immediately — never a black frame
+    }
+    onScroll();
+    if (reduced || !cfg.flow) {
+      drawGL(12.0);                      // one calm frozen frame
+    } else {
+      start();
+    }
+
+    window.__faAmbientEngine = {
+      info: function () {
+        return { running: raf !== null, W: glW, H: glH, errs: loopErrs.slice(0, 3) };
+      },
+      destroy: function () {
+        stop();
+        clearTimeout(resizeTimer);
+        styleObserver.disconnect();
+        window.removeEventListener('resize', onResize);
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseout', onLeave);
+        document.removeEventListener('visibilitychange', onVisibility);
+        if (gl) {
+          try {
+            gl.deleteTexture(palTexA);
+            gl.deleteTexture(palTexB);
+            gl.getExtension('WEBGL_lose_context').loseContext();
+          } catch (e) {}
+        }
+      }
+    };
+  })();
+
   var configEl = document.getElementById('bg-config');
   if (!configEl) return;
 

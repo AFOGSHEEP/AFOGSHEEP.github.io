@@ -352,6 +352,7 @@
         });
         if (window.lucide) lucide.createIcons();
         syncMeta();
+        if (window.__faGiscusSync) window.__faGiscusSync();
       }
       function applyMode(isDark) {
         root.classList.toggle('dark', isDark);
