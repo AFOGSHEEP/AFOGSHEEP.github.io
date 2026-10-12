@@ -1225,31 +1225,31 @@ html[data-style="porcelain"] {
   width: 64vmax; height: 64vmax;
   top: -28vmax; left: -16vmax;
   background: radial-gradient(circle at center, var(--fa-ab-1) 0%, transparent 66%);
-  animation: ab-drift-1 79s ease-in-out infinite alternate;
+  animation: ab-drift-1 26s ease-in-out infinite alternate;
 }
 .ab-2 {
   width: 56vmax; height: 56vmax;
   bottom: -26vmax; right: -14vmax;
   background: radial-gradient(circle at center, var(--fa-ab-2) 0%, transparent 66%);
-  animation: ab-drift-2 103s ease-in-out infinite alternate;
+  animation: ab-drift-2 35s ease-in-out infinite alternate;
 }
 .ab-3 {
   width: 48vmax; height: 48vmax;
   top: 24%; left: 30%;
   background: radial-gradient(circle at center, var(--fa-ab-3) 0%, transparent 64%);
-  animation: ab-drift-3 127s ease-in-out infinite alternate;
+  animation: ab-drift-3 43s ease-in-out infinite alternate;
 }
 .ab-4 {
   width: 52vmax; height: 52vmax;
   bottom: 4%; left: -20vmax;
   background: radial-gradient(circle at center, var(--fa-ab-4) 0%, transparent 64%);
-  animation: ab-drift-4 89s ease-in-out infinite alternate;
+  animation: ab-drift-4 30s ease-in-out infinite alternate;
 }
 .ab-5 {
   width: 42vmax; height: 42vmax;
   top: -16vmax; right: 4%;
   background: radial-gradient(circle at center, var(--fa-ab-5) 0%, transparent 62%);
-  animation: ab-drift-5 113s ease-in-out infinite alternate;
+  animation: ab-drift-5 38s ease-in-out infinite alternate;
 }
 @keyframes ab-drift-1 {
   from { transform: translate3d(0, 0, 0) scale(1); }

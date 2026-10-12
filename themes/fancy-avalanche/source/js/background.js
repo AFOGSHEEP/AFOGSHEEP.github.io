@@ -47,17 +47,17 @@
         [1.00, '#f6f8fb']
       ],
       'whale-dark': [
-        [0.00, '#101116'], [0.24, '#14151d'], [0.46, '#1a1c28'],
-        [0.66, '#222638'], [0.82, '#2c3350'], [0.93, '#374266'],
-        [1.00, '#4d5f96']
+        [0.00, '#0e0f13'], [0.24, '#121318'], [0.46, '#171921'],
+        [0.66, '#1e222f'], [0.82, '#252b40'], [0.93, '#2f3854'],
+        [1.00, '#3c4970']
       ],
       'porcelain-light': [
         [0.00, '#e6e5dc'], [0.28, '#f3f2ea'], [0.52, '#eceada'],
         [0.74, '#e9e9d9'], [0.90, '#e7e6cf'], [1.00, '#faf7ec']
       ],
       'porcelain-dark': [
-        [0.00, '#141413'], [0.32, '#1c1c1a'], [0.58, '#27251f'],
-        [0.82, '#363126'], [0.94, '#453c2c'], [1.00, '#5a4b33']
+        [0.00, '#121110'], [0.32, '#1a1918'], [0.58, '#242220'],
+        [0.82, '#312b23'], [0.94, '#3e372a'], [1.00, '#4c4230']
       ]
     };
 
@@ -82,6 +82,7 @@
       'uniform vec2 u_res;',
       'uniform float u_vel;',
       'uniform float u_phase;',
+      'uniform float u_peak;',
       'uniform sampler2D u_palA;',
       'uniform sampler2D u_palB;',
       'uniform float u_mix;',
@@ -102,7 +103,7 @@
       '  vec2 uv = gl_FragCoord.xy / u_res;',
       '  vec2 asp = vec2(u_res.x / u_res.y, 1.0);',
       '  vec2 p = uv * asp * 2.1;',                       // medium frequency → interwoven fields
-      '  float t = u_time * 0.16;',
+      '  float t = u_time * 0.19;',
       // slow global rotation — the whole field turns like smoke in a draft,
       // so motion has no fixed axis to read as deliberate glide
       '  float ra = t * 0.05;',
@@ -133,10 +134,10 @@
       '  float n2 = n * (0.72 + 0.28 * lp) + 0.05 * lp2 * n + 0.24 * key * key;',
       '  n2 *= (0.80 + 0.20 * vig);',
       '  float l = clamp(0.20 + 0.80 * n2, 0.0, 1.0);',
-      '  l += clamp(abs(u_vel) * 0.5, 0.0, 1.0) * 0.05;',  // dispersed smoke reads lighter
+      '  l += clamp(abs(u_vel) * 0.5, 0.0, 1.0) * 0.05 * u_peak;',  // dispersed smoke reads lighter
       // ivory key glow: blend the corner toward the ramp's ivory PEAK (1.0) —
       // anything less lands in the clay band and reads as a peach oval
-      '  l = mix(l, 1.0, 0.9 * smoothstep(0.5, 1.0, key));',
+      '  l = mix(l, u_peak, 0.9 * smoothstep(0.5, 1.0, key));', // dark clamps the peak dimmer
       '  vec3 cA = texture2D(u_palA, vec2(l, 0.5)).rgb;',
       '  vec3 cB = texture2D(u_palB, vec2(l, 0.5)).rgb;',
       '  gl_FragColor = vec4(mix(cA, cB, u_mix), 1.0);',
@@ -222,7 +223,7 @@
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
       var u = {};
-      ['u_time', 'u_res', 'u_mix', 'u_vel', 'u_phase'].forEach(function (n) {
+      ['u_time', 'u_res', 'u_mix', 'u_vel', 'u_phase', 'u_peak'].forEach(function (n) {
         u[n] = gl.getUniformLocation(prog, n);
       });
       gl.uniform1i(gl.getUniformLocation(prog, 'u_palA'), 0);
@@ -236,7 +237,7 @@
     function retintGL() {
       if (!gl) return;
       var ramp = rampTexture(RAMPS[mode()] || RAMPS['whale-light']);
-      if (reduced || !cfg.flow) { // no anim loop running — swap instantly on both slots
+      if (!cfg.flow) { // no anim loop running — swap instantly on both slots
         gl.deleteTexture(palTexA);
         gl.deleteTexture(palTexB);
         palTexA = makeTex(ramp, 0);
@@ -302,6 +303,7 @@
       gl.uniform2f(uni.u_res, glW, glH);
       gl.uniform1f(uni.u_vel, scrollVel);
       gl.uniform1f(uni.u_phase, smokePhase);
+      gl.uniform1f(uni.u_peak, root.classList.contains('dark') ? 0.8 : 1.0);
       gl.uniform1f(uni.u_mix, palMix);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
@@ -334,7 +336,7 @@
 
       /* ---- load governor ---- */
       if (ts - lastSwitch > 3000) {
-        if (gap > budget + 25) {
+        if (gap > budget + 40) {
           if (++slowFrames >= 10 && tier > 0) {
             tier--; applyTier(); lastSwitch = ts; slowFrames = 0; fastFrames = 0;
           }
@@ -360,7 +362,7 @@
     }
 
     function start() {
-      if (raf !== null || document.hidden || reduced) return;
+      if (raf !== null || document.hidden) return;
       lastDraw = 0;
       raf = requestAnimationFrame(frame);
     }
@@ -370,7 +372,7 @@
 
     function fullResize() {
       applyTier();
-      if (reduced || !cfg.flow) drawGL(12.0); // static frame for reduced-motion / frozen flow
+      if (!cfg.flow) drawGL(12.0);
     }
 
     function onResize() {
@@ -403,10 +405,10 @@
       drawGL(12.0);                      // paint immediately — never a black frame
     }
     onScroll();
-    if (reduced || !cfg.flow) {
-      drawGL(12.0);                      // one calm frozen frame
+    if (!cfg.flow) {
+      drawGL(12.0);                      // frozen frame only when flow is disabled
     } else {
-      start();
+      start();                           // reduced-motion gets a gentle 12fps drift
     }
 
     window.__faAmbientEngine = {
